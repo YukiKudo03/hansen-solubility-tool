@@ -2,7 +2,7 @@
  * テストデータファクトリ
  */
 import { RiskLevel } from '../../src/core/types';
-import type { Part, PartsGroup, Solvent, GroupEvaluationResult, PartEvaluationResult, RiskThresholds } from '../../src/core/types';
+import type { Part, PartsGroup, Solvent, GroupEvaluationResult, PartEvaluationResult, RiskThresholds, MixtureComponent } from '../../src/core/types';
 
 let idCounter = 0;
 function nextId() { return ++idCounter; }
@@ -79,6 +79,14 @@ export function buildGroupEvaluationResult(overrides: Partial<GroupEvaluationRes
     })),
     evaluatedAt: new Date('2026-03-15T10:00:00Z'),
     thresholdsUsed: { dangerousMax: 0.5, warningMax: 0.8, cautionMax: 1.2, holdMax: 2.0 },
+    ...overrides,
+  };
+}
+
+export function buildMixtureComponent(overrides: Partial<MixtureComponent> = {}): MixtureComponent {
+  return {
+    solvent: buildSolvent(),
+    volumeRatio: 1,
     ...overrides,
   };
 }

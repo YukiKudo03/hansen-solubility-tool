@@ -24,6 +24,7 @@ export interface ElectronAPI {
   createSolvent(dto: CreateSolventDto): Promise<Solvent>;
   updateSolvent(id: number, dto: Partial<CreateSolventDto>): Promise<Solvent | null>;
   deleteSolvent(id: number): Promise<boolean>;
+  createMixtureSolvent(dto: { components: { solventId: number; volumeRatio: number }[]; name: string }): Promise<Solvent>;
 
   // 評価
   evaluate(partsGroupId: number, solventId: number): Promise<GroupEvaluationResult>;

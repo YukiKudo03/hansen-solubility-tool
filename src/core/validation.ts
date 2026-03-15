@@ -87,3 +87,15 @@ export function validateSolventInput(input: {
     ?? validateCasNumber(input.casNumber)
     ?? validatePhysicalProperties(input);
 }
+
+export function validateMixtureInput(components: { solventId: number; volumeRatio: number }[]): string | null {
+  if (components.length < 1) {
+    return '1つ以上の溶媒を追加してください';
+  }
+  for (const c of components) {
+    if (!Number.isFinite(c.volumeRatio) || c.volumeRatio <= 0) {
+      return '体積比は正の数値を入力してください';
+    }
+  }
+  return null;
+}

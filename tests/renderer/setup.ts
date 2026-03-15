@@ -28,6 +28,7 @@ export function createMockApi(): { [K in keyof ElectronAPI]: ReturnType<typeof v
     createSolvent: vi.fn().mockResolvedValue({ id: 1, name: '', nameEn: null, casNumber: null, hsp: { deltaD: 0, deltaP: 0, deltaH: 0 }, molarVolume: null, molWeight: null, notes: null }),
     updateSolvent: vi.fn().mockResolvedValue(null),
     deleteSolvent: vi.fn().mockResolvedValue(true),
+    createMixtureSolvent: vi.fn().mockResolvedValue({ id: 99, name: '混合溶媒', nameEn: null, casNumber: null, hsp: { deltaD: 17, deltaP: 5, deltaH: 10 }, molarVolume: null, molWeight: null, boilingPoint: null, viscosity: null, specificGravity: null, surfaceTension: null, notes: '混合溶媒' }),
 
     // 評価
     evaluate: vi.fn().mockResolvedValue(null),

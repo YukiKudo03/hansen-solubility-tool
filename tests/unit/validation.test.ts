@@ -8,6 +8,7 @@ import {
   validatePartInput,
   validateSolventInput,
   validatePhysicalProperties,
+  validateMixtureInput,
 } from '../../src/core/validation';
 
 describe('validateHSPValues', () => {
@@ -208,5 +209,37 @@ describe('validatePhysicalProperties', () => {
   it('表面張力が負でエラー', () => {
     expect(validatePhysicalProperties({ surfaceTension: -5 }))
       .toBe('表面張力は正の数値を入力してください');
+  });
+});
+
+describe('validateMixtureInput', () => {
+  it('有効な2成分入力', () => {
+    expect(validateMixtureInput([
+      { solventId: 1, volumeRatio: 3 },
+      { solventId: 2, volumeRatio: 1 },
+    ])).toBeNull();
+  });
+
+  it('成分1つでも有効', () => {
+    expect(validateMixtureInput([{ solventId: 1, volumeRatio: 1 }])).toBeNull();
+  });
+
+  it('空配列でエラー', () => {
+    expect(validateMixtureInput([])).toBe('1つ以上の溶媒を追加してください');
+  });
+
+  it('体積比が0でエラー', () => {
+    expect(validateMixtureInput([{ solventId: 1, volumeRatio: 0 }]))
+      .toBe('体積比は正の数値を入力してください');
+  });
+
+  it('体積比が負でエラー', () => {
+    expect(validateMixtureInput([{ solventId: 1, volumeRatio: -1 }]))
+      .toBe('体積比は正の数値を入力してください');
+  });
+
+  it('体積比がNaNでエラー', () => {
+    expect(validateMixtureInput([{ solventId: 1, volumeRatio: NaN }]))
+      .toBe('体積比は正の数値を入力してください');
   });
 });

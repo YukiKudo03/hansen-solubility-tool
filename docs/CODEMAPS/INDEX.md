@@ -44,7 +44,8 @@ Pure domain logic (testable, no side effects)
 - `hsp.ts` — Hansen distance: `calculateRa()`, `calculateRed()`
 - `risk.ts` — Classification: `classifyRisk(red, thresholds)` → RiskLevel 1-5
 - `report.ts` — CSV export: `formatCsv(result)` (BOM-prefixed UTF-8, incl. physical properties)
-- `validation.ts` — Input validators incl. `validatePhysicalProperties()` for bp/viscosity/sg/st
+- `validation.ts` — Input validators incl. `validatePhysicalProperties()`, `validateMixtureInput()`
+- `mixture.ts` — Solvent mixture calculations: `calculateMixture()`, HSP/viscosity/molar volume mixing rules
 
 ### src/db/
 Data access layer (SQLite via better-sqlite3)
@@ -57,13 +58,14 @@ Data access layer (SQLite via better-sqlite3)
 ### src/main/
 Electron main process (lifecycle, IPC orchestration)
 - `main.ts` — App startup, DB init, migration, window creation, seed data load
-- `ipc-handlers.ts` — 27+ IPC handlers: parts CRUD, evaluation, CSV export, settings
+- `ipc-handlers.ts` — 28+ IPC handlers: parts CRUD, evaluation, mixture creation, CSV export, settings
 - `preload.ts` — Context-isolated bridge exposing `window.api` to renderer
 
 ### src/renderer/
 React UI (Vite-bundled, hot-reload in dev)
-- `App.tsx` — Tab router (Report, DatabaseEditor, Settings)
+- `App.tsx` — Tab router (Report, DatabaseEditor, MixtureLab, Settings)
 - `components/ReportView.tsx` — Evaluation workflow (select group + solvent, run, export)
+- `components/MixtureLab.tsx` — Mixture creation (select solvents, volume ratios, predict, register to DB)
 - `components/ResultsTable.tsx` — Display results with RiskBadge coloring
 - `components/DatabaseEditor.tsx` — CRUD UI for all entities
 - `hooks/useEvaluation.ts`, `hooks/usePartsGroups.ts`, `hooks/useSolvents.ts` — Async logic
@@ -104,11 +106,11 @@ npm run docker:test:unit
 
 | Category | Count | Purpose |
 |----------|-------|---------|
-| **Core** | 5 files | HSP math, risk logic, report, validation |
+| **Core** | 6 files | HSP math, risk logic, report, validation, mixture |
 | **Database** | 4 files | Schema, repositories, seed data |
 | **Main Process** | 3 files | Electron lifecycle, IPC, preload |
-| **Renderer** | 10 files | React components + hooks (incl. ErrorBoundary) |
-| **Tests** | 4 dirs | Unit + integration + renderer + E2E (21 files, 2254 lines) |
+| **Renderer** | 11 files | React components + hooks (incl. MixtureLab, ErrorBoundary) |
+| **Tests** | 4 dirs | Unit + integration + renderer + E2E (23 files, 3198 lines) |
 | **Config** | 8+ files | TS, Vite, Tailwind, Electron build |
 
 ## Database Schema Summary
@@ -124,9 +126,10 @@ npm run docker:test:unit
 
 ## IPC Contract
 
-**27+ handlers** registered in `ipc-handlers.ts`:
+**28+ handlers** registered in `ipc-handlers.ts`:
 - Parts CRUD: getAllGroups, getGroupById, createGroup, updateGroup, deleteGroup, createPart, updatePart, deletePart
 - Solvents CRUD: getAll, getById, search, create, update, delete
+- Mixture: createMixture({ components, name }) → Solvent (calculates mixed properties, saves to DB)
 - Evaluation: evaluate(groupId, solventId) → GroupEvaluationResult
 - Settings: getThresholds, setThresholds
 - Export: saveCsv(content) → { saved: boolean; filePath?: string }
@@ -140,13 +143,16 @@ All types defined in `src/core/types.ts`:
 - `Solvent` { id, name, nameEn, casNumber, hsp, molarVolume, molWeight, boilingPoint, viscosity, specificGravity, surfaceTension, notes }
 - `GroupEvaluationResult` { partsGroup, solvent, results[], evaluatedAt, thresholdsUsed }
 - `RiskLevel` enum: Dangerous(1), Warning(2), Caution(3), Hold(4), Safe(5)
+- `MixtureComponent` { solvent, volumeRatio }
+- `MixtureSolventResult` { name, hsp, molarVolume, molWeight, boilingPoint, viscosity, specificGravity, surfaceTension, compositionNote }
 
 ## Critical Paths
 
-1. **App Startup:** main.ts → initDb() → initializeDatabase() → seedDatabase() [once]
+1. **App Startup:** main.ts → initDb() → initializeDatabase() → migrateDatabase() → seedDatabase() [once]
 2. **User Evaluation:** ReportView select + click → window.api.evaluate() → IPC handler → calculate → return result
-3. **Data Persistence:** ReportView export → formatCsv() → window.api.saveCsv() → dialog → file write
-4. **Settings Change:** SettingsView form → window.api.setThresholds() → settings table update
+3. **Mixture Creation:** MixtureLab select solvents + ratios → calculateMixture() → window.api.createMixtureSolvent() → DB
+4. **Data Persistence:** ReportView export → formatCsv() → window.api.saveCsv() → dialog → file write
+5. **Settings Change:** SettingsView form → window.api.setThresholds() → settings table update
 
 ## Build Process
 
@@ -180,6 +186,6 @@ npm run package
 
 ---
 
-**Last Updated:** 2026-03-15 | **Version:** 1.2.0 | **Status:** Current
+**Last Updated:** 2026-03-15 | **Version:** 1.3.0 | **Status:** Current
 
 For detailed implementation, see individual codemaps. For questions about specific modules, consult the file headers which include JSDoc and TypeScript interfaces.

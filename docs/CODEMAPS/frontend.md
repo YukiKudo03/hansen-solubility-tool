@@ -6,7 +6,7 @@
 
 ```
 src/renderer/main.tsx (React entry point)
-    └── App.tsx (tab router, state: activeTab: 'report' | 'database' | 'settings')
+    └── App.tsx (tab router, state: activeTab: 'report' | 'database' | 'mixture' | 'settings')
         ├── ReportView.tsx (Evaluation workflow)
         │   ├── PartsGroupSelector.tsx (dropdown select, state: selectedGroup)
         │   ├── SolventSelector.tsx (search + dropdown, state: selectedSolvent)
@@ -16,6 +16,11 @@ src/renderer/main.tsx (React entry point)
         │
         ├── DatabaseEditor.tsx (CRUD UI for parts groups, parts, solvents)
         │   └── Full table editor (add/edit/delete rows)
+        │
+        ├── MixtureLab.tsx (混合溶媒作成)
+        │   ├── Solvent search + select per row (reuses search IPC)
+        │   ├── Volume ratio inputs → real-time mixture calculation
+        │   └── DB registration with composition note
         │
         ├── SettingsView.tsx (Risk threshold adjustment)
         │   └── Form inputs for dangerousMax, warningMax, etc.
@@ -88,6 +93,25 @@ src/renderer/main.tsx (React entry point)
 - Parts Groups (add/edit/delete)
 - Parts (add/edit/delete per group)
 - Solvents (add/edit/delete)
+
+### MixtureLab.tsx
+**Purpose:** Solvent mixture creation, property prediction, DB registration
+**State:**
+- `rows: ComponentRow[]` — solvent + volume ratio per row
+- `mixtureName: string` — name for DB registration
+- `saveMessage / error` — feedback states
+
+**Key Flow:**
+1. User adds solvents via inline search (reuses `searchSolvents` IPC)
+2. `useMemo` → `calculateMixture()` computes real-time mixed properties
+3. Results grid shows HSP + all physical properties
+4. User enters name → `createMixtureSolvent` IPC → saves to DB with composition note
+
+**Mixing Rules (in `src/core/mixture.ts`):**
+- HSP: volume-weighted average
+- Viscosity: Arrhenius log mixing `exp(Σ φi·ln(ηi))`
+- Mol weight: mole-fraction weighted (φ→x conversion via Vm)
+- Others: volume-weighted average
 
 ### ErrorBoundary.tsx
 **Purpose:** Catch React render errors gracefully
@@ -172,6 +196,7 @@ window.api = {
   createSolvent(dto: CreateSolventDto): Promise<Solvent>
   updateSolvent(id: number, dto: Partial<CreateSolventDto>): Promise<Solvent | null>
   deleteSolvent(id: number): Promise<boolean>
+  createMixtureSolvent(dto: { components: { solventId: number; volumeRatio: number }[]; name: string }): Promise<Solvent>
 
   // Evaluation
   evaluate(groupId: number, solventId: number): Promise<GroupEvaluationResult>

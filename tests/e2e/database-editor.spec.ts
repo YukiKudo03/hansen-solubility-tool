@@ -26,7 +26,7 @@ test('部品グループ一覧が表示される', async () => {
 });
 
 test('溶媒タブに切り替えで溶媒テーブルが表示される', async () => {
-  await page.getByRole('button', { name: '溶媒' }).click();
+  await page.getByRole('button', { name: '溶媒', exact: true }).click();
   await expect(page.getByText(/件の溶媒/)).toBeVisible();
 });
 
