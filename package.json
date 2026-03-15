@@ -4,6 +4,13 @@
   "description": "Hansen溶解度パラメータ 溶解性評価ツール",
   "main": "dist/main/main.js",
   "scripts": {
+    "dev": "concurrently \"npm run dev:main\" \"npm run dev:renderer\"",
+    "dev:main": "tsc -p tsconfig.node.json && electron .",
+    "dev:renderer": "vite --config vite.renderer.config.ts",
+    "build": "npm run build:main && npm run build:renderer",
+    "build:main": "tsc -p tsconfig.node.json",
+    "build:renderer": "vite build --config vite.renderer.config.ts",
+    "start": "electron .",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
@@ -25,13 +32,22 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@tailwindcss/vite": "^4.2.1",
     "@types/better-sqlite3": "^7.6.13",
     "@types/node": "^25.5.0",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^6.0.1",
     "@vitest/coverage-v8": "^2.1.9",
+    "electron": "^41.0.2",
+    "tailwindcss": "^4.2.1",
     "typescript": "^5.9.3",
+    "vite": "^5.4.21",
     "vitest": "^2.1.9"
   },
   "dependencies": {
-    "better-sqlite3": "^12.8.0"
+    "better-sqlite3": "^12.8.0",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4"
   }
 }

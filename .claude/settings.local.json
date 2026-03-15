@@ -12,7 +12,10 @@
       "Bash(npm install:*)",
       "Bash(npx vitest:*)",
       "Bash(npm ls:*)",
-      "Bash(git init:*)"
+      "Bash(git init:*)",
+      "Bash(git commit:*)",
+      "Bash(git add:*)",
+      "Bash(npx electron:*)"
     ]
   }
 }
