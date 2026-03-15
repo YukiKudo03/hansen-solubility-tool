@@ -1,13 +1,18 @@
-version: "3.9"
 services:
+  test-all:
+    build:
+      context: .
+      target: test
+    command: npx vitest run --coverage
+
   test-unit:
     build:
       context: .
-      dockerfile: Dockerfile.test
-    command: npx vitest run
+      target: test
+    command: npx vitest run tests/unit
 
   test-integration:
     build:
       context: .
-      dockerfile: Dockerfile.test
+      target: test
     command: npx vitest run tests/integration
