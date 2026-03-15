@@ -55,6 +55,7 @@ export interface SolventRepository {
   getAllSolvents(): Solvent[];
   getSolventById(id: number): Solvent | null;
   searchSolvents(query: string): Solvent[];
+  getPlasticizers(): Solvent[];
   createSolvent(dto: CreateSolventDto): Solvent;
   updateSolvent(id: number, dto: Partial<CreateSolventDto>): Solvent | null;
   deleteSolvent(id: number): boolean;

@@ -9,6 +9,9 @@ import { seedDatabase } from '../db/seed-data';
 import { SqlitePartsRepository, SqliteSolventRepository, SqliteSettingsRepository, SqliteNanoParticleRepository, SqliteDrugRepository } from '../db/sqlite-repository';
 import { seedNanoParticles } from '../db/seed-nano-particles';
 import { seedDrugs } from '../db/seed-drugs';
+import { seedCoatings } from '../db/seed-coatings';
+import { seedPlasticizers } from '../db/seed-plasticizers';
+import { seedCarriers } from '../db/seed-carriers';
 import { registerIpcHandlers } from './ipc-handlers';
 
 let mainWindow: BrowserWindow | null = null;
@@ -35,6 +38,15 @@ function initDb(): Database.Database {
 
   // 薬物シードデータ投入
   seedDrugs(db);
+
+  // コーティング材料シードデータ投入
+  seedCoatings(db);
+
+  // 可塑剤シードデータ投入
+  seedPlasticizers(db);
+
+  // DDSキャリアシードデータ投入
+  seedCarriers(db);
 
   return db;
 }
