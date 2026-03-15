@@ -144,6 +144,29 @@ export function validateWettabilityThresholds(t: WettabilityThresholds): string 
   return null;
 }
 
+export function validateBlendOptimizationInput(input: {
+  targetDeltaD: number;
+  targetDeltaP: number;
+  targetDeltaH: number;
+  candidateCount: number;
+  maxComponents: 2 | 3;
+  stepSize: number;
+  topN: number;
+}): string | null {
+  const hspErr = validateHSPValues(input.targetDeltaD, input.targetDeltaP, input.targetDeltaH);
+  if (hspErr) return `ターゲットHSP: ${hspErr}`;
+  if (!Number.isFinite(input.stepSize) || input.stepSize <= 0 || input.stepSize > 1) {
+    return '刻み幅は0より大きく1以下の数値を入力してください';
+  }
+  if (!Number.isInteger(input.topN) || input.topN <= 0) {
+    return '表示件数は正の整数を入力してください';
+  }
+  if (input.candidateCount < input.maxComponents) {
+    return `候補溶媒は${input.maxComponents}件以上選択してください`;
+  }
+  return null;
+}
+
 export function validateMixtureInput(components: { solventId: number; volumeRatio: number }[]): string | null {
   if (components.length < 1) {
     return '1つ以上の溶媒を追加してください';
