@@ -37,6 +37,7 @@ function createWindow(db: Database.Database): void {
     minWidth: 900,
     minHeight: 600,
     title: 'Hansen溶解度パラメータ 溶解性評価ツール',
+    icon: path.join(__dirname, '../../build/icon.ico'),
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       contextIsolation: true,
@@ -56,7 +57,7 @@ function createWindow(db: Database.Database): void {
     mainWindow.loadURL(process.env.VITE_DEV_SERVER_URL);
     mainWindow.webContents.openDevTools();
   } else {
-    mainWindow.loadFile(path.join(__dirname, '../renderer/index.html'));
+    mainWindow.loadFile(path.join(__dirname, '../../renderer/index.html'));
   }
 
   mainWindow.on('closed', () => {

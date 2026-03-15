@@ -12,14 +12,18 @@ files:
   - package.json
 
 extraMetadata:
-  main: dist/main/main.js
+  main: dist/main/main/main.js
 
 win:
   target:
     - target: nsis
       arch:
         - x64
+    - target: portable
+      arch:
+        - x64
   icon: build/icon.ico
+  signAndEditExecutable: false
 
 nsis:
   oneClick: false
