@@ -18,7 +18,15 @@
       "Bash(npx electron:*)",
       "Bash(npx tsc:*)",
       "Bash(npx vite:*)",
-      "Bash(npm uninstall:*)"
+      "Bash(npm uninstall:*)",
+      "Bash(gh auth:*)",
+      "Bash(gh repo:*)",
+      "Bash(gh label:*)",
+      "Bash(gh issue:*)",
+      "Bash(git push:*)",
+      "Bash(cat:*)",
+      "Bash(which node:*)",
+      "Bash(for f:*)"
     ]
   }
 }
