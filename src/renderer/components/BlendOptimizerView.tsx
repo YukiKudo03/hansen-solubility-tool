@@ -1,7 +1,10 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { formatBlendOptimizationCsv } from '../../core/report';
 import { useSolvents } from '../hooks/useSolvents';
 import { useBlendOptimizer } from '../hooks/useBlendOptimizer';
+import { usePartsGroups } from '../hooks/usePartsGroups';
+import { useDrugs } from '../hooks/useDrugs';
+import type { NanoParticle } from '../../core/types';
 
 export default function BlendOptimizerView() {
   const { solvents, loading: solventsLoading } = useSolvents();
@@ -21,6 +24,59 @@ export default function BlendOptimizerView() {
   const [topN, setTopN] = useState<string>('20');
 
   const [csvError, setCsvError] = useState<string | null>(null);
+
+  // 材料参照
+  type RefType = '' | 'part' | 'nanoparticle' | 'drug';
+  const [refType, setRefType] = useState<RefType>('');
+  const [selectedGroupId, setSelectedGroupId] = useState<string>('');
+  const [selectedPartId, setSelectedPartId] = useState<string>('');
+  const [selectedDrugId, setSelectedDrugId] = useState<string>('');
+  const [selectedNanoId, setSelectedNanoId] = useState<string>('');
+  const [nanoParticles, setNanoParticles] = useState<NanoParticle[]>([]);
+
+  const { groups } = usePartsGroups();
+  const { drugs } = useDrugs();
+
+  useEffect(() => {
+    if (refType === 'nanoparticle') {
+      window.api.getAllNanoParticles().then(setNanoParticles);
+    }
+  }, [refType]);
+
+  const selectedGroup = groups.find(g => g.id === Number(selectedGroupId));
+
+  const applyHSP = (hsp: { deltaD: number; deltaP: number; deltaH: number }) => {
+    setTargetDeltaD(String(hsp.deltaD));
+    setTargetDeltaP(String(hsp.deltaP));
+    setTargetDeltaH(String(hsp.deltaH));
+    clear();
+  };
+
+  const handleRefTypeChange = (type: RefType) => {
+    setRefType(type);
+    setSelectedGroupId('');
+    setSelectedPartId('');
+    setSelectedDrugId('');
+    setSelectedNanoId('');
+  };
+
+  const handlePartSelect = (partId: string) => {
+    setSelectedPartId(partId);
+    const part = selectedGroup?.parts.find(p => p.id === Number(partId));
+    if (part) applyHSP(part.hsp);
+  };
+
+  const handleDrugSelect = (drugId: string) => {
+    setSelectedDrugId(drugId);
+    const drug = drugs.find(d => d.id === Number(drugId));
+    if (drug) applyHSP(drug.hsp);
+  };
+
+  const handleNanoSelect = (nanoId: string) => {
+    setSelectedNanoId(nanoId);
+    const np = nanoParticles.find(n => n.id === Number(nanoId));
+    if (np) applyHSP(np.hsp);
+  };
 
   const canOptimize =
     targetDeltaD !== '' &&
@@ -95,6 +151,94 @@ export default function BlendOptimizerView() {
         {/* ターゲットHSP入力 */}
         <div className="mb-6">
           <h3 className="text-sm font-medium text-gray-700 mb-3">ターゲットHSP</h3>
+
+          {/* 材料から参照 */}
+          <div className="mb-4 p-3 bg-gray-50 rounded-md">
+            <h4 className="text-xs font-medium text-gray-600 mb-2">材料から参照</h4>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+              <div>
+                <label htmlFor="ref-type" className="block text-xs text-gray-500 mb-1">参照元</label>
+                <select
+                  id="ref-type"
+                  aria-label="参照元"
+                  value={refType}
+                  onChange={(e) => handleRefTypeChange(e.target.value as RefType)}
+                  className="w-full border border-gray-300 rounded-md px-2 py-1.5 text-sm"
+                >
+                  <option value="">-- 手入力 --</option>
+                  <option value="part">ポリマー材料</option>
+                  <option value="nanoparticle">ナノ粒子</option>
+                  <option value="drug">薬物</option>
+                </select>
+              </div>
+
+              {refType === 'part' && (
+                <>
+                  <div>
+                    <label htmlFor="ref-group" className="block text-xs text-gray-500 mb-1">グループ</label>
+                    <select
+                      id="ref-group"
+                      aria-label="グループ"
+                      value={selectedGroupId}
+                      onChange={(e) => { setSelectedGroupId(e.target.value); setSelectedPartId(''); }}
+                      className="w-full border border-gray-300 rounded-md px-2 py-1.5 text-sm"
+                    >
+                      <option value="">選択...</option>
+                      {groups.map(g => <option key={g.id} value={g.id}>{g.name}</option>)}
+                    </select>
+                  </div>
+                  {selectedGroup && (
+                    <div>
+                      <label htmlFor="ref-part" className="block text-xs text-gray-500 mb-1">材料</label>
+                      <select
+                        id="ref-part"
+                        aria-label="材料"
+                        value={selectedPartId}
+                        onChange={(e) => handlePartSelect(e.target.value)}
+                        className="w-full border border-gray-300 rounded-md px-2 py-1.5 text-sm"
+                      >
+                        <option value="">選択...</option>
+                        {selectedGroup.parts.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
+                      </select>
+                    </div>
+                  )}
+                </>
+              )}
+
+              {refType === 'drug' && (
+                <div>
+                  <label htmlFor="ref-drug" className="block text-xs text-gray-500 mb-1">薬物</label>
+                  <select
+                    id="ref-drug"
+                    aria-label="薬物"
+                    value={selectedDrugId}
+                    onChange={(e) => handleDrugSelect(e.target.value)}
+                    className="w-full border border-gray-300 rounded-md px-2 py-1.5 text-sm"
+                  >
+                    <option value="">選択...</option>
+                    {drugs.map(d => <option key={d.id} value={d.id}>{d.name}</option>)}
+                  </select>
+                </div>
+              )}
+
+              {refType === 'nanoparticle' && (
+                <div>
+                  <label htmlFor="ref-nano" className="block text-xs text-gray-500 mb-1">ナノ粒子</label>
+                  <select
+                    id="ref-nano"
+                    aria-label="ナノ粒子"
+                    value={selectedNanoId}
+                    onChange={(e) => handleNanoSelect(e.target.value)}
+                    className="w-full border border-gray-300 rounded-md px-2 py-1.5 text-sm"
+                  >
+                    <option value="">選択...</option>
+                    {nanoParticles.map(n => <option key={n.id} value={n.id}>{n.name}</option>)}
+                  </select>
+                </div>
+              )}
+            </div>
+          </div>
+
           <div className="grid grid-cols-3 gap-4">
             <div>
               <label className="block text-xs text-gray-500 mb-1">δD (MPa½)</label>
