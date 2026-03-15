@@ -1,8 +1,8 @@
 /**
  * Preload API 型定義 — window.api の型
  */
-import type { PartsGroup, Solvent, RiskThresholds, GroupEvaluationResult, NanoParticle, NanoParticleCategory, NanoDispersionEvaluationResult, DispersibilityThresholds, SolventConstraints, GroupContactAngleResult, WettabilityThresholds } from './core/types';
-import type { CreatePartsGroupDto, CreatePartDto, CreateSolventDto, CreateNanoParticleDto } from './db/repository';
+import type { PartsGroup, Solvent, RiskThresholds, GroupEvaluationResult, NanoParticle, NanoParticleCategory, NanoDispersionEvaluationResult, DispersibilityThresholds, SolventConstraints, GroupContactAngleResult, WettabilityThresholds, Drug, GroupSwellingResult, SwellingThresholds, DrugSolubilityScreeningResult, DrugSolubilityThresholds, BlendOptimizationResult } from './core/types';
+import type { CreatePartsGroupDto, CreatePartDto, CreateSolventDto, CreateNanoParticleDto, CreateDrugDto } from './db/repository';
 
 export interface ElectronAPI {
   // 部品グループ
@@ -61,6 +61,36 @@ export interface ElectronAPI {
   // 濡れ性閾値設定
   getWettabilityThresholds(): Promise<WettabilityThresholds>;
   setWettabilityThresholds(thresholds: WettabilityThresholds): Promise<void>;
+
+  // 膨潤度予測
+  evaluateSwelling(partsGroupId: number, solventId: number): Promise<GroupSwellingResult>;
+
+  // 膨潤度閾値設定
+  getSwellingThresholds(): Promise<SwellingThresholds>;
+  setSwellingThresholds(thresholds: SwellingThresholds): Promise<void>;
+
+  // 薬物
+  getAllDrugs(): Promise<Drug[]>;
+  getDrugById(id: number): Promise<Drug | null>;
+  getDrugsByCategory(category: string): Promise<Drug[]>;
+  searchDrugs(query: string): Promise<Drug[]>;
+  createDrug(dto: CreateDrugDto): Promise<Drug>;
+  updateDrug(id: number, dto: Partial<CreateDrugDto>): Promise<Drug | null>;
+  deleteDrug(id: number): Promise<boolean>;
+
+  // 薬物溶解性評価
+  evaluateDrugSolubility(drugId: number, solventId: number): Promise<DrugSolubilityScreeningResult>;
+  screenDrugSolvents(drugId: number): Promise<DrugSolubilityScreeningResult>;
+
+  // 薬物溶解性閾値設定
+  getDrugSolubilityThresholds(): Promise<DrugSolubilityThresholds>;
+  setDrugSolubilityThresholds(thresholds: DrugSolubilityThresholds): Promise<void>;
+
+  // ブレンド最適化
+  optimizeBlend(params: {
+    targetDeltaD: number; targetDeltaP: number; targetDeltaH: number;
+    candidateSolventIds: number[]; maxComponents: 2 | 3; stepSize: number; topN: number;
+  }): Promise<BlendOptimizationResult>;
 }
 
 declare global {

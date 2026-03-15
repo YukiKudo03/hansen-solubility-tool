@@ -6,8 +6,11 @@ import SettingsView from './components/SettingsView';
 import MixtureLab from './components/MixtureLab';
 import NanoDispersionView from './components/NanoDispersionView';
 import ContactAngleView from './components/ContactAngleView';
+import SwellingView from './components/SwellingView';
+import DrugSolubilityView from './components/DrugSolubilityView';
+import BlendOptimizerView from './components/BlendOptimizerView';
 
-type Tab = 'report' | 'database' | 'mixture' | 'nanoDispersion' | 'contactAngle' | 'settings';
+type Tab = 'report' | 'database' | 'mixture' | 'nanoDispersion' | 'contactAngle' | 'blendOptimizer' | 'swelling' | 'drugSolubility' | 'settings';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<Tab>('report');
@@ -18,6 +21,9 @@ export default function App() {
     { id: 'mixture', label: '混合溶媒' },
     { id: 'nanoDispersion', label: 'ナノ粒子分散' },
     { id: 'contactAngle', label: '接触角推定' },
+    { id: 'blendOptimizer', label: '溶剤ブレンド最適化' },
+    { id: 'swelling', label: '膨潤度予測' },
+    { id: 'drugSolubility', label: '薬物溶解性' },
     { id: 'settings', label: '設定' },
   ];
 
@@ -57,6 +63,9 @@ export default function App() {
           {activeTab === 'mixture' && <MixtureLab />}
           {activeTab === 'nanoDispersion' && <NanoDispersionView />}
           {activeTab === 'contactAngle' && <ContactAngleView />}
+          {activeTab === 'blendOptimizer' && <BlendOptimizerView />}
+          {activeTab === 'swelling' && <SwellingView />}
+          {activeTab === 'drugSolubility' && <DrugSolubilityView />}
           {activeTab === 'settings' && <SettingsView />}
         </ErrorBoundary>
       </main>

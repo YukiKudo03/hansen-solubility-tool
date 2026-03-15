@@ -3,16 +3,19 @@
  */
 import { ipcMain, dialog } from 'electron';
 import fs from 'fs';
-import type { PartsRepository, SolventRepository, SettingsRepository, NanoParticleRepository } from '../db/repository';
+import type { PartsRepository, SolventRepository, SettingsRepository, NanoParticleRepository, DrugRepository } from '../db/repository';
 import { calculateRa, calculateRed } from '../core/hsp';
 import { classifyRisk } from '../core/risk';
 import { classifyDispersibility, DEFAULT_DISPERSIBILITY_THRESHOLDS } from '../core/dispersibility';
 import { screenSolvents, filterByConstraints } from '../core/solvent-finder';
-import { validatePartInput, validateSolventInput, validateName, validateThresholds, validateMixtureInput, validateNanoParticleInput, validateDispersibilityThresholds, validateWettabilityThresholds } from '../core/validation';
+import { validatePartInput, validateSolventInput, validateName, validateThresholds, validateMixtureInput, validateNanoParticleInput, validateDispersibilityThresholds, validateWettabilityThresholds, validateBlendOptimizationInput, validateSwellingThresholds, validateDrugInput, validateDrugSolubilityThresholds } from '../core/validation';
+import { classifySwelling, DEFAULT_SWELLING_THRESHOLDS } from '../core/swelling';
+import { classifyDrugSolubility, DEFAULT_DRUG_SOLUBILITY_THRESHOLDS, screenDrugSolvents } from '../core/drug-solubility';
+import { optimizeBlend } from '../core/blend-optimizer';
 import { calculateMixture } from '../core/mixture';
 import { estimateContactAngle } from '../core/contact-angle';
 import { DEFAULT_WETTABILITY_THRESHOLDS, classifyWettability } from '../core/wettability';
-import type { GroupEvaluationResult, PartEvaluationResult, MixtureComponent, NanoDispersionEvaluationResult, SolventDispersibilityResult, DispersibilityThresholds, SolventConstraints, ContactAngleResult, GroupContactAngleResult, WettabilityThresholds } from '../core/types';
+import type { GroupEvaluationResult, PartEvaluationResult, MixtureComponent, NanoDispersionEvaluationResult, SolventDispersibilityResult, DispersibilityThresholds, SolventConstraints, ContactAngleResult, GroupContactAngleResult, WettabilityThresholds, SwellingThresholds, SwellingResult, GroupSwellingResult, DrugSolubilityThresholds, DrugSolubilityResult, DrugSolubilityScreeningResult } from '../core/types';
 
 /** JSON.parseの安全なラッパー — パース失敗時はfallbackを返す */
 function safeJsonParse<T>(json: string, fallback: T): T {
@@ -28,6 +31,7 @@ export function registerIpcHandlers(
   solventRepo: SolventRepository,
   settingsRepo: SettingsRepository,
   nanoParticleRepo: NanoParticleRepository,
+  drugRepo: DrugRepository,
 ): void {
   // --- 部品グループ ---
   ipcMain.handle('parts:getAllGroups', () => partsRepo.getAllGroups());
@@ -320,5 +324,138 @@ export function registerIpcHandlers(
     const err = validateWettabilityThresholds(thresholds);
     if (err) throw new Error(err);
     settingsRepo.setSetting('wettability_thresholds', JSON.stringify(thresholds));
+  });
+
+  // --- 膨潤度予測 ---
+  ipcMain.handle('swelling:evaluate', (_, partsGroupId: number, solventId: number) => {
+    const group = partsRepo.getGroupById(partsGroupId);
+    if (!group) throw new Error(`部品グループ (ID: ${partsGroupId}) が見つかりません`);
+    const solvent = solventRepo.getSolventById(solventId);
+    if (!solvent) throw new Error(`溶媒 (ID: ${solventId}) が見つかりません`);
+
+    const thresholdsJson = settingsRepo.getSetting('swelling_thresholds');
+    const thresholds: SwellingThresholds = thresholdsJson
+      ? safeJsonParse(thresholdsJson, { ...DEFAULT_SWELLING_THRESHOLDS })
+      : { ...DEFAULT_SWELLING_THRESHOLDS };
+
+    const results: SwellingResult[] = group.parts.map((part) => {
+      const ra = calculateRa(part.hsp, solvent.hsp);
+      const red = calculateRed(part.hsp, solvent.hsp, part.r0);
+      const swellingLevel = classifySwelling(red, thresholds);
+      return { part, solvent, ra, red, swellingLevel };
+    });
+
+    const result: GroupSwellingResult = {
+      partsGroup: group,
+      solvent,
+      results,
+      evaluatedAt: new Date(),
+      thresholdsUsed: thresholds,
+    };
+    return result;
+  });
+
+  // --- 膨潤度閾値設定 ---
+  ipcMain.handle('settings:getSwellingThresholds', () => {
+    const json = settingsRepo.getSetting('swelling_thresholds');
+    if (!json) return { ...DEFAULT_SWELLING_THRESHOLDS };
+    return safeJsonParse(json, { ...DEFAULT_SWELLING_THRESHOLDS });
+  });
+  ipcMain.handle('settings:setSwellingThresholds', (_, thresholds: SwellingThresholds) => {
+    const err = validateSwellingThresholds(thresholds);
+    if (err) throw new Error(err);
+    settingsRepo.setSetting('swelling_thresholds', JSON.stringify(thresholds));
+  });
+
+  // --- 薬物 CRUD ---
+  ipcMain.handle('drugs:getAll', () => drugRepo.getAll());
+  ipcMain.handle('drugs:getById', (_, id: number) => drugRepo.getById(id));
+  ipcMain.handle('drugs:getByCategory', (_, category: string) => drugRepo.getByTherapeuticCategory(category));
+  ipcMain.handle('drugs:search', (_, query: string) => drugRepo.search(query));
+  ipcMain.handle('drugs:create', (_, dto) => {
+    const err = validateDrugInput(dto);
+    if (err) throw new Error(err);
+    return drugRepo.create(dto);
+  });
+  ipcMain.handle('drugs:update', (_, id, dto) => drugRepo.update(id, dto));
+  ipcMain.handle('drugs:delete', (_, id: number) => drugRepo.delete(id));
+
+  // --- 薬物溶解性評価 ---
+  ipcMain.handle('drugSolubility:evaluate', (_, drugId: number, solventId: number) => {
+    const drug = drugRepo.getById(drugId);
+    if (!drug) throw new Error(`薬物 (ID: ${drugId}) が見つかりません`);
+    const solvent = solventRepo.getSolventById(solventId);
+    if (!solvent) throw new Error(`溶媒 (ID: ${solventId}) が見つかりません`);
+
+    const thresholdsJson = settingsRepo.getSetting('drug_solubility_thresholds');
+    const thresholds: DrugSolubilityThresholds = thresholdsJson
+      ? safeJsonParse(thresholdsJson, { ...DEFAULT_DRUG_SOLUBILITY_THRESHOLDS })
+      : { ...DEFAULT_DRUG_SOLUBILITY_THRESHOLDS };
+
+    const ra = calculateRa(drug.hsp, solvent.hsp);
+    const red = calculateRed(drug.hsp, solvent.hsp, drug.r0);
+    const solubility = classifyDrugSolubility(red, thresholds);
+    const singleResult: DrugSolubilityResult = { drug, solvent, ra, red, solubility };
+    const result: DrugSolubilityScreeningResult = {
+      drug,
+      results: [singleResult],
+      evaluatedAt: new Date(),
+      thresholdsUsed: thresholds,
+    };
+    return result;
+  });
+
+  ipcMain.handle('drugSolubility:screenAll', (_, drugId: number) => {
+    const drug = drugRepo.getById(drugId);
+    if (!drug) throw new Error(`薬物 (ID: ${drugId}) が見つかりません`);
+    const solvents = solventRepo.getAllSolvents();
+    const thresholdsJson = settingsRepo.getSetting('drug_solubility_thresholds');
+    const thresholds: DrugSolubilityThresholds = thresholdsJson
+      ? safeJsonParse(thresholdsJson, { ...DEFAULT_DRUG_SOLUBILITY_THRESHOLDS })
+      : { ...DEFAULT_DRUG_SOLUBILITY_THRESHOLDS };
+    return screenDrugSolvents(drug, solvents, thresholds);
+  });
+
+  // --- 薬物溶解性閾値設定 ---
+  ipcMain.handle('settings:getDrugSolubilityThresholds', () => {
+    const json = settingsRepo.getSetting('drug_solubility_thresholds');
+    if (!json) return { ...DEFAULT_DRUG_SOLUBILITY_THRESHOLDS };
+    return safeJsonParse(json, { ...DEFAULT_DRUG_SOLUBILITY_THRESHOLDS });
+  });
+  ipcMain.handle('settings:setDrugSolubilityThresholds', (_, thresholds: DrugSolubilityThresholds) => {
+    const err = validateDrugSolubilityThresholds(thresholds);
+    if (err) throw new Error(err);
+    settingsRepo.setSetting('drug_solubility_thresholds', JSON.stringify(thresholds));
+  });
+
+  // --- ブレンド最適化 ---
+  ipcMain.handle('blend:optimize', (_, params: {
+    targetDeltaD: number; targetDeltaP: number; targetDeltaH: number;
+    candidateSolventIds: number[]; maxComponents: 2 | 3; stepSize: number; topN: number;
+  }) => {
+    const err = validateBlendOptimizationInput({
+      targetDeltaD: params.targetDeltaD,
+      targetDeltaP: params.targetDeltaP,
+      targetDeltaH: params.targetDeltaH,
+      candidateCount: params.candidateSolventIds.length,
+      maxComponents: params.maxComponents,
+      stepSize: params.stepSize,
+      topN: params.topN,
+    });
+    if (err) throw new Error(err);
+
+    const candidateSolvents = params.candidateSolventIds.map((id) => {
+      const solvent = solventRepo.getSolventById(id);
+      if (!solvent) throw new Error(`溶媒 (ID: ${id}) が見つかりません`);
+      return solvent;
+    });
+
+    return optimizeBlend({
+      targetHSP: { deltaD: params.targetDeltaD, deltaP: params.targetDeltaP, deltaH: params.targetDeltaH },
+      candidateSolvents,
+      maxComponents: params.maxComponents,
+      stepSize: params.stepSize,
+      topN: params.topN,
+    });
   });
 }

@@ -99,6 +99,45 @@ export const api = {
     moderateMax: number;
     hydrophobicMax: number;
   }) => ipcRenderer.invoke('settings:setWettabilityThresholds', thresholds),
+
+  // 膨潤度予測
+  evaluateSwelling: (partsGroupId: number, solventId: number) =>
+    ipcRenderer.invoke('swelling:evaluate', partsGroupId, solventId),
+
+  // 膨潤度閾値設定
+  getSwellingThresholds: () => ipcRenderer.invoke('settings:getSwellingThresholds'),
+  setSwellingThresholds: (thresholds: {
+    severeMax: number; highMax: number; moderateMax: number; lowMax: number;
+  }) => ipcRenderer.invoke('settings:setSwellingThresholds', thresholds),
+
+  // 薬物
+  getAllDrugs: () => ipcRenderer.invoke('drugs:getAll'),
+  getDrugById: (id: number) => ipcRenderer.invoke('drugs:getById', id),
+  getDrugsByCategory: (category: string) => ipcRenderer.invoke('drugs:getByCategory', category),
+  searchDrugs: (query: string) => ipcRenderer.invoke('drugs:search', query),
+  createDrug: (dto: Record<string, unknown>) =>
+    ipcRenderer.invoke('drugs:create', dto),
+  updateDrug: (id: number, dto: Record<string, unknown>) =>
+    ipcRenderer.invoke('drugs:update', id, dto),
+  deleteDrug: (id: number) => ipcRenderer.invoke('drugs:delete', id),
+
+  // 薬物溶解性評価
+  evaluateDrugSolubility: (drugId: number, solventId: number) =>
+    ipcRenderer.invoke('drugSolubility:evaluate', drugId, solventId),
+  screenDrugSolvents: (drugId: number) =>
+    ipcRenderer.invoke('drugSolubility:screenAll', drugId),
+
+  // 薬物溶解性閾値設定
+  getDrugSolubilityThresholds: () => ipcRenderer.invoke('settings:getDrugSolubilityThresholds'),
+  setDrugSolubilityThresholds: (thresholds: {
+    excellentMax: number; goodMax: number; partialMax: number; poorMax: number;
+  }) => ipcRenderer.invoke('settings:setDrugSolubilityThresholds', thresholds),
+
+  // ブレンド最適化
+  optimizeBlend: (params: {
+    targetDeltaD: number; targetDeltaP: number; targetDeltaH: number;
+    candidateSolventIds: number[]; maxComponents: 2 | 3; stepSize: number; topN: number;
+  }) => ipcRenderer.invoke('blend:optimize', params),
 };
 
 contextBridge.exposeInMainWorld('api', api);
