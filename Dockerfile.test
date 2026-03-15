@@ -7,7 +7,8 @@ RUN apt-get update && apt-get install -y \
 WORKDIR /app
 
 COPY package.json package-lock.json ./
-RUN npm ci
+RUN npm ci --ignore-scripts || npm install --legacy-peer-deps
+RUN npm rebuild better-sqlite3
 
 COPY . .
 

@@ -11,7 +11,8 @@ WORKDIR /app
 
 # 依存関係のキャッシュ最適化
 COPY package.json package-lock.json ./
-RUN npm ci
+RUN npm ci --ignore-scripts || npm install --legacy-peer-deps
+RUN npm rebuild better-sqlite3
 
 # ソースコードをコピー
 COPY . .

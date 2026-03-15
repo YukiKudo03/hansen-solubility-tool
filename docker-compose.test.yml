@@ -4,14 +4,10 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.test
-    command: npx vitest run --coverage
-    volumes:
-      - ./coverage:/app/coverage
+    command: npx vitest run
 
   test-integration:
     build:
       context: .
       dockerfile: Dockerfile.test
-    command: npx vitest run tests/integration --coverage
-    volumes:
-      - ./coverage:/app/coverage
+    command: npx vitest run tests/integration
