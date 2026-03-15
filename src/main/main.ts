@@ -53,10 +53,10 @@ function initDb(): Database.Database {
 
 function createWindow(db: Database.Database): void {
   mainWindow = new BrowserWindow({
-    width: 1200,
-    height: 800,
-    minWidth: 900,
-    minHeight: 600,
+    width: 960,
+    height: 680,
+    minWidth: 700,
+    minHeight: 500,
     title: 'Hansen溶解度パラメータ 溶解性評価ツール',
     icon: path.join(__dirname, '../../build/icon.ico'),
     webPreferences: {

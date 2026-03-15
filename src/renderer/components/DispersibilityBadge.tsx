@@ -18,7 +18,7 @@ export default function DispersibilityBadge({ level, red }: DispersibilityBadgeP
   const config = BADGE_CONFIG[level] ?? BADGE_CONFIG[DispersibilityLevel.Bad];
   return (
     <span
-      className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium ${config.bg} ${config.text}`}
+      className={`inline-flex items-center gap-1 px-3 py-1 rounded-md3-sm text-md3-label-md ${config.bg} ${config.text}`}
     >
       <span className="font-bold">{config.label}</span>
       {red !== undefined && (

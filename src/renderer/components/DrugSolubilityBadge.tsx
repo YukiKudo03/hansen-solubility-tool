@@ -17,7 +17,7 @@ const BADGE_CONFIG: Record<DrugSolubilityLevel, { label: string; bg: string; tex
 export default function DrugSolubilityBadge({ level, red }: DrugSolubilityBadgeProps) {
   const config = BADGE_CONFIG[level];
   return (
-    <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium ${config.bg} ${config.text}`}>
+    <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-md3-sm text-md3-label-md ${config.bg} ${config.text}`}>
       <span>Level {level}</span>
       <span className="font-bold">{config.label}</span>
       {red !== undefined && <span className="opacity-75">(RED: {red.toFixed(3)})</span>}

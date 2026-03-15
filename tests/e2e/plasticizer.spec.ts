@@ -42,11 +42,11 @@ test('可塑剤スクリーニングを実行できる', async () => {
 });
 
 test('結果テーブルに相溶性バッジが表示される', async () => {
-  const badges = page.locator('.rounded-full');
+  const badges = page.locator('.rounded-md3-sm');
   const badgeCount = await badges.count();
   expect(badgeCount).toBeGreaterThan(0);
 });
 
 test('CSV出力ボタンが表示される', async () => {
-  await expect(page.locator('main button', { hasText: 'CSV出力' })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'CSV出力' })).toBeVisible();
 });

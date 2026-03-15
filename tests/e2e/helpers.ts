@@ -8,12 +8,39 @@ import path from 'path';
 const ELECTRON_PATH = require('electron') as unknown as string;
 
 /**
- * タブをクリックする（スクロールして可視化してからクリック）
+ * ナビゲーションからタブを選択する（MD3 NavigationDrawer対応）
+ * サイドバー内のサブ項目を探し、必要ならカテゴリを展開してからクリック
  */
 export async function clickTab(page: Page, tabText: string): Promise<void> {
-  const tab = page.locator('nav button', { hasText: tabText });
-  await tab.scrollIntoViewIfNeeded();
-  await tab.click();
+  const drawer = page.locator('[data-testid="navigation-drawer"]');
+
+  // まずサイドバー内に直接テキストが見えるか確認
+  const directItem = drawer.locator('button', { hasText: tabText });
+  if (await directItem.first().isVisible().catch(() => false)) {
+    await directItem.first().click();
+    return;
+  }
+
+  // 見えない場合、カテゴリヘッダー（pl-12クラスを持たないボタン）をクリックして展開
+  // NavigationDrawerのカテゴリヘッダーはpx-4 py-2クラスを持ち、サブ項目はpl-12クラスを持つ
+  const allButtons = drawer.locator('button');
+  const buttonCount = await allButtons.count();
+  for (let i = 0; i < buttonCount; i++) {
+    const btn = allButtons.nth(i);
+    const cls = await btn.getAttribute('class').catch(() => '');
+    // サブ項目（pl-12）はスキップ、カテゴリヘッダーのみクリック
+    if (cls && cls.includes('pl-12')) continue;
+    await btn.click();
+    await page.waitForTimeout(200);
+    const item = drawer.locator('button', { hasText: tabText });
+    if (await item.first().isVisible().catch(() => false)) {
+      await item.first().click();
+      return;
+    }
+  }
+
+  // フォールバック: getByTextで直接検索
+  await page.getByText(tabText, { exact: true }).first().click();
 }
 
 export async function launchApp(): Promise<{ app: ElectronApplication; page: Page }> {

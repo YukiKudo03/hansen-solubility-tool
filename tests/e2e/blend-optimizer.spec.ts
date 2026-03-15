@@ -17,7 +17,7 @@ test.afterAll(async () => {
 });
 
 test('溶剤ブレンド最適化タブに切り替え', async () => {
-  await clickTab(page, '溶剤ブレンド最適化');
+  await clickTab(page, 'ブレンド最適化');
   await page.waitForTimeout(500);
   await expect(page.locator('h2', { hasText: '溶剤ブレンド最適化' })).toBeVisible();
 });
@@ -59,5 +59,5 @@ test('結果テーブルに順位と組成が表示される', async () => {
 });
 
 test('CSV出力ボタンが表示される', async () => {
-  await expect(page.locator('main button', { hasText: 'CSV出力' })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'CSV出力' })).toBeVisible();
 });
