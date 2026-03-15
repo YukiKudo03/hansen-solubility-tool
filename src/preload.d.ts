@@ -1,7 +1,7 @@
 /**
  * Preload API 型定義 — window.api の型
  */
-import type { PartsGroup, Solvent, RiskThresholds, GroupEvaluationResult, NanoParticle, NanoParticleCategory, NanoDispersionEvaluationResult, DispersibilityThresholds, SolventConstraints, GroupContactAngleResult, WettabilityThresholds, Drug, GroupSwellingResult, SwellingThresholds, DrugSolubilityScreeningResult, DrugSolubilityThresholds, BlendOptimizationResult } from './core/types';
+import type { PartsGroup, Solvent, RiskThresholds, GroupEvaluationResult, NanoParticle, NanoParticleCategory, NanoDispersionEvaluationResult, DispersibilityThresholds, SolventConstraints, GroupContactAngleResult, WettabilityThresholds, Drug, GroupSwellingResult, SwellingThresholds, DrugSolubilityScreeningResult, DrugSolubilityThresholds, BlendOptimizationResult, GroupChemicalResistanceResult, ChemicalResistanceThresholds, PlasticizerEvaluationResult, PlasticizerCompatibilityThresholds, CarrierEvaluationResult, CarrierCompatibilityThresholds } from './core/types';
 import type { CreatePartsGroupDto, CreatePartDto, CreateSolventDto, CreateNanoParticleDto, CreateDrugDto } from './db/repository';
 
 export interface ElectronAPI {
@@ -91,6 +91,29 @@ export interface ElectronAPI {
     targetDeltaD: number; targetDeltaP: number; targetDeltaH: number;
     candidateSolventIds: number[]; maxComponents: 2 | 3; stepSize: number; topN: number;
   }): Promise<BlendOptimizationResult>;
+
+  // 耐薬品性評価
+  evaluateChemicalResistance(partsGroupId: number, solventId: number): Promise<GroupChemicalResistanceResult>;
+
+  // 耐薬品性閾値設定
+  getChemicalResistanceThresholds(): Promise<ChemicalResistanceThresholds>;
+  setChemicalResistanceThresholds(thresholds: ChemicalResistanceThresholds): Promise<void>;
+
+  // 可塑剤選定
+  getPlasticizers(): Promise<Solvent[]>;
+  screenPlasticizers(partId: number, groupId: number): Promise<PlasticizerEvaluationResult>;
+
+  // 可塑剤閾値設定
+  getPlasticizerThresholds(): Promise<PlasticizerCompatibilityThresholds>;
+  setPlasticizerThresholds(thresholds: PlasticizerCompatibilityThresholds): Promise<void>;
+
+  // キャリア選定（DDS）
+  evaluateCarrier(drugId: number, carrierId: number, carrierGroupId: number): Promise<CarrierEvaluationResult>;
+  screenCarriers(drugId: number, carrierGroupId: number): Promise<CarrierEvaluationResult>;
+
+  // キャリア閾値設定
+  getCarrierThresholds(): Promise<CarrierCompatibilityThresholds>;
+  setCarrierThresholds(thresholds: CarrierCompatibilityThresholds): Promise<void>;
 }
 
 declare global {

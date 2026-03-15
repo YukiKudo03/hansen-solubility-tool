@@ -8,14 +8,17 @@ import { calculateRa, calculateRed } from '../core/hsp';
 import { classifyRisk } from '../core/risk';
 import { classifyDispersibility, DEFAULT_DISPERSIBILITY_THRESHOLDS } from '../core/dispersibility';
 import { screenSolvents, filterByConstraints } from '../core/solvent-finder';
-import { validatePartInput, validateSolventInput, validateName, validateThresholds, validateMixtureInput, validateNanoParticleInput, validateDispersibilityThresholds, validateWettabilityThresholds, validateBlendOptimizationInput, validateSwellingThresholds, validateDrugInput, validateDrugSolubilityThresholds } from '../core/validation';
+import { validatePartInput, validateSolventInput, validateName, validateThresholds, validateMixtureInput, validateNanoParticleInput, validateDispersibilityThresholds, validateWettabilityThresholds, validateBlendOptimizationInput, validateSwellingThresholds, validateDrugInput, validateDrugSolubilityThresholds, validateChemicalResistanceThresholds, validatePlasticizerThresholds, validateCarrierThresholds } from '../core/validation';
+import { classifyChemicalResistance, DEFAULT_CHEMICAL_RESISTANCE_THRESHOLDS } from '../core/chemical-resistance';
+import { classifyPlasticizerCompatibility, DEFAULT_PLASTICIZER_THRESHOLDS, screenPlasticizers } from '../core/plasticizer';
+import { classifyCarrierCompatibility, DEFAULT_CARRIER_THRESHOLDS, screenCarriers } from '../core/carrier-selection';
 import { classifySwelling, DEFAULT_SWELLING_THRESHOLDS } from '../core/swelling';
 import { classifyDrugSolubility, DEFAULT_DRUG_SOLUBILITY_THRESHOLDS, screenDrugSolvents } from '../core/drug-solubility';
 import { optimizeBlend } from '../core/blend-optimizer';
 import { calculateMixture } from '../core/mixture';
 import { estimateContactAngle } from '../core/contact-angle';
 import { DEFAULT_WETTABILITY_THRESHOLDS, classifyWettability } from '../core/wettability';
-import type { GroupEvaluationResult, PartEvaluationResult, MixtureComponent, NanoDispersionEvaluationResult, SolventDispersibilityResult, DispersibilityThresholds, SolventConstraints, ContactAngleResult, GroupContactAngleResult, WettabilityThresholds, SwellingThresholds, SwellingResult, GroupSwellingResult, DrugSolubilityThresholds, DrugSolubilityResult, DrugSolubilityScreeningResult } from '../core/types';
+import type { GroupEvaluationResult, PartEvaluationResult, MixtureComponent, NanoDispersionEvaluationResult, SolventDispersibilityResult, DispersibilityThresholds, SolventConstraints, ContactAngleResult, GroupContactAngleResult, WettabilityThresholds, SwellingThresholds, SwellingResult, GroupSwellingResult, DrugSolubilityThresholds, DrugSolubilityResult, DrugSolubilityScreeningResult, ChemicalResistanceThresholds, ChemicalResistanceResult, GroupChemicalResistanceResult, PlasticizerCompatibilityThresholds, CarrierCompatibilityThresholds } from '../core/types';
 
 /** JSON.parseの安全なラッパー — パース失敗時はfallbackを返す */
 function safeJsonParse<T>(json: string, fallback: T): T {
@@ -457,5 +460,131 @@ export function registerIpcHandlers(
       stepSize: params.stepSize,
       topN: params.topN,
     });
+  });
+
+  // --- 耐薬品性評価 ---
+  ipcMain.handle('chemicalResistance:evaluate', (_, partsGroupId: number, solventId: number) => {
+    const group = partsRepo.getGroupById(partsGroupId);
+    if (!group) throw new Error(`部品グループ (ID: ${partsGroupId}) が見つかりません`);
+    const solvent = solventRepo.getSolventById(solventId);
+    if (!solvent) throw new Error(`溶媒 (ID: ${solventId}) が見つかりません`);
+
+    const thresholdsJson = settingsRepo.getSetting('chemical_resistance_thresholds');
+    const thresholds: ChemicalResistanceThresholds = thresholdsJson
+      ? safeJsonParse(thresholdsJson, { ...DEFAULT_CHEMICAL_RESISTANCE_THRESHOLDS })
+      : { ...DEFAULT_CHEMICAL_RESISTANCE_THRESHOLDS };
+
+    const results: ChemicalResistanceResult[] = group.parts.map((part) => {
+      const ra = calculateRa(part.hsp, solvent.hsp);
+      const red = calculateRed(part.hsp, solvent.hsp, part.r0);
+      const resistanceLevel = classifyChemicalResistance(red, thresholds);
+      return { part, solvent, ra, red, resistanceLevel };
+    });
+
+    const result: GroupChemicalResistanceResult = {
+      partsGroup: group,
+      solvent,
+      results,
+      evaluatedAt: new Date(),
+      thresholdsUsed: thresholds,
+    };
+    return result;
+  });
+
+  // --- 耐薬品性閾値設定 ---
+  ipcMain.handle('settings:getChemicalResistanceThresholds', () => {
+    const json = settingsRepo.getSetting('chemical_resistance_thresholds');
+    if (!json) return { ...DEFAULT_CHEMICAL_RESISTANCE_THRESHOLDS };
+    return safeJsonParse(json, { ...DEFAULT_CHEMICAL_RESISTANCE_THRESHOLDS });
+  });
+  ipcMain.handle('settings:setChemicalResistanceThresholds', (_, thresholds: ChemicalResistanceThresholds) => {
+    const err = validateChemicalResistanceThresholds(thresholds);
+    if (err) throw new Error(err);
+    settingsRepo.setSetting('chemical_resistance_thresholds', JSON.stringify(thresholds));
+  });
+
+  // --- 可塑剤選定 ---
+  ipcMain.handle('solvents:getPlasticizers', () => solventRepo.getPlasticizers());
+
+  ipcMain.handle('plasticizer:screen', (_, partId: number, groupId: number) => {
+    const group = partsRepo.getGroupById(groupId);
+    if (!group) throw new Error(`部品グループ (ID: ${groupId}) が見つかりません`);
+    const part = group.parts.find((p) => p.id === partId);
+    if (!part) throw new Error(`部品 (ID: ${partId}) が見つかりません`);
+
+    const plasticizers = solventRepo.getPlasticizers();
+    const thresholdsJson = settingsRepo.getSetting('plasticizer_thresholds');
+    const thresholds: PlasticizerCompatibilityThresholds = thresholdsJson
+      ? safeJsonParse(thresholdsJson, { ...DEFAULT_PLASTICIZER_THRESHOLDS })
+      : { ...DEFAULT_PLASTICIZER_THRESHOLDS };
+
+    return screenPlasticizers(part, plasticizers, thresholds);
+  });
+
+  // --- 可塑剤閾値設定 ---
+  ipcMain.handle('settings:getPlasticizerThresholds', () => {
+    const json = settingsRepo.getSetting('plasticizer_thresholds');
+    if (!json) return { ...DEFAULT_PLASTICIZER_THRESHOLDS };
+    return safeJsonParse(json, { ...DEFAULT_PLASTICIZER_THRESHOLDS });
+  });
+  ipcMain.handle('settings:setPlasticizerThresholds', (_, thresholds: PlasticizerCompatibilityThresholds) => {
+    const err = validatePlasticizerThresholds(thresholds);
+    if (err) throw new Error(err);
+    settingsRepo.setSetting('plasticizer_thresholds', JSON.stringify(thresholds));
+  });
+
+  // --- キャリア選定（DDS） ---
+  ipcMain.handle('carrier:evaluate', (_, drugId: number, carrierId: number, carrierGroupId: number) => {
+    const drug = drugRepo.getById(drugId);
+    if (!drug) throw new Error(`薬物 (ID: ${drugId}) が見つかりません`);
+
+    const group = partsRepo.getGroupById(carrierGroupId);
+    if (!group) throw new Error(`キャリアグループ (ID: ${carrierGroupId}) が見つかりません`);
+    const carrier = group.parts.find((p) => p.id === carrierId);
+    if (!carrier) throw new Error(`キャリア (ID: ${carrierId}) が見つかりません`);
+
+    const thresholdsJson = settingsRepo.getSetting('carrier_thresholds');
+    const thresholds: CarrierCompatibilityThresholds = thresholdsJson
+      ? safeJsonParse(thresholdsJson, { ...DEFAULT_CARRIER_THRESHOLDS })
+      : { ...DEFAULT_CARRIER_THRESHOLDS };
+
+    const ra = calculateRa(drug.hsp, carrier.hsp);
+    // r0 belongs to carrier (HSP sphere owner), NOT drug
+    const red = calculateRed(drug.hsp, carrier.hsp, carrier.r0);
+    const compatibility = classifyCarrierCompatibility(red, thresholds);
+
+    return {
+      drug,
+      results: [{ drug, carrier, ra, red, compatibility }],
+      evaluatedAt: new Date(),
+      thresholdsUsed: thresholds,
+    };
+  });
+
+  ipcMain.handle('carrier:screenAll', (_, drugId: number, carrierGroupId: number) => {
+    const drug = drugRepo.getById(drugId);
+    if (!drug) throw new Error(`薬物 (ID: ${drugId}) が見つかりません`);
+
+    const group = partsRepo.getGroupById(carrierGroupId);
+    if (!group) throw new Error(`キャリアグループ (ID: ${carrierGroupId}) が見つかりません`);
+
+    const thresholdsJson = settingsRepo.getSetting('carrier_thresholds');
+    const thresholds: CarrierCompatibilityThresholds = thresholdsJson
+      ? safeJsonParse(thresholdsJson, { ...DEFAULT_CARRIER_THRESHOLDS })
+      : { ...DEFAULT_CARRIER_THRESHOLDS };
+
+    return screenCarriers(drug, group.parts, thresholds);
+  });
+
+  // --- キャリア閾値設定 ---
+  ipcMain.handle('settings:getCarrierThresholds', () => {
+    const json = settingsRepo.getSetting('carrier_thresholds');
+    if (!json) return { ...DEFAULT_CARRIER_THRESHOLDS };
+    return safeJsonParse(json, { ...DEFAULT_CARRIER_THRESHOLDS });
+  });
+  ipcMain.handle('settings:setCarrierThresholds', (_, thresholds: CarrierCompatibilityThresholds) => {
+    const err = validateCarrierThresholds(thresholds);
+    if (err) throw new Error(err);
+    settingsRepo.setSetting('carrier_thresholds', JSON.stringify(thresholds));
   });
 }
