@@ -204,6 +204,11 @@ export class SqliteSolventRepository implements SolventRepository {
     return rows.map(rowToSolvent);
   }
 
+  getPlasticizers(): Solvent[] {
+    const rows = this.db.prepare("SELECT * FROM solvents WHERE notes LIKE '%[可塑剤]%' ORDER BY id").all() as Record<string, unknown>[];
+    return rows.map(rowToSolvent);
+  }
+
   createSolvent(dto: CreateSolventDto): Solvent {
     const result = this.db
       .prepare(

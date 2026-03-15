@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { formatCsv, formatContactAngleCsv, formatSwellingCsv, formatDrugSolubilityCsv, formatBlendOptimizationCsv } from '../../src/core/report';
-import { RiskLevel, WettabilityLevel, SwellingLevel, DrugSolubilityLevel } from '../../src/core/types';
-import type { GroupEvaluationResult, GroupContactAngleResult, ContactAngleResult, Part, Solvent, PartsGroup, GroupSwellingResult, DrugSolubilityScreeningResult, BlendOptimizationResult } from '../../src/core/types';
+import { formatCsv, formatContactAngleCsv, formatSwellingCsv, formatDrugSolubilityCsv, formatBlendOptimizationCsv, formatChemicalResistanceCsv, formatPlasticizerCsv, formatCarrierSelectionCsv } from '../../src/core/report';
+import { RiskLevel, WettabilityLevel, SwellingLevel, DrugSolubilityLevel, ChemicalResistanceLevel, PlasticizerCompatibilityLevel, CarrierCompatibilityLevel } from '../../src/core/types';
+import type { GroupEvaluationResult, GroupContactAngleResult, ContactAngleResult, Part, Solvent, PartsGroup, GroupSwellingResult, DrugSolubilityScreeningResult, BlendOptimizationResult, GroupChemicalResistanceResult, PlasticizerEvaluationResult, CarrierEvaluationResult } from '../../src/core/types';
 
 function makePart(overrides: Partial<Part> = {}): Part {
   return {
@@ -356,5 +356,156 @@ describe('formatBlendOptimizationCsv', () => {
     const csv = formatBlendOptimizationCsv(result);
     expect(csv.startsWith('\uFEFF')).toBe(true);
     expect(csv).toContain('Ra');
+  });
+});
+
+// ─── formatChemicalResistanceCsv ───────────────────
+
+describe('formatChemicalResistanceCsv', () => {
+  it('BOM付きUTF-8ヘッダーを含む', () => {
+    const result: GroupChemicalResistanceResult = {
+      partsGroup: { id: 1, name: 'コーティンググループ', description: null, parts: [] },
+      solvent: makeSolvent(),
+      results: [],
+      evaluatedAt: new Date('2024-01-01'),
+      thresholdsUsed: { noResistanceMax: 0.5, poorMax: 0.8, moderateMax: 1.2, goodMax: 2.0 },
+    };
+    const csv = formatChemicalResistanceCsv(result);
+    expect(csv.startsWith('\uFEFF')).toBe(true);
+    expect(csv).toContain('耐薬品性レベル');
+    expect(csv).toContain('耐薬品性判定');
+  });
+
+  it('ヘッダー行に必要なカラムが含まれる', () => {
+    const result: GroupChemicalResistanceResult = {
+      partsGroup: { id: 1, name: 'TestGroup', description: null, parts: [] },
+      solvent: makeSolvent(),
+      results: [],
+      evaluatedAt: new Date('2024-01-01'),
+      thresholdsUsed: { noResistanceMax: 0.5, poorMax: 0.8, moderateMax: 1.2, goodMax: 2.0 },
+    };
+    const csv = formatChemicalResistanceCsv(result);
+    const header = csv.split('\r\n')[0].replace('\uFEFF', '');
+    expect(header).toContain('部品グループ');
+    expect(header).toContain('塗膜名');
+    expect(header).toContain('RED');
+    expect(header).toContain('評価日時');
+  });
+
+  it('結果行が正しくフォーマットされる', () => {
+    const part = makePart({ name: '塗膜A', materialType: 'アクリル' });
+    const solvent = makeSolvent();
+    const result: GroupChemicalResistanceResult = {
+      partsGroup: { id: 1, name: 'コーティンググループ', description: null, parts: [part] },
+      solvent,
+      results: [
+        { part, solvent, ra: 2.5, red: 0.6, resistanceLevel: ChemicalResistanceLevel.Poor },
+      ],
+      evaluatedAt: new Date('2024-01-01'),
+      thresholdsUsed: { noResistanceMax: 0.5, poorMax: 0.8, moderateMax: 1.2, goodMax: 2.0 },
+    };
+    const csv = formatChemicalResistanceCsv(result);
+    expect(csv).toContain('塗膜A');
+    expect(csv).toContain('低耐性');
+  });
+});
+
+// ─── formatPlasticizerCsv ───────────────────
+
+describe('formatPlasticizerCsv', () => {
+  it('BOM付きUTF-8ヘッダーを含む', () => {
+    const result: PlasticizerEvaluationResult = {
+      part: makePart({ name: 'PVC' }),
+      results: [],
+      evaluatedAt: new Date('2024-01-01'),
+      thresholdsUsed: { excellentMax: 0.5, goodMax: 0.8, fairMax: 1.0, poorMax: 1.5 },
+    };
+    const csv = formatPlasticizerCsv(result);
+    expect(csv.startsWith('\uFEFF')).toBe(true);
+    expect(csv).toContain('相溶性レベル');
+    expect(csv).toContain('相溶性判定');
+  });
+
+  it('ヘッダー行に必要なカラムが含まれる', () => {
+    const result: PlasticizerEvaluationResult = {
+      part: makePart({ name: 'PVC' }),
+      results: [],
+      evaluatedAt: new Date('2024-01-01'),
+      thresholdsUsed: { excellentMax: 0.5, goodMax: 0.8, fairMax: 1.0, poorMax: 1.5 },
+    };
+    const csv = formatPlasticizerCsv(result);
+    const header = csv.split('\r\n')[0].replace('\uFEFF', '');
+    expect(header).toContain('ポリマー名');
+    expect(header).toContain('可塑剤名');
+    expect(header).toContain('RED');
+    expect(header).toContain('評価日時');
+  });
+
+  it('結果行が正しくフォーマットされる', () => {
+    const part = makePart({ name: 'PVC' });
+    const solvent = makeSolvent({ name: 'DOP' });
+    const result: PlasticizerEvaluationResult = {
+      part,
+      results: [
+        { part, solvent, ra: 1.2, red: 0.4, compatibility: PlasticizerCompatibilityLevel.Excellent },
+      ],
+      evaluatedAt: new Date('2024-01-01'),
+      thresholdsUsed: { excellentMax: 0.5, goodMax: 0.8, fairMax: 1.0, poorMax: 1.5 },
+    };
+    const csv = formatPlasticizerCsv(result);
+    expect(csv).toContain('PVC');
+    expect(csv).toContain('DOP');
+    expect(csv).toContain('優秀');
+  });
+});
+
+// ─── formatCarrierSelectionCsv ───────────────────
+
+describe('formatCarrierSelectionCsv', () => {
+  it('BOM付きUTF-8ヘッダーを含む', () => {
+    const drug = { id: 1, name: 'Ibuprofen', nameEn: null, casNumber: null, hsp: { deltaD: 17.1, deltaP: 3.1, deltaH: 7.5 }, r0: 5.0, molWeight: null, logP: null, therapeuticCategory: null, notes: null };
+    const result: CarrierEvaluationResult = {
+      drug,
+      results: [],
+      evaluatedAt: new Date('2024-01-01'),
+      thresholdsUsed: { excellentMax: 0.5, goodMax: 0.8, fairMax: 1.0, poorMax: 1.5 },
+    };
+    const csv = formatCarrierSelectionCsv(result);
+    expect(csv.startsWith('\uFEFF')).toBe(true);
+    expect(csv).toContain('適合性レベル');
+    expect(csv).toContain('適合性判定');
+  });
+
+  it('ヘッダー行に必要なカラムが含まれる', () => {
+    const drug = { id: 1, name: 'Ibuprofen', nameEn: null, casNumber: null, hsp: { deltaD: 17.1, deltaP: 3.1, deltaH: 7.5 }, r0: 5.0, molWeight: null, logP: null, therapeuticCategory: null, notes: null };
+    const result: CarrierEvaluationResult = {
+      drug,
+      results: [],
+      evaluatedAt: new Date('2024-01-01'),
+      thresholdsUsed: { excellentMax: 0.5, goodMax: 0.8, fairMax: 1.0, poorMax: 1.5 },
+    };
+    const csv = formatCarrierSelectionCsv(result);
+    const header = csv.split('\r\n')[0].replace('\uFEFF', '');
+    expect(header).toContain('薬物名');
+    expect(header).toContain('キャリア名');
+    expect(header).toContain('RED');
+    expect(header).toContain('評価日時');
+  });
+
+  it('結果行が正しくフォーマットされる', () => {
+    const drug = { id: 1, name: 'Ibuprofen', nameEn: null, casNumber: null, hsp: { deltaD: 17.1, deltaP: 3.1, deltaH: 7.5 }, r0: 5.0, molWeight: null, logP: null, therapeuticCategory: null, notes: null };
+    const carrier = makePart({ name: 'PLA', r0: 6.0 });
+    const result: CarrierEvaluationResult = {
+      drug,
+      results: [
+        { drug, carrier, ra: 1.5, red: 0.3, compatibility: CarrierCompatibilityLevel.Excellent },
+      ],
+      evaluatedAt: new Date('2024-01-01'),
+      thresholdsUsed: { excellentMax: 0.5, goodMax: 0.8, fairMax: 1.0, poorMax: 1.5 },
+    };
+    const csv = formatCarrierSelectionCsv(result);
+    expect(csv).toContain('Ibuprofen');
+    expect(csv).toContain('PLA');
+    expect(csv).toContain('優秀');
   });
 });

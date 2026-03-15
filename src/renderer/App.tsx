@@ -9,8 +9,11 @@ import ContactAngleView from './components/ContactAngleView';
 import SwellingView from './components/SwellingView';
 import DrugSolubilityView from './components/DrugSolubilityView';
 import BlendOptimizerView from './components/BlendOptimizerView';
+import ChemicalResistanceView from './components/ChemicalResistanceView';
+import PlasticizerView from './components/PlasticizerView';
+import CarrierSelectionView from './components/CarrierSelectionView';
 
-type Tab = 'report' | 'database' | 'mixture' | 'nanoDispersion' | 'contactAngle' | 'blendOptimizer' | 'swelling' | 'drugSolubility' | 'settings';
+type Tab = 'report' | 'database' | 'mixture' | 'nanoDispersion' | 'contactAngle' | 'blendOptimizer' | 'swelling' | 'drugSolubility' | 'chemicalResistance' | 'plasticizer' | 'carrierSelection' | 'settings';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<Tab>('report');
@@ -24,6 +27,9 @@ export default function App() {
     { id: 'blendOptimizer', label: '溶剤ブレンド最適化' },
     { id: 'swelling', label: '膨潤度予測' },
     { id: 'drugSolubility', label: '薬物溶解性' },
+    { id: 'chemicalResistance', label: '耐薬品性予測' },
+    { id: 'plasticizer', label: '可塑剤選定' },
+    { id: 'carrierSelection', label: 'キャリア選定（DDS）' },
     { id: 'settings', label: '設定' },
   ];
 
@@ -66,6 +72,9 @@ export default function App() {
           {activeTab === 'blendOptimizer' && <BlendOptimizerView />}
           {activeTab === 'swelling' && <SwellingView />}
           {activeTab === 'drugSolubility' && <DrugSolubilityView />}
+          {activeTab === 'chemicalResistance' && <ChemicalResistanceView />}
+          {activeTab === 'plasticizer' && <PlasticizerView />}
+          {activeTab === 'carrierSelection' && <CarrierSelectionView />}
           {activeTab === 'settings' && <SettingsView />}
         </ErrorBoundary>
       </main>

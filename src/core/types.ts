@@ -317,3 +317,112 @@ export interface BlendOptimizationResult {
   topResults: BlendResult[];
   evaluatedAt: Date;
 }
+
+// ─── 塗膜耐薬品性予測系 ───────────────────────────
+
+/** 耐薬品性レベル (1=耐性なし, 5=優秀な耐性) — RED大=耐性良好（他の分類と解釈方向が逆） */
+export enum ChemicalResistanceLevel {
+  NoResistance = 1,   // 耐性なし（塗膜が溶解・剥離）
+  Poor = 2,           // 低耐性
+  Moderate = 3,       // 中程度の耐性
+  Good = 4,           // 良好な耐性
+  Excellent = 5,      // 優秀な耐性
+}
+
+/** 耐薬品性閾値設定 (RED値ベース) — RED大=良好 */
+export interface ChemicalResistanceThresholds {
+  noResistanceMax: number;  // default: 0.5
+  poorMax: number;          // default: 0.8
+  moderateMax: number;      // default: 1.2
+  goodMax: number;          // default: 2.0
+}
+
+/** 個別部品の耐薬品性予測結果 */
+export interface ChemicalResistanceResult {
+  part: Part;
+  solvent: Solvent;
+  ra: number;
+  red: number;
+  resistanceLevel: ChemicalResistanceLevel;
+}
+
+/** グループ全体の耐薬品性予測結果 */
+export interface GroupChemicalResistanceResult {
+  partsGroup: PartsGroup;
+  solvent: Solvent;
+  results: ChemicalResistanceResult[];
+  evaluatedAt: Date;
+  thresholdsUsed: ChemicalResistanceThresholds;
+}
+
+// ─── 可塑剤選定支援系 ───────────────────────────
+
+/** 可塑剤相溶性レベル (1=最良, 5=不相溶) — RED小=相溶性良好 */
+export enum PlasticizerCompatibilityLevel {
+  Excellent = 1,    // 優秀な相溶性
+  Good = 2,         // 良好
+  Fair = 3,         // 可能（境界付近）
+  Poor = 4,         // 不良
+  Incompatible = 5, // 不相溶
+}
+
+/** 可塑剤相溶性閾値設定 (RED値ベース) */
+export interface PlasticizerCompatibilityThresholds {
+  excellentMax: number;  // default: 0.5
+  goodMax: number;       // default: 0.8
+  fairMax: number;       // default: 1.0
+  poorMax: number;       // default: 1.5
+}
+
+/** 可塑剤スクリーニング結果 */
+export interface PlasticizerScreeningResult {
+  part: Part;
+  solvent: Solvent;
+  ra: number;
+  red: number;
+  compatibility: PlasticizerCompatibilityLevel;
+}
+
+/** ポリマーに対する全可塑剤スクリーニング結果 */
+export interface PlasticizerEvaluationResult {
+  part: Part;
+  results: PlasticizerScreeningResult[];
+  evaluatedAt: Date;
+  thresholdsUsed: PlasticizerCompatibilityThresholds;
+}
+
+// ─── 薬物送達キャリア選定系（DDS）───────────────────────────
+
+/** キャリア適合性レベル (1=最良, 5=不適) — RED小=適合性良好 */
+export enum CarrierCompatibilityLevel {
+  Excellent = 1,    // 優秀な適合性（高カプセル化効率）
+  Good = 2,         // 良好
+  Fair = 3,         // 可能（境界付近）
+  Poor = 4,         // 不良
+  Incompatible = 5, // 不適
+}
+
+/** キャリア適合性閾値設定 (RED値ベース) */
+export interface CarrierCompatibilityThresholds {
+  excellentMax: number;  // default: 0.5
+  goodMax: number;       // default: 0.8
+  fairMax: number;       // default: 1.0
+  poorMax: number;       // default: 1.5
+}
+
+/** キャリアスクリーニング結果 */
+export interface CarrierScreeningResult {
+  drug: Drug;
+  carrier: Part;
+  ra: number;
+  red: number;
+  compatibility: CarrierCompatibilityLevel;
+}
+
+/** 薬物に対する全キャリアスクリーニング結果 */
+export interface CarrierEvaluationResult {
+  drug: Drug;
+  results: CarrierScreeningResult[];
+  evaluatedAt: Date;
+  thresholdsUsed: CarrierCompatibilityThresholds;
+}

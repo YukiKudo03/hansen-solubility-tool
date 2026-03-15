@@ -138,6 +138,39 @@ export const api = {
     targetDeltaD: number; targetDeltaP: number; targetDeltaH: number;
     candidateSolventIds: number[]; maxComponents: 2 | 3; stepSize: number; topN: number;
   }) => ipcRenderer.invoke('blend:optimize', params),
+
+  // 耐薬品性評価
+  evaluateChemicalResistance: (partsGroupId: number, solventId: number) =>
+    ipcRenderer.invoke('chemicalResistance:evaluate', partsGroupId, solventId),
+
+  // 耐薬品性閾値設定
+  getChemicalResistanceThresholds: () => ipcRenderer.invoke('settings:getChemicalResistanceThresholds'),
+  setChemicalResistanceThresholds: (thresholds: {
+    noResistanceMax: number; poorMax: number; moderateMax: number; goodMax: number;
+  }) => ipcRenderer.invoke('settings:setChemicalResistanceThresholds', thresholds),
+
+  // 可塑剤選定
+  getPlasticizers: () => ipcRenderer.invoke('solvents:getPlasticizers'),
+  screenPlasticizers: (partId: number, groupId: number) =>
+    ipcRenderer.invoke('plasticizer:screen', partId, groupId),
+
+  // 可塑剤閾値設定
+  getPlasticizerThresholds: () => ipcRenderer.invoke('settings:getPlasticizerThresholds'),
+  setPlasticizerThresholds: (thresholds: {
+    excellentMax: number; goodMax: number; fairMax: number; poorMax: number;
+  }) => ipcRenderer.invoke('settings:setPlasticizerThresholds', thresholds),
+
+  // キャリア選定（DDS）
+  evaluateCarrier: (drugId: number, carrierId: number, carrierGroupId: number) =>
+    ipcRenderer.invoke('carrier:evaluate', drugId, carrierId, carrierGroupId),
+  screenCarriers: (drugId: number, carrierGroupId: number) =>
+    ipcRenderer.invoke('carrier:screenAll', drugId, carrierGroupId),
+
+  // キャリア閾値設定
+  getCarrierThresholds: () => ipcRenderer.invoke('settings:getCarrierThresholds'),
+  setCarrierThresholds: (thresholds: {
+    excellentMax: number; goodMax: number; fairMax: number; poorMax: number;
+  }) => ipcRenderer.invoke('settings:setCarrierThresholds', thresholds),
 };
 
 contextBridge.exposeInMainWorld('api', api);
