@@ -34,9 +34,13 @@ CREATE TABLE IF NOT EXISTS solvents (
   delta_d      REAL NOT NULL,
   delta_p      REAL NOT NULL,
   delta_h      REAL NOT NULL,
-  molar_volume REAL,
-  mol_weight   REAL,
-  notes        TEXT,
+  molar_volume    REAL,
+  mol_weight      REAL,
+  boiling_point   REAL,
+  viscosity       REAL,
+  specific_gravity REAL,
+  surface_tension REAL,
+  notes           TEXT,
   created_at   TEXT DEFAULT (datetime('now')),
   updated_at   TEXT DEFAULT (datetime('now'))
 );
@@ -54,4 +58,26 @@ export function initializeDatabase(db: Database.Database): void {
   db.pragma('journal_mode = WAL');
   db.pragma('foreign_keys = ON');
   db.exec(SCHEMA_SQL);
+}
+
+/**
+ * 既存DBのマイグレーション（新カラム追加）
+ * ALTER TABLE ADD COLUMN は冪等に実行（既存カラムはスキップ）
+ */
+export function migrateDatabase(db: Database.Database): void {
+  const columns = db.pragma('table_info(solvents)') as { name: string }[];
+  const existingCols = new Set(columns.map((c) => c.name));
+
+  const newColumns = [
+    { name: 'boiling_point', type: 'REAL' },
+    { name: 'viscosity', type: 'REAL' },
+    { name: 'specific_gravity', type: 'REAL' },
+    { name: 'surface_tension', type: 'REAL' },
+  ];
+
+  for (const col of newColumns) {
+    if (!existingCols.has(col.name)) {
+      db.exec(`ALTER TABLE solvents ADD COLUMN ${col.name} ${col.type}`);
+    }
+  }
 }

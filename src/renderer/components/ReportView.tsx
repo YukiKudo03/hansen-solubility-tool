@@ -104,6 +104,30 @@ export default function ReportView() {
               <span className="text-gray-500">部品数:</span>{' '}
               <span className="font-medium">{result.results.length}</span>
             </div>
+            {result.solvent.boilingPoint != null && (
+              <div className="bg-gray-50 p-3 rounded">
+                <span className="text-gray-500">沸点:</span>{' '}
+                <span className="font-medium">{result.solvent.boilingPoint} °C</span>
+              </div>
+            )}
+            {result.solvent.viscosity != null && (
+              <div className="bg-gray-50 p-3 rounded">
+                <span className="text-gray-500">粘度:</span>{' '}
+                <span className="font-medium">{result.solvent.viscosity} mPa·s</span>
+              </div>
+            )}
+            {result.solvent.specificGravity != null && (
+              <div className="bg-gray-50 p-3 rounded">
+                <span className="text-gray-500">比重:</span>{' '}
+                <span className="font-medium">{result.solvent.specificGravity}</span>
+              </div>
+            )}
+            {result.solvent.surfaceTension != null && (
+              <div className="bg-gray-50 p-3 rounded">
+                <span className="text-gray-500">表面張力:</span>{' '}
+                <span className="font-medium">{result.solvent.surfaceTension} mN/m</span>
+              </div>
+            )}
           </div>
           <ResultsTable result={result} />
         </div>

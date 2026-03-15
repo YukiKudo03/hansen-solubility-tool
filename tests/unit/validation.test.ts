@@ -7,6 +7,7 @@ import {
   validateCasNumber,
   validatePartInput,
   validateSolventInput,
+  validatePhysicalProperties,
 } from '../../src/core/validation';
 
 describe('validateHSPValues', () => {
@@ -144,5 +145,68 @@ describe('validateSolventInput', () => {
   it('CAS番号が不正でエラー', () => {
     expect(validateSolventInput({ name: 'X', deltaD: 18.0, deltaP: 1.4, deltaH: 2.0, casNumber: 'bad' }))
       .toBe('CAS番号の形式が不正です（例: 108-88-3）');
+  });
+
+  it('物性値が有効な入力', () => {
+    expect(validateSolventInput({
+      name: 'トルエン', deltaD: 18.0, deltaP: 1.4, deltaH: 2.0,
+      boilingPoint: 110.6, viscosity: 0.56, specificGravity: 0.867, surfaceTension: 28.4,
+    })).toBeNull();
+  });
+
+  it('粘度が負でエラー', () => {
+    expect(validateSolventInput({
+      name: 'X', deltaD: 18.0, deltaP: 1.4, deltaH: 2.0, viscosity: -1,
+    })).toBe('粘度は0以上の数値を入力してください');
+  });
+});
+
+describe('validatePhysicalProperties', () => {
+  it('全て未指定で有効', () => {
+    expect(validatePhysicalProperties({})).toBeNull();
+  });
+
+  it('有効な物性値', () => {
+    expect(validatePhysicalProperties({
+      boilingPoint: 110.6, viscosity: 0.56, specificGravity: 0.867, surfaceTension: 28.4,
+    })).toBeNull();
+  });
+
+  it('沸点の負値は許容（ジエチルエーテル等）', () => {
+    expect(validatePhysicalProperties({ boilingPoint: -34.6 })).toBeNull();
+  });
+
+  it('沸点がNaNでエラー', () => {
+    expect(validatePhysicalProperties({ boilingPoint: NaN }))
+      .toBe('沸点は有効な数値を入力してください');
+  });
+
+  it('粘度がゼロは許容', () => {
+    expect(validatePhysicalProperties({ viscosity: 0 })).toBeNull();
+  });
+
+  it('粘度が負でエラー', () => {
+    expect(validatePhysicalProperties({ viscosity: -0.1 }))
+      .toBe('粘度は0以上の数値を入力してください');
+  });
+
+  it('比重がゼロでエラー', () => {
+    expect(validatePhysicalProperties({ specificGravity: 0 }))
+      .toBe('比重は正の数値を入力してください');
+  });
+
+  it('比重が負でエラー', () => {
+    expect(validatePhysicalProperties({ specificGravity: -1 }))
+      .toBe('比重は正の数値を入力してください');
+  });
+
+  it('表面張力がゼロでエラー', () => {
+    expect(validatePhysicalProperties({ surfaceTension: 0 }))
+      .toBe('表面張力は正の数値を入力してください');
+  });
+
+  it('表面張力が負でエラー', () => {
+    expect(validatePhysicalProperties({ surfaceTension: -5 }))
+      .toBe('表面張力は正の数値を入力してください');
   });
 });

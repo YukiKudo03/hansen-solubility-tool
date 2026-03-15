@@ -31,6 +31,10 @@ export interface CreateSolventDto {
   deltaH: number;
   molarVolume?: number;
   molWeight?: number;
+  boilingPoint?: number;
+  viscosity?: number;
+  specificGravity?: number;
+  surfaceTension?: number;
   notes?: string;
 }
 

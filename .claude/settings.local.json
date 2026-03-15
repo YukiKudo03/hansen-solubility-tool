@@ -50,7 +50,9 @@
       "Bash(wc:*)",
       "Bash(find:*)",
       "Bash(git status:*)",
-      "Bash(git checkout:*)"
+      "Bash(git checkout:*)",
+      "Bash(gh pr:*)",
+      "Bash(git stash:*)"
     ]
   }
 }

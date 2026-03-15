@@ -4,7 +4,7 @@
 import { app, BrowserWindow } from 'electron';
 import path from 'path';
 import Database from 'better-sqlite3';
-import { initializeDatabase } from '../db/schema';
+import { initializeDatabase, migrateDatabase } from '../db/schema';
 import { seedDatabase } from '../db/seed-data';
 import { SqlitePartsRepository, SqliteSolventRepository, SqliteSettingsRepository } from '../db/sqlite-repository';
 import { registerIpcHandlers } from './ipc-handlers';
@@ -20,6 +20,7 @@ function initDb(): Database.Database {
   const dbPath = getDbPath();
   const db = new Database(dbPath);
   initializeDatabase(db);
+  migrateDatabase(db);
 
   // テーブルが空の場合のみシードデータを投入
   const count = db.prepare('SELECT COUNT(*) as cnt FROM solvents').get() as { cnt: number };
