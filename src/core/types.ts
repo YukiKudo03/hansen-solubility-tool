@@ -44,6 +44,25 @@ export interface Solvent {
   notes: string | null;
 }
 
+/** 混合溶媒の成分 */
+export interface MixtureComponent {
+  solvent: Solvent;
+  volumeRatio: number; // 体積比（正の数値）
+}
+
+/** 混合溶媒の計算結果 */
+export interface MixtureSolventResult {
+  name: string;
+  hsp: HSPValues;
+  molarVolume: number | null;
+  molWeight: number | null;
+  boilingPoint: number | null;
+  viscosity: number | null;
+  specificGravity: number | null;
+  surfaceTension: number | null;
+  compositionNote: string; // 組成情報テキスト（DB保存用）
+}
+
 /** リスクレベル (1=最も危険, 5=安全) */
 export enum RiskLevel {
   Dangerous = 1, // 危険（間違いなく溶解する）

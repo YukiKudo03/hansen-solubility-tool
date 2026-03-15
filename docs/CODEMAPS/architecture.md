@@ -61,13 +61,14 @@
 
 **Key component hierarchy:**
 ```
-App.tsx (tab router)
+App.tsx (tab router: report | database | mixture | settings)
 ├── ReportView
 │   ├── PartsGroupSelector
 │   ├── SolventSelector
 │   ├── ResultsTable
 │   └── RiskBadge
 ├── DatabaseEditor
+├── MixtureLab (混合溶媒作成・物性予測・DB登録)
 ├── SettingsView
 └── ErrorBoundary (wraps all views)
 ```
@@ -75,7 +76,7 @@ App.tsx (tab router)
 ### Preload Bridge
 **File:** `src/main/preload.ts`
 - Exposes safe IPC API to renderer via `window.api`
-- Methods: evaluate, getAllGroups, getSolvents, createPart, etc.
+- Methods: evaluate, getAllGroups, getSolvents, createPart, createMixtureSolvent, etc.
 
 ## Data Flow: Evaluation Pipeline
 
@@ -106,7 +107,7 @@ User Action: Select Parts Group + Solvent → Click "評価実行"
 
 | Layer | Location | Purpose | Key Files |
 |-------|----------|---------|-----------|
-| **Domain** | `src/core/` | Pure TS calculation logic | `types.ts`, `hsp.ts`, `risk.ts`, `report.ts`, `validation.ts` |
+| **Domain** | `src/core/` | Pure TS calculation logic | `types.ts`, `hsp.ts`, `risk.ts`, `report.ts`, `validation.ts`, `mixture.ts` |
 | **Data Access** | `src/db/` | SQLite schema, repositories, seed data | `schema.ts`, `repository.ts`, `sqlite-repository.ts`, `seed-data.ts` |
 | **Main Process** | `src/main/` | Electron lifecycle, IPC orchestration | `main.ts`, `ipc-handlers.ts`, `preload.ts` |
 | **UI** | `src/renderer/` | React components & hooks | `App.tsx`, `components/`, `hooks/` |
@@ -134,7 +135,8 @@ hansen-solubility/
 │   │   ├── hsp.ts         # Hansen distance calculation
 │   │   ├── risk.ts        # Risk level classification
 │   │   ├── report.ts      # CSV export formatting
-│   │   └── validation.ts  # Input validators
+│   │   ├── validation.ts  # Input validators
+│   │   └── mixture.ts     # Solvent mixture calculations
 │   │
 │   ├── db/                # Data access layer
 │   │   ├── schema.ts      # SQLite table definitions
@@ -153,6 +155,7 @@ hansen-solubility/
 │       ├── components/
 │       │   ├── ReportView.tsx
 │       │   ├── DatabaseEditor.tsx
+│       │   ├── MixtureLab.tsx
 │       │   ├── SettingsView.tsx
 │       │   ├── PartsGroupSelector.tsx
 │       │   ├── SolventSelector.tsx
@@ -165,7 +168,7 @@ hansen-solubility/
 │           └── useSolvents.ts
 │
 └── tests/
-    ├── unit/              # Core logic tests (hsp, risk, report, validation)
+    ├── unit/              # Core logic tests (hsp, risk, report, validation, mixture)
     ├── integration/       # DB + IPC tests
     ├── renderer/          # React component + hook tests
     └── e2e/               # Playwright E2E tests

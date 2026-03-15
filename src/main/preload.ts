@@ -37,6 +37,8 @@ export const api = {
   updateSolvent: (id: number, dto: Record<string, unknown>) =>
     ipcRenderer.invoke('solvents:update', id, dto),
   deleteSolvent: (id: number) => ipcRenderer.invoke('solvents:delete', id),
+  createMixtureSolvent: (dto: { components: { solventId: number; volumeRatio: number }[]; name: string }) =>
+    ipcRenderer.invoke('solvents:createMixture', dto),
 
   // 評価
   evaluate: (partsGroupId: number, solventId: number) =>

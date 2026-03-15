@@ -6,8 +6,9 @@ import fs from 'fs';
 import type { PartsRepository, SolventRepository, SettingsRepository } from '../db/repository';
 import { calculateRa, calculateRed } from '../core/hsp';
 import { classifyRisk } from '../core/risk';
-import { validatePartInput, validateSolventInput, validateName, validateThresholds } from '../core/validation';
-import type { GroupEvaluationResult, PartEvaluationResult } from '../core/types';
+import { validatePartInput, validateSolventInput, validateName, validateThresholds, validateMixtureInput } from '../core/validation';
+import { calculateMixture } from '../core/mixture';
+import type { GroupEvaluationResult, PartEvaluationResult, MixtureComponent } from '../core/types';
 
 export function registerIpcHandlers(
   partsRepo: PartsRepository,
@@ -45,6 +46,33 @@ export function registerIpcHandlers(
   });
   ipcMain.handle('solvents:update', (_, id, dto) => solventRepo.updateSolvent(id, dto));
   ipcMain.handle('solvents:delete', (_, id: number) => solventRepo.deleteSolvent(id));
+
+  // --- 混合溶媒登録 ---
+  ipcMain.handle('solvents:createMixture', (_, dto: { components: { solventId: number; volumeRatio: number }[]; name: string }) => {
+    const err = validateMixtureInput(dto.components) ?? validateName(dto.name);
+    if (err) throw new Error(err);
+
+    const mixtureComponents: MixtureComponent[] = dto.components.map((c) => {
+      const solvent = solventRepo.getSolventById(c.solventId);
+      if (!solvent) throw new Error(`溶媒 (ID: ${c.solventId}) が見つかりません`);
+      return { solvent, volumeRatio: c.volumeRatio };
+    });
+
+    const result = calculateMixture(mixtureComponents);
+    return solventRepo.createSolvent({
+      name: dto.name,
+      deltaD: result.hsp.deltaD,
+      deltaP: result.hsp.deltaP,
+      deltaH: result.hsp.deltaH,
+      molarVolume: result.molarVolume ?? undefined,
+      molWeight: result.molWeight ?? undefined,
+      boilingPoint: result.boilingPoint ?? undefined,
+      viscosity: result.viscosity ?? undefined,
+      specificGravity: result.specificGravity ?? undefined,
+      surfaceTension: result.surfaceTension ?? undefined,
+      notes: result.compositionNote,
+    });
+  });
 
   // --- 評価実行 ---
   ipcMain.handle('evaluate', (_, partsGroupId: number, solventId: number) => {

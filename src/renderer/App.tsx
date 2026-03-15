@@ -3,8 +3,9 @@ import ErrorBoundary from './components/ErrorBoundary';
 import ReportView from './components/ReportView';
 import DatabaseEditor from './components/DatabaseEditor';
 import SettingsView from './components/SettingsView';
+import MixtureLab from './components/MixtureLab';
 
-type Tab = 'report' | 'database' | 'settings';
+type Tab = 'report' | 'database' | 'mixture' | 'settings';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<Tab>('report');
@@ -12,6 +13,7 @@ export default function App() {
   const tabs: { id: Tab; label: string }[] = [
     { id: 'report', label: '溶解性評価' },
     { id: 'database', label: 'データベース編集' },
+    { id: 'mixture', label: '混合溶媒' },
     { id: 'settings', label: '設定' },
   ];
 
@@ -48,6 +50,7 @@ export default function App() {
         <ErrorBoundary>
           {activeTab === 'report' && <ReportView />}
           {activeTab === 'database' && <DatabaseEditor />}
+          {activeTab === 'mixture' && <MixtureLab />}
           {activeTab === 'settings' && <SettingsView />}
         </ErrorBoundary>
       </main>

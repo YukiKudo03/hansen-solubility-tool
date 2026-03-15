@@ -1,48 +1,46 @@
-Codemap Update Report — 2026-03-15 (v1.2.0)
+Codemap Update Report — 2026-03-15 (v1.3.0)
 =============================================
 
 ## Summary
-- Change level: ~5% (solvent physical properties addition)
-- All codemaps updated in place (well below 30% threshold)
-- Previous version: 1.1.0
+- Change level: ~15% (mixture feature addition)
+- All codemaps updated in place (below 30% threshold)
+- Previous version: 1.2.0
 
 ## Changes Detected
 
-### Schema Changes
-- solvents table: +4 columns (boiling_point, viscosity, specific_gravity, surface_tension)
-- New migration function: migrateDatabase() with idempotent ALTER TABLE
+### New Source Files
+- src/core/mixture.ts (117 lines) — solvent mixture calculations
+- src/renderer/components/MixtureLab.tsx (193 lines) — mixture creation UI
+
+### New Test Files
+- tests/unit/mixture.test.ts (177 lines) — 25 mixture calculation tests
+- tests/integration/mixture-integration.test.ts (100 lines) — 3 DB integration tests
+- tests/renderer/components/MixtureLab.test.tsx (156 lines) — 8 component tests
 
 ### Modified Source Files
-- src/core/types.ts — Solvent interface +4 fields
-- src/core/validation.ts — +validatePhysicalProperties() function
-- src/core/report.ts — CSV +4 columns
-- src/db/repository.ts — CreateSolventDto +4 fields
-- src/db/schema.ts — +migrateDatabase(), solvents table +4 columns
-- src/db/sqlite-repository.ts — rowToSolvent, INSERT, UPDATE +4 fields
-- src/db/seed-data.ts — all 85 solvents +4 physical property values
-- src/main/main.ts — +migrateDatabase() call
-- src/renderer/components/DatabaseEditor.tsx — +4 form inputs, +4 table columns
-- src/renderer/components/ReportView.tsx — +physical property info cards
+- src/core/types.ts — +MixtureComponent, +MixtureSolventResult types
+- src/core/validation.ts — +validateMixtureInput()
+- src/main/ipc-handlers.ts — +solvents:createMixture handler
+- src/main/preload.ts — +createMixtureSolvent API
+- src/preload.d.ts — +createMixtureSolvent type
+- src/renderer/App.tsx — +'mixture' tab
 
-### Test Updates
-- tests/unit/validation.test.ts — +validatePhysicalProperties tests
-- tests/unit/report.test.ts — +physical property CSV tests
-- tests/integration/sqlite-repository.test.ts — +physical property CRUD + migration tests
-- tests/renderer/factories.ts — buildSolvent +4 fields
+### Modified Test Files
+- tests/unit/validation.test.ts — +6 mixture validation tests
+- tests/renderer/factories.ts — +buildMixtureComponent
+- tests/renderer/setup.ts — +createMixtureSolvent mock
+- tests/renderer/components/ReportView.test.tsx — flaky test fix
 
 ## Codemap Updates Applied
 
 | File | Changes |
 |------|---------|
-| data.md | +4 solvents columns, +migration section, +DTO fields |
-| frontend.md | +ReportView physical properties display, +Solvent type fields |
-| INDEX.md | +validation.ts description, +schema.ts migration, +Solvent type |
-| README.md | version bump |
+| architecture.md | +mixture.ts, +MixtureLab, +tab, +IPC |
+| frontend.md | +MixtureLab component detail, +IPC method, +tab |
+| INDEX.md | +mixture types, +critical path, +file stats, +IPC |
+| README.md | version 1.3.0 |
 
 ## Current Stats
-- Source: 25 files, 2326 lines TypeScript
-- Tests: 21 files, 217 tests passing
-- Solvents schema: 16 columns (was 12)
-
-## Staleness Warnings
-- None (all codemaps freshly updated)
+- Source: 27 files, 2764 lines TypeScript
+- Tests: 23 files, 3198 lines, 259 tests (98.74% coverage)
+- Coverage: core 100%, renderer 98.2%

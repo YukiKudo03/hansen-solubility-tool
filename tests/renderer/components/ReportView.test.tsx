@@ -111,7 +111,11 @@ describe('ReportView', () => {
     expect(screen.queryByText('CSV出力')).not.toBeInTheDocument();
 
     // 選択→評価
-    await waitFor(() => expect(screen.getByRole('combobox')).toBeInTheDocument());
+    await waitFor(() => {
+      const combobox = screen.getByRole('combobox');
+      expect(combobox).toBeInTheDocument();
+      expect(combobox.querySelectorAll('option').length).toBeGreaterThan(1);
+    });
     await user.selectOptions(screen.getByRole('combobox'), String(group.id));
     const input = screen.getByPlaceholderText(/溶媒名/);
     await user.click(input);
