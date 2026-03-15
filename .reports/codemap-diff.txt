@@ -1,63 +1,66 @@
-Codemap Update Report — 2026-03-15 (v1.4.0)
-=============================================
+Codemap Update Report — 2026-03-15 (Contact Angle Estimation)
+==============================================================
 
 ## Summary
-- Change level: ~40% (nanoparticle dispersion feature addition)
-- All codemaps overwritten (above 30% threshold, approved as part of feature implementation)
-- Previous version: 1.3.0 (Mixture Lab)
+- Change level: ~25% (contact angle estimation feature addition)
+- All codemaps updated (architecture, frontend, data, INDEX)
+- Previous version: v1.4.0 (Nanoparticle Dispersion)
 
 ## Changes Detected
 
-### New Source Files (9 files)
-- src/core/dispersibility.ts — Nanoparticle dispersibility classification (5-level)
-- src/core/solvent-finder.ts — Solvent screening + physical property constraint filters
-- src/db/seed-nano-particles.ts — 18 nanoparticle seed data (literature-sourced HSP values)
-- src/renderer/components/NanoDispersionView.tsx — Main UI for nanoparticle screening
-- src/renderer/components/DispersibilityBadge.tsx — Visual dispersibility level badge
-- src/renderer/hooks/useNanoParticles.ts — Nanoparticle data fetch hook
-- src/renderer/hooks/useNanoDispersion.ts — Nanoparticle evaluation hook
+### New Source Files (7 files)
+- src/core/contact-angle.ts — Nakamoto-Yamamoto式による接触角推定 (89 lines)
+- src/core/wettability.ts — 6段階濡れ性分類 (90 lines)
+- src/renderer/components/ContactAngleView.tsx — 接触角推定UI (288 lines)
+- src/renderer/components/WettabilityBadge.tsx — 濡れ性バッジ (30 lines)
+- src/renderer/hooks/useContactAngle.ts — 接触角フック (47 lines)
+- tests/unit/contact-angle.test.ts — 接触角テスト (241 lines, 22 tests)
+- tests/unit/wettability.test.ts — 濡れ性テスト (110 lines, 17 tests)
 
-### New Test Files (2 files)
-- tests/unit/dispersibility.test.ts — 14 tests
-- tests/unit/solvent-finder.test.ts — 11 tests
+### Modified Source Files (9 files)
+- src/core/types.ts — +WettabilityLevel enum (6-level), +WettabilityThresholds, +ContactAngleResult, +GroupContactAngleResult
+- src/core/validation.ts — +validateWettabilityThresholds() (0-180° range check)
+- src/core/report.ts — +formatContactAngleCsv() (γ_LV, γ_SV, γ_SL, cos(θ), θ columns)
+- src/main/ipc-handlers.ts — +contactAngle:evaluate, +contactAngle:screenSolvents, +wettability threshold handlers
+- src/main/preload.ts — +estimateContactAngle, +screenContactAngle, +wettability threshold methods
+- src/preload.d.ts — +GroupContactAngleResult, +WettabilityThresholds type exports
+- src/renderer/App.tsx — +'contactAngle' tab (6タブ化)
+- src/renderer/components/SettingsView.tsx — +濡れ性閾値設定UI + 図解
+- tests/renderer/setup.ts — +接触角・濡れ性・ナノ粒子関連モックAPI追加
 
-### Modified Source Files (11 files)
-- src/core/types.ts — +8 types: NanoParticle, DispersibilityLevel, DispersibilityThresholds, etc.
-- src/core/validation.ts — +validateNanoParticleInput(), +validateDispersibilityThresholds()
-- src/core/report.ts — +formatNanoDispersionCsv()
-- src/db/schema.ts — +nano_particles table
-- src/db/repository.ts — +NanoParticleRepository interface, +CreateNanoParticleDto
-- src/db/sqlite-repository.ts — +SqliteNanoParticleRepository, +rowToNanoParticle()
-- src/main/main.ts — +NanoParticleRepo init, +seedNanoParticles()
-- src/main/ipc-handlers.ts — +12 IPC handlers (nano CRUD + dispersion eval + thresholds)
-- src/main/preload.ts — +13 API methods
-- src/preload.d.ts — +type definitions for nano API
-- src/renderer/App.tsx — +'nanoDispersion' tab
-
-### Modified Test Files (1 file)
-- tests/unit/validation.test.ts — +15 nanoparticle validation tests
+### Modified Test Files (2 files)
+- tests/unit/validation.test.ts — +6 wettability threshold tests
+- tests/unit/report.test.ts — +5 contact angle CSV tests
 
 ## Architecture Changes
-- New evaluation pipeline: Nanoparticle Dispersion Screening (parallel to Polymer Evaluation)
-- New database table: nano_particles (18 seed rows)
-- New repository: NanoParticleRepository (7 methods)
-- New core modules: dispersibility.ts, solvent-finder.ts
-- IPC handlers: 28 → 40+
-- Preload API: 18 → 30+ methods
-- UI tabs: 4 → 5
-- Unit tests: 127 → 167 (+40 new tests, all passing)
+- New evaluation pipeline: Contact Angle Estimation (Pipeline C)
+  - Uses Nakamoto-Yamamoto式 (γ = 0.0947·δD² + 0.0315·δP² + 0.0238·δH²)
+  - Young's equation: cos(θ) = (γ_SV − γ_SL) / γ_LV
+  - 6-level wettability classification (vs 5-level for risk/dispersibility)
+  - Two modes: group evaluation + solvent screening
+- UI tabs: 5 → 6
+- IPC handlers: ~40 → ~45
+- Settings keys: 2 → 3 (wettability_thresholds added)
+- Core modules: 8 → 10
+
+## Test Count Changes
+- Unit tests: 207 → 218 (+11)
+- New test files: contact-angle.test.ts (22), wettability.test.ts (17)
+- Extended: validation.test.ts (+6), report.test.ts (+5)
+- Renderer tests: 85 (mock setup updated)
+- Total passing: 303
 
 ## Codemap Updates Applied
 
-| File | Status | Changes |
-|------|--------|---------|
-| INDEX.md | Rewritten | +nano types, +nano pipeline, +file stats, +IPC contract |
-| architecture.md | Rewritten | +dual pipeline diagram, +nano files in tree, +component hierarchy |
-| data.md | Rewritten | +nano_particles table, +nano repo, +seed data details |
-| frontend.md | Rewritten | +NanoDispersionView, +DispersibilityBadge, +hooks, +IPC methods |
-| dependencies.md | Unchanged | No new external packages |
+| File | Status | Key Changes |
+|------|--------|-------------|
+| INDEX.md | Updated | 3 evaluation modes, updated stats, contact angle types |
+| architecture.md | Updated | Pipeline C added, file tree, 45+ handlers |
+| frontend.md | Updated | ContactAngleView, WettabilityBadge, useContactAngle |
+| data.md | Updated | wettability_thresholds settings key |
+| dependencies.md | Unchanged | No new packages |
 
 ## Current Stats
-- Source: 36 files TypeScript
-- Tests: 25+ files, 167+ unit tests passing
-- New dependencies: none (zero new packages)
+- Source: 37 files TypeScript
+- Tests: 34 files, 303 tests passing (unit 218 + renderer 85)
+- New dependencies: none
