@@ -1,4 +1,4 @@
-<!-- Generated: 2026-03-15 | Version: 1.0.0 | Tech: Electron 41 + Vite + React 19 + TS 5.9 + better-sqlite3 12.8 -->
+<!-- Generated: 2026-03-15 | Updated: 2026-03-15 | Files scanned: 25 src + 21 test | Token estimate: ~900 -->
 
 # Hansen Solubility System Architecture
 
@@ -69,6 +69,7 @@ App.tsx (tab router)
 │   └── RiskBadge
 ├── DatabaseEditor
 ├── SettingsView
+└── ErrorBoundary (wraps all views)
 ```
 
 ### Preload Bridge
@@ -105,7 +106,7 @@ User Action: Select Parts Group + Solvent → Click "評価実行"
 
 | Layer | Location | Purpose | Key Files |
 |-------|----------|---------|-----------|
-| **Domain** | `src/core/` | Pure TS calculation logic | `types.ts`, `hsp.ts`, `risk.ts`, `report.ts` |
+| **Domain** | `src/core/` | Pure TS calculation logic | `types.ts`, `hsp.ts`, `risk.ts`, `report.ts`, `validation.ts` |
 | **Data Access** | `src/db/` | SQLite schema, repositories, seed data | `schema.ts`, `repository.ts`, `sqlite-repository.ts`, `seed-data.ts` |
 | **Main Process** | `src/main/` | Electron lifecycle, IPC orchestration | `main.ts`, `ipc-handlers.ts`, `preload.ts` |
 | **UI** | `src/renderer/` | React components & hooks | `App.tsx`, `components/`, `hooks/` |
@@ -132,13 +133,14 @@ hansen-solubility/
 │   │   ├── types.ts       # Domain types & interfaces
 │   │   ├── hsp.ts         # Hansen distance calculation
 │   │   ├── risk.ts        # Risk level classification
-│   │   └── report.ts      # CSV export formatting
+│   │   ├── report.ts      # CSV export formatting
+│   │   └── validation.ts  # Input validators
 │   │
 │   ├── db/                # Data access layer
 │   │   ├── schema.ts      # SQLite table definitions
 │   │   ├── repository.ts  # Repository interfaces (DTOs)
 │   │   ├── sqlite-repository.ts  # SQLite implementation
-│   │   └── seed-data.ts   # ~85 solvents + 6-8 polymer groups
+│   │   └── seed-data.ts   # ~85 solvents + 7 polymer groups (incl. adhesives)
 │   │
 │   ├── main/              # Electron main process
 │   │   ├── main.ts        # App lifecycle
@@ -155,15 +157,18 @@ hansen-solubility/
 │       │   ├── PartsGroupSelector.tsx
 │       │   ├── SolventSelector.tsx
 │       │   ├── ResultsTable.tsx
-│       │   └── RiskBadge.tsx
+│       │   ├── RiskBadge.tsx
+│       │   └── ErrorBoundary.tsx
 │       └── hooks/
 │           ├── useEvaluation.ts
 │           ├── usePartsGroups.ts
 │           └── useSolvents.ts
 │
 └── tests/
-    ├── unit/              # Core logic tests
-    └── integration/       # DB + IPC tests
+    ├── unit/              # Core logic tests (hsp, risk, report, validation)
+    ├── integration/       # DB + IPC tests
+    ├── renderer/          # React component + hook tests
+    └── e2e/               # Playwright E2E tests
 ```
 
 ## Build & Execution

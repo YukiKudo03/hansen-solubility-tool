@@ -1,4 +1,4 @@
-<!-- Generated: 2026-03-15 | React 19 | Tailwind CSS 3.4 -->
+<!-- Generated: 2026-03-15 | Updated: 2026-03-15 | Files scanned: 12 | Token estimate: ~850 -->
 
 # Frontend Component Architecture
 
@@ -17,8 +17,9 @@ src/renderer/main.tsx (React entry point)
         ├── DatabaseEditor.tsx (CRUD UI for parts groups, parts, solvents)
         │   └── Full table editor (add/edit/delete rows)
         │
-        └── SettingsView.tsx (Risk threshold adjustment)
-            └── Form inputs for dangerousMax, warningMax, etc.
+        ├── SettingsView.tsx (Risk threshold adjustment)
+        │   └── Form inputs for dangerousMax, warningMax, etc.
+        └── ErrorBoundary.tsx (catches React errors, shows fallback UI)
 ```
 
 ## Component Details
@@ -85,6 +86,11 @@ src/renderer/main.tsx (React entry point)
 - Parts Groups (add/edit/delete)
 - Parts (add/edit/delete per group)
 - Solvents (add/edit/delete)
+
+### ErrorBoundary.tsx
+**Purpose:** Catch React render errors gracefully
+**Implementation:** Class component with `componentDidCatch()` and `getDerivedStateFromError()`
+**Fallback:** Displays error message with retry button
 
 ### SettingsView.tsx
 **Purpose:** Configure risk thresholds

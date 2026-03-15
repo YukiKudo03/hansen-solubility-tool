@@ -1,4 +1,4 @@
-<!-- Generated: 2026-03-15 | Codemap Index v1.0 -->
+<!-- Generated: 2026-03-15 | Updated: 2026-03-15 | Files scanned: 46 | Token estimate: ~600 -->
 
 # Hansen Solubility Project — Codemap Index
 
@@ -50,7 +50,7 @@ Data access layer (SQLite via better-sqlite3)
 - `schema.ts` — Table definitions: parts_groups, parts, solvents, settings
 - `repository.ts` — Interface definitions (DTOs, method signatures)
 - `sqlite-repository.ts` — Concrete implementations (3 classes: Parts, Solvent, Settings repos)
-- `seed-data.ts` — ~85 solvents + 6-8 polymer groups (loaded on first launch)
+- `seed-data.ts` — ~85 solvents + 7 polymer groups incl. adhesives (loaded on first launch)
 
 ### src/main/
 Electron main process (lifecycle, IPC orchestration)
@@ -67,8 +67,10 @@ React UI (Vite-bundled, hot-reload in dev)
 - `hooks/useEvaluation.ts`, `hooks/usePartsGroups.ts`, `hooks/useSolvents.ts` — Async logic
 
 ### tests/
-- `tests/unit/` — Core calculations (hsp.ts, risk.ts)
-- `tests/integration/` — DB operations, IPC handlers
+- `tests/unit/` — Core calculations (hsp, risk, report, validation)
+- `tests/integration/` — DB operations, seed data integrity
+- `tests/renderer/` — React component + hook tests (13 files)
+- `tests/e2e/` — Playwright E2E tests (evaluation, database-editor, settings)
 
 ## Development Commands
 
@@ -100,19 +102,19 @@ npm run docker:test:unit
 
 | Category | Count | Purpose |
 |----------|-------|---------|
-| **Core** | 4 files | HSP math, risk logic, report generation |
+| **Core** | 5 files | HSP math, risk logic, report, validation |
 | **Database** | 4 files | Schema, repositories, seed data |
 | **Main Process** | 3 files | Electron lifecycle, IPC, preload |
-| **Renderer** | 9 files | React components + hooks |
-| **Tests** | 2 dirs | Unit + integration suites |
+| **Renderer** | 10 files | React components + hooks (incl. ErrorBoundary) |
+| **Tests** | 4 dirs | Unit + integration + renderer + E2E (21 files, 2254 lines) |
 | **Config** | 8+ files | TS, Vite, Tailwind, Electron build |
 
 ## Database Schema Summary
 
 | Table | Purpose | Rows | Relationships |
 |-------|---------|------|---------------|
-| `parts_groups` | Polymer material groups | ~8 | 1 → Many with parts |
-| `parts` | Individual polymers | ~50 | Many ← 1 from parts_groups |
+| `parts_groups` | Polymer material groups | 7 | 1 → Many with parts |
+| `parts` | Individual polymers | ~60 | Many ← 1 from parts_groups |
 | `solvents` | Chemical solvents | ~85 | No foreign keys |
 | `settings` | Config (risk thresholds) | ~4 | Key-value store |
 
@@ -176,6 +178,6 @@ npm run package
 
 ---
 
-**Last Updated:** 2026-03-15 | **Version:** 1.0.0 | **Status:** Current
+**Last Updated:** 2026-03-15 | **Version:** 1.1.0 | **Status:** Current
 
 For detailed implementation, see individual codemaps. For questions about specific modules, consult the file headers which include JSDoc and TypeScript interfaces.
