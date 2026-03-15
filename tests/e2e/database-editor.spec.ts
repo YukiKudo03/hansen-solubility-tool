@@ -22,11 +22,11 @@ test('データベース編集タブに切り替え', async () => {
 });
 
 test('部品グループ一覧が表示される', async () => {
-  await expect(page.getByText('汎用プラスチック')).toBeVisible();
+  await expect(page.getByRole('heading', { name: '汎用プラスチック' })).toBeVisible();
 });
 
 test('溶媒タブに切り替えで溶媒テーブルが表示される', async () => {
-  await page.locator('button', { hasText: '溶媒' }).click();
+  await page.getByRole('button', { name: '溶媒' }).click();
   await expect(page.getByText(/件の溶媒/)).toBeVisible();
 });
 
