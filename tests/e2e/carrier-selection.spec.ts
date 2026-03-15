@@ -3,7 +3,7 @@
  */
 import { test, expect } from '@playwright/test';
 import type { ElectronApplication, Page } from '@playwright/test';
-import { launchApp } from './helpers';
+import { launchApp, clickTab } from './helpers';
 
 let app: ElectronApplication;
 let page: Page;
@@ -17,7 +17,7 @@ test.afterAll(async () => {
 });
 
 test('キャリア選定タブに切り替え', async () => {
-  await page.locator('nav button', { hasText: 'キャリア選定' }).click();
+  await clickTab(page, 'キャリア選定');
   await page.waitForTimeout(500);
 });
 
@@ -28,7 +28,15 @@ test('薬物を選択できる', async () => {
 });
 
 test('キャリアスクリーニングを実行できる', async () => {
-  await page.locator('main button.bg-blue-600').first().click();
+  // スクリーニングモードに切替
+  await page.locator('main button', { hasText: 'グループスクリーニング' }).click();
+  await page.waitForTimeout(300);
+  // キャリアグループ選択
+  const groupSelect = page.locator('main select').nth(1);
+  await groupSelect.selectOption({ index: 1 });
+  await page.waitForTimeout(500);
+  // 実行ボタンクリック
+  await page.locator('main button.bg-blue-600').click();
   await page.waitForTimeout(2000);
 
   await expect(page.locator('th', { hasText: 'RED' })).toBeVisible({ timeout: 10000 });

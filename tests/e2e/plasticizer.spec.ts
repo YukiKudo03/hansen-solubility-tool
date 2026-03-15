@@ -3,7 +3,7 @@
  */
 import { test, expect } from '@playwright/test';
 import type { ElectronApplication, Page } from '@playwright/test';
-import { launchApp } from './helpers';
+import { launchApp, clickTab } from './helpers';
 
 let app: ElectronApplication;
 let page: Page;
@@ -17,7 +17,7 @@ test.afterAll(async () => {
 });
 
 test('可塑剤選定タブに切り替え', async () => {
-  await page.locator('nav button', { hasText: '可塑剤選定' }).click();
+  await clickTab(page, '可塑剤選定');
   await page.waitForTimeout(500);
 });
 

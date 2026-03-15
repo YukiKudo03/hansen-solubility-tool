@@ -3,7 +3,7 @@
  */
 import { test, expect } from '@playwright/test';
 import type { ElectronApplication, Page } from '@playwright/test';
-import { launchApp } from './helpers';
+import { launchApp, clickTab } from './helpers';
 
 let app: ElectronApplication;
 let page: Page;
@@ -17,14 +17,14 @@ test.afterAll(async () => {
 });
 
 test('溶剤ブレンド最適化タブに切り替え', async () => {
-  await page.locator('nav button', { hasText: '溶剤ブレンド最適化' }).click();
+  await clickTab(page, '溶剤ブレンド最適化');
   await page.waitForTimeout(500);
-  await expect(page.getByText('ターゲットHSP')).toBeVisible();
+  await expect(page.locator('h2', { hasText: '溶剤ブレンド最適化' })).toBeVisible();
 });
 
 test('ターゲットHSP値を入力できる', async () => {
-  const inputs = page.locator('main input[type="number"]');
-  // δD, δP, δH inputs
+  const inputs = page.locator('main').getByRole('spinbutton');
+  // δD, δP, δH inputs (first 3 spinbuttons)
   await inputs.nth(0).fill('17.0');
   await inputs.nth(1).fill('5.0');
   await inputs.nth(2).fill('10.0');
@@ -33,7 +33,7 @@ test('ターゲットHSP値を入力できる', async () => {
 
 test('候補溶媒を選択できる', async () => {
   // チェックボックスで溶媒を選択
-  const checkboxes = page.locator('main input[type="checkbox"]');
+  const checkboxes = page.locator('main').getByRole('checkbox');
   const count = await checkboxes.count();
   expect(count).toBeGreaterThan(0);
 

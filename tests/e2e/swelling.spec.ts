@@ -3,7 +3,7 @@
  */
 import { test, expect } from '@playwright/test';
 import type { ElectronApplication, Page } from '@playwright/test';
-import { launchApp } from './helpers';
+import { launchApp, clickTab } from './helpers';
 
 let app: ElectronApplication;
 let page: Page;
@@ -17,7 +17,7 @@ test.afterAll(async () => {
 });
 
 test('膨潤度予測タブに切り替え', async () => {
-  await page.locator('nav button', { hasText: '膨潤度予測' }).click();
+  await clickTab(page, '膨潤度予測');
   await page.waitForTimeout(500);
   await expect(page.getByText('部品グループ')).toBeVisible();
 });

@@ -43,8 +43,8 @@ export default function App() {
       </header>
 
       {/* タブナビゲーション */}
-      <nav className="bg-white border-b border-gray-200 px-6">
-        <div className="flex space-x-1">
+      <nav className="bg-white border-b border-gray-200 px-6 overflow-x-auto">
+        <div className="flex space-x-1 min-w-max">
           {tabs.map((tab) => (
             <button
               key={tab.id}

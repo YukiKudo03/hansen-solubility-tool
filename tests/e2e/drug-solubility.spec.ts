@@ -3,7 +3,7 @@
  */
 import { test, expect } from '@playwright/test';
 import type { ElectronApplication, Page } from '@playwright/test';
-import { launchApp } from './helpers';
+import { launchApp, clickTab } from './helpers';
 
 let app: ElectronApplication;
 let page: Page;
@@ -17,7 +17,7 @@ test.afterAll(async () => {
 });
 
 test('薬物溶解性タブに切り替え', async () => {
-  await page.locator('nav button', { hasText: '薬物溶解性' }).click();
+  await clickTab(page, '薬物溶解性');
   await page.waitForTimeout(500);
 });
 
@@ -28,7 +28,11 @@ test('薬物を選択できる', async () => {
 });
 
 test('全溶媒スクリーニングを実行できる', async () => {
-  await page.locator('main button.bg-blue-600').first().click();
+  // スクリーニングモードに切替
+  await page.locator('main button', { hasText: '全溶媒スクリーニング' }).first().click();
+  await page.waitForTimeout(300);
+  // 実行ボタンをクリック
+  await page.locator('main button.bg-blue-600').click();
   await page.waitForTimeout(2000);
 
   // 結果テーブルが表示される
