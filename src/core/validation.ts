@@ -144,6 +144,62 @@ export function validateWettabilityThresholds(t: WettabilityThresholds): string 
   return null;
 }
 
+export function validateSwellingThresholds(t: {
+  severeMax: number;
+  highMax: number;
+  moderateMax: number;
+  lowMax: number;
+}): string | null {
+  const vals = [t.severeMax, t.highMax, t.moderateMax, t.lowMax];
+  if (vals.some((v) => !Number.isFinite(v) || v < 0)) {
+    return '閾値はすべて0以上の数値を入力してください';
+  }
+  if (!(t.severeMax < t.highMax && t.highMax < t.moderateMax && t.moderateMax < t.lowMax)) {
+    return '閾値は severeMax < highMax < moderateMax < lowMax の順でなければなりません';
+  }
+  return null;
+}
+
+export function validateDrugInput(input: {
+  name: string;
+  deltaD: number;
+  deltaP: number;
+  deltaH: number;
+  r0: number;
+  casNumber?: string;
+  molWeight?: number;
+  logP?: number;
+}): string | null {
+  const nameErr = validateName(input.name);
+  if (nameErr) return nameErr;
+  const hspErr = validateHSPValues(input.deltaD, input.deltaP, input.deltaH);
+  if (hspErr) return hspErr;
+  const r0Err = validateR0(input.r0);
+  if (r0Err) return r0Err;
+  const casErr = validateCasNumber(input.casNumber);
+  if (casErr) return casErr;
+  if (input.molWeight !== undefined && (!Number.isFinite(input.molWeight) || input.molWeight <= 0)) {
+    return '分子量は正の数値を入力してください';
+  }
+  return null;
+}
+
+export function validateDrugSolubilityThresholds(t: {
+  excellentMax: number;
+  goodMax: number;
+  partialMax: number;
+  poorMax: number;
+}): string | null {
+  const vals = [t.excellentMax, t.goodMax, t.partialMax, t.poorMax];
+  if (vals.some((v) => !Number.isFinite(v) || v < 0)) {
+    return '閾値はすべて0以上の数値を入力してください';
+  }
+  if (!(t.excellentMax < t.goodMax && t.goodMax < t.partialMax && t.partialMax < t.poorMax)) {
+    return '閾値は excellentMax < goodMax < partialMax < poorMax の順でなければなりません';
+  }
+  return null;
+}
+
 export function validateBlendOptimizationInput(input: {
   targetDeltaD: number;
   targetDeltaP: number;
