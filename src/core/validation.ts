@@ -88,6 +88,48 @@ export function validateSolventInput(input: {
     ?? validatePhysicalProperties(input);
 }
 
+const VALID_NANO_PARTICLE_CATEGORIES = ['carbon', 'metal', 'metal_oxide', 'quantum_dot', 'polymer', 'other'];
+
+export function validateNanoParticleInput(input: {
+  name: string;
+  category: string;
+  coreMaterial: string;
+  deltaD: number;
+  deltaP: number;
+  deltaH: number;
+  r0: number;
+  particleSize?: number;
+}): string | null {
+  const nameErr = validateName(input.name);
+  if (nameErr) return nameErr;
+  if (!input.coreMaterial || !input.coreMaterial.trim()) return '母材を入力してください';
+  if (!VALID_NANO_PARTICLE_CATEGORIES.includes(input.category)) return '無効なカテゴリです';
+  const hspErr = validateHSPValues(input.deltaD, input.deltaP, input.deltaH);
+  if (hspErr) return hspErr;
+  const r0Err = validateR0(input.r0);
+  if (r0Err) return r0Err;
+  if (input.particleSize !== undefined && (!Number.isFinite(input.particleSize) || input.particleSize <= 0)) {
+    return '粒子径は正の数値を入力してください';
+  }
+  return null;
+}
+
+export function validateDispersibilityThresholds(t: {
+  excellentMax: number;
+  goodMax: number;
+  fairMax: number;
+  poorMax: number;
+}): string | null {
+  const vals = [t.excellentMax, t.goodMax, t.fairMax, t.poorMax];
+  if (vals.some((v) => !Number.isFinite(v) || v < 0)) {
+    return '閾値はすべて0以上の数値を入力してください';
+  }
+  if (!(t.excellentMax < t.goodMax && t.goodMax < t.fairMax && t.fairMax < t.poorMax)) {
+    return '閾値は excellentMax < goodMax < fairMax < poorMax の順でなければなりません';
+  }
+  return null;
+}
+
 export function validateMixtureInput(components: { solventId: number; volumeRatio: number }[]): string | null {
   if (components.length < 1) {
     return '1つ以上の溶媒を追加してください';

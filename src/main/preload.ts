@@ -55,6 +55,34 @@ export const api = {
 
   // CSV保存
   saveCsv: (csvContent: string) => ipcRenderer.invoke('csv:save', csvContent),
+
+  // ナノ粒子
+  getAllNanoParticles: () => ipcRenderer.invoke('nanoParticles:getAll'),
+  getNanoParticleById: (id: number) => ipcRenderer.invoke('nanoParticles:getById', id),
+  getNanoParticlesByCategory: (category: string) => ipcRenderer.invoke('nanoParticles:getByCategory', category),
+  searchNanoParticles: (query: string) => ipcRenderer.invoke('nanoParticles:search', query),
+  createNanoParticle: (dto: Record<string, unknown>) =>
+    ipcRenderer.invoke('nanoParticles:create', dto),
+  updateNanoParticle: (id: number, dto: Record<string, unknown>) =>
+    ipcRenderer.invoke('nanoParticles:update', id, dto),
+  deleteNanoParticle: (id: number) => ipcRenderer.invoke('nanoParticles:delete', id),
+
+  // ナノ粒子分散評価
+  evaluateNanoDispersion: (particleId: number, solventId: number) =>
+    ipcRenderer.invoke('nanoDispersion:evaluate', particleId, solventId),
+  screenAllSolvents: (particleId: number) =>
+    ipcRenderer.invoke('nanoDispersion:screenAll', particleId),
+  screenFilteredSolvents: (particleId: number, constraints: Record<string, unknown>) =>
+    ipcRenderer.invoke('nanoDispersion:screenFiltered', particleId, constraints),
+
+  // 分散性閾値設定
+  getDispersibilityThresholds: () => ipcRenderer.invoke('settings:getDispersibilityThresholds'),
+  setDispersibilityThresholds: (thresholds: {
+    excellentMax: number;
+    goodMax: number;
+    fairMax: number;
+    poorMax: number;
+  }) => ipcRenderer.invoke('settings:setDispersibilityThresholds', thresholds),
 };
 
 contextBridge.exposeInMainWorld('api', api);

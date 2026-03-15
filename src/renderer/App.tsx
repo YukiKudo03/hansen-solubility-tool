@@ -4,8 +4,9 @@ import ReportView from './components/ReportView';
 import DatabaseEditor from './components/DatabaseEditor';
 import SettingsView from './components/SettingsView';
 import MixtureLab from './components/MixtureLab';
+import NanoDispersionView from './components/NanoDispersionView';
 
-type Tab = 'report' | 'database' | 'mixture' | 'settings';
+type Tab = 'report' | 'database' | 'mixture' | 'nanoDispersion' | 'settings';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<Tab>('report');
@@ -14,6 +15,7 @@ export default function App() {
     { id: 'report', label: '溶解性評価' },
     { id: 'database', label: 'データベース編集' },
     { id: 'mixture', label: '混合溶媒' },
+    { id: 'nanoDispersion', label: 'ナノ粒子分散' },
     { id: 'settings', label: '設定' },
   ];
 
@@ -51,6 +53,7 @@ export default function App() {
           {activeTab === 'report' && <ReportView />}
           {activeTab === 'database' && <DatabaseEditor />}
           {activeTab === 'mixture' && <MixtureLab />}
+          {activeTab === 'nanoDispersion' && <NanoDispersionView />}
           {activeTab === 'settings' && <SettingsView />}
         </ErrorBoundary>
       </main>

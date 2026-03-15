@@ -1,8 +1,8 @@
 /**
  * Preload API 型定義 — window.api の型
  */
-import type { PartsGroup, Solvent, RiskThresholds, GroupEvaluationResult } from './core/types';
-import type { CreatePartsGroupDto, CreatePartDto, CreateSolventDto } from './db/repository';
+import type { PartsGroup, Solvent, RiskThresholds, GroupEvaluationResult, NanoParticle, NanoParticleCategory, NanoDispersionEvaluationResult, DispersibilityThresholds, SolventConstraints } from './core/types';
+import type { CreatePartsGroupDto, CreatePartDto, CreateSolventDto, CreateNanoParticleDto } from './db/repository';
 
 export interface ElectronAPI {
   // 部品グループ
@@ -35,6 +35,24 @@ export interface ElectronAPI {
 
   // CSV保存
   saveCsv(csvContent: string): Promise<{ saved: boolean; filePath?: string }>;
+
+  // ナノ粒子
+  getAllNanoParticles(): Promise<NanoParticle[]>;
+  getNanoParticleById(id: number): Promise<NanoParticle | null>;
+  getNanoParticlesByCategory(category: string): Promise<NanoParticle[]>;
+  searchNanoParticles(query: string): Promise<NanoParticle[]>;
+  createNanoParticle(dto: CreateNanoParticleDto): Promise<NanoParticle>;
+  updateNanoParticle(id: number, dto: Partial<CreateNanoParticleDto>): Promise<NanoParticle | null>;
+  deleteNanoParticle(id: number): Promise<boolean>;
+
+  // ナノ粒子分散評価
+  evaluateNanoDispersion(particleId: number, solventId: number): Promise<NanoDispersionEvaluationResult>;
+  screenAllSolvents(particleId: number): Promise<NanoDispersionEvaluationResult>;
+  screenFilteredSolvents(particleId: number, constraints: SolventConstraints): Promise<NanoDispersionEvaluationResult>;
+
+  // 分散性閾値設定
+  getDispersibilityThresholds(): Promise<DispersibilityThresholds>;
+  setDispersibilityThresholds(thresholds: DispersibilityThresholds): Promise<void>;
 }
 
 declare global {

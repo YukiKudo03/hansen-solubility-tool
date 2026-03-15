@@ -45,9 +45,12 @@ npm run package            # Build + create Windows installer
 
 On first launch:
 1. SQLite database created at user data path
-2. Schema tables created (`parts_groups`, `parts`, `solvents`, `settings`)
+2. Schema tables created (`parts_groups`, `parts`, `solvents`, `nano_particles`, `settings`)
 3. Migration run (adds physical property columns if upgrading from older version)
-4. Seed data loaded (~85 solvents with physical properties, 7 polymer groups)
+4. Seed data loaded:
+   - ~85 solvents with physical properties
+   - 7 polymer groups (~60 parts)
+   - 18 nanoparticles (CNT, graphene, Ag NP, TiO₂, ZnO, etc.)
 
 ### Backup
 
@@ -139,10 +142,12 @@ npm run test:e2e          # E2E tests (requires app build first)
 ### Pre-release Checklist
 
 - [ ] `npm run typecheck` passes
-- [ ] `npm test` — all tests green
+- [ ] `npm test` — all tests green (167+ unit tests)
 - [ ] `npm run test:e2e` — E2E tests pass
 - [ ] `npm run package` — installer builds successfully
 - [ ] Install and run the packaged app
-- [ ] Verify evaluation workflow (select group + solvent → evaluate → export CSV)
+- [ ] Verify polymer evaluation workflow (select group + solvent → evaluate → export CSV)
+- [ ] Verify nanoparticle dispersion screening (select particle → screen all solvents → CSV export)
 - [ ] Verify database editor (add/edit/delete operations)
-- [ ] Verify settings (threshold changes persist)
+- [ ] Verify mixture lab (create mixture → register to DB)
+- [ ] Verify settings (risk + dispersibility threshold changes persist)

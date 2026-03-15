@@ -45,6 +45,23 @@ CREATE TABLE IF NOT EXISTS solvents (
   updated_at   TEXT DEFAULT (datetime('now'))
 );
 
+CREATE TABLE IF NOT EXISTS nano_particles (
+  id              INTEGER PRIMARY KEY AUTOINCREMENT,
+  name            TEXT NOT NULL,
+  name_en         TEXT,
+  category        TEXT NOT NULL DEFAULT 'other',
+  core_material   TEXT NOT NULL,
+  surface_ligand  TEXT,
+  delta_d         REAL NOT NULL,
+  delta_p         REAL NOT NULL,
+  delta_h         REAL NOT NULL,
+  r0              REAL NOT NULL,
+  particle_size   REAL,
+  notes           TEXT,
+  created_at      TEXT DEFAULT (datetime('now')),
+  updated_at      TEXT DEFAULT (datetime('now'))
+);
+
 CREATE TABLE IF NOT EXISTS settings (
   key   TEXT PRIMARY KEY,
   value TEXT NOT NULL

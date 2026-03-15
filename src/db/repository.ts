@@ -1,7 +1,7 @@
 /**
  * リポジトリインターフェース定義
  */
-import type { Part, PartsGroup, Solvent, RiskThresholds } from '../core/types';
+import type { Part, PartsGroup, Solvent, RiskThresholds, NanoParticle, NanoParticleCategory } from '../core/types';
 
 /** 部品グループ作成DTO */
 export interface CreatePartsGroupDto {
@@ -58,6 +58,31 @@ export interface SolventRepository {
   createSolvent(dto: CreateSolventDto): Solvent;
   updateSolvent(id: number, dto: Partial<CreateSolventDto>): Solvent | null;
   deleteSolvent(id: number): boolean;
+}
+
+/** ナノ粒子作成DTO */
+export interface CreateNanoParticleDto {
+  name: string;
+  nameEn?: string;
+  category: NanoParticleCategory;
+  coreMaterial: string;
+  surfaceLigand?: string;
+  deltaD: number;
+  deltaP: number;
+  deltaH: number;
+  r0: number;
+  particleSize?: number;
+  notes?: string;
+}
+
+export interface NanoParticleRepository {
+  getAll(): NanoParticle[];
+  getById(id: number): NanoParticle | null;
+  getByCategory(category: NanoParticleCategory): NanoParticle[];
+  search(query: string): NanoParticle[];
+  create(dto: CreateNanoParticleDto): NanoParticle;
+  update(id: number, dto: Partial<CreateNanoParticleDto>): NanoParticle | null;
+  delete(id: number): boolean;
 }
 
 export interface SettingsRepository {

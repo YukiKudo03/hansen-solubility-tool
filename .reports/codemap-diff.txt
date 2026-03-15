@@ -1,46 +1,63 @@
-Codemap Update Report — 2026-03-15 (v1.3.0)
+Codemap Update Report — 2026-03-15 (v1.4.0)
 =============================================
 
 ## Summary
-- Change level: ~15% (mixture feature addition)
-- All codemaps updated in place (below 30% threshold)
-- Previous version: 1.2.0
+- Change level: ~40% (nanoparticle dispersion feature addition)
+- All codemaps overwritten (above 30% threshold, approved as part of feature implementation)
+- Previous version: 1.3.0 (Mixture Lab)
 
 ## Changes Detected
 
-### New Source Files
-- src/core/mixture.ts (117 lines) — solvent mixture calculations
-- src/renderer/components/MixtureLab.tsx (193 lines) — mixture creation UI
+### New Source Files (9 files)
+- src/core/dispersibility.ts — Nanoparticle dispersibility classification (5-level)
+- src/core/solvent-finder.ts — Solvent screening + physical property constraint filters
+- src/db/seed-nano-particles.ts — 18 nanoparticle seed data (literature-sourced HSP values)
+- src/renderer/components/NanoDispersionView.tsx — Main UI for nanoparticle screening
+- src/renderer/components/DispersibilityBadge.tsx — Visual dispersibility level badge
+- src/renderer/hooks/useNanoParticles.ts — Nanoparticle data fetch hook
+- src/renderer/hooks/useNanoDispersion.ts — Nanoparticle evaluation hook
 
-### New Test Files
-- tests/unit/mixture.test.ts (177 lines) — 25 mixture calculation tests
-- tests/integration/mixture-integration.test.ts (100 lines) — 3 DB integration tests
-- tests/renderer/components/MixtureLab.test.tsx (156 lines) — 8 component tests
+### New Test Files (2 files)
+- tests/unit/dispersibility.test.ts — 14 tests
+- tests/unit/solvent-finder.test.ts — 11 tests
 
-### Modified Source Files
-- src/core/types.ts — +MixtureComponent, +MixtureSolventResult types
-- src/core/validation.ts — +validateMixtureInput()
-- src/main/ipc-handlers.ts — +solvents:createMixture handler
-- src/main/preload.ts — +createMixtureSolvent API
-- src/preload.d.ts — +createMixtureSolvent type
-- src/renderer/App.tsx — +'mixture' tab
+### Modified Source Files (11 files)
+- src/core/types.ts — +8 types: NanoParticle, DispersibilityLevel, DispersibilityThresholds, etc.
+- src/core/validation.ts — +validateNanoParticleInput(), +validateDispersibilityThresholds()
+- src/core/report.ts — +formatNanoDispersionCsv()
+- src/db/schema.ts — +nano_particles table
+- src/db/repository.ts — +NanoParticleRepository interface, +CreateNanoParticleDto
+- src/db/sqlite-repository.ts — +SqliteNanoParticleRepository, +rowToNanoParticle()
+- src/main/main.ts — +NanoParticleRepo init, +seedNanoParticles()
+- src/main/ipc-handlers.ts — +12 IPC handlers (nano CRUD + dispersion eval + thresholds)
+- src/main/preload.ts — +13 API methods
+- src/preload.d.ts — +type definitions for nano API
+- src/renderer/App.tsx — +'nanoDispersion' tab
 
-### Modified Test Files
-- tests/unit/validation.test.ts — +6 mixture validation tests
-- tests/renderer/factories.ts — +buildMixtureComponent
-- tests/renderer/setup.ts — +createMixtureSolvent mock
-- tests/renderer/components/ReportView.test.tsx — flaky test fix
+### Modified Test Files (1 file)
+- tests/unit/validation.test.ts — +15 nanoparticle validation tests
+
+## Architecture Changes
+- New evaluation pipeline: Nanoparticle Dispersion Screening (parallel to Polymer Evaluation)
+- New database table: nano_particles (18 seed rows)
+- New repository: NanoParticleRepository (7 methods)
+- New core modules: dispersibility.ts, solvent-finder.ts
+- IPC handlers: 28 → 40+
+- Preload API: 18 → 30+ methods
+- UI tabs: 4 → 5
+- Unit tests: 127 → 167 (+40 new tests, all passing)
 
 ## Codemap Updates Applied
 
-| File | Changes |
-|------|---------|
-| architecture.md | +mixture.ts, +MixtureLab, +tab, +IPC |
-| frontend.md | +MixtureLab component detail, +IPC method, +tab |
-| INDEX.md | +mixture types, +critical path, +file stats, +IPC |
-| README.md | version 1.3.0 |
+| File | Status | Changes |
+|------|--------|---------|
+| INDEX.md | Rewritten | +nano types, +nano pipeline, +file stats, +IPC contract |
+| architecture.md | Rewritten | +dual pipeline diagram, +nano files in tree, +component hierarchy |
+| data.md | Rewritten | +nano_particles table, +nano repo, +seed data details |
+| frontend.md | Rewritten | +NanoDispersionView, +DispersibilityBadge, +hooks, +IPC methods |
+| dependencies.md | Unchanged | No new external packages |
 
 ## Current Stats
-- Source: 27 files, 2764 lines TypeScript
-- Tests: 23 files, 3198 lines, 259 tests (98.74% coverage)
-- Coverage: core 100%, renderer 98.2%
+- Source: 36 files TypeScript
+- Tests: 25+ files, 167+ unit tests passing
+- New dependencies: none (zero new packages)

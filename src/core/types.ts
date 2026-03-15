@@ -97,3 +97,70 @@ export interface GroupEvaluationResult {
   evaluatedAt: Date;
   thresholdsUsed: RiskThresholds;
 }
+
+// ─── ナノ粒子分散系 ───────────────────────────
+
+/** ナノ粒子カテゴリ */
+export type NanoParticleCategory =
+  | 'carbon'       // カーボン系（CNT, グラフェン, フラーレン）
+  | 'metal'        // 金属（Ag, Au, Cu）
+  | 'metal_oxide'  // 金属酸化物（TiO₂, ZnO, SiO₂, ZrO₂）
+  | 'quantum_dot'  // 量子ドット（CdSe, ZnS, InP）
+  | 'polymer'      // 高分子ナノ粒子
+  | 'other';       // その他
+
+/** ナノ粒子 */
+export interface NanoParticle {
+  id: number;
+  name: string;
+  nameEn: string | null;
+  category: NanoParticleCategory;
+  coreMaterial: string;          // 母材（例: TiO₂, Ag, SWCNT）
+  surfaceLigand: string | null;  // 表面修飾剤（例: オレイルアミン, PVP）
+  hsp: HSPValues;                // 表面HSP（リガンド込み）
+  r0: number;                    // 相互作用半径
+  particleSize: number | null;   // 粒子径 (nm)
+  notes: string | null;
+}
+
+/** 分散性レベル (1=最良, 5=不可) — RED値が小さいほど良好 */
+export enum DispersibilityLevel {
+  Excellent = 1, // 優秀（HSP球の深部）
+  Good = 2,      // 良好
+  Fair = 3,      // 可能（HSP球の境界付近）
+  Poor = 4,      // 不良（球外だが近い）
+  Bad = 5,       // 不可（明確に球外）
+}
+
+/** 分散性閾値設定 */
+export interface DispersibilityThresholds {
+  excellentMax: number; // default: 0.5
+  goodMax: number;      // default: 0.8
+  fairMax: number;      // default: 1.0
+  poorMax: number;      // default: 1.5
+}
+
+/** 個別溶媒の分散性評価結果 */
+export interface SolventDispersibilityResult {
+  nanoParticle: NanoParticle;
+  solvent: Solvent;
+  ra: number;
+  red: number;
+  dispersibility: DispersibilityLevel;
+}
+
+/** ナノ粒子に対する全溶媒スクリーニング結果 */
+export interface NanoDispersionEvaluationResult {
+  nanoParticle: NanoParticle;
+  results: SolventDispersibilityResult[];
+  evaluatedAt: Date;
+  thresholdsUsed: DispersibilityThresholds;
+}
+
+/** 溶媒物性制約（スクリーニング用フィルタ） */
+export interface SolventConstraints {
+  maxBoilingPoint?: number;
+  minBoilingPoint?: number;
+  maxViscosity?: number;
+  maxSurfaceTension?: number;
+}
