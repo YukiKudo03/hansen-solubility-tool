@@ -98,7 +98,10 @@ src/
 │               5 repos: Parts, Solvent, NanoParticle, Drug, Settings
 │               6 seed files: solvents, nano-particles, drugs, coatings, plasticizers, carriers
 ├── main/       Electron main process (lifecycle, IPC, 70+ handlers)
-└── renderer/   React UI (12 tabs, 24 components, 13 hooks)
+└── renderer/   MD3 responsive UI (960×680)
+                navigation.ts — 5カテゴリ・12タブ定義
+                27 components (9 Views, 8 Badges, 3 Nav, 4 Selectors, etc.)
+                14 hooks (incl. useMediaQuery for responsive breakpoints)
 ```
 
 See `docs/CODEMAPS/INDEX.md` for detailed architecture.
@@ -106,7 +109,7 @@ See `docs/CODEMAPS/INDEX.md` for detailed architecture.
 ## Code Style
 
 - **Language:** TypeScript (strict mode)
-- **Styling:** Tailwind CSS utility classes only
+- **Styling:** Tailwind CSS + MD3 design tokens (`tailwind.config.ts` で定義)
 - **No linter configured** — follow existing patterns
 - **Naming:** camelCase for TS, snake_case for DB columns
 

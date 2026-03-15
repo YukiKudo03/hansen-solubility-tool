@@ -146,7 +146,7 @@ npm run test:e2e          # E2E tests (requires app build first)
 ### Pre-release Checklist
 
 - [ ] `npm run typecheck` passes
-- [ ] `npm test` — all tests green (349+ tests: unit 349 + renderer 85)
+- [ ] `npm test` — all tests green (351+ unit tests, core 95%+ coverage)
 - [ ] `npm run test:e2e` — E2E tests pass
 - [ ] `npm run package` — installer builds successfully
 - [ ] Install and run the packaged app
