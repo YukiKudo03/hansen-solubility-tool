@@ -1,0 +1,36 @@
+appId: com.hansen-solubility.tool
+productName: Hansen溶解度パラメータ評価ツール
+copyright: Copyright © 2026
+
+directories:
+  output: out
+  buildResources: build
+
+files:
+  - dist/**/*
+  - node_modules/**/*
+  - package.json
+
+extraMetadata:
+  main: dist/main/main.js
+
+win:
+  target:
+    - target: nsis
+      arch:
+        - x64
+  icon: build/icon.ico
+
+nsis:
+  oneClick: false
+  perMachine: false
+  allowToChangeInstallationDirectory: true
+  installerLanguages:
+    - ja
+  language: 1041
+
+asar: true
+
+asarUnpack:
+  - "**/*.node"
+  - "**/better-sqlite3/**"

@@ -15,7 +15,10 @@
       "Bash(git init:*)",
       "Bash(git commit:*)",
       "Bash(git add:*)",
-      "Bash(npx electron:*)"
+      "Bash(npx electron:*)",
+      "Bash(npx tsc:*)",
+      "Bash(npx vite:*)",
+      "Bash(npm uninstall:*)"
     ]
   }
 }
