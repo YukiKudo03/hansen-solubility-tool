@@ -10,7 +10,7 @@ A production-grade Electron desktop application for HSP-based material compatibi
 - **[architecture.md](./architecture.md)** — System diagram, 9 evaluation pipelines, module boundaries
 
 ### Implementation Details
-- **[frontend.md](./frontend.md)** — React components (12 tabs), hooks (13), IPC interface (70+ methods)
+- **[frontend.md](./frontend.md)** — MD3 responsive layout (Drawer/Rail/BottomNav), 5カテゴリ, hooks (14), IPC (70+ methods)
 - **[data.md](./data.md)** — SQLite schema (6 tables), repositories (5), seed data (85 solvents + 18 nanoparticles + 15 drugs + 12 coatings + 10 plasticizers + 11 carriers)
 - **[dependencies.md](./dependencies.md)** — External packages, build tools, Docker support
 
@@ -82,9 +82,10 @@ Data access layer (SQLite via better-sqlite3)
 - `preload.ts` — Context-isolated bridge (70+ methods)
 
 ### src/renderer/ (37 files)
-- `App.tsx` — Tab router (12 tabs)
-- `components/` — 24 components (9 Views, 7 Badges, 4 Selectors, 3 Shared, 1 ErrorBoundary)
-- `hooks/` — 13 hooks
+- `App.tsx` — MD3 responsive layout (NavigationDrawer/Rail/BottomNav)
+- `navigation.ts` — 5カテゴリ・12タブ定義
+- `components/` — 27 components (9 Views, 8 Badges, 3 Nav, 4 Selectors, 2 Shared, 1 ErrorBoundary)
+- `hooks/` — 14 hooks (+ useMediaQuery)
 
 ### tests/ (16 unit + 15 renderer + integration + e2e)
 - Unit: 349 tests covering all core logic
@@ -108,7 +109,7 @@ Data access layer (SQLite via better-sqlite3)
 | **Core** | 16 | HSP, 9 classifiers, report, validation, mixture, blend-optimizer |
 | **Database** | 9 | Schema, repositories, 6 seed files |
 | **Main Process** | 3 | Electron lifecycle, IPC (70+), preload |
-| **Renderer** | 37 | React components (24) + hooks (13) + entry |
+| **Renderer** | 40 | React components (27) + hooks (14) + navigation.ts + entry |
 | **Tests** | 31+ | Unit (349) + Renderer + Integration + E2E |
 
 ---
