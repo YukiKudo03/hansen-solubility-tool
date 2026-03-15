@@ -3,5 +3,21 @@ dist
 out
 coverage
 .git
+.gitignore
 data/*.db
 *.exe
+
+# テスト結果・一時ファイル
+test-results
+playwright-report
+
+# Docker関連（再帰ビルド防止）
+Dockerfile*
+docker-compose*.yml
+.dockerignore
+
+# ドキュメント・設定（ビルド不要）
+*.md
+.reports
+.claude
+.vscode
