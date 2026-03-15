@@ -65,6 +65,46 @@ export function createMockApi(): { [K in keyof ElectronAPI]: ReturnType<typeof v
     // 濡れ性閾値
     getWettabilityThresholds: vi.fn().mockResolvedValue({ superHydrophilicMax: 10, hydrophilicMax: 30, wettableMax: 60, moderateMax: 90, hydrophobicMax: 150 }),
     setWettabilityThresholds: vi.fn().mockResolvedValue(undefined),
+
+    // 膨潤度予測
+    evaluateSwelling: vi.fn().mockResolvedValue(null),
+    getSwellingThresholds: vi.fn().mockResolvedValue({ minimalMax: 0.5, slightMax: 1.0, moderateMax: 2.0, severeMax: 5.0 }),
+    setSwellingThresholds: vi.fn().mockResolvedValue(undefined),
+
+    // 薬物
+    getAllDrugs: vi.fn().mockResolvedValue([]),
+    getDrugById: vi.fn().mockResolvedValue(null),
+    getDrugsByCategory: vi.fn().mockResolvedValue([]),
+    searchDrugs: vi.fn().mockResolvedValue([]),
+    createDrug: vi.fn().mockResolvedValue({ id: 1, name: '', nameEn: null, casNumber: null, category: 'other', hsp: { deltaD: 0, deltaP: 0, deltaH: 0 }, r0: 1, molarVolume: null, notes: null }),
+    updateDrug: vi.fn().mockResolvedValue(null),
+    deleteDrug: vi.fn().mockResolvedValue(true),
+
+    // 薬物溶解性評価
+    evaluateDrugSolubility: vi.fn().mockResolvedValue(null),
+    screenDrugSolvents: vi.fn().mockResolvedValue(null),
+    getDrugSolubilityThresholds: vi.fn().mockResolvedValue({ excellentMax: 0.5, goodMax: 1.0, fairMax: 2.0, poorMax: 4.0 }),
+    setDrugSolubilityThresholds: vi.fn().mockResolvedValue(undefined),
+
+    // ブレンド最適化
+    optimizeBlend: vi.fn().mockResolvedValue(null),
+
+    // 耐薬品性評価
+    evaluateChemicalResistance: vi.fn().mockResolvedValue(null),
+    getChemicalResistanceThresholds: vi.fn().mockResolvedValue({ excellentMax: 0.5, goodMax: 1.0, fairMax: 2.0, poorMax: 4.0 }),
+    setChemicalResistanceThresholds: vi.fn().mockResolvedValue(undefined),
+
+    // 可塑剤選定
+    getPlasticizers: vi.fn().mockResolvedValue([]),
+    screenPlasticizers: vi.fn().mockResolvedValue(null),
+    getPlasticizerThresholds: vi.fn().mockResolvedValue({ excellentMax: 0.5, goodMax: 1.0, fairMax: 2.0, poorMax: 4.0 }),
+    setPlasticizerThresholds: vi.fn().mockResolvedValue(undefined),
+
+    // キャリア選定（DDS）
+    evaluateCarrier: vi.fn().mockResolvedValue(null),
+    screenCarriers: vi.fn().mockResolvedValue(null),
+    getCarrierThresholds: vi.fn().mockResolvedValue({ excellentMax: 0.5, goodMax: 1.0, fairMax: 2.0, poorMax: 4.0 }),
+    setCarrierThresholds: vi.fn().mockResolvedValue(undefined),
   };
 }
 
