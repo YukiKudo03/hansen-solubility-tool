@@ -2,12 +2,15 @@
  * CSV レポート生成
  * BOM付きUTF-8でExcelでの文字化けを防止
  */
-import type { GroupEvaluationResult, NanoDispersionEvaluationResult, GroupContactAngleResult, GroupSwellingResult, DrugSolubilityScreeningResult, BlendOptimizationResult } from './types';
+import type { GroupEvaluationResult, NanoDispersionEvaluationResult, GroupContactAngleResult, GroupSwellingResult, DrugSolubilityScreeningResult, BlendOptimizationResult, GroupChemicalResistanceResult, PlasticizerEvaluationResult, CarrierEvaluationResult } from './types';
 import { getRiskLevelInfo } from './risk';
 import { getDispersibilityLevelInfo } from './dispersibility';
 import { getWettabilityLevelInfo } from './wettability';
 import { getSwellingLevelInfo } from './swelling';
 import { getDrugSolubilityLevelInfo } from './drug-solubility';
+import { getChemicalResistanceLevelInfo } from './chemical-resistance';
+import { getPlasticizerCompatibilityLevelInfo } from './plasticizer';
+import { getCarrierCompatibilityLevelInfo } from './carrier-selection';
 
 /** CSVフィールドをエスケープする（カンマ・引用符・改行を含む場合） */
 function escapeCsvField(value: string): string {
@@ -287,6 +290,150 @@ export function formatDrugSolubilityCsv(result: DrugSolubilityScreeningResult): 
       round3(r.ra),
       round3(r.red),
       `Level ${r.solubility}`,
+      escapeCsvField(`${info.label}（${info.description}）`),
+      result.evaluatedAt.toISOString(),
+    ].join(',');
+  });
+
+  return BOM + [headers.join(','), ...rows].join('\r\n') + '\r\n';
+}
+
+/**
+ * 耐薬品性予測結果をCSV文字列に変換する
+ * @returns BOM付きUTF-8 CSV文字列
+ */
+export function formatChemicalResistanceCsv(result: GroupChemicalResistanceResult): string {
+  const BOM = '\uFEFF';
+  const headers = [
+    '部品グループ',
+    '塗膜名',
+    '材料種別',
+    'δD',
+    'δP',
+    'δH',
+    'R₀',
+    '溶媒名',
+    '溶媒 δD',
+    '溶媒 δP',
+    '溶媒 δH',
+    'Ra',
+    'RED',
+    '耐薬品性レベル',
+    '耐薬品性判定',
+    '評価日時',
+  ];
+
+  const rows = result.results.map((r) => {
+    const info = getChemicalResistanceLevelInfo(r.resistanceLevel);
+    return [
+      escapeCsvField(result.partsGroup.name),
+      escapeCsvField(r.part.name),
+      escapeCsvField(r.part.materialType ?? ''),
+      round3(r.part.hsp.deltaD),
+      round3(r.part.hsp.deltaP),
+      round3(r.part.hsp.deltaH),
+      round3(r.part.r0),
+      escapeCsvField(r.solvent.name),
+      round3(r.solvent.hsp.deltaD),
+      round3(r.solvent.hsp.deltaP),
+      round3(r.solvent.hsp.deltaH),
+      round3(r.ra),
+      round3(r.red),
+      `Level ${r.resistanceLevel}`,
+      escapeCsvField(`${info.label}（${info.description}）`),
+      result.evaluatedAt.toISOString(),
+    ].join(',');
+  });
+
+  return BOM + [headers.join(','), ...rows].join('\r\n') + '\r\n';
+}
+
+/**
+ * 可塑剤スクリーニング結果をCSV文字列に変換する
+ * @returns BOM付きUTF-8 CSV文字列
+ */
+export function formatPlasticizerCsv(result: PlasticizerEvaluationResult): string {
+  const BOM = '\uFEFF';
+  const headers = [
+    'ポリマー名',
+    'ポリマー δD',
+    'ポリマー δP',
+    'ポリマー δH',
+    'ポリマー R₀',
+    '可塑剤名',
+    '可塑剤 δD',
+    '可塑剤 δP',
+    '可塑剤 δH',
+    'Ra',
+    'RED',
+    '相溶性レベル',
+    '相溶性判定',
+    '評価日時',
+  ];
+
+  const rows = result.results.map((r) => {
+    const info = getPlasticizerCompatibilityLevelInfo(r.compatibility);
+    return [
+      escapeCsvField(r.part.name),
+      round3(r.part.hsp.deltaD),
+      round3(r.part.hsp.deltaP),
+      round3(r.part.hsp.deltaH),
+      round3(r.part.r0),
+      escapeCsvField(r.solvent.name),
+      round3(r.solvent.hsp.deltaD),
+      round3(r.solvent.hsp.deltaP),
+      round3(r.solvent.hsp.deltaH),
+      round3(r.ra),
+      round3(r.red),
+      `Level ${r.compatibility}`,
+      escapeCsvField(`${info.label}（${info.description}）`),
+      result.evaluatedAt.toISOString(),
+    ].join(',');
+  });
+
+  return BOM + [headers.join(','), ...rows].join('\r\n') + '\r\n';
+}
+
+/**
+ * キャリア選定スクリーニング結果をCSV文字列に変換する
+ * @returns BOM付きUTF-8 CSV文字列
+ */
+export function formatCarrierSelectionCsv(result: CarrierEvaluationResult): string {
+  const BOM = '\uFEFF';
+  const headers = [
+    '薬物名',
+    '薬物 δD',
+    '薬物 δP',
+    '薬物 δH',
+    '薬物 R₀',
+    'キャリア名',
+    'キャリア δD',
+    'キャリア δP',
+    'キャリア δH',
+    'キャリア R₀',
+    'Ra',
+    'RED',
+    '適合性レベル',
+    '適合性判定',
+    '評価日時',
+  ];
+
+  const rows = result.results.map((r) => {
+    const info = getCarrierCompatibilityLevelInfo(r.compatibility);
+    return [
+      escapeCsvField(r.drug.name),
+      round3(r.drug.hsp.deltaD),
+      round3(r.drug.hsp.deltaP),
+      round3(r.drug.hsp.deltaH),
+      round3(r.drug.r0),
+      escapeCsvField(r.carrier.name),
+      round3(r.carrier.hsp.deltaD),
+      round3(r.carrier.hsp.deltaP),
+      round3(r.carrier.hsp.deltaH),
+      round3(r.carrier.r0),
+      round3(r.ra),
+      round3(r.red),
+      `Level ${r.compatibility}`,
       escapeCsvField(`${info.label}（${info.description}）`),
       result.evaluatedAt.toISOString(),
     ].join(',');
