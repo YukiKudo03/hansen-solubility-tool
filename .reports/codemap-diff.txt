@@ -1,55 +1,48 @@
-Codemap Update Report — 2026-03-15 (v1.1.0)
+Codemap Update Report — 2026-03-15 (v1.2.0)
 =============================================
 
 ## Summary
-- Change level: ~15% (incremental update, no structural changes)
-- All codemaps updated in place (below 30% threshold)
-- Previous version: 1.0.0 (2026-03-15 initial generation)
+- Change level: ~5% (solvent physical properties addition)
+- All codemaps updated in place (well below 30% threshold)
+- Previous version: 1.1.0
 
 ## Changes Detected
 
-### New Source Files
-- src/core/validation.ts (63 lines) — input validators
-- src/renderer/components/ErrorBoundary.tsx (48 lines) — React error boundary
+### Schema Changes
+- solvents table: +4 columns (boiling_point, viscosity, specific_gravity, surface_tension)
+- New migration function: migrateDatabase() with idempotent ALTER TABLE
 
-### New Test Infrastructure
-- tests/renderer/ (13 files, ~1140 lines) — component + hook tests
-- tests/e2e/ (4 files, 146 lines) — Playwright E2E tests
-- tests/unit/validation.test.ts (148 lines)
-- playwright.config.ts — E2E configuration
+### Modified Source Files
+- src/core/types.ts — Solvent interface +4 fields
+- src/core/validation.ts — +validatePhysicalProperties() function
+- src/core/report.ts — CSV +4 columns
+- src/db/repository.ts — CreateSolventDto +4 fields
+- src/db/schema.ts — +migrateDatabase(), solvents table +4 columns
+- src/db/sqlite-repository.ts — rowToSolvent, INSERT, UPDATE +4 fields
+- src/db/seed-data.ts — all 85 solvents +4 physical property values
+- src/main/main.ts — +migrateDatabase() call
+- src/renderer/components/DatabaseEditor.tsx — +4 form inputs, +4 table columns
+- src/renderer/components/ReportView.tsx — +physical property info cards
 
-### Modified Files
-- src/db/seed-data.ts — added 接着剤 (adhesives) group with 10 HSP entries
-- src/main/ipc-handlers.ts — validation integration (+25 lines)
-- src/main/main.ts — minor lifecycle updates
-- src/renderer/App.tsx — ErrorBoundary integration
-- package.json — added Playwright, testing-library dependencies
-
-### New Dependencies
-- @playwright/test (E2E testing)
-- @testing-library/react, dom, jest-dom, user-event (component testing)
-- happy-dom (lightweight DOM for tests)
-- icon-gen (icon generation)
-
-### Build Assets Added
-- build/icon.ico, build/icon.svg — app icons
+### Test Updates
+- tests/unit/validation.test.ts — +validatePhysicalProperties tests
+- tests/unit/report.test.ts — +physical property CSV tests
+- tests/integration/sqlite-repository.test.ts — +physical property CRUD + migration tests
+- tests/renderer/factories.ts — buildSolvent +4 fields
 
 ## Codemap Updates Applied
 
 | File | Changes |
 |------|---------|
-| architecture.md | +validation.ts in core, +ErrorBoundary, +E2E/renderer test dirs |
-| frontend.md | +ErrorBoundary component documentation |
-| data.md | polymer groups: 6-8 → 7 (added adhesives detail) |
-| dependencies.md | +Playwright, +testing-library, +E2E scripts |
-| INDEX.md | Updated file counts, test stats, version 1.1.0 |
+| data.md | +4 solvents columns, +migration section, +DTO fields |
+| frontend.md | +ReportView physical properties display, +Solvent type fields |
+| INDEX.md | +validation.ts description, +schema.ts migration, +Solvent type |
+| README.md | version bump |
 
 ## Current Stats
-- Source: 25 files, 2200 lines TypeScript
-- Tests: 21 files, 2254 lines (unit + integration + renderer + E2E)
-- Polymer groups: 7 (incl. adhesives with 10 types)
-- Solvents: ~85 seeded
-- IPC handlers: 27+
+- Source: 25 files, 2326 lines TypeScript
+- Tests: 21 files, 217 tests passing
+- Solvents schema: 16 columns (was 12)
 
 ## Staleness Warnings
 - None (all codemaps freshly updated)

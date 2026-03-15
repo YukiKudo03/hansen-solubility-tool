@@ -43,18 +43,20 @@ Pure domain logic (testable, no side effects)
 - `types.ts` — Domain interfaces (HSPValues, Part, PartsGroup, Solvent, RiskLevel)
 - `hsp.ts` — Hansen distance: `calculateRa()`, `calculateRed()`
 - `risk.ts` — Classification: `classifyRisk(red, thresholds)` → RiskLevel 1-5
-- `report.ts` — CSV export: `formatCsv(result)` (BOM-prefixed UTF-8)
+- `report.ts` — CSV export: `formatCsv(result)` (BOM-prefixed UTF-8, incl. physical properties)
+- `validation.ts` — Input validators incl. `validatePhysicalProperties()` for bp/viscosity/sg/st
 
 ### src/db/
 Data access layer (SQLite via better-sqlite3)
 - `schema.ts` — Table definitions: parts_groups, parts, solvents, settings
 - `repository.ts` — Interface definitions (DTOs, method signatures)
 - `sqlite-repository.ts` — Concrete implementations (3 classes: Parts, Solvent, Settings repos)
-- `seed-data.ts` — ~85 solvents + 7 polymer groups incl. adhesives (loaded on first launch)
+- `schema.ts` — Table definitions + `migrateDatabase()` for physical property columns
+- `seed-data.ts` — ~85 solvents (HSP + physical properties) + 7 polymer groups (loaded on first launch)
 
 ### src/main/
 Electron main process (lifecycle, IPC orchestration)
-- `main.ts` — App startup, DB init, window creation, seed data load
+- `main.ts` — App startup, DB init, migration, window creation, seed data load
 - `ipc-handlers.ts` — 27+ IPC handlers: parts CRUD, evaluation, CSV export, settings
 - `preload.ts` — Context-isolated bridge exposing `window.api` to renderer
 
@@ -135,7 +137,7 @@ All types defined in `src/core/types.ts`:
 - `HSPValues` { deltaD, deltaP, deltaH }
 - `Part` { id, groupId, name, materialType, hsp, r0, notes }
 - `PartsGroup` { id, name, description, parts[] }
-- `Solvent` { id, name, nameEn, casNumber, hsp, molarVolume, molWeight, notes }
+- `Solvent` { id, name, nameEn, casNumber, hsp, molarVolume, molWeight, boilingPoint, viscosity, specificGravity, surfaceTension, notes }
 - `GroupEvaluationResult` { partsGroup, solvent, results[], evaluatedAt, thresholdsUsed }
 - `RiskLevel` enum: Dangerous(1), Warning(2), Caution(3), Hold(4), Safe(5)
 
@@ -178,6 +180,6 @@ npm run package
 
 ---
 
-**Last Updated:** 2026-03-15 | **Version:** 1.1.0 | **Status:** Current
+**Last Updated:** 2026-03-15 | **Version:** 1.2.0 | **Status:** Current
 
 For detailed implementation, see individual codemaps. For questions about specific modules, consult the file headers which include JSDoc and TypeScript interfaces.

@@ -25,6 +25,10 @@ function makeSolvent(overrides: Partial<Solvent> = {}): Solvent {
     hsp: { deltaD: 18.0, deltaP: 1.4, deltaH: 2.0 },
     molarVolume: 106.2,
     molWeight: 92.14,
+    boilingPoint: 110.6,
+    viscosity: 0.56,
+    specificGravity: 0.867,
+    surfaceTension: 28.4,
     notes: null,
     ...overrides,
   };
@@ -74,7 +78,7 @@ describe('formatCsv', () => {
     // BOMを除去してヘッダーを検証
     const header = lines[0].replace('\uFEFF', '');
     expect(header).toBe(
-      '部品グループ,部品名,材料種別,部品 δD,部品 δP,部品 δH,部品 R₀,溶媒名,溶媒 δD,溶媒 δP,溶媒 δH,Ra,RED,リスクレベル,リスク判定,評価日時',
+      '部品グループ,部品名,材料種別,部品 δD,部品 δP,部品 δH,部品 R₀,溶媒名,溶媒 δD,溶媒 δP,溶媒 δH,溶媒 沸点(°C),溶媒 粘度(mPa·s),溶媒 比重,溶媒 表面張力(mN/m),Ra,RED,リスクレベル,リスク判定,評価日時',
     );
   });
 
@@ -155,6 +159,32 @@ describe('formatCsv', () => {
     });
     const csv = formatCsv(result);
     expect(csv).toContain('"ポリマー""テスト"""');
+  });
+
+  it('物性値がCSVに含まれる', () => {
+    const csv = formatCsv(makeGroupResult());
+    const lines = csv.split('\r\n');
+    const dataLine = lines[1];
+    expect(dataLine).toContain('110.6');
+    expect(dataLine).toContain('0.56');
+    expect(dataLine).toContain('0.867');
+    expect(dataLine).toContain('28.4');
+  });
+
+  it('物性値がnullの場合は空文字', () => {
+    const solvent = makeSolvent({ boilingPoint: null, viscosity: null, specificGravity: null, surfaceTension: null });
+    const part = makePart();
+    const result = makeGroupResult({
+      results: [{ part, solvent, ra: 3.380, red: 0.638, riskLevel: RiskLevel.Warning }],
+    });
+    const csv = formatCsv(result);
+    const lines = csv.split('\r\n');
+    const fields = lines[1].split(',');
+    // 溶媒δH(index 10) の後に 4つの物性カラム(index 11-14)
+    expect(fields[11]).toBe('');
+    expect(fields[12]).toBe('');
+    expect(fields[13]).toBe('');
+    expect(fields[14]).toBe('');
   });
 
   it('materialTypeがnullの場合は空文字', () => {

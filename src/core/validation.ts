@@ -50,14 +50,40 @@ export function validatePartInput(input: {
     ?? validateR0(input.r0);
 }
 
+export function validatePhysicalProperties(input: {
+  boilingPoint?: number;
+  viscosity?: number;
+  specificGravity?: number;
+  surfaceTension?: number;
+}): string | null {
+  if (input.boilingPoint !== undefined && !Number.isFinite(input.boilingPoint)) {
+    return '沸点は有効な数値を入力してください';
+  }
+  if (input.viscosity !== undefined && (!Number.isFinite(input.viscosity) || input.viscosity < 0)) {
+    return '粘度は0以上の数値を入力してください';
+  }
+  if (input.specificGravity !== undefined && (!Number.isFinite(input.specificGravity) || input.specificGravity <= 0)) {
+    return '比重は正の数値を入力してください';
+  }
+  if (input.surfaceTension !== undefined && (!Number.isFinite(input.surfaceTension) || input.surfaceTension <= 0)) {
+    return '表面張力は正の数値を入力してください';
+  }
+  return null;
+}
+
 export function validateSolventInput(input: {
   name: string;
   deltaD: number;
   deltaP: number;
   deltaH: number;
   casNumber?: string;
+  boilingPoint?: number;
+  viscosity?: number;
+  specificGravity?: number;
+  surfaceTension?: number;
 }): string | null {
   return validateName(input.name)
     ?? validateHSPValues(input.deltaD, input.deltaP, input.deltaH)
-    ?? validateCasNumber(input.casNumber);
+    ?? validateCasNumber(input.casNumber)
+    ?? validatePhysicalProperties(input);
 }

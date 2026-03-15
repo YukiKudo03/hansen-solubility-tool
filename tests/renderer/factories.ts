@@ -33,6 +33,10 @@ export function buildSolvent(overrides: Partial<Solvent> = {}): Solvent {
     hsp: { deltaD: 18.0, deltaP: 1.4, deltaH: 2.0 },
     molarVolume: 106.2,
     molWeight: 92.14,
+    boilingPoint: 110.6,
+    viscosity: 0.56,
+    specificGravity: 0.867,
+    surfaceTension: 28.4,
     notes: null,
     ...overrides,
   };

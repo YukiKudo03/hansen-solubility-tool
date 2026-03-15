@@ -44,6 +44,10 @@ function rowToSolvent(row: Record<string, unknown>): Solvent {
     },
     molarVolume: (row.molar_volume as number) ?? null,
     molWeight: (row.mol_weight as number) ?? null,
+    boilingPoint: (row.boiling_point as number) ?? null,
+    viscosity: (row.viscosity as number) ?? null,
+    specificGravity: (row.specific_gravity as number) ?? null,
+    surfaceTension: (row.surface_tension as number) ?? null,
     notes: (row.notes as string) ?? null,
   };
 }
@@ -159,7 +163,7 @@ export class SqliteSolventRepository implements SolventRepository {
   createSolvent(dto: CreateSolventDto): Solvent {
     const result = this.db
       .prepare(
-        'INSERT INTO solvents (name, name_en, cas_number, delta_d, delta_p, delta_h, molar_volume, mol_weight, notes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
+        'INSERT INTO solvents (name, name_en, cas_number, delta_d, delta_p, delta_h, molar_volume, mol_weight, boiling_point, viscosity, specific_gravity, surface_tension, notes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
       )
       .run(
         dto.name,
@@ -170,6 +174,10 @@ export class SqliteSolventRepository implements SolventRepository {
         dto.deltaH,
         dto.molarVolume ?? null,
         dto.molWeight ?? null,
+        dto.boilingPoint ?? null,
+        dto.viscosity ?? null,
+        dto.specificGravity ?? null,
+        dto.surfaceTension ?? null,
         dto.notes ?? null,
       );
     const row = this.db.prepare('SELECT * FROM solvents WHERE id = ?').get(Number(result.lastInsertRowid)) as Record<string, unknown>;
@@ -181,7 +189,7 @@ export class SqliteSolventRepository implements SolventRepository {
     if (!existing) return null;
     this.db
       .prepare(
-        "UPDATE solvents SET name = ?, name_en = ?, cas_number = ?, delta_d = ?, delta_p = ?, delta_h = ?, molar_volume = ?, mol_weight = ?, notes = ?, updated_at = datetime('now') WHERE id = ?",
+        "UPDATE solvents SET name = ?, name_en = ?, cas_number = ?, delta_d = ?, delta_p = ?, delta_h = ?, molar_volume = ?, mol_weight = ?, boiling_point = ?, viscosity = ?, specific_gravity = ?, surface_tension = ?, notes = ?, updated_at = datetime('now') WHERE id = ?",
       )
       .run(
         dto.name ?? existing.name,
@@ -192,6 +200,10 @@ export class SqliteSolventRepository implements SolventRepository {
         dto.deltaH ?? existing.delta_h,
         dto.molarVolume ?? existing.molar_volume,
         dto.molWeight ?? existing.mol_weight,
+        dto.boilingPoint ?? existing.boiling_point,
+        dto.viscosity ?? existing.viscosity,
+        dto.specificGravity ?? existing.specific_gravity,
+        dto.surfaceTension ?? existing.surface_tension,
         dto.notes ?? existing.notes,
         id,
       );

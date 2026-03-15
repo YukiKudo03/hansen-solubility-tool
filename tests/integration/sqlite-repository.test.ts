@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import Database from 'better-sqlite3';
-import { initializeDatabase } from '../../src/db/schema';
+import { initializeDatabase, migrateDatabase } from '../../src/db/schema';
 import {
   SqlitePartsRepository,
   SqliteSolventRepository,
@@ -265,6 +265,78 @@ describe('SqliteSolventRepository', () => {
 
   it('存在しない溶媒の削除でfalse', () => {
     expect(solventRepo.deleteSolvent(999)).toBe(false);
+  });
+
+  it('物性値を含む溶媒を作成して取得', () => {
+    const solvent = solventRepo.createSolvent({
+      name: 'トルエン',
+      deltaD: 18.0,
+      deltaP: 1.4,
+      deltaH: 2.0,
+      boilingPoint: 110.6,
+      viscosity: 0.56,
+      specificGravity: 0.867,
+      surfaceTension: 28.4,
+    });
+    expect(solvent.boilingPoint).toBe(110.6);
+    expect(solvent.viscosity).toBe(0.56);
+    expect(solvent.specificGravity).toBe(0.867);
+    expect(solvent.surfaceTension).toBe(28.4);
+  });
+
+  it('物性値がnullの溶媒を作成', () => {
+    const solvent = solventRepo.createSolvent({
+      name: 'テスト',
+      deltaD: 1,
+      deltaP: 1,
+      deltaH: 1,
+    });
+    expect(solvent.boilingPoint).toBeNull();
+    expect(solvent.viscosity).toBeNull();
+    expect(solvent.specificGravity).toBeNull();
+    expect(solvent.surfaceTension).toBeNull();
+  });
+
+  it('物性値のみ更新', () => {
+    solventRepo.createSolvent({ name: 'テスト', deltaD: 1, deltaP: 1, deltaH: 1 });
+    const updated = solventRepo.updateSolvent(1, {
+      boilingPoint: 100,
+      viscosity: 0.89,
+      specificGravity: 0.997,
+      surfaceTension: 72.0,
+    });
+    expect(updated!.boilingPoint).toBe(100);
+    expect(updated!.viscosity).toBe(0.89);
+    expect(updated!.specificGravity).toBe(0.997);
+    expect(updated!.surfaceTension).toBe(72.0);
+    expect(updated!.name).toBe('テスト'); // 他のフィールドは保持
+  });
+
+  it('沸点の負値を保存できる（ジエチルエーテル等）', () => {
+    const solvent = solventRepo.createSolvent({
+      name: 'ジエチルエーテル',
+      deltaD: 14.5,
+      deltaP: 2.9,
+      deltaH: 5.1,
+      boilingPoint: -34.6,
+    });
+    expect(solvent.boilingPoint).toBe(-34.6);
+  });
+});
+
+describe('migrateDatabase', () => {
+  it('マイグレーションは冪等（2回実行してもエラーなし）', () => {
+    migrateDatabase(db);
+    migrateDatabase(db);
+    // エラーが出なければ成功
+    const solvent = solventRepo.createSolvent({
+      name: 'テスト',
+      deltaD: 1,
+      deltaP: 1,
+      deltaH: 1,
+      boilingPoint: 100,
+    });
+    expect(solvent.boilingPoint).toBe(100);
   });
 });
 

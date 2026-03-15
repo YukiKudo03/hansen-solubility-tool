@@ -33,6 +33,10 @@ export default function DatabaseEditor() {
   const [newSolventDh, setNewSolventDh] = useState('');
   const [newSolventMv, setNewSolventMv] = useState('');
   const [newSolventMw, setNewSolventMw] = useState('');
+  const [newSolventBp, setNewSolventBp] = useState('');
+  const [newSolventVisc, setNewSolventVisc] = useState('');
+  const [newSolventSg, setNewSolventSg] = useState('');
+  const [newSolventSt, setNewSolventSt] = useState('');
 
   const loadGroups = useCallback(async () => {
     setGroups(await window.api.getAllGroups());
@@ -102,6 +106,10 @@ export default function DatabaseEditor() {
       deltaH: parseFloat(newSolventDh),
       molarVolume: newSolventMv ? parseFloat(newSolventMv) : undefined,
       molWeight: newSolventMw ? parseFloat(newSolventMw) : undefined,
+      boilingPoint: newSolventBp ? parseFloat(newSolventBp) : undefined,
+      viscosity: newSolventVisc ? parseFloat(newSolventVisc) : undefined,
+      specificGravity: newSolventSg ? parseFloat(newSolventSg) : undefined,
+      surfaceTension: newSolventSt ? parseFloat(newSolventSt) : undefined,
     });
     setAddingSolvent(false);
     setNewSolventName('');
@@ -112,6 +120,10 @@ export default function DatabaseEditor() {
     setNewSolventDh('');
     setNewSolventMv('');
     setNewSolventMw('');
+    setNewSolventBp('');
+    setNewSolventVisc('');
+    setNewSolventSg('');
+    setNewSolventSt('');
     await loadSolvents();
   };
 
@@ -296,6 +308,10 @@ export default function DatabaseEditor() {
                   <input value={newSolventDh} onChange={(e) => setNewSolventDh(e.target.value)} placeholder="δH *" type="number" step="0.1" className={inputClass} />
                   <input value={newSolventMv} onChange={(e) => setNewSolventMv(e.target.value)} placeholder="モル体積" type="number" step="0.1" className={inputClass} />
                   <input value={newSolventMw} onChange={(e) => setNewSolventMw(e.target.value)} placeholder="分子量" type="number" step="0.01" className={inputClass} />
+                  <input value={newSolventBp} onChange={(e) => setNewSolventBp(e.target.value)} placeholder="沸点(°C)" type="number" step="0.1" className={inputClass} />
+                  <input value={newSolventVisc} onChange={(e) => setNewSolventVisc(e.target.value)} placeholder="粘度(mPa·s)" type="number" step="0.01" className={inputClass} />
+                  <input value={newSolventSg} onChange={(e) => setNewSolventSg(e.target.value)} placeholder="比重" type="number" step="0.001" className={inputClass} />
+                  <input value={newSolventSt} onChange={(e) => setNewSolventSt(e.target.value)} placeholder="表面張力(mN/m)" type="number" step="0.1" className={inputClass} />
                 </div>
                 <button onClick={handleAddSolvent} className="px-3 py-1 bg-green-600 text-white rounded text-sm">
                   保存
@@ -316,6 +332,10 @@ export default function DatabaseEditor() {
                     <th className="text-right py-2">δH</th>
                     <th className="text-right py-2">Vm</th>
                     <th className="text-right py-2">Mw</th>
+                    <th className="text-right py-2">沸点</th>
+                    <th className="text-right py-2">粘度</th>
+                    <th className="text-right py-2">比重</th>
+                    <th className="text-right py-2">表面張力</th>
                     <th className="text-right py-2">操作</th>
                   </tr>
                 </thead>
@@ -330,6 +350,10 @@ export default function DatabaseEditor() {
                       <td className="py-1.5 text-right">{s.hsp.deltaH.toFixed(1)}</td>
                       <td className="py-1.5 text-right">{s.molarVolume?.toFixed(1) ?? '-'}</td>
                       <td className="py-1.5 text-right">{s.molWeight?.toFixed(2) ?? '-'}</td>
+                      <td className="py-1.5 text-right">{s.boilingPoint?.toFixed(1) ?? '-'}</td>
+                      <td className="py-1.5 text-right">{s.viscosity?.toFixed(2) ?? '-'}</td>
+                      <td className="py-1.5 text-right">{s.specificGravity?.toFixed(3) ?? '-'}</td>
+                      <td className="py-1.5 text-right">{s.surfaceTension?.toFixed(1) ?? '-'}</td>
                       <td className="py-1.5 text-right">
                         <button
                           onClick={() => handleDeleteSolvent(s.id)}

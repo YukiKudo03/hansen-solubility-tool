@@ -35,8 +35,12 @@ export interface Solvent {
   nameEn: string | null;
   casNumber: string | null;
   hsp: HSPValues;
-  molarVolume: number | null; // cm³/mol
-  molWeight: number | null;   // g/mol
+  molarVolume: number | null;    // cm³/mol
+  molWeight: number | null;      // g/mol
+  boilingPoint: number | null;   // 沸点 (°C)
+  viscosity: number | null;      // 粘度 (mPa·s, 25°C)
+  specificGravity: number | null; // 比重 (25°C, 水=1)
+  surfaceTension: number | null; // 表面張力 (mN/m, 25°C)
   notes: string | null;
 }
 
