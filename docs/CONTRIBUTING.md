@@ -74,7 +74,7 @@ npm run test:e2e         # Playwright E2E (requires built app)
 
 ### Writing Tests
 
-- **Unit tests** go in `tests/unit/` — test pure functions in `src/core/` (hsp, risk, dispersibility, wettability, contact-angle, solvent-finder, report, validation, mixture)
+- **Unit tests** go in `tests/unit/` — test pure functions in `src/core/` (hsp, risk, dispersibility, wettability, contact-angle, blend-optimizer, swelling, drug-solubility, chemical-resistance, plasticizer, carrier-selection, solvent-finder, report, validation, mixture)
 - **Integration tests** go in `tests/integration/` — test SQLite repositories
 - **Component tests** go in `tests/renderer/` — use `@testing-library/react`
 - **E2E tests** go in `tests/e2e/` — use Playwright with Electron
@@ -90,13 +90,15 @@ Use factories from `tests/renderer/factories.ts` for consistent test data.
 ```
 src/
 ├── core/       Pure domain logic (no I/O, 100% testable)
-│               hsp.ts, risk.ts, dispersibility.ts, wettability.ts,
-│               contact-angle.ts, solvent-finder.ts, report.ts,
-│               validation.ts, mixture.ts, types.ts
+│               16 modules: hsp, risk, dispersibility, wettability,
+│               contact-angle, blend-optimizer, swelling, drug-solubility,
+│               chemical-resistance, plasticizer, carrier-selection,
+│               solvent-finder, report, validation, mixture, types
 ├── db/         SQLite data access layer (repository pattern)
-│               4 repos: Parts, Solvent, NanoParticle, Settings
-├── main/       Electron main process (lifecycle, IPC, 45+ handlers)
-└── renderer/   React UI (6 tabs, 13 components, 6 hooks)
+│               5 repos: Parts, Solvent, NanoParticle, Drug, Settings
+│               6 seed files: solvents, nano-particles, drugs, coatings, plasticizers, carriers
+├── main/       Electron main process (lifecycle, IPC, 70+ handlers)
+└── renderer/   React UI (12 tabs, 24 components, 13 hooks)
 ```
 
 See `docs/CODEMAPS/INDEX.md` for detailed architecture.

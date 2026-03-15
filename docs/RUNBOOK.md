@@ -45,12 +45,16 @@ npm run package            # Build + create Windows installer
 
 On first launch:
 1. SQLite database created at user data path
-2. Schema tables created (`parts_groups`, `parts`, `solvents`, `nano_particles`, `settings`)
+2. Schema tables created (`parts_groups`, `parts`, `solvents`, `nano_particles`, `drugs`, `settings`)
 3. Migration run (adds physical property columns if upgrading from older version)
 4. Seed data loaded:
    - ~85 solvents with physical properties
    - 7 polymer groups (~60 parts)
    - 18 nanoparticles (CNT, graphene, Ag NP, TiO₂, ZnO, etc.)
+   - 15 drugs (アセトアミノフェン, イブプロフェン, etc.)
+   - 12 coating materials (「コーティング材料」group)
+   - 10 plasticizers (Solvent with [可塑剤] tag)
+   - 11 DDS carriers (「DDSキャリア」group)
 
 ### Backup
 
@@ -142,13 +146,19 @@ npm run test:e2e          # E2E tests (requires app build first)
 ### Pre-release Checklist
 
 - [ ] `npm run typecheck` passes
-- [ ] `npm test` — all tests green (303+ tests: unit 218 + renderer 85)
+- [ ] `npm test` — all tests green (349+ tests: unit 349 + renderer 85)
 - [ ] `npm run test:e2e` — E2E tests pass
 - [ ] `npm run package` — installer builds successfully
 - [ ] Install and run the packaged app
 - [ ] Verify polymer evaluation workflow (select group + solvent → evaluate → export CSV)
 - [ ] Verify nanoparticle dispersion screening (select particle → screen all solvents → CSV export)
-- [ ] Verify contact angle estimation (group mode: select group + solvent → estimate, screening mode: select part → screen all solvents)
-- [ ] Verify database editor (add/edit/delete operations)
+- [ ] Verify contact angle estimation (group mode + screening mode)
+- [ ] Verify solvent blend optimization (target HSP + candidate solvents → ranking)
+- [ ] Verify swelling prediction (group + solvent → swelling levels + elastomer warning)
+- [ ] Verify drug solubility (drug + solvent/screening → solubility levels)
+- [ ] Verify chemical resistance (coating group + solvent → resistance levels)
+- [ ] Verify plasticizer selection (polymer → plasticizer screening)
+- [ ] Verify DDS carrier selection (drug + carrier group/screening)
+- [ ] Verify database editor (add/edit/delete operations for all entities)
 - [ ] Verify mixture lab (create mixture → register to DB)
-- [ ] Verify settings (risk + dispersibility + wettability threshold changes persist)
+- [ ] Verify settings (all 9 threshold configurations persist)
