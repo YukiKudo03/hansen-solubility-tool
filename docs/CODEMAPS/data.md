@@ -1,123 +1,82 @@
-<!-- Generated: 2026-03-15 | Updated: 2026-03-15 | Files scanned: 5 | Token estimate: ~950 -->
+<!-- Generated: 2026-03-15 | Updated: 2026-03-15 | Files scanned: 9 | Token estimate: ~900 -->
 
 # Database Schema & Data Layer
 
-## Database Location & Configuration
+## Configuration
 
-**File Path:** `{app.getPath('userData')}/hansen.db`
-- Windows: `C:\Users\{user}\AppData\Roaming\{app-name}\hansen.db`
-
-**Configuration:**
+- **File:** `{userData}/hansen.db`
 - **Driver:** better-sqlite3 12.8.0
-- **Mode:** WAL (Write-Ahead Logging)
-- **Foreign Keys:** Enabled (`PRAGMA foreign_keys = ON`)
-- **Initialization:** `src/db/schema.ts` executes SQL on app startup
+- **Mode:** WAL, foreign_keys ON
+- **Init:** `schema.ts` → `migrateDatabase()` → 6 seed functions
 
-## Table Schema
+## Tables (6)
 
-### parts_groups
-Polymer material groups
+### parts_groups → parts (1:N, CASCADE)
+Groups of polymer/coating/carrier materials.
 
-| Column | Type | Constraints | Purpose |
-|--------|------|-------------|---------|
-| id | INTEGER | PK AUTO | Unique identifier |
-| name | TEXT | NOT NULL | Group name |
-| description | TEXT | | Optional notes |
-| created_at / updated_at | TEXT | DEFAULT NOW | Audit |
+| Column | Type | Notes |
+|--------|------|-------|
+| id | INTEGER PK | Auto |
+| name | TEXT NOT NULL | Group name |
+| description | TEXT | Optional |
+| created_at/updated_at | TEXT | Auto |
 
-**Relationships:** 1 → Many with `parts`
-
-### parts
-Individual polymer materials within a group
-
-| Column | Type | Constraints | Purpose |
-|--------|------|-------------|---------|
-| id | INTEGER | PK AUTO | Unique identifier |
-| group_id | INTEGER | NOT NULL FK → parts_groups | Parent group |
-| name | TEXT | NOT NULL | Part/material name |
-| material_type | TEXT | | Classification |
-| delta_d/p/h | REAL | NOT NULL | HSP components (MPa^(1/2)) |
-| r0 | REAL | NOT NULL | Interaction radius |
-| notes | TEXT | | Technical notes |
-
-**Relationships:** Many ← 1 with `parts_groups` (ON DELETE CASCADE)
+**Seed groups:** ~7 polymer + 「コーティング材料」(12 parts) + 「DDSキャリア」(11 parts) = ~10 groups, ~83 parts total
 
 ### solvents
-Chemical solvents with HSP + physical properties
+Chemical solvents + plasticizers (identified by `[可塑剤]` tag in notes).
 
-| Column | Type | Constraints | Purpose |
-|--------|------|-------------|---------|
-| id | INTEGER | PK AUTO | Unique identifier |
-| name / name_en | TEXT | NOT NULL / optional | Japanese / English name |
-| cas_number | TEXT | | CAS Registry Number |
-| delta_d/p/h | REAL | NOT NULL | HSP components |
-| molar_volume | REAL | | cm³/mol |
-| mol_weight | REAL | | g/mol |
-| boiling_point | REAL | | 沸点 (°C, 負値許容) |
-| viscosity | REAL | | 粘度 (mPa·s, 25°C) |
-| specific_gravity | REAL | | 比重 (25°C) |
-| surface_tension | REAL | | 表面張力 (mN/m) |
+| Column | Type | Notes |
+|--------|------|-------|
+| id | INTEGER PK | Auto |
+| name/name_en | TEXT | JP/EN names |
+| cas_number | TEXT | CAS Registry |
+| delta_d/p/h | REAL NOT NULL | HSP (MPa^½) |
+| molar_volume, mol_weight | REAL | Optional |
+| boiling_point, viscosity, specific_gravity, surface_tension | REAL | Physical props |
+| notes | TEXT | `[可塑剤]` tag for plasticizers |
 
-**Seed Data:** ~85 solvents
+**Seed:** ~85 solvents + 10 plasticizers = ~95 rows
 
 ### nano_particles
-Nanoparticle materials with surface HSP
+| Key Columns | category (carbon/metal/metal_oxide/quantum_dot/polymer/other), core_material, surface_ligand, delta_d/p/h, r0, particle_size |
+**Seed:** 18 nanoparticles
 
-| Column | Type | Constraints | Purpose |
-|--------|------|-------------|---------|
-| id | INTEGER | PK AUTO | Unique identifier |
-| name / name_en | TEXT | NOT NULL / optional | Japanese / English name |
-| category | TEXT | NOT NULL DEFAULT 'other' | carbon/metal/metal_oxide/quantum_dot/polymer/other |
-| core_material | TEXT | NOT NULL | 母材 (TiO₂, Ag, SWCNT, etc.) |
-| surface_ligand | TEXT | | 表面修飾剤 |
-| delta_d/p/h | REAL | NOT NULL | Surface HSP (ligand-inclusive) |
-| r0 | REAL | NOT NULL | Interaction radius |
-| particle_size | REAL | | 粒子径 (nm) |
+### drugs
+| Key Columns | name/name_en, cas_number, delta_d/p/h, r0, mol_weight, log_p, therapeutic_category |
+**Seed:** 15 drugs (鎮痛薬, 抗炎症薬, 降圧薬, 抗真菌薬, 抗菌薬, 抗てんかん薬, 気管支拡張薬, 中枢神経刺激薬)
 
-**Seed Data:** 18 nanoparticles (Carbon: 5, Metal: 4, Metal Oxide: 5, Quantum Dot: 2, Polymer: 1, Other: 1)
-
-### settings
-Key-value configuration store
-
-| Column | Type | Constraints | Purpose |
-|--------|------|-------------|---------|
-| key | TEXT | PRIMARY KEY | Setting identifier |
-| value | TEXT | NOT NULL | JSON-serialized value |
-
-**Current Keys:**
-- `risk_thresholds` → `{ dangerousMax, warningMax, cautionMax, holdMax }`
-- `dispersibility_thresholds` → `{ excellentMax, goodMax, fairMax, poorMax }`
-- `wettability_thresholds` → `{ superHydrophilicMax, hydrophilicMax, wettableMax, moderateMax, hydrophobicMax }`
+### settings (KV store)
+**Keys:** risk_thresholds, dispersibility_thresholds, wettability_thresholds, swelling_thresholds, drug_solubility_thresholds, chemical_resistance_thresholds, plasticizer_thresholds, carrier_thresholds
 
 ## Repository Pattern
 
-**Interface:** `src/db/repository.ts`
-- `PartsRepository` (8 methods)
-- `SolventRepository` (6 methods)
-- `NanoParticleRepository` (7 methods)
-- `SettingsRepository` (4 methods: getThresholds, setThresholds, getSetting, setSetting)
+**Interfaces** (`repository.ts`):
 
-**Implementation:** `src/db/sqlite-repository.ts`
-- `SqlitePartsRepository`
-- `SqliteSolventRepository`
-- `SqliteNanoParticleRepository`
-- `SqliteSettingsRepository`
+| Repository | Methods | DTO |
+|-----------|---------|-----|
+| PartsRepository | getAllGroups, getGroupById, createGroup, updateGroup, deleteGroup, getPartsByGroupId, createPart, updatePart, deletePart | CreatePartsGroupDto, CreatePartDto |
+| SolventRepository | getAllSolvents, getSolventById, searchSolvents, **getPlasticizers**, createSolvent, updateSolvent, deleteSolvent | CreateSolventDto |
+| NanoParticleRepository | getAll, getById, getByCategory, search, create, update, delete | CreateNanoParticleDto |
+| DrugRepository | getAll, getById, getByTherapeuticCategory, search, create, update, delete | CreateDrugDto |
+| SettingsRepository | getSetting, setSetting, getThresholds, setThresholds | — |
 
-**DTOs:**
-```ts
-CreatePartsGroupDto { name, description? }
-CreatePartDto { groupId, name, materialType?, deltaD, deltaP, deltaH, r0, notes? }
-CreateSolventDto { name, nameEn?, casNumber?, deltaD, deltaP, deltaH, molarVolume?, molWeight?, boilingPoint?, viscosity?, specificGravity?, surfaceTension?, notes? }
-CreateNanoParticleDto { name, nameEn?, category, coreMaterial, surfaceLigand?, deltaD, deltaP, deltaH, r0, particleSize?, notes? }
+**Implementation:** `sqlite-repository.ts` — 5 classes (SqliteParts/Solvent/NanoParticle/Drug/Settings Repository)
+
+## Seed Data Pipeline
+
 ```
-
-## Data Integrity
-
-- **Foreign Key Constraints:** ON DELETE CASCADE (delete group → deletes parts)
-- **NOT NULL Fields:** name, HSP values, r0, category + core_material (nano_particles)
-- **Default Values:** Timestamps auto-set, category defaults to 'other'
-- **Type Safety:** TypeScript mapping prevents schema drift
+main.ts → initDb()
+  → initializeDatabase(db)    # CREATE TABLE IF NOT EXISTS (6 tables)
+  → migrateDatabase(db)       # ALTER TABLE for legacy columns
+  → seedDatabase(db)          # 85 solvents + 7 polymer groups (if empty)
+  → seedNanoParticles(db)     # 18 nanoparticles (if empty)
+  → seedDrugs(db)             # 15 drugs (if empty)
+  → seedCoatings(db)          # 12 coatings as PartsGroup (if group absent)
+  → seedPlasticizers(db)      # 10 plasticizers as Solvents (if none tagged)
+  → seedCarriers(db)          # 11 DDS carriers as PartsGroup (if group absent)
+```
 
 ---
 
-**Related:** See `architecture.md` for initialization flow, `frontend.md` for UI ↔ DB interaction.
+**Related:** See `architecture.md` for pipeline mapping, `frontend.md` for UI ↔ DB interaction.

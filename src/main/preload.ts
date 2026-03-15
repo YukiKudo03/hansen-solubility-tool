@@ -99,6 +99,78 @@ export const api = {
     moderateMax: number;
     hydrophobicMax: number;
   }) => ipcRenderer.invoke('settings:setWettabilityThresholds', thresholds),
+
+  // 膨潤度予測
+  evaluateSwelling: (partsGroupId: number, solventId: number) =>
+    ipcRenderer.invoke('swelling:evaluate', partsGroupId, solventId),
+
+  // 膨潤度閾値設定
+  getSwellingThresholds: () => ipcRenderer.invoke('settings:getSwellingThresholds'),
+  setSwellingThresholds: (thresholds: {
+    severeMax: number; highMax: number; moderateMax: number; lowMax: number;
+  }) => ipcRenderer.invoke('settings:setSwellingThresholds', thresholds),
+
+  // 薬物
+  getAllDrugs: () => ipcRenderer.invoke('drugs:getAll'),
+  getDrugById: (id: number) => ipcRenderer.invoke('drugs:getById', id),
+  getDrugsByCategory: (category: string) => ipcRenderer.invoke('drugs:getByCategory', category),
+  searchDrugs: (query: string) => ipcRenderer.invoke('drugs:search', query),
+  createDrug: (dto: Record<string, unknown>) =>
+    ipcRenderer.invoke('drugs:create', dto),
+  updateDrug: (id: number, dto: Record<string, unknown>) =>
+    ipcRenderer.invoke('drugs:update', id, dto),
+  deleteDrug: (id: number) => ipcRenderer.invoke('drugs:delete', id),
+
+  // 薬物溶解性評価
+  evaluateDrugSolubility: (drugId: number, solventId: number) =>
+    ipcRenderer.invoke('drugSolubility:evaluate', drugId, solventId),
+  screenDrugSolvents: (drugId: number) =>
+    ipcRenderer.invoke('drugSolubility:screenAll', drugId),
+
+  // 薬物溶解性閾値設定
+  getDrugSolubilityThresholds: () => ipcRenderer.invoke('settings:getDrugSolubilityThresholds'),
+  setDrugSolubilityThresholds: (thresholds: {
+    excellentMax: number; goodMax: number; partialMax: number; poorMax: number;
+  }) => ipcRenderer.invoke('settings:setDrugSolubilityThresholds', thresholds),
+
+  // ブレンド最適化
+  optimizeBlend: (params: {
+    targetDeltaD: number; targetDeltaP: number; targetDeltaH: number;
+    candidateSolventIds: number[]; maxComponents: 2 | 3; stepSize: number; topN: number;
+  }) => ipcRenderer.invoke('blend:optimize', params),
+
+  // 耐薬品性評価
+  evaluateChemicalResistance: (partsGroupId: number, solventId: number) =>
+    ipcRenderer.invoke('chemicalResistance:evaluate', partsGroupId, solventId),
+
+  // 耐薬品性閾値設定
+  getChemicalResistanceThresholds: () => ipcRenderer.invoke('settings:getChemicalResistanceThresholds'),
+  setChemicalResistanceThresholds: (thresholds: {
+    noResistanceMax: number; poorMax: number; moderateMax: number; goodMax: number;
+  }) => ipcRenderer.invoke('settings:setChemicalResistanceThresholds', thresholds),
+
+  // 可塑剤選定
+  getPlasticizers: () => ipcRenderer.invoke('solvents:getPlasticizers'),
+  screenPlasticizers: (partId: number, groupId: number) =>
+    ipcRenderer.invoke('plasticizer:screen', partId, groupId),
+
+  // 可塑剤閾値設定
+  getPlasticizerThresholds: () => ipcRenderer.invoke('settings:getPlasticizerThresholds'),
+  setPlasticizerThresholds: (thresholds: {
+    excellentMax: number; goodMax: number; fairMax: number; poorMax: number;
+  }) => ipcRenderer.invoke('settings:setPlasticizerThresholds', thresholds),
+
+  // キャリア選定（DDS）
+  evaluateCarrier: (drugId: number, carrierId: number, carrierGroupId: number) =>
+    ipcRenderer.invoke('carrier:evaluate', drugId, carrierId, carrierGroupId),
+  screenCarriers: (drugId: number, carrierGroupId: number) =>
+    ipcRenderer.invoke('carrier:screenAll', drugId, carrierGroupId),
+
+  // キャリア閾値設定
+  getCarrierThresholds: () => ipcRenderer.invoke('settings:getCarrierThresholds'),
+  setCarrierThresholds: (thresholds: {
+    excellentMax: number; goodMax: number; fairMax: number; poorMax: number;
+  }) => ipcRenderer.invoke('settings:setCarrierThresholds', thresholds),
 };
 
 contextBridge.exposeInMainWorld('api', api);

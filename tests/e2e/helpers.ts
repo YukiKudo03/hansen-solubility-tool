@@ -7,6 +7,15 @@ import path from 'path';
 
 const ELECTRON_PATH = require('electron') as unknown as string;
 
+/**
+ * タブをクリックする（スクロールして可視化してからクリック）
+ */
+export async function clickTab(page: Page, tabText: string): Promise<void> {
+  const tab = page.locator('nav button', { hasText: tabText });
+  await tab.scrollIntoViewIfNeeded();
+  await tab.click();
+}
+
 export async function launchApp(): Promise<{ app: ElectronApplication; page: Page }> {
   const app = await electron.launch({
     executablePath: ELECTRON_PATH,

@@ -12,6 +12,12 @@ import {
   validateNanoParticleInput,
   validateDispersibilityThresholds,
   validateWettabilityThresholds,
+  validateSwellingThresholds,
+  validateDrugInput,
+  validateDrugSolubilityThresholds,
+  validateChemicalResistanceThresholds,
+  validatePlasticizerThresholds,
+  validateCarrierThresholds,
 } from '../../src/core/validation';
 
 describe('validateHSPValues', () => {
@@ -366,5 +372,89 @@ describe('validateWettabilityThresholds', () => {
     expect(validateWettabilityThresholds({
       superHydrophilicMax: NaN, hydrophilicMax: 30, wettableMax: 60, moderateMax: 90, hydrophobicMax: 150,
     })).toBe('閾値はすべて0以上180以下の数値を入力してください');
+  });
+});
+
+describe('validateSwellingThresholds', () => {
+  it('有効な閾値でnull', () => {
+    expect(validateSwellingThresholds({ severeMax: 0.5, highMax: 0.8, moderateMax: 1.0, lowMax: 1.5 })).toBeNull();
+  });
+  it('負の値でエラー', () => {
+    expect(validateSwellingThresholds({ severeMax: -0.1, highMax: 0.8, moderateMax: 1.0, lowMax: 1.5 })).toBeTruthy();
+  });
+  it('順序が不正でエラー', () => {
+    expect(validateSwellingThresholds({ severeMax: 0.5, highMax: 0.3, moderateMax: 1.0, lowMax: 1.5 })).toBeTruthy();
+  });
+  it('NaNでエラー', () => {
+    expect(validateSwellingThresholds({ severeMax: NaN, highMax: 0.8, moderateMax: 1.0, lowMax: 1.5 })).toBeTruthy();
+  });
+});
+
+describe('validateDrugInput', () => {
+  it('有効な入力でnull', () => {
+    expect(validateDrugInput({ name: 'Acetaminophen', deltaD: 17.2, deltaP: 9.4, deltaH: 13.3, r0: 5.0 })).toBeNull();
+  });
+  it('名前が空でエラー', () => {
+    expect(validateDrugInput({ name: '', deltaD: 17.2, deltaP: 9.4, deltaH: 13.3, r0: 5.0 })).toBeTruthy();
+  });
+  it('負のHSP値でエラー', () => {
+    expect(validateDrugInput({ name: 'Test', deltaD: -1, deltaP: 9.4, deltaH: 13.3, r0: 5.0 })).toBeTruthy();
+  });
+  it('R0=0でエラー', () => {
+    expect(validateDrugInput({ name: 'Test', deltaD: 17.2, deltaP: 9.4, deltaH: 13.3, r0: 0 })).toBeTruthy();
+  });
+  it('CAS番号フォーマット不正でエラー', () => {
+    expect(validateDrugInput({ name: 'Test', deltaD: 17.2, deltaP: 9.4, deltaH: 13.3, r0: 5.0, casNumber: 'invalid' })).toBeTruthy();
+  });
+  it('CAS番号が空文字でも有効', () => {
+    expect(validateDrugInput({ name: 'Test', deltaD: 17.2, deltaP: 9.4, deltaH: 13.3, r0: 5.0, casNumber: '' })).toBeNull();
+  });
+});
+
+describe('validateDrugSolubilityThresholds', () => {
+  it('有効な閾値でnull', () => {
+    expect(validateDrugSolubilityThresholds({ excellentMax: 0.5, goodMax: 0.8, partialMax: 1.0, poorMax: 1.5 })).toBeNull();
+  });
+  it('負の値でエラー', () => {
+    expect(validateDrugSolubilityThresholds({ excellentMax: -0.1, goodMax: 0.8, partialMax: 1.0, poorMax: 1.5 })).toBeTruthy();
+  });
+  it('順序が不正でエラー', () => {
+    expect(validateDrugSolubilityThresholds({ excellentMax: 0.5, goodMax: 0.3, partialMax: 1.0, poorMax: 1.5 })).toBeTruthy();
+  });
+});
+
+describe('validateChemicalResistanceThresholds', () => {
+  it('有効な閾値でnull', () => {
+    expect(validateChemicalResistanceThresholds({ noResistanceMax: 0.5, poorMax: 0.8, moderateMax: 1.2, goodMax: 2.0 })).toBeNull();
+  });
+  it('負の値でエラー', () => {
+    expect(validateChemicalResistanceThresholds({ noResistanceMax: -0.1, poorMax: 0.8, moderateMax: 1.2, goodMax: 2.0 })).toBeTruthy();
+  });
+  it('順序が不正でエラー', () => {
+    expect(validateChemicalResistanceThresholds({ noResistanceMax: 0.5, poorMax: 0.3, moderateMax: 1.2, goodMax: 2.0 })).toBeTruthy();
+  });
+});
+
+describe('validatePlasticizerThresholds', () => {
+  it('有効な閾値でnull', () => {
+    expect(validatePlasticizerThresholds({ excellentMax: 0.5, goodMax: 0.8, fairMax: 1.0, poorMax: 1.5 })).toBeNull();
+  });
+  it('負の値でエラー', () => {
+    expect(validatePlasticizerThresholds({ excellentMax: -0.1, goodMax: 0.8, fairMax: 1.0, poorMax: 1.5 })).toBeTruthy();
+  });
+  it('順序が不正でエラー', () => {
+    expect(validatePlasticizerThresholds({ excellentMax: 0.5, goodMax: 0.3, fairMax: 1.0, poorMax: 1.5 })).toBeTruthy();
+  });
+});
+
+describe('validateCarrierThresholds', () => {
+  it('有効な閾値でnull', () => {
+    expect(validateCarrierThresholds({ excellentMax: 0.5, goodMax: 0.8, fairMax: 1.0, poorMax: 1.5 })).toBeNull();
+  });
+  it('負の値でエラー', () => {
+    expect(validateCarrierThresholds({ excellentMax: -0.1, goodMax: 0.8, fairMax: 1.0, poorMax: 1.5 })).toBeTruthy();
+  });
+  it('順序が不正でエラー', () => {
+    expect(validateCarrierThresholds({ excellentMax: 0.5, goodMax: 0.3, fairMax: 1.0, poorMax: 1.5 })).toBeTruthy();
   });
 });

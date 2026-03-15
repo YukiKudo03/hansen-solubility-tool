@@ -1,4 +1,4 @@
-<!-- Generated: 2026-03-15 | Updated: 2026-03-15 | Files scanned: 37 src + 34 test | Token estimate: ~950 -->
+<!-- Generated: 2026-03-15 | Updated: 2026-03-15 | Files scanned: 65 src | Token estimate: ~950 -->
 
 # Hansen Solubility System Architecture
 
@@ -8,201 +8,136 @@
 ┌─────────────────────────────────────────────────────────────────┐
 │                     ELECTRON APPLICATION                         │
 ├─────────────────────────────────────────────────────────────────┤
-│                                                                   │
 │  ┌──────────────────────┐          ┌────────────────────────┐   │
 │  │  MAIN PROCESS        │  IPC     │  RENDERER PROCESS      │   │
 │  │  (main.ts)           │◄────────►│  (React 19 App.tsx)    │   │
-│  │                      │          │                        │   │
-│  │ ┌──────────────────┐ │          │ ┌──────────────────┐  │   │
-│  │ │ IPC Handlers     │ │          │ │ UI Components    │  │   │
-│  │ │ (ipc-handlers)   │ │          │ │ - ReportView     │  │   │
-│  │ │ 45+ handlers     │ │          │ │ - NanoDispersion │  │   │
-│  │ └──────────────────┘ │          │ │ - ContactAngle   │  │   │
-│  │         ▼            │          │ │ - DatabaseEditor │  │   │
-│  │ ┌──────────────────┐ │          │ │ - MixtureLab     │  │   │
-│  │ │ Core Calculator  │ │          │ └──────────────────┘  │   │
-│  │ │ hsp.ts (shared)  │ │          │        ▲              │   │
-│  │ │ risk.ts          │ │          │   Hooks              │   │
-│  │ │ dispersibility.ts│ │          │ - usePartsGroups   │  │   │
-│  │ │ wettability.ts   │ │          │ - useSolvents      │  │   │
-│  │ │ contact-angle.ts │ │          │ - useNanoParticles │  │   │
-│  │ │ solvent-finder.ts│ │          │ - useNanoDispersion│  │   │
-│  │ │ report.ts        │ │          │ - useContactAngle  │  │   │
-│  │ └──────────────────┘ │          └────────────────────────┘   │
-│  │         ▼            │                                        │
-│  │ ┌──────────────────┐ │                                        │
-│  │ │ Repository Layer │ │                                        │
-│  │ │ Parts, Solvent,  │ │                                        │
-│  │ │ NanoParticle,    │ │                                        │
-│  │ │ Settings repos   │ │                                        │
-│  │ └──────────────────┘ │                                        │
-│  │         ▼            │                                        │
-│  │ ┌──────────────────┐ │                                        │
-│  │ │ SQLite Database  │ │                                        │
-│  │ │ hansen.db (WAL)  │ │                                        │
-│  │ │ 5 tables         │ │                                        │
-│  │ └──────────────────┘ │                                        │
-│  └──────────────────────┘                                        │
+│  │                      │ 70+ API  │  12 tabs               │   │
+│  │ ┌──────────────────┐ │          │ ┌──────────────────┐   │   │
+│  │ │ IPC Handlers     │ │          │ │ 9 Feature Views  │   │   │
+│  │ │ 70+ handlers     │ │          │ │ + DB/Mix/Settings│   │   │
+│  │ └──────────────────┘ │          │ └──────────────────┘   │   │
+│  │         ▼            │          │        ▲               │   │
+│  │ ┌──────────────────┐ │          │   13 Hooks             │   │
+│  │ │ Core (16 modules)│ │          │   7 Badges             │   │
+│  │ │ Pure functions   │ │          └────────────────────────┘   │
+│  │ └──────────────────┘ │                                       │
+│  │         ▼            │                                       │
+│  │ ┌──────────────────┐ │                                       │
+│  │ │ 5 Repositories   │ │                                       │
+│  │ │ Parts, Solvent,  │ │                                       │
+│  │ │ NanoParticle,    │ │                                       │
+│  │ │ Drug, Settings   │ │                                       │
+│  │ └──────────────────┘ │                                       │
+│  │         ▼            │                                       │
+│  │ ┌──────────────────┐ │                                       │
+│  │ │ SQLite (WAL)     │ │                                       │
+│  │ │ 6 tables         │ │                                       │
+│  │ └──────────────────┘ │                                       │
+│  └──────────────────────┘                                       │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
-## Three Evaluation Pipelines
+## Nine Evaluation Pipelines
 
-### Pipeline A: Polymer-Solvent Compatibility
+### Group 1: Original (Ra/RED classifiers)
 ```
-ReportView → select PartsGroup + Solvent → evaluate()
-  → For each Part: calculateRa() → calculateRed() → classifyRisk()
-  → GroupEvaluationResult → ResultsTable + RiskBadge → CSV
+A) Polymer Risk:        ReportView → evaluate(groupId, solventId) → Ra/RED → classifyRisk → RiskLevel(RED小=危険)
+B) Nano Dispersion:     NanoDispersionView → screenAll(particleId) → Ra/RED → classifyDispersibility(RED小=良好)
+C) Contact Angle:       ContactAngleView → estimateContactAngle() → γ_SV/γ_LV/γ_SL → Young's eq → θ → classifyWettability
 ```
-**Interpretation:** RED小 = 溶解しやすい = **危険**
 
-### Pipeline B: Nanoparticle Dispersion Screening
+### Group 2: Phase 1 (Engineering applications)
 ```
-NanoDispersionView → select NanoParticle → screenAllSolvents()
-  → For each Solvent: calculateRa() → calculateRed() → classifyDispersibility()
-  → NanoDispersionEvaluationResult → sort by RED asc → DispersibilityBadge → CSV
-  → Optional: filterByConstraints(boilingPoint, viscosity, surfaceTension)
+D) Blend Optimization:  BlendOptimizerView → optimizeBlend(target, solvents, step, topN) → grid search → Ra最小化
+E) Swelling:            SwellingView → evaluateSwelling(groupId, solventId) → Ra/RED → classifySwelling(RED小=膨潤大)
+F) Drug Solubility:     DrugSolubilityView → screenDrugSolvents(drugId) → Ra/RED → classifyDrugSolubility(RED小=溶解性良)
 ```
-**Interpretation:** RED小 = 分散しやすい = **良好**
 
-### Pipeline C: Contact Angle Estimation
+### Group 3: Phase 2 (Advanced applications)
 ```
-ContactAngleView → select PartsGroup + Solvent → estimateContactAngle()
-  → For each Part: calculateSurfaceTension() → calculateInterfacialTension()
-  → Young's equation: cos(θ) = (γ_SV − γ_SL) / γ_LV → classifyWettability()
-  → GroupContactAngleResult → sort by θ asc → WettabilityBadge → CSV
-
-ContactAngleView (screening mode) → select Part → screenContactAngle()
-  → For each Solvent: estimateContactAngle() → sort by θ asc
+G) Chemical Resistance: ChemResistanceView → evaluate(groupId, solventId) → Ra/RED → classifyChemResistance(RED大=耐性良 ※逆向き)
+H) Plasticizer:         PlasticizerView → screenPlasticizers(partId, groupId) → Ra/RED → classifyCompatibility(RED小=相溶性良)
+I) Carrier Selection:   CarrierSelectionView → screenCarriers(drugId, groupId) → Ra/RED → classifyCompatibility(carrier.r0使用)
 ```
-**Theory:** Nakamoto-Yamamoto式 (Langmuir 2023)
-- γ = 0.0947·δD² + 0.0315·δP² + 0.0238·δH²
-**Interpretation:** θ小 = 濡れやすい = **親水**, θ大 = **疎水**
 
 ### Shared Core
-All pipelines share HSP values from `types.ts`. Pipeline A/B share `calculateRa()`/`calculateRed()`. Pipeline C uses its own `calculateSurfaceTension()`/`calculateInterfacialTension()` via Nakamoto-Yamamoto coefficients.
+All pipelines share `calculateRa()`/`calculateRed()` from `hsp.ts` except Pipeline C (uses Nakamoto-Yamamoto) and D (uses grid search + blendHSP).
+
+## Entity Mapping (Phase 2: No New Tables)
+
+| Feature | Material Entity | Comparison Entity | Notes |
+|---------|----------------|-------------------|-------|
+| Chemical Resistance | Part (「コーティング材料」group) | Solvent | RED逆向き |
+| Plasticizer | Part (any) | Solvent ([可塑剤] tagged) | notes LIKE filter |
+| Carrier Selection | Drug | Part (「DDSキャリア」group) | carrier.r0 used |
 
 ## Component Hierarchy
 
 ```
-App.tsx (tab router: report | database | mixture | nanoDispersion | contactAngle | settings)
-├── ReportView (polymer evaluation)
-│   ├── PartsGroupSelector, SolventSelector
-│   ├── ResultsTable → RiskBadge
-│   └── CSV export via formatCsv()
-├── NanoDispersionView (nanoparticle screening)
-│   ├── Category filter → Particle selector
-│   ├── Constraint filters, Stats summary
-│   ├── Results table → DispersibilityBadge
-│   └── CSV export via formatNanoDispersionCsv()
-├── ContactAngleView (contact angle estimation)
-│   ├── Mode toggle: グループ評価 | 溶媒スクリーニング
-│   ├── PartsGroupSelector, SolventSelector or Part selector
-│   ├── Stats summary (θ_min, hydrophilic count)
-│   ├── Sortable results table → WettabilityBadge
-│   └── CSV export via formatContactAngleCsv()
+App.tsx (12 tabs)
+├── ReportView (A: polymer risk)
+├── NanoDispersionView (B: nanoparticle screening)
+├── ContactAngleView (C: contact angle)
+├── BlendOptimizerView (D: solvent blend optimization)
+├── SwellingView (E: swelling prediction)
+├── DrugSolubilityView (F: drug solubility)
+├── ChemicalResistanceView (G: chemical resistance)
+├── PlasticizerView (H: plasticizer selection)
+├── CarrierSelectionView (I: DDS carrier selection)
 ├── DatabaseEditor (CRUD for all entities)
 ├── MixtureLab (mixed solvent creation)
-├── SettingsView (risk + dispersibility + wettability thresholds)
-└── ErrorBoundary (wraps all views)
+├── SettingsView (9 threshold configs)
+└── ErrorBoundary
 ```
 
 ## Module Boundaries
 
-| Layer | Location | Purpose | Key Files |
-|-------|----------|---------|-----------|
-| **Domain** | `src/core/` | Pure TS calculation logic | `types.ts`, `hsp.ts`, `risk.ts`, `dispersibility.ts`, `wettability.ts`, `contact-angle.ts`, `solvent-finder.ts`, `report.ts`, `validation.ts`, `mixture.ts` |
-| **Data Access** | `src/db/` | SQLite schema, repositories, seed data | `schema.ts`, `repository.ts`, `sqlite-repository.ts`, `seed-data.ts`, `seed-nano-particles.ts` |
-| **Main Process** | `src/main/` | Electron lifecycle, IPC orchestration | `main.ts`, `ipc-handlers.ts`, `preload.ts` |
-| **UI** | `src/renderer/` | React components & hooks | `App.tsx`, 13 components, 6 hooks |
+| Layer | Location | Files | Purpose |
+|-------|----------|-------|---------|
+| **Domain** | `src/core/` | 16 | Pure calculations, classification, CSV, validation |
+| **Data Access** | `src/db/` | 9 | Schema, 5 repos, 6 seed files |
+| **Main Process** | `src/main/` | 3 | Electron lifecycle, 70+ IPC handlers, preload |
+| **UI** | `src/renderer/` | 37 | 24 components, 13 hooks, entry |
 
-## Dependency Flow
-
-```
-Renderer (React)
-    ↓ (window.api via IPC, 40+ methods)
-Main Process
-    ├→ Repository (sqlite-repository.ts, 4 repo classes)
-    │   ↓
-    │   SQLite Database (5 tables)
-    └→ Core (hsp.ts, risk.ts, dispersibility.ts, wettability.ts, contact-angle.ts, ...)
-        └→ Types (types.ts)
-```
-
-## File Structure Tree
+## File Structure
 
 ```
 src/
-├── core/                    # Pure domain logic (no I/O)
-│   ├── types.ts             # All domain types & interfaces
-│   ├── hsp.ts               # Hansen distance (shared by Pipeline A/B)
-│   ├── risk.ts              # Polymer risk classification
-│   ├── dispersibility.ts    # Nanoparticle dispersibility classification
-│   ├── wettability.ts       # Contact angle wettability classification (6-level)
-│   ├── contact-angle.ts     # Nakamoto-Yamamoto surface tension + Young's equation
-│   ├── solvent-finder.ts    # Solvent screening & constraint filters
-│   ├── report.ts            # CSV export (polymer + nano + contact angle)
-│   ├── validation.ts        # Input validators (all entities + wettability thresholds)
-│   └── mixture.ts           # Solvent mixture calculations
-│
-├── db/                      # Data access layer
-│   ├── schema.ts            # SQLite tables (5 tables)
-│   ├── repository.ts        # Repository interfaces (4 repos)
-│   ├── sqlite-repository.ts # SQLite implementations (4 classes)
-│   ├── seed-data.ts         # ~85 solvents + 7 polymer groups
-│   └── seed-nano-particles.ts # 18 nanoparticles
-│
-├── main/                    # Electron main process
-│   ├── main.ts              # App lifecycle + seed loading
-│   ├── ipc-handlers.ts      # 45+ IPC handlers
-│   └── preload.ts           # Context-isolated bridge (40+ methods)
-│
-├── renderer/                # React UI
-│   ├── main.tsx             # Entry point
-│   ├── App.tsx              # Tab router (6 tabs)
-│   ├── components/
-│   │   ├── ReportView.tsx
-│   │   ├── NanoDispersionView.tsx
-│   │   ├── ContactAngleView.tsx
-│   │   ├── DatabaseEditor.tsx
-│   │   ├── MixtureLab.tsx
-│   │   ├── SettingsView.tsx
-│   │   ├── PartsGroupSelector.tsx
-│   │   ├── SolventSelector.tsx
-│   │   ├── ResultsTable.tsx
-│   │   ├── RiskBadge.tsx
-│   │   ├── DispersibilityBadge.tsx
-│   │   ├── WettabilityBadge.tsx
-│   │   └── ErrorBoundary.tsx
-│   └── hooks/
-│       ├── useContactAngle.ts
-│       ├── useNanoParticles.ts
-│       ├── useNanoDispersion.ts
-│       ├── useEvaluation.ts
-│       ├── usePartsGroups.ts
-│       └── useSolvents.ts
-│
-└── preload.d.ts             # window.api type definitions
-
-tests/
-├── unit/                    # 218 tests
-├── integration/             # DB operations
-├── renderer/                # 85 React component + hook tests
-└── e2e/                     # Playwright E2E tests
+├── core/                          # Pure domain logic (16 files)
+│   ├── types.ts                   # All types (9 level enums, 20+ interfaces)
+│   ├── hsp.ts                     # calculateRa/RED (shared)
+│   ├── risk.ts                    # Pipeline A
+│   ├── dispersibility.ts          # Pipeline B
+│   ├── wettability.ts             # Pipeline C (classification)
+│   ├── contact-angle.ts           # Pipeline C (calculation)
+│   ├── blend-optimizer.ts         # Pipeline D (grid search)
+│   ├── swelling.ts                # Pipeline E
+│   ├── drug-solubility.ts         # Pipeline F
+│   ├── chemical-resistance.ts     # Pipeline G (RED逆向き)
+│   ├── plasticizer.ts             # Pipeline H
+│   ├── carrier-selection.ts       # Pipeline I
+│   ├── solvent-finder.ts          # Screening utilities
+│   ├── report.ts                  # 9 CSV formatters
+│   ├── validation.ts              # 12+ validators
+│   └── mixture.ts                 # Mixture calculations
+├── db/                            # Data access (9 files)
+│   ├── schema.ts                  # 6 tables
+│   ├── repository.ts              # 5 interfaces + DTOs
+│   ├── sqlite-repository.ts       # 5 implementations
+│   ├── seed-data.ts               # 85 solvents + 7 groups
+│   ├── seed-nano-particles.ts     # 18 nanoparticles
+│   ├── seed-drugs.ts              # 15 drugs
+│   ├── seed-coatings.ts           # 12 coatings (PartsGroup)
+│   ├── seed-plasticizers.ts       # 10 plasticizers (Solvent)
+│   └── seed-carriers.ts           # 11 DDS carriers (PartsGroup)
+├── main/                          # Electron main (3 files)
+│   ├── main.ts, ipc-handlers.ts, preload.ts
+├── renderer/                      # React UI (37 files)
+│   ├── components/ (24)           # 9 Views + 7 Badges + 4 Selectors + 3 Shared + ErrorBoundary
+│   └── hooks/ (13)                # Feature hooks
+└── preload.d.ts                   # window.api types (70+ methods)
 ```
-
-## Technology Stack
-
-| Component | Package | Version |
-|-----------|---------|---------|
-| Desktop Framework | electron | 41.0.2 |
-| UI Library | react, react-dom | 19.2.4 |
-| Language | typescript | 5.9.3 |
-| Build Tool | vite | 5.4.21 |
-| Database | better-sqlite3 | 12.8.0 |
-| CSS Framework | tailwindcss | 3.4.19 |
-| Test Framework | vitest | 2.1.9 |
 
 ---
 
-**Next:** See `frontend.md` for component details, `data.md` for database schema, `dependencies.md` for external packages.
+**Next:** See `frontend.md` for component details, `data.md` for database schema.
