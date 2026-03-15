@@ -83,6 +83,22 @@ export const api = {
     fairMax: number;
     poorMax: number;
   }) => ipcRenderer.invoke('settings:setDispersibilityThresholds', thresholds),
+
+  // 接触角推定
+  estimateContactAngle: (partsGroupId: number, solventId: number) =>
+    ipcRenderer.invoke('contactAngle:evaluate', partsGroupId, solventId),
+  screenContactAngle: (partId: number, groupId: number) =>
+    ipcRenderer.invoke('contactAngle:screenSolvents', partId, groupId),
+
+  // 濡れ性閾値設定
+  getWettabilityThresholds: () => ipcRenderer.invoke('settings:getWettabilityThresholds'),
+  setWettabilityThresholds: (thresholds: {
+    superHydrophilicMax: number;
+    hydrophilicMax: number;
+    wettableMax: number;
+    moderateMax: number;
+    hydrophobicMax: number;
+  }) => ipcRenderer.invoke('settings:setWettabilityThresholds', thresholds),
 };
 
 contextBridge.exposeInMainWorld('api', api);

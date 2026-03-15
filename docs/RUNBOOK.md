@@ -142,12 +142,13 @@ npm run test:e2e          # E2E tests (requires app build first)
 ### Pre-release Checklist
 
 - [ ] `npm run typecheck` passes
-- [ ] `npm test` — all tests green (167+ unit tests)
+- [ ] `npm test` — all tests green (303+ tests: unit 218 + renderer 85)
 - [ ] `npm run test:e2e` — E2E tests pass
 - [ ] `npm run package` — installer builds successfully
 - [ ] Install and run the packaged app
 - [ ] Verify polymer evaluation workflow (select group + solvent → evaluate → export CSV)
 - [ ] Verify nanoparticle dispersion screening (select particle → screen all solvents → CSV export)
+- [ ] Verify contact angle estimation (group mode: select group + solvent → estimate, screening mode: select part → screen all solvents)
 - [ ] Verify database editor (add/edit/delete operations)
 - [ ] Verify mixture lab (create mixture → register to DB)
-- [ ] Verify settings (risk + dispersibility threshold changes persist)
+- [ ] Verify settings (risk + dispersibility + wettability threshold changes persist)

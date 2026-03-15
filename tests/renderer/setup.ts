@@ -39,6 +39,32 @@ export function createMockApi(): { [K in keyof ElectronAPI]: ReturnType<typeof v
 
     // CSV
     saveCsv: vi.fn().mockResolvedValue({ saved: false }),
+
+    // ナノ粒子
+    getAllNanoParticles: vi.fn().mockResolvedValue([]),
+    getNanoParticleById: vi.fn().mockResolvedValue(null),
+    getNanoParticlesByCategory: vi.fn().mockResolvedValue([]),
+    searchNanoParticles: vi.fn().mockResolvedValue([]),
+    createNanoParticle: vi.fn().mockResolvedValue({ id: 1, name: '', nameEn: null, category: 'other', coreMaterial: '', surfaceLigand: null, hsp: { deltaD: 0, deltaP: 0, deltaH: 0 }, r0: 1, particleSize: null, notes: null }),
+    updateNanoParticle: vi.fn().mockResolvedValue(null),
+    deleteNanoParticle: vi.fn().mockResolvedValue(true),
+
+    // ナノ粒子分散評価
+    evaluateNanoDispersion: vi.fn().mockResolvedValue(null),
+    screenAllSolvents: vi.fn().mockResolvedValue(null),
+    screenFilteredSolvents: vi.fn().mockResolvedValue(null),
+
+    // 分散性閾値
+    getDispersibilityThresholds: vi.fn().mockResolvedValue({ excellentMax: 0.5, goodMax: 0.8, fairMax: 1.0, poorMax: 1.5 }),
+    setDispersibilityThresholds: vi.fn().mockResolvedValue(undefined),
+
+    // 接触角推定
+    estimateContactAngle: vi.fn().mockResolvedValue(null),
+    screenContactAngle: vi.fn().mockResolvedValue(null),
+
+    // 濡れ性閾値
+    getWettabilityThresholds: vi.fn().mockResolvedValue({ superHydrophilicMax: 10, hydrophilicMax: 30, wettableMax: 60, moderateMax: 90, hydrophobicMax: 150 }),
+    setWettabilityThresholds: vi.fn().mockResolvedValue(undefined),
   };
 }
 

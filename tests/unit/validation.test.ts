@@ -11,6 +11,7 @@ import {
   validateMixtureInput,
   validateNanoParticleInput,
   validateDispersibilityThresholds,
+  validateWettabilityThresholds,
 } from '../../src/core/validation';
 
 describe('validateHSPValues', () => {
@@ -327,5 +328,43 @@ describe('validateDispersibilityThresholds', () => {
     expect(validateDispersibilityThresholds({
       excellentMax: -0.1, goodMax: 0.8, fairMax: 1.0, poorMax: 1.5,
     })).toBe('閾値はすべて0以上の数値を入力してください');
+  });
+});
+
+describe('validateWettabilityThresholds', () => {
+  it('有効な閾値（昇順）', () => {
+    expect(validateWettabilityThresholds({
+      superHydrophilicMax: 10, hydrophilicMax: 30, wettableMax: 60, moderateMax: 90, hydrophobicMax: 150,
+    })).toBeNull();
+  });
+
+  it('逆順でエラー', () => {
+    expect(validateWettabilityThresholds({
+      superHydrophilicMax: 150, hydrophilicMax: 90, wettableMax: 60, moderateMax: 30, hydrophobicMax: 10,
+    })).toBe('閾値は superHydrophilicMax < hydrophilicMax < wettableMax < moderateMax < hydrophobicMax の順でなければなりません');
+  });
+
+  it('同値でエラー', () => {
+    expect(validateWettabilityThresholds({
+      superHydrophilicMax: 10, hydrophilicMax: 10, wettableMax: 60, moderateMax: 90, hydrophobicMax: 150,
+    })).toBe('閾値は superHydrophilicMax < hydrophilicMax < wettableMax < moderateMax < hydrophobicMax の順でなければなりません');
+  });
+
+  it('負の値でエラー', () => {
+    expect(validateWettabilityThresholds({
+      superHydrophilicMax: -5, hydrophilicMax: 30, wettableMax: 60, moderateMax: 90, hydrophobicMax: 150,
+    })).toBe('閾値はすべて0以上180以下の数値を入力してください');
+  });
+
+  it('180°超でエラー', () => {
+    expect(validateWettabilityThresholds({
+      superHydrophilicMax: 10, hydrophilicMax: 30, wettableMax: 60, moderateMax: 90, hydrophobicMax: 200,
+    })).toBe('閾値はすべて0以上180以下の数値を入力してください');
+  });
+
+  it('NaNでエラー', () => {
+    expect(validateWettabilityThresholds({
+      superHydrophilicMax: NaN, hydrophilicMax: 30, wettableMax: 60, moderateMax: 90, hydrophobicMax: 150,
+    })).toBe('閾値はすべて0以上180以下の数値を入力してください');
   });
 });

@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { formatCsv } from '../../src/core/report';
-import { RiskLevel } from '../../src/core/types';
-import type { GroupEvaluationResult, Part, Solvent, PartsGroup } from '../../src/core/types';
+import { formatCsv, formatContactAngleCsv } from '../../src/core/report';
+import { RiskLevel, WettabilityLevel } from '../../src/core/types';
+import type { GroupEvaluationResult, GroupContactAngleResult, ContactAngleResult, Part, Solvent, PartsGroup } from '../../src/core/types';
 
 function makePart(overrides: Partial<Part> = {}): Part {
   return {
@@ -221,5 +221,75 @@ describe('formatCsv', () => {
     expect(lines.length).toBe(3); // ヘッダー + 2行
     expect(lines[1]).toContain('部品A');
     expect(lines[2]).toContain('部品B');
+  });
+});
+
+// ─── formatContactAngleCsv ───────────────────
+
+function makeContactAngleResult(overrides: Partial<GroupContactAngleResult> = {}): GroupContactAngleResult {
+  const part = makePart();
+  const solvent = makeSolvent();
+  const group: PartsGroup = { id: 1, name: 'テストグループ', description: null, parts: [part] };
+  return {
+    partsGroup: group,
+    solvent,
+    results: [
+      {
+        part,
+        solvent,
+        surfaceTensionLV: 28.5,
+        surfaceEnergySV: 33.2,
+        interfacialTension: 1.5,
+        cosTheta: 0.85,
+        contactAngle: 31.8,
+        wettability: WettabilityLevel.Wettable,
+      },
+    ],
+    evaluatedAt: new Date('2026-03-15T10:00:00Z'),
+    ...overrides,
+  };
+}
+
+describe('formatContactAngleCsv', () => {
+  it('BOM付きUTF-8で出力される', () => {
+    const csv = formatContactAngleCsv(makeContactAngleResult());
+    expect(csv.charCodeAt(0)).toBe(0xfeff);
+  });
+
+  it('ヘッダー行に接触角関連カラムがある', () => {
+    const csv = formatContactAngleCsv(makeContactAngleResult());
+    const header = csv.split('\r\n')[0].replace('\uFEFF', '');
+    expect(header).toContain('接触角(°)');
+    expect(header).toContain('γ_LV(mN/m)');
+    expect(header).toContain('γ_SV(mN/m)');
+    expect(header).toContain('γ_SL(mN/m)');
+    expect(header).toContain('cos(θ)');
+    expect(header).toContain('濡れ性レベル');
+    expect(header).toContain('濡れ性判定');
+  });
+
+  it('データ行に数値が含まれる', () => {
+    const csv = formatContactAngleCsv(makeContactAngleResult());
+    const lines = csv.split('\r\n');
+    const dataLine = lines[1];
+    expect(dataLine).toContain('ポリスチレン');
+    expect(dataLine).toContain('トルエン');
+    expect(dataLine).toContain('31.8');
+    expect(dataLine).toContain('28.500');
+    expect(dataLine).toContain('33.200');
+  });
+
+  it('CRLFで改行される', () => {
+    const csv = formatContactAngleCsv(makeContactAngleResult());
+    expect(csv).toContain('\r\n');
+    const withoutCRLF = csv.replace(/\r\n/g, '');
+    expect(withoutCRLF).not.toContain('\n');
+  });
+
+  it('空の結果セットではヘッダーのみ', () => {
+    const result = makeContactAngleResult({ results: [] });
+    const csv = formatContactAngleCsv(result);
+    const lines = csv.split('\r\n').filter((l) => l.length > 0);
+    expect(lines.length).toBe(1);
   });
 });

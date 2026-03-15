@@ -2,7 +2,7 @@
  * バリデーション関数（純粋関数）
  * エラーがある場合はメッセージ文字列を返し、有効な場合はnullを返す
  */
-import type { RiskThresholds } from './types';
+import type { RiskThresholds, WettabilityThresholds } from './types';
 
 export function validateHSPValues(deltaD: number, deltaP: number, deltaH: number): string | null {
   if (!Number.isFinite(deltaD) || deltaD < 0) return 'δDは0以上の数値を入力してください';
@@ -126,6 +126,20 @@ export function validateDispersibilityThresholds(t: {
   }
   if (!(t.excellentMax < t.goodMax && t.goodMax < t.fairMax && t.fairMax < t.poorMax)) {
     return '閾値は excellentMax < goodMax < fairMax < poorMax の順でなければなりません';
+  }
+  return null;
+}
+
+export function validateWettabilityThresholds(t: WettabilityThresholds): string | null {
+  const vals = [t.superHydrophilicMax, t.hydrophilicMax, t.wettableMax, t.moderateMax, t.hydrophobicMax];
+  if (vals.some((v) => !Number.isFinite(v) || v < 0 || v > 180)) {
+    return '閾値はすべて0以上180以下の数値を入力してください';
+  }
+  if (!(t.superHydrophilicMax < t.hydrophilicMax
+    && t.hydrophilicMax < t.wettableMax
+    && t.wettableMax < t.moderateMax
+    && t.moderateMax < t.hydrophobicMax)) {
+    return '閾値は superHydrophilicMax < hydrophilicMax < wettableMax < moderateMax < hydrophobicMax の順でなければなりません';
   }
   return null;
 }

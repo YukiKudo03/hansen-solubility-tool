@@ -164,3 +164,44 @@ export interface SolventConstraints {
   maxViscosity?: number;
   maxSurfaceTension?: number;
 }
+
+// ─── 接触角推定系 ───────────────────────────
+
+/** 濡れ性レベル (1=最も濡れやすい, 6=最も撥水) */
+export enum WettabilityLevel {
+  SuperHydrophilic = 1, // 超親水 (θ < 10°)
+  Hydrophilic = 2,      // 親水 (10° ≤ θ < 30°)
+  Wettable = 3,         // 濡れ性良好 (30° ≤ θ < 60°)
+  Moderate = 4,         // 中間 (60° ≤ θ < 90°)
+  Hydrophobic = 5,      // 疎水 (90° ≤ θ < 150°)
+  SuperHydrophobic = 6, // 超撥水 (θ ≥ 150°)
+}
+
+/** 濡れ性閾値設定 (接触角の閾値, 単位: °) */
+export interface WettabilityThresholds {
+  superHydrophilicMax: number; // default: 10
+  hydrophilicMax: number;      // default: 30
+  wettableMax: number;         // default: 60
+  moderateMax: number;         // default: 90
+  hydrophobicMax: number;      // default: 150
+}
+
+/** 個別部品の接触角推定結果 */
+export interface ContactAngleResult {
+  part: Part;
+  solvent: Solvent;
+  surfaceTensionLV: number;   // 液体表面張力 γ_LV (mN/m)
+  surfaceEnergySV: number;    // 固体表面エネルギー γ_SV (mN/m)
+  interfacialTension: number; // 界面張力 γ_SL (mN/m)
+  cosTheta: number;           // cos(θ)
+  contactAngle: number;       // 接触角 θ (°)
+  wettability: WettabilityLevel;
+}
+
+/** グループ全体の接触角推定結果 */
+export interface GroupContactAngleResult {
+  partsGroup: PartsGroup;
+  solvent: Solvent;
+  results: ContactAngleResult[];
+  evaluatedAt: Date;
+}

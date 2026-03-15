@@ -5,8 +5,9 @@ import DatabaseEditor from './components/DatabaseEditor';
 import SettingsView from './components/SettingsView';
 import MixtureLab from './components/MixtureLab';
 import NanoDispersionView from './components/NanoDispersionView';
+import ContactAngleView from './components/ContactAngleView';
 
-type Tab = 'report' | 'database' | 'mixture' | 'nanoDispersion' | 'settings';
+type Tab = 'report' | 'database' | 'mixture' | 'nanoDispersion' | 'contactAngle' | 'settings';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<Tab>('report');
@@ -16,6 +17,7 @@ export default function App() {
     { id: 'database', label: 'データベース編集' },
     { id: 'mixture', label: '混合溶媒' },
     { id: 'nanoDispersion', label: 'ナノ粒子分散' },
+    { id: 'contactAngle', label: '接触角推定' },
     { id: 'settings', label: '設定' },
   ];
 
@@ -54,6 +56,7 @@ export default function App() {
           {activeTab === 'database' && <DatabaseEditor />}
           {activeTab === 'mixture' && <MixtureLab />}
           {activeTab === 'nanoDispersion' && <NanoDispersionView />}
+          {activeTab === 'contactAngle' && <ContactAngleView />}
           {activeTab === 'settings' && <SettingsView />}
         </ErrorBoundary>
       </main>

@@ -1,7 +1,7 @@
 /**
  * Preload API 型定義 — window.api の型
  */
-import type { PartsGroup, Solvent, RiskThresholds, GroupEvaluationResult, NanoParticle, NanoParticleCategory, NanoDispersionEvaluationResult, DispersibilityThresholds, SolventConstraints } from './core/types';
+import type { PartsGroup, Solvent, RiskThresholds, GroupEvaluationResult, NanoParticle, NanoParticleCategory, NanoDispersionEvaluationResult, DispersibilityThresholds, SolventConstraints, GroupContactAngleResult, WettabilityThresholds } from './core/types';
 import type { CreatePartsGroupDto, CreatePartDto, CreateSolventDto, CreateNanoParticleDto } from './db/repository';
 
 export interface ElectronAPI {
@@ -53,6 +53,14 @@ export interface ElectronAPI {
   // 分散性閾値設定
   getDispersibilityThresholds(): Promise<DispersibilityThresholds>;
   setDispersibilityThresholds(thresholds: DispersibilityThresholds): Promise<void>;
+
+  // 接触角推定
+  estimateContactAngle(partsGroupId: number, solventId: number): Promise<GroupContactAngleResult>;
+  screenContactAngle(partId: number, groupId: number): Promise<GroupContactAngleResult>;
+
+  // 濡れ性閾値設定
+  getWettabilityThresholds(): Promise<WettabilityThresholds>;
+  setWettabilityThresholds(thresholds: WettabilityThresholds): Promise<void>;
 }
 
 declare global {
