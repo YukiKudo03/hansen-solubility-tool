@@ -11,13 +11,13 @@
 │  ┌──────────────────────┐          ┌────────────────────────┐   │
 │  │  MAIN PROCESS        │  IPC     │  RENDERER PROCESS      │   │
 │  │  (main.ts)           │◄────────►│  (React 19 App.tsx)    │   │
-│  │                      │ 70+ API  │  12 tabs               │   │
+│  │                      │ 70+ API  │  MD3 responsive (960×680)│   │
 │  │ ┌──────────────────┐ │          │ ┌──────────────────┐   │   │
 │  │ │ IPC Handlers     │ │          │ │ 9 Feature Views  │   │   │
 │  │ │ 70+ handlers     │ │          │ │ + DB/Mix/Settings│   │   │
 │  │ └──────────────────┘ │          │ └──────────────────┘   │   │
 │  │         ▼            │          │        ▲               │   │
-│  │ ┌──────────────────┐ │          │   13 Hooks             │   │
+│  │ ┌──────────────────┐ │          │   14 Hooks             │   │
 │  │ │ Core (16 modules)│ │          │   7 Badges             │   │
 │  │ │ Pure functions   │ │          └────────────────────────┘   │
 │  │ └──────────────────┘ │                                       │
@@ -74,19 +74,11 @@ All pipelines share `calculateRa()`/`calculateRed()` from `hsp.ts` except Pipeli
 ## Component Hierarchy
 
 ```
-App.tsx (12 tabs)
-├── ReportView (A: polymer risk)
-├── NanoDispersionView (B: nanoparticle screening)
-├── ContactAngleView (C: contact angle)
-├── BlendOptimizerView (D: solvent blend optimization)
-├── SwellingView (E: swelling prediction)
-├── DrugSolubilityView (F: drug solubility)
-├── ChemicalResistanceView (G: chemical resistance)
-├── PlasticizerView (H: plasticizer selection)
-├── CarrierSelectionView (I: DDS carrier selection)
-├── DatabaseEditor (CRUD for all entities)
-├── MixtureLab (mixed solvent creation)
-├── SettingsView (9 threshold configs)
+App.tsx (MD3 responsive: Drawer ≥840px / Rail 600-839px / BottomNav <600px)
+├── NavigationDrawer (5 categories: 評価/選定/最適化/データ/設定)
+├── NavigationRail (icon + popover)
+├── BottomNavigation (bottom bar + popup)
+├── 9 Feature Views (A-I) + DatabaseEditor + MixtureLab + SettingsView
 └── ErrorBoundary
 ```
 
@@ -97,7 +89,7 @@ App.tsx (12 tabs)
 | **Domain** | `src/core/` | 16 | Pure calculations, classification, CSV, validation |
 | **Data Access** | `src/db/` | 9 | Schema, 5 repos, 6 seed files |
 | **Main Process** | `src/main/` | 3 | Electron lifecycle, 70+ IPC handlers, preload |
-| **UI** | `src/renderer/` | 37 | 24 components, 13 hooks, entry |
+| **UI** | `src/renderer/` | 40 | 27 components (9 Views, 8 Badges, 3 Nav, 4 Selectors, 3 Shared), 14 hooks, navigation.ts |
 
 ## File Structure
 

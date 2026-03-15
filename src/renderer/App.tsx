@@ -1,5 +1,11 @@
 import React, { useState } from 'react';
 import ErrorBoundary from './components/ErrorBoundary';
+import NavigationDrawer from './components/NavigationDrawer';
+import NavigationRail from './components/NavigationRail';
+import BottomNavigation from './components/BottomNavigation';
+import { useMediaQuery } from './hooks/useMediaQuery';
+import type { Tab } from './navigation';
+
 import ReportView from './components/ReportView';
 import DatabaseEditor from './components/DatabaseEditor';
 import SettingsView from './components/SettingsView';
@@ -13,71 +19,54 @@ import ChemicalResistanceView from './components/ChemicalResistanceView';
 import PlasticizerView from './components/PlasticizerView';
 import CarrierSelectionView from './components/CarrierSelectionView';
 
-type Tab = 'report' | 'database' | 'mixture' | 'nanoDispersion' | 'contactAngle' | 'blendOptimizer' | 'swelling' | 'drugSolubility' | 'chemicalResistance' | 'plasticizer' | 'carrierSelection' | 'settings';
+const VIEW_MAP: Record<Tab, React.ComponentType> = {
+  report: ReportView,
+  database: DatabaseEditor,
+  mixture: MixtureLab,
+  nanoDispersion: NanoDispersionView,
+  contactAngle: ContactAngleView,
+  blendOptimizer: BlendOptimizerView,
+  swelling: SwellingView,
+  drugSolubility: DrugSolubilityView,
+  chemicalResistance: ChemicalResistanceView,
+  plasticizer: PlasticizerView,
+  carrierSelection: CarrierSelectionView,
+  settings: SettingsView,
+};
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<Tab>('report');
-
-  const tabs: { id: Tab; label: string }[] = [
-    { id: 'report', label: '溶解性評価' },
-    { id: 'database', label: 'データベース編集' },
-    { id: 'mixture', label: '混合溶媒' },
-    { id: 'nanoDispersion', label: 'ナノ粒子分散' },
-    { id: 'contactAngle', label: '接触角推定' },
-    { id: 'blendOptimizer', label: '溶剤ブレンド最適化' },
-    { id: 'swelling', label: '膨潤度予測' },
-    { id: 'drugSolubility', label: '薬物溶解性' },
-    { id: 'chemicalResistance', label: '耐薬品性予測' },
-    { id: 'plasticizer', label: '可塑剤選定' },
-    { id: 'carrierSelection', label: 'キャリア選定（DDS）' },
-    { id: 'settings', label: '設定' },
-  ];
+  const screenSize = useMediaQuery();
+  const ActiveView = VIEW_MAP[activeTab];
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
+    <div className="h-screen bg-md3-surface flex flex-col">
       {/* ヘッダー */}
-      <header className="bg-white border-b border-gray-200 px-6 py-3">
-        <h1 className="text-xl font-bold text-gray-800">
+      <header className="bg-md3-surface-container-low border-b border-md3-outline-variant px-4 py-2 shrink-0">
+        <h1 className="text-md3-title-lg text-md3-on-surface">
           Hansen溶解度パラメータ 溶解性評価ツール
         </h1>
       </header>
 
-      {/* タブナビゲーション */}
-      <nav className="bg-white border-b border-gray-200 px-6 overflow-x-auto">
-        <div className="flex space-x-1 min-w-max">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`px-4 py-2.5 text-sm font-medium rounded-t-lg transition-colors ${
-                activeTab === tab.id
-                  ? 'bg-blue-50 text-blue-700 border-b-2 border-blue-700'
-                  : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'
-              }`}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-      </nav>
+      {/* メインエリア */}
+      <div className="flex-1 flex overflow-hidden">
+        {screenSize === 'desktop' && (
+          <NavigationDrawer activeTab={activeTab} onSelect={setActiveTab} />
+        )}
+        {screenSize === 'tablet' && (
+          <NavigationRail activeTab={activeTab} onSelect={setActiveTab} />
+        )}
 
-      {/* メインコンテンツ */}
-      <main className="flex-1 p-6">
-        <ErrorBoundary>
-          {activeTab === 'report' && <ReportView />}
-          {activeTab === 'database' && <DatabaseEditor />}
-          {activeTab === 'mixture' && <MixtureLab />}
-          {activeTab === 'nanoDispersion' && <NanoDispersionView />}
-          {activeTab === 'contactAngle' && <ContactAngleView />}
-          {activeTab === 'blendOptimizer' && <BlendOptimizerView />}
-          {activeTab === 'swelling' && <SwellingView />}
-          {activeTab === 'drugSolubility' && <DrugSolubilityView />}
-          {activeTab === 'chemicalResistance' && <ChemicalResistanceView />}
-          {activeTab === 'plasticizer' && <PlasticizerView />}
-          {activeTab === 'carrierSelection' && <CarrierSelectionView />}
-          {activeTab === 'settings' && <SettingsView />}
-        </ErrorBoundary>
-      </main>
+        <main className="flex-1 overflow-y-auto p-4">
+          <ErrorBoundary>
+            <ActiveView />
+          </ErrorBoundary>
+        </main>
+      </div>
+
+      {screenSize === 'mobile' && (
+        <BottomNavigation activeTab={activeTab} onSelect={setActiveTab} />
+      )}
     </div>
   );
 }

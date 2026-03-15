@@ -3,7 +3,7 @@
  */
 import { test, expect } from '@playwright/test';
 import type { ElectronApplication, Page } from '@playwright/test';
-import { launchApp } from './helpers';
+import { launchApp, clickTab } from './helpers';
 
 let app: ElectronApplication;
 let page: Page;
@@ -17,7 +17,7 @@ test.afterAll(async () => {
 });
 
 test('混合溶媒タブに切り替え', async () => {
-  await page.getByText('混合溶媒').click();
+  await clickTab(page, '混合溶媒');
   await expect(page.getByText('混合溶媒の作成')).toBeVisible();
 });
 

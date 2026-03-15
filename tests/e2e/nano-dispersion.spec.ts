@@ -3,7 +3,7 @@
  */
 import { test, expect } from '@playwright/test';
 import type { ElectronApplication, Page } from '@playwright/test';
-import { launchApp } from './helpers';
+import { launchApp, clickTab } from './helpers';
 
 let app: ElectronApplication;
 let page: Page;
@@ -17,7 +17,7 @@ test.afterAll(async () => {
 });
 
 test('ナノ粒子分散タブに切り替え', async () => {
-  await page.getByText('ナノ粒子分散').click();
+  await clickTab(page, 'ナノ粒子分散');
   await expect(page.getByText('ナノ粒子分散評価')).toBeVisible();
 });
 
@@ -81,7 +81,7 @@ test('全溶媒スクリーニングを実行できる', async () => {
 
 test('結果テーブルに分散性バッジが表示される', async () => {
   // 分散性バッジ（優秀/良好/可能/不良/不可のいずれか）が表示
-  const badges = page.locator('.rounded-full');
+  const badges = page.locator('.rounded-md3-sm');
   const count = await badges.count();
   expect(count).toBeGreaterThan(0);
 });
