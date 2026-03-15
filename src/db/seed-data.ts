@@ -190,6 +190,21 @@ export const POLYMER_GROUP_SEEDS: PolymerGroupSeed[] = [
       { name: 'PFA', materialType: 'PFA', deltaD: 16.0, deltaP: 1.5, deltaH: 3.0, r0: 4.5 },
     ],
   },
+  {
+    group: { name: '接着剤', description: '主要な接着剤（硬化後の樹脂としてのHSP値）' },
+    parts: [
+      { name: 'エポキシ系接着剤（2液硬化型）', materialType: 'Epoxy', deltaD: 18.0, deltaP: 10.5, deltaH: 9.0, r0: 12.7 },
+      { name: 'シアノアクリレート（瞬間接着剤）', materialType: 'CA', deltaD: 19.2, deltaP: 12.3, deltaH: 8.6, r0: 7.0 },
+      { name: 'ポリウレタン系接着剤', materialType: 'PU', deltaD: 18.1, deltaP: 9.3, deltaH: 4.5, r0: 9.5 },
+      { name: 'アクリル系接着剤（SGA）', materialType: 'Acrylic', deltaD: 18.6, deltaP: 10.5, deltaH: 7.5, r0: 8.6 },
+      { name: 'シリコーン系接着剤（RTV）', materialType: 'Silicone', deltaD: 16.5, deltaP: 2.0, deltaH: 4.0, r0: 10.0 },
+      { name: 'EVA系ホットメルト接着剤', materialType: 'EVA', deltaD: 17.5, deltaP: 4.5, deltaH: 6.2, r0: 10.5 },
+      { name: 'ポリ酢酸ビニル（木工用ボンド）', materialType: 'PVAc', deltaD: 20.9, deltaP: 11.3, deltaH: 9.6, r0: 13.7 },
+      { name: 'クロロプレン系接着剤', materialType: 'CR-Adh', deltaD: 19.1, deltaP: 3.7, deltaH: 4.5, r0: 7.2 },
+      { name: 'フェノール樹脂系接着剤', materialType: 'Phenolic', deltaD: 20.4, deltaP: 12.0, deltaH: 11.5, r0: 14.0 },
+      { name: 'ポリアミド系ホットメルト接着剤', materialType: 'PA-HM', deltaD: 17.4, deltaP: 9.9, deltaH: 14.6, r0: 5.0 },
+    ],
+  },
 ];
 
 /**
