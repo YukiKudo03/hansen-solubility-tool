@@ -21,11 +21,16 @@ export async function clickTab(page: Page, tabText: string): Promise<void> {
     return;
   }
 
-  // 見えない場合、各カテゴリヘッダーをクリックして展開
-  const categoryHeaders = drawer.locator('button').filter({ has: page.locator('span.text-lg') });
-  const count = await categoryHeaders.count();
-  for (let i = 0; i < count; i++) {
-    await categoryHeaders.nth(i).click();
+  // 見えない場合、カテゴリヘッダー（pl-12クラスを持たないボタン）をクリックして展開
+  // NavigationDrawerのカテゴリヘッダーはpx-4 py-2クラスを持ち、サブ項目はpl-12クラスを持つ
+  const allButtons = drawer.locator('button');
+  const buttonCount = await allButtons.count();
+  for (let i = 0; i < buttonCount; i++) {
+    const btn = allButtons.nth(i);
+    const cls = await btn.getAttribute('class').catch(() => '');
+    // サブ項目（pl-12）はスキップ、カテゴリヘッダーのみクリック
+    if (cls && cls.includes('pl-12')) continue;
+    await btn.click();
     await page.waitForTimeout(200);
     const item = drawer.locator('button', { hasText: tabText });
     if (await item.first().isVisible().catch(() => false)) {

@@ -3,7 +3,7 @@
  */
 import { test, expect } from '@playwright/test';
 import type { ElectronApplication, Page } from '@playwright/test';
-import { launchApp } from './helpers';
+import { launchApp, clickTab } from './helpers';
 
 let app: ElectronApplication;
 let page: Page;
@@ -17,8 +17,8 @@ test.afterAll(async () => {
 });
 
 test('接触角推定タブに切り替え', async () => {
-  // navバー内のタブボタンを明示的に指定
-  await page.locator('nav button', { hasText: '接触角推定' }).click();
+  // NavigationDrawerからタブを選択
+  await clickTab(page, '接触角推定');
   await expect(page.getByText('Nakamoto-Yamamoto式')).toBeVisible();
 });
 
@@ -57,7 +57,7 @@ test('結果テーブルに接触角と濡れ性バッジが表示される', as
   await expect(page.locator('td').filter({ hasText: /\d+\.\d°/ }).first()).toBeVisible();
 
   // 濡れ性バッジ（超親水/親水/濡れ性良好/中間/疎水/超撥水のいずれか）
-  const badges = page.locator('.rounded-full');
+  const badges = page.locator('.rounded-md3-sm');
   const badgeCount = await badges.count();
   expect(badgeCount).toBeGreaterThan(0);
 });
@@ -102,7 +102,7 @@ test('全溶媒スクリーニングを実行できる', async () => {
 });
 
 test('スクリーニング結果にCSV出力ボタンが表示される', async () => {
-  await expect(page.locator('main button', { hasText: 'CSV出力' })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'CSV出力' })).toBeVisible();
 });
 
 test('グループ評価モードに戻せる', async () => {
