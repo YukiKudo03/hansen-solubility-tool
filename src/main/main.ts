@@ -6,8 +6,9 @@ import path from 'path';
 import Database from 'better-sqlite3';
 import { initializeDatabase, migrateDatabase } from '../db/schema';
 import { seedDatabase } from '../db/seed-data';
-import { SqlitePartsRepository, SqliteSolventRepository, SqliteSettingsRepository, SqliteNanoParticleRepository } from '../db/sqlite-repository';
+import { SqlitePartsRepository, SqliteSolventRepository, SqliteSettingsRepository, SqliteNanoParticleRepository, SqliteDrugRepository } from '../db/sqlite-repository';
 import { seedNanoParticles } from '../db/seed-nano-particles';
+import { seedDrugs } from '../db/seed-drugs';
 import { registerIpcHandlers } from './ipc-handlers';
 
 let mainWindow: BrowserWindow | null = null;
@@ -31,6 +32,9 @@ function initDb(): Database.Database {
 
   // ナノ粒子シードデータ投入
   seedNanoParticles(db);
+
+  // 薬物シードデータ投入
+  seedDrugs(db);
 
   return db;
 }
@@ -56,6 +60,7 @@ function createWindow(db: Database.Database): void {
   const solventRepo = new SqliteSolventRepository(db);
   const settingsRepo = new SqliteSettingsRepository(db);
   const nanoParticleRepo = new SqliteNanoParticleRepository(db);
+  const drugRepo = new SqliteDrugRepository(db);
   registerIpcHandlers(partsRepo, solventRepo, settingsRepo, nanoParticleRepo);
 
   // 開発時はVite devサーバー、本番時はビルド済みファイルを読み込む

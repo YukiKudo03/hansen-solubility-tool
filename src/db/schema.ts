@@ -62,6 +62,23 @@ CREATE TABLE IF NOT EXISTS nano_particles (
   updated_at      TEXT DEFAULT (datetime('now'))
 );
 
+CREATE TABLE IF NOT EXISTS drugs (
+  id                    INTEGER PRIMARY KEY AUTOINCREMENT,
+  name                  TEXT NOT NULL,
+  name_en               TEXT,
+  cas_number            TEXT,
+  delta_d               REAL NOT NULL,
+  delta_p               REAL NOT NULL,
+  delta_h               REAL NOT NULL,
+  r0                    REAL NOT NULL,
+  mol_weight            REAL,
+  log_p                 REAL,
+  therapeutic_category  TEXT,
+  notes                 TEXT,
+  created_at            TEXT DEFAULT (datetime('now')),
+  updated_at            TEXT DEFAULT (datetime('now'))
+);
+
 CREATE TABLE IF NOT EXISTS settings (
   key   TEXT PRIMARY KEY,
   value TEXT NOT NULL
