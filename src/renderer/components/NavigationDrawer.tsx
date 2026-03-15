@@ -28,6 +28,7 @@ const NavigationDrawer: React.FC<NavigationDrawerProps> = ({ activeTab, onSelect
   return (
     <nav
       data-testid="navigation-drawer"
+      aria-label="メインナビゲーション"
       className="w-60 h-full bg-md3-surface-container-low overflow-y-auto flex flex-col"
     >
       {NAV_CATEGORIES.map((category) => {
@@ -36,7 +37,9 @@ const NavigationDrawer: React.FC<NavigationDrawerProps> = ({ activeTab, onSelect
         return (
           <div key={category.id}>
             <button
+              data-nav-type="category"
               className="flex items-center gap-3 px-4 py-2 w-full text-left text-md3-on-surface hover:bg-md3-surface-container-highest"
+              aria-expanded={isExpanded}
               onClick={() => toggleCategory(category.id)}
             >
               <span>{category.icon}</span>
@@ -50,12 +53,14 @@ const NavigationDrawer: React.FC<NavigationDrawerProps> = ({ activeTab, onSelect
                   return (
                     <button
                       key={item.id}
+                      data-nav-type="item"
                       className={
                         `pl-12 pr-4 py-2 w-full text-left rounded-md3-xl ` +
                         (isActive
                           ? 'bg-md3-secondary-container text-md3-on-secondary-container font-medium'
                           : 'text-md3-on-surface-variant hover:bg-md3-surface-container-highest')
                       }
+                      aria-current={isActive ? 'page' : undefined}
                       onClick={() => onSelect(item.id)}
                     >
                       {item.label}

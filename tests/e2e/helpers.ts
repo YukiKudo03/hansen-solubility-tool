@@ -21,15 +21,11 @@ export async function clickTab(page: Page, tabText: string): Promise<void> {
     return;
   }
 
-  // 見えない場合、カテゴリヘッダー（pl-12クラスを持たないボタン）をクリックして展開
-  // NavigationDrawerのカテゴリヘッダーはpx-4 py-2クラスを持ち、サブ項目はpl-12クラスを持つ
-  const allButtons = drawer.locator('button');
-  const buttonCount = await allButtons.count();
+  // 見えない場合、カテゴリヘッダー（data-nav-type="category"）をクリックして展開
+  const categoryButtons = drawer.locator('button[data-nav-type="category"]');
+  const buttonCount = await categoryButtons.count();
   for (let i = 0; i < buttonCount; i++) {
-    const btn = allButtons.nth(i);
-    const cls = await btn.getAttribute('class').catch(() => '');
-    // サブ項目（pl-12）はスキップ、カテゴリヘッダーのみクリック
-    if (cls && cls.includes('pl-12')) continue;
+    const btn = categoryButtons.nth(i);
     await btn.click();
     await page.waitForTimeout(200);
     const item = drawer.locator('button', { hasText: tabText });
@@ -39,8 +35,8 @@ export async function clickTab(page: Page, tabText: string): Promise<void> {
     }
   }
 
-  // フォールバック: getByTextで直接検索
-  await page.getByText(tabText, { exact: true }).first().click();
+  // フォールバック: drawerスコープ内でgetByTextで直接検索
+  await drawer.getByText(tabText, { exact: true }).first().click();
 }
 
 export async function launchApp(): Promise<{ app: ElectronApplication; page: Page }> {

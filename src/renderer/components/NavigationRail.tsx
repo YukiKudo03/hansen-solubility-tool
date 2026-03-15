@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { NAV_CATEGORIES, getCategoryForTab } from '../navigation';
 import type { Tab } from '../navigation';
 
@@ -10,6 +10,18 @@ interface NavigationRailProps {
 const NavigationRail: React.FC<NavigationRailProps> = ({ activeTab, onSelect }) => {
   const [openCategory, setOpenCategory] = useState<string | null>(null);
   const activeCategory = getCategoryForTab(activeTab);
+  const navRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    if (!openCategory) return;
+    const handleClickOutside = (e: MouseEvent) => {
+      if (navRef.current && !navRef.current.contains(e.target as Node)) {
+        setOpenCategory(null);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [openCategory]);
 
   const handleCategoryClick = (categoryId: string) => {
     setOpenCategory((prev) => (prev === categoryId ? null : categoryId));
@@ -22,7 +34,9 @@ const NavigationRail: React.FC<NavigationRailProps> = ({ activeTab, onSelect }) 
 
   return (
     <nav
+      ref={navRef}
       data-testid="navigation-rail"
+      aria-label="メインナビゲーション"
       className="w-20 h-full bg-md3-surface-container flex flex-col items-center py-4 gap-2 relative"
     >
       {NAV_CATEGORIES.map((category) => {
@@ -33,6 +47,7 @@ const NavigationRail: React.FC<NavigationRailProps> = ({ activeTab, onSelect }) 
           <div key={category.id} className="relative w-full flex flex-col items-center">
             <button
               className="flex flex-col items-center gap-1 w-full py-2 px-1"
+              aria-expanded={openCategory === category.id}
               onClick={() => handleCategoryClick(category.id)}
             >
               <span

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { NAV_CATEGORIES, getCategoryForTab } from '../navigation';
 import type { Tab } from '../navigation';
 
@@ -10,6 +10,18 @@ interface BottomNavigationProps {
 const BottomNavigation: React.FC<BottomNavigationProps> = ({ activeTab, onSelect }) => {
   const [openCategory, setOpenCategory] = useState<string | null>(null);
   const activeCategory = getCategoryForTab(activeTab);
+  const navRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    if (!openCategory) return;
+    const handleClickOutside = (e: MouseEvent) => {
+      if (navRef.current && !navRef.current.contains(e.target as Node)) {
+        setOpenCategory(null);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [openCategory]);
 
   const handleCategoryClick = (categoryId: string) => {
     setOpenCategory((prev) => (prev === categoryId ? null : categoryId));
@@ -22,7 +34,9 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({ activeTab, onSelect
 
   return (
     <nav
+      ref={navRef}
       data-testid="bottom-navigation"
+      aria-label="メインナビゲーション"
       className="w-full bg-md3-surface-container flex justify-around items-center h-16 relative"
     >
       {NAV_CATEGORIES.map((category) => {
@@ -47,6 +61,7 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({ activeTab, onSelect
 
             <button
               className="flex flex-col items-center gap-1 px-3 py-1"
+              aria-expanded={openCategory === category.id}
               onClick={() => handleCategoryClick(category.id)}
             >
               <span
