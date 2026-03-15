@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { formatCsv, formatContactAngleCsv } from '../../src/core/report';
-import { RiskLevel, WettabilityLevel } from '../../src/core/types';
-import type { GroupEvaluationResult, GroupContactAngleResult, ContactAngleResult, Part, Solvent, PartsGroup } from '../../src/core/types';
+import { formatCsv, formatContactAngleCsv, formatSwellingCsv, formatDrugSolubilityCsv, formatBlendOptimizationCsv } from '../../src/core/report';
+import { RiskLevel, WettabilityLevel, SwellingLevel, DrugSolubilityLevel } from '../../src/core/types';
+import type { GroupEvaluationResult, GroupContactAngleResult, ContactAngleResult, Part, Solvent, PartsGroup, GroupSwellingResult, DrugSolubilityScreeningResult, BlendOptimizationResult } from '../../src/core/types';
 
 function makePart(overrides: Partial<Part> = {}): Part {
   return {
@@ -291,5 +291,70 @@ describe('formatContactAngleCsv', () => {
     const csv = formatContactAngleCsv(result);
     const lines = csv.split('\r\n').filter((l) => l.length > 0);
     expect(lines.length).toBe(1);
+  });
+});
+
+// ─── formatSwellingCsv ───────────────────
+
+describe('formatSwellingCsv', () => {
+  it('BOM付きUTF-8ヘッダーを含む', () => {
+    const result: GroupSwellingResult = {
+      partsGroup: { id: 1, name: 'TestGroup', description: null, parts: [] },
+      solvent: { id: 1, name: 'Water', nameEn: null, casNumber: null, hsp: { deltaD: 15.5, deltaP: 16.0, deltaH: 42.3 }, molarVolume: null, molWeight: null, boilingPoint: null, viscosity: null, specificGravity: null, surfaceTension: null, notes: null },
+      results: [],
+      evaluatedAt: new Date('2024-01-01'),
+      thresholdsUsed: { severeMax: 0.5, highMax: 0.8, moderateMax: 1.0, lowMax: 1.5 },
+    };
+    const csv = formatSwellingCsv(result);
+    expect(csv.startsWith('\uFEFF')).toBe(true);
+    expect(csv).toContain('膨潤レベル');
+  });
+
+  it('結果行が正しくフォーマットされる', () => {
+    const result: GroupSwellingResult = {
+      partsGroup: { id: 1, name: 'TestGroup', description: null, parts: [
+        { id: 1, groupId: 1, name: 'Part1', materialType: 'elastomer', hsp: { deltaD: 18.0, deltaP: 5.0, deltaH: 7.0 }, r0: 5.0, notes: null },
+      ] },
+      solvent: { id: 1, name: 'Toluene', nameEn: null, casNumber: null, hsp: { deltaD: 18.0, deltaP: 1.4, deltaH: 2.0 }, molarVolume: null, molWeight: null, boilingPoint: 110.6, viscosity: null, specificGravity: null, surfaceTension: null, notes: null },
+      results: [
+        { part: { id: 1, groupId: 1, name: 'Part1', materialType: 'elastomer', hsp: { deltaD: 18.0, deltaP: 5.0, deltaH: 7.0 }, r0: 5.0, notes: null }, solvent: { id: 1, name: 'Toluene', nameEn: null, casNumber: null, hsp: { deltaD: 18.0, deltaP: 1.4, deltaH: 2.0 }, molarVolume: null, molWeight: null, boilingPoint: 110.6, viscosity: null, specificGravity: null, surfaceTension: null, notes: null }, ra: 3.5, red: 0.7, swellingLevel: SwellingLevel.High },
+      ],
+      evaluatedAt: new Date('2024-01-01'),
+      thresholdsUsed: { severeMax: 0.5, highMax: 0.8, moderateMax: 1.0, lowMax: 1.5 },
+    };
+    const csv = formatSwellingCsv(result);
+    expect(csv).toContain('Part1');
+    expect(csv).toContain('高膨潤');
+  });
+});
+
+// ─── formatDrugSolubilityCsv ───────────────────
+
+describe('formatDrugSolubilityCsv', () => {
+  it('BOM付きUTF-8ヘッダーを含む', () => {
+    const result: DrugSolubilityScreeningResult = {
+      drug: { id: 1, name: 'Acetaminophen', nameEn: null, casNumber: null, hsp: { deltaD: 17.2, deltaP: 9.4, deltaH: 13.3 }, r0: 5.0, molWeight: null, logP: null, therapeuticCategory: null, notes: null },
+      results: [],
+      evaluatedAt: new Date('2024-01-01'),
+      thresholdsUsed: { excellentMax: 0.5, goodMax: 0.8, partialMax: 1.0, poorMax: 1.5 },
+    };
+    const csv = formatDrugSolubilityCsv(result);
+    expect(csv.startsWith('\uFEFF')).toBe(true);
+    expect(csv).toContain('溶解性レベル');
+  });
+});
+
+// ─── formatBlendOptimizationCsv ───────────────────
+
+describe('formatBlendOptimizationCsv', () => {
+  it('BOM付きUTF-8ヘッダーを含む', () => {
+    const result: BlendOptimizationResult = {
+      targetHSP: { deltaD: 17.0, deltaP: 5.0, deltaH: 10.0 },
+      topResults: [],
+      evaluatedAt: new Date('2024-01-01'),
+    };
+    const csv = formatBlendOptimizationCsv(result);
+    expect(csv.startsWith('\uFEFF')).toBe(true);
+    expect(csv).toContain('Ra');
   });
 });
