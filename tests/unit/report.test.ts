@@ -342,6 +342,25 @@ describe('formatDrugSolubilityCsv', () => {
     expect(csv.startsWith('\uFEFF')).toBe(true);
     expect(csv).toContain('溶解性レベル');
   });
+
+  it('結果行が正しくフォーマットされる', () => {
+    const drug = { id: 1, name: 'Acetaminophen', nameEn: null, casNumber: null, hsp: { deltaD: 17.2, deltaP: 9.4, deltaH: 13.3 }, r0: 5.0, molWeight: null, logP: null, therapeuticCategory: '解熱鎮痛薬', notes: null };
+    const solvent = makeSolvent({ name: 'エタノール', hsp: { deltaD: 15.8, deltaP: 8.8, deltaH: 19.4 } });
+    const result: DrugSolubilityScreeningResult = {
+      drug,
+      results: [
+        { drug, solvent, ra: 1.2, red: 0.3, solubility: DrugSolubilityLevel.Excellent },
+      ],
+      evaluatedAt: new Date('2024-01-01'),
+      thresholdsUsed: { excellentMax: 0.5, goodMax: 0.8, partialMax: 1.0, poorMax: 1.5 },
+    };
+    const csv = formatDrugSolubilityCsv(result);
+    expect(csv).toContain('Acetaminophen');
+    expect(csv).toContain('エタノール');
+    expect(csv).toContain('解熱鎮痛薬');
+    expect(csv).toContain('0.300');
+    expect(csv).toContain('優秀');
+  });
 });
 
 // ─── formatBlendOptimizationCsv ───────────────────
@@ -356,6 +375,31 @@ describe('formatBlendOptimizationCsv', () => {
     const csv = formatBlendOptimizationCsv(result);
     expect(csv.startsWith('\uFEFF')).toBe(true);
     expect(csv).toContain('Ra');
+  });
+
+  it('結果行が正しくフォーマットされる', () => {
+    const solvent1 = makeSolvent({ name: 'トルエン' });
+    const solvent2 = makeSolvent({ id: 2, name: 'アセトン', hsp: { deltaD: 15.5, deltaP: 10.4, deltaH: 7.0 } });
+    const result: BlendOptimizationResult = {
+      targetHSP: { deltaD: 17.0, deltaP: 5.0, deltaH: 10.0 },
+      topResults: [
+        {
+          components: [
+            { solvent: solvent1, volumeFraction: 0.6 },
+            { solvent: solvent2, volumeFraction: 0.4 },
+          ],
+          blendHSP: { deltaD: 16.9, deltaP: 4.8, deltaH: 9.9 },
+          ra: 0.25,
+        },
+      ],
+      evaluatedAt: new Date('2024-01-01'),
+    };
+    const csv = formatBlendOptimizationCsv(result);
+    expect(csv).toContain('トルエン');
+    expect(csv).toContain('アセトン');
+    expect(csv).toContain('0.600');
+    expect(csv).toContain('0.400');
+    expect(csv).toContain('0.250');
   });
 });
 
