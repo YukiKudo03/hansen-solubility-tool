@@ -36,7 +36,21 @@
       "Bash(CSC_IDENTITY_AUTO_DISCOVERY=false npx electron-builder --win --x64 2>&1 | grep -E \"artifact|building|nsis|portable|error\" -i | head -20)",
       "Bash(npm rebuild:*)",
       "Bash(npx playwright:*)",
-      "Bash(npx electron-rebuild:*)"
+      "Bash(npx electron-rebuild:*)",
+      "Bash(tasklist:*)",
+      "Bash(taskkill:*)",
+      "Bash(python:*)",
+      "WebFetch(domain:www.pirika.com)",
+      "WebFetch(domain:polymerdatabase.com)",
+      "WebFetch(domain:www.researchgate.net)",
+      "WebFetch(domain:info.ornl.gov)",
+      "WebFetch(domain:www.stevenabbott.co.uk)",
+      "WebFetch(domain:cool.culturalheritage.org)",
+      "Bash(CSC_IDENTITY_AUTO_DISCOVERY=false npx electron-builder --win --x64 2>&1 | grep -E \"packaging|building|artifact|target|file=\" -i)",
+      "Bash(wc:*)",
+      "Bash(find:*)",
+      "Bash(git status:*)",
+      "Bash(git checkout:*)"
     ]
   }
 }

@@ -1,4 +1,4 @@
-<!-- Generated: 2026-03-15 | Node 18+ required -->
+<!-- Generated: 2026-03-15 | Updated: 2026-03-15 | Files scanned: 2 | Token estimate: ~750 -->
 
 # External Dependencies & Build Tools
 
@@ -33,6 +33,12 @@
 |---------|---------|---------|
 | **vitest** | 2.1.9 | Unit/integration test framework |
 | @vitest/coverage-v8 | 2.1.9 | Code coverage reporter (V8) |
+| **@playwright/test** | latest | E2E testing framework |
+| @testing-library/react | 16.3.2 | React component testing |
+| @testing-library/dom | 10.4.1 | DOM query helpers |
+| @testing-library/jest-dom | 6.9.1 | Custom matchers |
+| @testing-library/user-event | 14.6.1 | User interaction simulation |
+| happy-dom | 20.8.4 | Lightweight DOM for tests |
 
 ### Build & Packaging
 | Package | Version | Purpose |
@@ -63,7 +69,9 @@
   "test:watch": "vitest",
   "test:coverage": "vitest run --coverage",
   "test:unit": "vitest run tests/unit",
-  "test:integration": "vitest run tests/integration"
+  "test:integration": "vitest run tests/integration",
+  "test:e2e": "playwright test",
+  "test:e2e:headed": "playwright test --headed"
 }
 ```
 
@@ -154,7 +162,9 @@ hansen-solubility
 │   ├── electron + electron-builder
 │   └── concurrently
 ├── dev: testing
-│   └── vitest + coverage-v8
+│   ├── vitest + coverage-v8
+│   ├── @playwright/test (E2E)
+│   └── @testing-library/* (component tests)
 └── dev: styling
     ├── tailwindcss
     ├── postcss

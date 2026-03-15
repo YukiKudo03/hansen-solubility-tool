@@ -1,4 +1,4 @@
-<!-- Generated: 2026-03-15 | SQLite WAL | better-sqlite3 12.8 -->
+<!-- Generated: 2026-03-15 | Updated: 2026-03-15 | Files scanned: 4 | Token estimate: ~800 -->
 
 # Database Schema & Data Layer
 
@@ -124,9 +124,11 @@ if (count.cnt === 0) {
 }
 ```
 
-**Polymer Groups (seeded):** 6-8 groups including:
+**Polymer Groups (seeded):** 7 groups:
 - ゴム類 (Rubbers)
 - プラスチック (Plastics)
+- フッ素樹脂 (Fluoropolymers)
+- 接着剤 (Adhesives) — 10 types: Epoxy, CA, PU, Acrylic, Silicone, EVA, PVAc, CR, Phenolic, PA-HM
 - その他 (Others)
 
 ## Type Mapping

@@ -79,6 +79,6 @@ These codemaps are the **single source of truth** for architecture. Reference in
 
 ---
 
-**Generated:** 2026-03-15 | **Version:** 1.0.0 | **Status:** Current
+**Generated:** 2026-03-15 | **Version:** 1.1.0 | **Status:** Current
 
 See [../.reports/codemap-diff.txt](../../.reports/codemap-diff.txt) for generation report.
