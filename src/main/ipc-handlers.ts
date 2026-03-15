@@ -8,9 +8,11 @@ import { calculateRa, calculateRed } from '../core/hsp';
 import { classifyRisk } from '../core/risk';
 import { classifyDispersibility, DEFAULT_DISPERSIBILITY_THRESHOLDS } from '../core/dispersibility';
 import { screenSolvents, filterByConstraints } from '../core/solvent-finder';
-import { validatePartInput, validateSolventInput, validateName, validateThresholds, validateMixtureInput, validateNanoParticleInput, validateDispersibilityThresholds } from '../core/validation';
+import { validatePartInput, validateSolventInput, validateName, validateThresholds, validateMixtureInput, validateNanoParticleInput, validateDispersibilityThresholds, validateWettabilityThresholds } from '../core/validation';
 import { calculateMixture } from '../core/mixture';
-import type { GroupEvaluationResult, PartEvaluationResult, MixtureComponent, NanoDispersionEvaluationResult, SolventDispersibilityResult, DispersibilityThresholds, SolventConstraints } from '../core/types';
+import { estimateContactAngle } from '../core/contact-angle';
+import { DEFAULT_WETTABILITY_THRESHOLDS, classifyWettability } from '../core/wettability';
+import type { GroupEvaluationResult, PartEvaluationResult, MixtureComponent, NanoDispersionEvaluationResult, SolventDispersibilityResult, DispersibilityThresholds, SolventConstraints, ContactAngleResult, GroupContactAngleResult, WettabilityThresholds } from '../core/types';
 
 /** JSON.parseの安全なラッパー — パース失敗時はfallbackを返す */
 function safeJsonParse<T>(json: string, fallback: T): T {
@@ -247,5 +249,76 @@ export function registerIpcHandlers(
     const err = validateDispersibilityThresholds(thresholds);
     if (err) throw new Error(err);
     settingsRepo.setSetting('dispersibility_thresholds', JSON.stringify(thresholds));
+  });
+
+  // --- 接触角推定 ---
+  ipcMain.handle('contactAngle:evaluate', (_, partsGroupId: number, solventId: number) => {
+    const group = partsRepo.getGroupById(partsGroupId);
+    if (!group) throw new Error(`部品グループ (ID: ${partsGroupId}) が見つかりません`);
+
+    const solvent = solventRepo.getSolventById(solventId);
+    if (!solvent) throw new Error(`溶媒 (ID: ${solventId}) が見つかりません`);
+
+    const thresholdsJson = settingsRepo.getSetting('wettability_thresholds');
+    const thresholds: WettabilityThresholds = thresholdsJson
+      ? safeJsonParse(thresholdsJson, { ...DEFAULT_WETTABILITY_THRESHOLDS })
+      : { ...DEFAULT_WETTABILITY_THRESHOLDS };
+
+    const results: ContactAngleResult[] = group.parts.map((part) => {
+      const base = estimateContactAngle(part, solvent);
+      const wettability = classifyWettability(base.contactAngle, thresholds);
+      return { ...base, wettability };
+    });
+
+    const result: GroupContactAngleResult = {
+      partsGroup: group,
+      solvent,
+      results,
+      evaluatedAt: new Date(),
+    };
+    return result;
+  });
+
+  ipcMain.handle('contactAngle:screenSolvents', (_, partId: number, groupId: number) => {
+    const group = partsRepo.getGroupById(groupId);
+    if (!group) throw new Error(`部品グループ (ID: ${groupId}) が見つかりません`);
+
+    const part = group.parts.find((p) => p.id === partId);
+    if (!part) throw new Error(`部品 (ID: ${partId}) が見つかりません`);
+
+    const solvents = solventRepo.getAllSolvents();
+    const thresholdsJson = settingsRepo.getSetting('wettability_thresholds');
+    const thresholds: WettabilityThresholds = thresholdsJson
+      ? safeJsonParse(thresholdsJson, { ...DEFAULT_WETTABILITY_THRESHOLDS })
+      : { ...DEFAULT_WETTABILITY_THRESHOLDS };
+
+    const results: ContactAngleResult[] = solvents.map((solvent) => {
+      const base = estimateContactAngle(part, solvent);
+      const wettability = classifyWettability(base.contactAngle, thresholds);
+      return { ...base, wettability };
+    });
+
+    // 接触角昇順でソート
+    results.sort((a, b) => a.contactAngle - b.contactAngle);
+
+    const result: GroupContactAngleResult = {
+      partsGroup: group,
+      solvent: solvents[0],
+      results,
+      evaluatedAt: new Date(),
+    };
+    return result;
+  });
+
+  // --- 濡れ性閾値設定 ---
+  ipcMain.handle('settings:getWettabilityThresholds', () => {
+    const json = settingsRepo.getSetting('wettability_thresholds');
+    if (!json) return { ...DEFAULT_WETTABILITY_THRESHOLDS };
+    return safeJsonParse(json, { ...DEFAULT_WETTABILITY_THRESHOLDS });
+  });
+  ipcMain.handle('settings:setWettabilityThresholds', (_, thresholds: WettabilityThresholds) => {
+    const err = validateWettabilityThresholds(thresholds);
+    if (err) throw new Error(err);
+    settingsRepo.setSetting('wettability_thresholds', JSON.stringify(thresholds));
   });
 }

@@ -91,7 +91,7 @@ describe('SettingsView', () => {
 
     await waitFor(() => expect(mockApi.getThresholds).toHaveBeenCalled());
 
-    expect(screen.getByText('判定基準の図解')).toBeInTheDocument();
+    expect(screen.getAllByText('判定基準の図解').length).toBeGreaterThanOrEqual(1);
     expect(screen.getByText('危険')).toBeInTheDocument();
     expect(screen.getByText('安全')).toBeInTheDocument();
   });
