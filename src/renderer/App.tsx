@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import ErrorBoundary from './components/ErrorBoundary';
 import ReportView from './components/ReportView';
 import DatabaseEditor from './components/DatabaseEditor';
 import SettingsView from './components/SettingsView';
@@ -44,9 +45,11 @@ export default function App() {
 
       {/* メインコンテンツ */}
       <main className="flex-1 p-6">
-        {activeTab === 'report' && <ReportView />}
-        {activeTab === 'database' && <DatabaseEditor />}
-        {activeTab === 'settings' && <SettingsView />}
+        <ErrorBoundary>
+          {activeTab === 'report' && <ReportView />}
+          {activeTab === 'database' && <DatabaseEditor />}
+          {activeTab === 'settings' && <SettingsView />}
+        </ErrorBoundary>
       </main>
     </div>
   );

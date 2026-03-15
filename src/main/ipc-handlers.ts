@@ -6,6 +6,7 @@ import fs from 'fs';
 import type { PartsRepository, SolventRepository, SettingsRepository } from '../db/repository';
 import { calculateRa, calculateRed } from '../core/hsp';
 import { classifyRisk } from '../core/risk';
+import { validatePartInput, validateSolventInput, validateName, validateThresholds } from '../core/validation';
 import type { GroupEvaluationResult, PartEvaluationResult } from '../core/types';
 
 export function registerIpcHandlers(
@@ -16,12 +17,20 @@ export function registerIpcHandlers(
   // --- 部品グループ ---
   ipcMain.handle('parts:getAllGroups', () => partsRepo.getAllGroups());
   ipcMain.handle('parts:getGroupById', (_, id: number) => partsRepo.getGroupById(id));
-  ipcMain.handle('parts:createGroup', (_, dto) => partsRepo.createGroup(dto));
+  ipcMain.handle('parts:createGroup', (_, dto) => {
+    const err = validateName(dto.name);
+    if (err) throw new Error(err);
+    return partsRepo.createGroup(dto);
+  });
   ipcMain.handle('parts:updateGroup', (_, id, dto) => partsRepo.updateGroup(id, dto));
   ipcMain.handle('parts:deleteGroup', (_, id: number) => partsRepo.deleteGroup(id));
 
   // --- 部品 ---
-  ipcMain.handle('parts:createPart', (_, dto) => partsRepo.createPart(dto));
+  ipcMain.handle('parts:createPart', (_, dto) => {
+    const err = validatePartInput(dto);
+    if (err) throw new Error(err);
+    return partsRepo.createPart(dto);
+  });
   ipcMain.handle('parts:updatePart', (_, id, dto) => partsRepo.updatePart(id, dto));
   ipcMain.handle('parts:deletePart', (_, id: number) => partsRepo.deletePart(id));
 
@@ -29,7 +38,11 @@ export function registerIpcHandlers(
   ipcMain.handle('solvents:getAll', () => solventRepo.getAllSolvents());
   ipcMain.handle('solvents:getById', (_, id: number) => solventRepo.getSolventById(id));
   ipcMain.handle('solvents:search', (_, query: string) => solventRepo.searchSolvents(query));
-  ipcMain.handle('solvents:create', (_, dto) => solventRepo.createSolvent(dto));
+  ipcMain.handle('solvents:create', (_, dto) => {
+    const err = validateSolventInput(dto);
+    if (err) throw new Error(err);
+    return solventRepo.createSolvent(dto);
+  });
   ipcMain.handle('solvents:update', (_, id, dto) => solventRepo.updateSolvent(id, dto));
   ipcMain.handle('solvents:delete', (_, id: number) => solventRepo.deleteSolvent(id));
 
@@ -63,7 +76,11 @@ export function registerIpcHandlers(
 
   // --- 設定 ---
   ipcMain.handle('settings:getThresholds', () => settingsRepo.getThresholds());
-  ipcMain.handle('settings:setThresholds', (_, thresholds) => settingsRepo.setThresholds(thresholds));
+  ipcMain.handle('settings:setThresholds', (_, thresholds) => {
+    const err = validateThresholds(thresholds);
+    if (err) throw new Error(err);
+    return settingsRepo.setThresholds(thresholds);
+  });
 
   // --- CSV保存 ---
   ipcMain.handle('csv:save', async (_, csvContent: string) => {
