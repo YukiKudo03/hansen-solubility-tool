@@ -61,7 +61,7 @@ function createWindow(db: Database.Database): void {
   const settingsRepo = new SqliteSettingsRepository(db);
   const nanoParticleRepo = new SqliteNanoParticleRepository(db);
   const drugRepo = new SqliteDrugRepository(db);
-  registerIpcHandlers(partsRepo, solventRepo, settingsRepo, nanoParticleRepo);
+  registerIpcHandlers(partsRepo, solventRepo, settingsRepo, nanoParticleRepo, drugRepo);
 
   // 開発時はVite devサーバー、本番時はビルド済みファイルを読み込む
   if (process.env.VITE_DEV_SERVER_URL) {
