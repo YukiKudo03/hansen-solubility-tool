@@ -46,7 +46,8 @@ npm run package            # Build + create Windows installer
 On first launch:
 1. SQLite database created at user data path
 2. Schema tables created (`parts_groups`, `parts`, `solvents`, `settings`)
-3. Seed data loaded (~85 solvents, 7 polymer groups)
+3. Migration run (adds physical property columns if upgrading from older version)
+4. Seed data loaded (~85 solvents with physical properties, 7 polymer groups)
 
 ### Backup
 

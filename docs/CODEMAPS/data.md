@@ -1,4 +1,4 @@
-<!-- Generated: 2026-03-15 | Updated: 2026-03-15 | Files scanned: 4 | Token estimate: ~800 -->
+<!-- Generated: 2026-03-15 | Updated: 2026-03-15 | Files scanned: 4 | Token estimate: ~850 -->
 
 # Database Schema & Data Layer
 
@@ -63,11 +63,15 @@ Chemical solvents with HSP values
 | delta_h | REAL | NOT NULL | Hydrogen bonding (MPa^(1/2)) |
 | molar_volume | REAL | | cm³/mol (optional, for density calculations) |
 | mol_weight | REAL | | g/mol (optional) |
+| boiling_point | REAL | | 沸点 (°C, 負値許容) |
+| viscosity | REAL | | 粘度 (mPa·s, 25°C) |
+| specific_gravity | REAL | | 比重 (25°C, 水=1) |
+| surface_tension | REAL | | 表面張力 (mN/m, 25°C) |
 | notes | TEXT | | Safety/source notes |
 | created_at | TEXT | DEFAULT NOW | Audit timestamp |
 | updated_at | TEXT | DEFAULT NOW | Audit timestamp |
 
-**Seed Data:** ~85 solvents across categories:
+**Seed Data:** ~85 solvents with HSP + physical properties (bp, viscosity, sg, st) across categories:
 - Hydrocarbons: n-pentane to n-dodecane, cyclohexane
 - Aromatics: benzene, toluene, xylene, styrene
 - Halogenated: dichloromethane, chloroform, TCE, etc.
@@ -106,7 +110,7 @@ Key-value configuration store
 ```ts
 CreatePartsGroupDto { name, description? }
 CreatePartDto { groupId, name, materialType?, deltaD, deltaP, deltaH, r0, notes? }
-CreateSolventDto { name, nameEn?, casNumber?, deltaD, deltaP, deltaH, molarVolume?, molWeight?, notes? }
+CreateSolventDto { name, nameEn?, casNumber?, deltaD, deltaP, deltaH, molarVolume?, molWeight?, boilingPoint?, viscosity?, specificGravity?, surfaceTension?, notes? }
 ```
 
 ## Seed Data Loading
@@ -175,6 +179,13 @@ VALUES (?, ?, ?, ?, ?, ?, ...)
 SELECT value FROM settings WHERE key LIKE 'thresholds.%'
   → Parse JSON and build RiskThresholds object
 ```
+
+## Migration
+
+**Function:** `migrateDatabase(db)` in `src/db/schema.ts`
+- Adds 4 physical property columns via `ALTER TABLE ADD COLUMN` (idempotent)
+- Uses `PRAGMA table_info(solvents)` to check existing columns before ALTER
+- Called in `main.ts` after `initializeDatabase(db)`
 
 ## Data Integrity
 

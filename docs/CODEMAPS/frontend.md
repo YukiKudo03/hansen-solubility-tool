@@ -37,6 +37,8 @@ src/renderer/main.tsx (React entry point)
 - `handleEvaluate()` → calls `window.api.evaluate(groupId, solventId)`
 - `handleExportCsv()` → calls `window.api.saveCsv(formatCsv(result))`
 
+**Displays:** Solvent HSP values + physical properties (bp, viscosity, sg, st) as info cards (null-safe)
+
 **Styling:** Tailwind grid layout, card shadow, button states
 
 ### ResultsTable.tsx
@@ -200,7 +202,7 @@ All component props typed via `src/core/types.ts`:
 ```ts
 interface Part { id, groupId, name, materialType, hsp, r0, notes }
 interface PartsGroup { id, name, description, parts }
-interface Solvent { id, name, nameEn, casNumber, hsp, molarVolume, molWeight, notes }
+interface Solvent { id, name, nameEn, casNumber, hsp, molarVolume, molWeight, boilingPoint, viscosity, specificGravity, surfaceTension, notes }
 interface GroupEvaluationResult { partsGroup, solvent, results, evaluatedAt, thresholdsUsed }
 interface PartEvaluationResult { part, solvent, ra, red, riskLevel }
 ```

@@ -110,6 +110,7 @@ See `docs/CODEMAPS/INDEX.md` for detailed architecture.
 - [ ] Type check passes (`npm run typecheck`)
 - [ ] New features have unit tests
 - [ ] UI changes have component tests
+- [ ] Database schema changes include migration in `schema.ts` (`migrateDatabase`)
 - [ ] Database changes update seed data if needed
 - [ ] IPC changes update both `ipc-handlers.ts` and `preload.ts`
 
