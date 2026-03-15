@@ -1,0 +1,17 @@
+version: "3.9"
+services:
+  test-unit:
+    build:
+      context: .
+      dockerfile: Dockerfile.test
+    command: npx vitest run --coverage
+    volumes:
+      - ./coverage:/app/coverage
+
+  test-integration:
+    build:
+      context: .
+      dockerfile: Dockerfile.test
+    command: npx vitest run tests/integration --coverage
+    volumes:
+      - ./coverage:/app/coverage
