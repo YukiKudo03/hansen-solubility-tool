@@ -27,7 +27,16 @@
       "Bash(cat:*)",
       "Bash(which node:*)",
       "Bash(for f:*)",
-      "Bash(docker:*)"
+      "Bash(docker:*)",
+      "Bash(npx icon-gen:*)",
+      "Bash(npm run:*)",
+      "Bash(npx electron-builder:*)",
+      "Bash(ls:*)",
+      "Bash(rm:*)",
+      "Bash(CSC_IDENTITY_AUTO_DISCOVERY=false npx electron-builder --win --x64 2>&1 | grep -E \"artifact|building|nsis|portable|error\" -i | head -20)",
+      "Bash(npm rebuild:*)",
+      "Bash(npx playwright:*)",
+      "Bash(npx electron-rebuild:*)"
     ]
   }
 }
