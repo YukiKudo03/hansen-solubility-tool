@@ -14,29 +14,29 @@ const ELECTRON_PATH = require('electron') as unknown as string;
 export async function clickTab(page: Page, tabText: string): Promise<void> {
   const drawer = page.locator('[data-testid="navigation-drawer"]');
 
-  // まずサイドバー内に直接テキストが見えるか確認
-  const directItem = drawer.locator('button', { hasText: tabText });
-  if (await directItem.first().isVisible().catch(() => false)) {
-    await directItem.first().click();
+  // サブ項目（data-nav-type="item"）を優先検索
+  const subItem = drawer.locator('button[data-nav-type="item"]', { hasText: tabText });
+  if (await subItem.first().isVisible().catch(() => false)) {
+    await subItem.first().click();
     return;
   }
 
-  // 見えない場合、カテゴリヘッダー（data-nav-type="category"）をクリックして展開
+  // 見えない場合、カテゴリヘッダーを展開してからサブ項目を探す
   const categoryButtons = drawer.locator('button[data-nav-type="category"]');
   const buttonCount = await categoryButtons.count();
   for (let i = 0; i < buttonCount; i++) {
     const btn = categoryButtons.nth(i);
     await btn.click();
     await page.waitForTimeout(200);
-    const item = drawer.locator('button', { hasText: tabText });
+    const item = drawer.locator('button[data-nav-type="item"]', { hasText: tabText });
     if (await item.first().isVisible().catch(() => false)) {
       await item.first().click();
       return;
     }
   }
 
-  // フォールバック: drawerスコープ内でgetByTextで直接検索
-  await drawer.getByText(tabText, { exact: true }).first().click();
+  // フォールバック: drawerスコープ内でサブ項目を直接検索
+  await drawer.locator('button[data-nav-type="item"]').getByText(tabText, { exact: true }).first().click();
 }
 
 export async function launchApp(): Promise<{ app: ElectronApplication; page: Page }> {

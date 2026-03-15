@@ -3,7 +3,7 @@
  */
 import { test, expect } from '@playwright/test';
 import type { ElectronApplication, Page } from '@playwright/test';
-import { launchApp } from './helpers';
+import { launchApp, clickTab } from './helpers';
 
 let app: ElectronApplication;
 let page: Page;
@@ -17,7 +17,7 @@ test.afterAll(async () => {
 });
 
 test('データベース編集タブに切り替え', async () => {
-  await page.getByText('データベース編集').click();
+  await clickTab(page, 'データベース編集');
   await expect(page.getByText('部品グループ')).toBeVisible();
 });
 
