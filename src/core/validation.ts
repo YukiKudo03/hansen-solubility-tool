@@ -223,6 +223,45 @@ export function validateBlendOptimizationInput(input: {
   return null;
 }
 
+export function validateChemicalResistanceThresholds(t: {
+  noResistanceMax: number; poorMax: number; moderateMax: number; goodMax: number;
+}): string | null {
+  const vals = [t.noResistanceMax, t.poorMax, t.moderateMax, t.goodMax];
+  if (vals.some((v) => !Number.isFinite(v) || v < 0)) {
+    return '閾値はすべて0以上の数値を入力してください';
+  }
+  if (!(t.noResistanceMax < t.poorMax && t.poorMax < t.moderateMax && t.moderateMax < t.goodMax)) {
+    return '閾値は noResistanceMax < poorMax < moderateMax < goodMax の順でなければなりません';
+  }
+  return null;
+}
+
+export function validatePlasticizerThresholds(t: {
+  excellentMax: number; goodMax: number; fairMax: number; poorMax: number;
+}): string | null {
+  const vals = [t.excellentMax, t.goodMax, t.fairMax, t.poorMax];
+  if (vals.some((v) => !Number.isFinite(v) || v < 0)) {
+    return '閾値はすべて0以上の数値を入力してください';
+  }
+  if (!(t.excellentMax < t.goodMax && t.goodMax < t.fairMax && t.fairMax < t.poorMax)) {
+    return '閾値は excellentMax < goodMax < fairMax < poorMax の順でなければなりません';
+  }
+  return null;
+}
+
+export function validateCarrierThresholds(t: {
+  excellentMax: number; goodMax: number; fairMax: number; poorMax: number;
+}): string | null {
+  const vals = [t.excellentMax, t.goodMax, t.fairMax, t.poorMax];
+  if (vals.some((v) => !Number.isFinite(v) || v < 0)) {
+    return '閾値はすべて0以上の数値を入力してください';
+  }
+  if (!(t.excellentMax < t.goodMax && t.goodMax < t.fairMax && t.fairMax < t.poorMax)) {
+    return '閾値は excellentMax < goodMax < fairMax < poorMax の順でなければなりません';
+  }
+  return null;
+}
+
 export function validateMixtureInput(components: { solventId: number; volumeRatio: number }[]): string | null {
   if (components.length < 1) {
     return '1つ以上の溶媒を追加してください';

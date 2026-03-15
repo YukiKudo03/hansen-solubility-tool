@@ -15,6 +15,9 @@ import {
   validateSwellingThresholds,
   validateDrugInput,
   validateDrugSolubilityThresholds,
+  validateChemicalResistanceThresholds,
+  validatePlasticizerThresholds,
+  validateCarrierThresholds,
 } from '../../src/core/validation';
 
 describe('validateHSPValues', () => {
@@ -417,5 +420,41 @@ describe('validateDrugSolubilityThresholds', () => {
   });
   it('順序が不正でエラー', () => {
     expect(validateDrugSolubilityThresholds({ excellentMax: 0.5, goodMax: 0.3, partialMax: 1.0, poorMax: 1.5 })).toBeTruthy();
+  });
+});
+
+describe('validateChemicalResistanceThresholds', () => {
+  it('有効な閾値でnull', () => {
+    expect(validateChemicalResistanceThresholds({ noResistanceMax: 0.5, poorMax: 0.8, moderateMax: 1.2, goodMax: 2.0 })).toBeNull();
+  });
+  it('負の値でエラー', () => {
+    expect(validateChemicalResistanceThresholds({ noResistanceMax: -0.1, poorMax: 0.8, moderateMax: 1.2, goodMax: 2.0 })).toBeTruthy();
+  });
+  it('順序が不正でエラー', () => {
+    expect(validateChemicalResistanceThresholds({ noResistanceMax: 0.5, poorMax: 0.3, moderateMax: 1.2, goodMax: 2.0 })).toBeTruthy();
+  });
+});
+
+describe('validatePlasticizerThresholds', () => {
+  it('有効な閾値でnull', () => {
+    expect(validatePlasticizerThresholds({ excellentMax: 0.5, goodMax: 0.8, fairMax: 1.0, poorMax: 1.5 })).toBeNull();
+  });
+  it('負の値でエラー', () => {
+    expect(validatePlasticizerThresholds({ excellentMax: -0.1, goodMax: 0.8, fairMax: 1.0, poorMax: 1.5 })).toBeTruthy();
+  });
+  it('順序が不正でエラー', () => {
+    expect(validatePlasticizerThresholds({ excellentMax: 0.5, goodMax: 0.3, fairMax: 1.0, poorMax: 1.5 })).toBeTruthy();
+  });
+});
+
+describe('validateCarrierThresholds', () => {
+  it('有効な閾値でnull', () => {
+    expect(validateCarrierThresholds({ excellentMax: 0.5, goodMax: 0.8, fairMax: 1.0, poorMax: 1.5 })).toBeNull();
+  });
+  it('負の値でエラー', () => {
+    expect(validateCarrierThresholds({ excellentMax: -0.1, goodMax: 0.8, fairMax: 1.0, poorMax: 1.5 })).toBeTruthy();
+  });
+  it('順序が不正でエラー', () => {
+    expect(validateCarrierThresholds({ excellentMax: 0.5, goodMax: 0.3, fairMax: 1.0, poorMax: 1.5 })).toBeTruthy();
   });
 });
