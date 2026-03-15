@@ -1,4 +1,4 @@
-<!-- Generated: 2026-03-15 | Updated: 2026-03-15 | Files scanned: 25 src + 21 test | Token estimate: ~900 -->
+<!-- Generated: 2026-03-15 | Updated: 2026-03-15 | Files scanned: 30 src + 23 test | Token estimate: ~950 -->
 
 # Hansen Solubility System Architecture
 
@@ -16,112 +16,96 @@
 │  │ ┌──────────────────┐ │          │ ┌──────────────────┐  │   │
 │  │ │ IPC Handlers     │ │          │ │ UI Components    │  │   │
 │  │ │ (ipc-handlers)   │ │          │ │ - ReportView     │  │   │
+│  │ │ 40+ handlers     │ │          │ │ - NanoDispersion │  │   │
 │  │ └──────────────────┘ │          │ │ - DatabaseEditor │  │   │
-│  │         ▼            │          │ │ - SettingsView   │  │   │
+│  │         ▼            │          │ │ - MixtureLab     │  │   │
 │  │ ┌──────────────────┐ │          │ └──────────────────┘  │   │
 │  │ │ Core Calculator  │ │          │        ▲              │   │
-│  │ │ hsp.ts, risk.ts  │ │          │   Hooks              │   │
-│  │ │ report.ts        │ │          │ - usePartsGroups   │  │   │
-│  │ └──────────────────┘ │          │ - useSolvents      │  │   │
-│  │         ▼            │          │ - useEvaluation    │  │   │
-│  │ ┌──────────────────┐ │          └────────────────────────┘   │
+│  │ │ hsp.ts (shared)  │ │          │   Hooks              │   │
+│  │ │ risk.ts          │ │          │ - usePartsGroups   │  │   │
+│  │ │ dispersibility.ts│ │          │ - useSolvents      │  │   │
+│  │ │ solvent-finder.ts│ │          │ - useNanoParticles │  │   │
+│  │ │ report.ts        │ │          │ - useNanoDispersion│  │   │
+│  │ └──────────────────┘ │          └────────────────────────┘   │
+│  │         ▼            │                                        │
+│  │ ┌──────────────────┐ │                                        │
 │  │ │ Repository Layer │ │                                        │
-│  │ │ (sqlite-repo)    │ │                                        │
+│  │ │ Parts, Solvent,  │ │                                        │
+│  │ │ NanoParticle,    │ │                                        │
+│  │ │ Settings repos   │ │                                        │
 │  │ └──────────────────┘ │                                        │
 │  │         ▼            │                                        │
 │  │ ┌──────────────────┐ │                                        │
 │  │ │ SQLite Database  │ │                                        │
-│  │ │ hansen.db        │ │                                        │
-│  │ │ (WAL mode)       │ │                                        │
+│  │ │ hansen.db (WAL)  │ │                                        │
+│  │ │ 5 tables         │ │                                        │
 │  │ └──────────────────┘ │                                        │
-│  │                      │                                        │
 │  └──────────────────────┘                                        │
-│                                                                   │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
-## Process Boundaries
+## Two Evaluation Pipelines
 
-### Main Process
-**File:** `src/main/main.ts`
-- Initializes Electron window (1200x800, min 900x600)
-- Creates & initializes SQLite database
-- Seeds data if empty
-- Registers IPC handlers via `ipc-handlers.ts`
-- Loads Vite dev server (dev) or built HTML (prod)
-
-**Key exports:**
-- None (main entry point)
-
-### Renderer Process (React)
-**File:** `src/renderer/main.tsx` → `App.tsx`
-- React 19 app with tab-based navigation
-- Three main views: Report, DatabaseEditor, Settings
-- Communicates with main via `window.api` (preload bridge)
-
-**Key component hierarchy:**
+### Pipeline A: Polymer-Solvent Compatibility (既存)
 ```
-App.tsx (tab router: report | database | mixture | settings)
-├── ReportView
+ReportView → select PartsGroup + Solvent → evaluate()
+  → For each Part: calculateRa() → calculateRed() → classifyRisk()
+  → GroupEvaluationResult → ResultsTable + RiskBadge → CSV
+```
+**Interpretation:** RED小 = 溶解しやすい = **危険**
+
+### Pipeline B: Nanoparticle Dispersion Screening (新規)
+```
+NanoDispersionView → select NanoParticle → screenAllSolvents()
+  → For each Solvent: calculateRa() → calculateRed() → classifyDispersibility()
+  → NanoDispersionEvaluationResult → sort by RED asc → DispersibilityBadge → CSV
+  → Optional: filterByConstraints(boilingPoint, viscosity, surfaceTension)
+```
+**Interpretation:** RED小 = 分散しやすい = **良好**
+
+### Shared Core
+Both pipelines share `calculateRa()` and `calculateRed()` in `hsp.ts`. The only difference is the **classification layer** (risk.ts vs dispersibility.ts) and **UI presentation**.
+
+## Component Hierarchy
+
+```
+App.tsx (tab router: report | database | mixture | nanoDispersion | settings)
+├── ReportView (polymer evaluation)
 │   ├── PartsGroupSelector
 │   ├── SolventSelector
-│   ├── ResultsTable
-│   └── RiskBadge
-├── DatabaseEditor
-├── MixtureLab (混合溶媒作成・物性予測・DB登録)
-├── SettingsView
+│   ├── ResultsTable → RiskBadge
+│   └── CSV export via formatCsv()
+├── NanoDispersionView (nanoparticle screening)  ← NEW
+│   ├── Category filter → Particle selector
+│   ├── Constraint filters (BP, viscosity, surface tension)
+│   ├── Stats summary (total, dispersible count, best solvent)
+│   ├── Results table → DispersibilityBadge
+│   └── CSV export via formatNanoDispersionCsv()
+├── DatabaseEditor (CRUD for all entities)
+├── MixtureLab (mixed solvent creation)
+├── SettingsView (threshold configuration)
 └── ErrorBoundary (wraps all views)
-```
-
-### Preload Bridge
-**File:** `src/main/preload.ts`
-- Exposes safe IPC API to renderer via `window.api`
-- Methods: evaluate, getAllGroups, getSolvents, createPart, createMixtureSolvent, etc.
-
-## Data Flow: Evaluation Pipeline
-
-```
-User Action: Select Parts Group + Solvent → Click "評価実行"
-                          ▼
-                 ReportView.tsx
-                          ▼
-                 window.api.evaluate()
-                          ▼
-                 IPC: "evaluate" handler
-                          ▼
-        ipc-handlers.ts registerIpcHandlers()
-                          ▼
-    1. Load PartsGroup & Solvent from DB (repository layer)
-    2. For each Part in group:
-       - calculateRa(part.hsp, solvent.hsp)  [hsp.ts]
-       - calculateRed(ra, r0)                 [hsp.ts]
-       - classifyRisk(red, thresholds)       [risk.ts]
-    3. Build GroupEvaluationResult
-                          ▼
-        Return to renderer, display in ResultsTable
-                          ▼
-     User exports: formatCsv() → IPC csv:save → dialog
 ```
 
 ## Module Boundaries
 
 | Layer | Location | Purpose | Key Files |
 |-------|----------|---------|-----------|
-| **Domain** | `src/core/` | Pure TS calculation logic | `types.ts`, `hsp.ts`, `risk.ts`, `report.ts`, `validation.ts`, `mixture.ts` |
-| **Data Access** | `src/db/` | SQLite schema, repositories, seed data | `schema.ts`, `repository.ts`, `sqlite-repository.ts`, `seed-data.ts` |
+| **Domain** | `src/core/` | Pure TS calculation logic | `types.ts`, `hsp.ts`, `risk.ts`, `dispersibility.ts`, `solvent-finder.ts`, `report.ts`, `validation.ts`, `mixture.ts` |
+| **Data Access** | `src/db/` | SQLite schema, repositories, seed data | `schema.ts`, `repository.ts`, `sqlite-repository.ts`, `seed-data.ts`, `seed-nano-particles.ts` |
 | **Main Process** | `src/main/` | Electron lifecycle, IPC orchestration | `main.ts`, `ipc-handlers.ts`, `preload.ts` |
-| **UI** | `src/renderer/` | React components & hooks | `App.tsx`, `components/`, `hooks/` |
+| **UI** | `src/renderer/` | React components & hooks | `App.tsx`, 10 components, 5 hooks |
 
 ## Dependency Flow
 
 ```
 Renderer (React)
-    ↓ (window.api via IPC)
+    ↓ (window.api via IPC, 30+ methods)
 Main Process
-    ├→ Repository (sqlite-repository.ts)
+    ├→ Repository (sqlite-repository.ts, 4 repo classes)
     │   ↓
-    │   SQLite Database
-    └→ Core (hsp.ts, risk.ts, report.ts)
+    │   SQLite Database (5 tables)
+    └→ Core (hsp.ts, risk.ts, dispersibility.ts, solvent-finder.ts, report.ts)
         └→ Types (types.ts)
 ```
 
@@ -130,55 +114,63 @@ Main Process
 ```
 hansen-solubility/
 ├── src/
-│   ├── core/              # Pure domain logic (no I/O)
-│   │   ├── types.ts       # Domain types & interfaces
-│   │   ├── hsp.ts         # Hansen distance calculation
-│   │   ├── risk.ts        # Risk level classification
-│   │   ├── report.ts      # CSV export formatting
-│   │   ├── validation.ts  # Input validators
-│   │   └── mixture.ts     # Solvent mixture calculations
+│   ├── core/                    # Pure domain logic (no I/O)
+│   │   ├── types.ts             # All domain types & interfaces
+│   │   ├── hsp.ts               # Hansen distance (shared)
+│   │   ├── risk.ts              # Polymer risk classification
+│   │   ├── dispersibility.ts    # ← NEW: Nanoparticle dispersibility classification
+│   │   ├── solvent-finder.ts    # ← NEW: Solvent screening & constraint filters
+│   │   ├── report.ts            # CSV export (polymer + nano)
+│   │   ├── validation.ts        # Input validators (all entities)
+│   │   └── mixture.ts           # Solvent mixture calculations
 │   │
-│   ├── db/                # Data access layer
-│   │   ├── schema.ts      # SQLite table definitions
-│   │   ├── repository.ts  # Repository interfaces (DTOs)
-│   │   ├── sqlite-repository.ts  # SQLite implementation
-│   │   └── seed-data.ts   # ~85 solvents + 7 polymer groups (incl. adhesives)
+│   ├── db/                      # Data access layer
+│   │   ├── schema.ts            # SQLite tables (5 tables)
+│   │   ├── repository.ts        # Repository interfaces (4 repos)
+│   │   ├── sqlite-repository.ts # SQLite implementations (4 classes)
+│   │   ├── seed-data.ts         # ~85 solvents + 7 polymer groups
+│   │   └── seed-nano-particles.ts # ← NEW: 18 nanoparticles
 │   │
-│   ├── main/              # Electron main process
-│   │   ├── main.ts        # App lifecycle
-│   │   ├── ipc-handlers.ts # IPC business logic
-│   │   └── preload.ts     # Context-isolated bridge
+│   ├── main/                    # Electron main process
+│   │   ├── main.ts              # App lifecycle + seed loading
+│   │   ├── ipc-handlers.ts      # 40+ IPC handlers
+│   │   └── preload.ts           # Context-isolated bridge (30+ methods)
 │   │
-│   └── renderer/          # React UI
-│       ├── main.tsx       # Entry point
-│       ├── App.tsx        # Tab router
-│       ├── components/
-│       │   ├── ReportView.tsx
-│       │   ├── DatabaseEditor.tsx
-│       │   ├── MixtureLab.tsx
-│       │   ├── SettingsView.tsx
-│       │   ├── PartsGroupSelector.tsx
-│       │   ├── SolventSelector.tsx
-│       │   ├── ResultsTable.tsx
-│       │   ├── RiskBadge.tsx
-│       │   └── ErrorBoundary.tsx
-│       └── hooks/
-│           ├── useEvaluation.ts
-│           ├── usePartsGroups.ts
-│           └── useSolvents.ts
+│   ├── renderer/                # React UI
+│   │   ├── main.tsx             # Entry point
+│   │   ├── App.tsx              # Tab router (5 tabs)
+│   │   ├── components/
+│   │   │   ├── ReportView.tsx
+│   │   │   ├── NanoDispersionView.tsx  # ← NEW
+│   │   │   ├── DispersibilityBadge.tsx # ← NEW
+│   │   │   ├── DatabaseEditor.tsx
+│   │   │   ├── MixtureLab.tsx
+│   │   │   ├── SettingsView.tsx
+│   │   │   ├── PartsGroupSelector.tsx
+│   │   │   ├── SolventSelector.tsx
+│   │   │   ├── ResultsTable.tsx
+│   │   │   ├── RiskBadge.tsx
+│   │   │   └── ErrorBoundary.tsx
+│   │   └── hooks/
+│   │       ├── useNanoParticles.ts     # ← NEW
+│   │       ├── useNanoDispersion.ts    # ← NEW
+│   │       ├── useEvaluation.ts
+│   │       ├── usePartsGroups.ts
+│   │       └── useSolvents.ts
+│   │
+│   └── preload.d.ts             # window.api type definitions
 │
 └── tests/
-    ├── unit/              # Core logic tests (hsp, risk, report, validation, mixture)
-    ├── integration/       # DB + IPC tests
-    ├── renderer/          # React component + hook tests
-    └── e2e/               # Playwright E2E tests
+    ├── unit/                    # 167 tests
+    │   ├── dispersibility.test.ts   # ← NEW (14 tests)
+    │   ├── solvent-finder.test.ts   # ← NEW (11 tests)
+    │   ├── hsp.test.ts, risk.test.ts, report.test.ts
+    │   ├── validation.test.ts       # Extended (+15 nano tests)
+    │   └── mixture.test.ts
+    ├── integration/             # DB operations
+    ├── renderer/                # React component tests
+    └── e2e/                     # Playwright E2E tests
 ```
-
-## Build & Execution
-
-- **Dev:** `npm run dev` → runs `dev:main` + `dev:renderer` (tsc + electron + vite)
-- **Build:** `npm run build` → tsc (main) + vite build (renderer)
-- **Package:** `npm run package` → electron-builder (Windows .exe)
 
 ## Technology Stack
 
@@ -194,4 +186,4 @@ hansen-solubility/
 
 ---
 
-**Next:** See `frontend.md` for component hierarchy, `data.md` for database schema, `dependencies.md` for external packages.
+**Next:** See `frontend.md` for component details, `data.md` for database schema, `dependencies.md` for external packages.

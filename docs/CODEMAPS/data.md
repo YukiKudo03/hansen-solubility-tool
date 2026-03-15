@@ -1,4 +1,4 @@
-<!-- Generated: 2026-03-15 | Updated: 2026-03-15 | Files scanned: 4 | Token estimate: ~850 -->
+<!-- Generated: 2026-03-15 | Updated: 2026-03-15 | Files scanned: 5 | Token estimate: ~950 -->
 
 # Database Schema & Data Layer
 
@@ -6,12 +6,10 @@
 
 **File Path:** `{app.getPath('userData')}/hansen.db`
 - Windows: `C:\Users\{user}\AppData\Roaming\{app-name}\hansen.db`
-- macOS: `~/Library/Application Support/{app-name}/hansen.db`
-- Linux: `~/.config/{app-name}/hansen.db`
 
 **Configuration:**
 - **Driver:** better-sqlite3 12.8.0
-- **Mode:** WAL (Write-Ahead Logging) for concurrent access
+- **Mode:** WAL (Write-Ahead Logging)
 - **Foreign Keys:** Enabled (`PRAGMA foreign_keys = ON`)
 - **Initialization:** `src/db/schema.ts` executes SQL on app startup
 
@@ -22,11 +20,11 @@ Polymer material groups
 
 | Column | Type | Constraints | Purpose |
 |--------|------|-------------|---------|
-| id | INTEGER | PRIMARY KEY AUTOINCREMENT | Unique identifier |
-| name | TEXT | NOT NULL | Group name (e.g., "ゴム類", "プラスチック") |
+| id | INTEGER | PK AUTO | Unique identifier |
+| name | TEXT | NOT NULL | Group name |
 | description | TEXT | | Optional notes |
-| created_at | TEXT | DEFAULT NOW | Audit timestamp |
-| updated_at | TEXT | DEFAULT NOW | Audit timestamp |
+| created_at | TEXT | DEFAULT NOW | Audit |
+| updated_at | TEXT | DEFAULT NOW | Audit |
 
 **Relationships:** 1 → Many with `parts`
 
@@ -35,50 +33,58 @@ Individual polymer materials within a group
 
 | Column | Type | Constraints | Purpose |
 |--------|------|-------------|---------|
-| id | INTEGER | PRIMARY KEY AUTOINCREMENT | Unique identifier |
+| id | INTEGER | PK AUTO | Unique identifier |
 | group_id | INTEGER | NOT NULL FK → parts_groups | Parent group |
 | name | TEXT | NOT NULL | Part/material name |
-| material_type | TEXT | | Classification (e.g., "天然ゴム", "PVC") |
-| delta_d | REAL | NOT NULL | Dispersive force component (MPa^(1/2)) |
-| delta_p | REAL | NOT NULL | Polar component (MPa^(1/2)) |
-| delta_h | REAL | NOT NULL | Hydrogen bonding component (MPa^(1/2)) |
-| r0 | REAL | NOT NULL | Interaction radius (MPa^(1/2)) |
+| material_type | TEXT | | Classification |
+| delta_d/p/h | REAL | NOT NULL | HSP components (MPa^(1/2)) |
+| r0 | REAL | NOT NULL | Interaction radius |
 | notes | TEXT | | Technical notes |
-| created_at | TEXT | DEFAULT NOW | Audit timestamp |
-| updated_at | TEXT | DEFAULT NOW | Audit timestamp |
+| created_at/updated_at | TEXT | DEFAULT NOW | Audit |
 
 **Relationships:** Many ← 1 with `parts_groups` (ON DELETE CASCADE)
 
 ### solvents
-Chemical solvents with HSP values
+Chemical solvents with HSP + physical properties
 
 | Column | Type | Constraints | Purpose |
 |--------|------|-------------|---------|
-| id | INTEGER | PRIMARY KEY AUTOINCREMENT | Unique identifier |
-| name | TEXT | NOT NULL | Japanese name |
-| name_en | TEXT | | English name |
+| id | INTEGER | PK AUTO | Unique identifier |
+| name / name_en | TEXT | NOT NULL / optional | Japanese / English name |
 | cas_number | TEXT | | CAS Registry Number |
-| delta_d | REAL | NOT NULL | Dispersive force (MPa^(1/2)) |
-| delta_p | REAL | NOT NULL | Polar component (MPa^(1/2)) |
-| delta_h | REAL | NOT NULL | Hydrogen bonding (MPa^(1/2)) |
-| molar_volume | REAL | | cm³/mol (optional, for density calculations) |
-| mol_weight | REAL | | g/mol (optional) |
+| delta_d/p/h | REAL | NOT NULL | HSP components |
+| molar_volume | REAL | | cm³/mol |
+| mol_weight | REAL | | g/mol |
 | boiling_point | REAL | | 沸点 (°C, 負値許容) |
 | viscosity | REAL | | 粘度 (mPa·s, 25°C) |
-| specific_gravity | REAL | | 比重 (25°C, 水=1) |
-| surface_tension | REAL | | 表面張力 (mN/m, 25°C) |
-| notes | TEXT | | Safety/source notes |
-| created_at | TEXT | DEFAULT NOW | Audit timestamp |
-| updated_at | TEXT | DEFAULT NOW | Audit timestamp |
+| specific_gravity | REAL | | 比重 (25°C) |
+| surface_tension | REAL | | 表面張力 (mN/m) |
+| notes | TEXT | | Notes |
+| created_at/updated_at | TEXT | DEFAULT NOW | Audit |
 
-**Seed Data:** ~85 solvents with HSP + physical properties (bp, viscosity, sg, st) across categories:
-- Hydrocarbons: n-pentane to n-dodecane, cyclohexane
-- Aromatics: benzene, toluene, xylene, styrene
-- Halogenated: dichloromethane, chloroform, TCE, etc.
-- Alcohols: methanol, ethanol, propanol, butanol, glycols
-- Esters: ethyl acetate, butyl acetate, propylene glycol
-- Ketones: acetone, MEK, MIBK
-- Others: DMSO, water, formamide
+**Seed Data:** ~85 solvents across categories (hydrocarbons, aromatics, halogenated, alcohols, esters, ketones, others)
+
+### nano_particles ← NEW
+Nanoparticle materials with surface HSP
+
+| Column | Type | Constraints | Purpose |
+|--------|------|-------------|---------|
+| id | INTEGER | PK AUTO | Unique identifier |
+| name / name_en | TEXT | NOT NULL / optional | Japanese / English name |
+| category | TEXT | NOT NULL DEFAULT 'other' | carbon/metal/metal_oxide/quantum_dot/polymer/other |
+| core_material | TEXT | NOT NULL | 母材 (TiO₂, Ag, SWCNT, etc.) |
+| surface_ligand | TEXT | | 表面修飾剤 (オレイルアミン, PVP, etc.) |
+| delta_d/p/h | REAL | NOT NULL | Surface HSP (ligand-inclusive) |
+| r0 | REAL | NOT NULL | Interaction radius |
+| particle_size | REAL | | 粒子径 (nm) |
+| notes | TEXT | | Source references |
+| created_at/updated_at | TEXT | DEFAULT NOW | Audit |
+
+**Seed Data:** 18 nanoparticles from literature:
+- Carbon: SWCNT, MWCNT, Graphene, C60, GO
+- Metal: Ag NP (OAm), Ag NP (decanoic acid), Au NP (citrate), Cu NP (PVP)
+- Metal Oxide: TiO₂, ZnO, SiO₂, ZrO₂ (acetic acid), ZrO₂ (oleic acid), Al₂O₃
+- Quantum Dot: ZnO QD, CdSe/ZnS QD (oleic acid)
 
 ### settings
 Key-value configuration store
@@ -89,109 +95,58 @@ Key-value configuration store
 | value | TEXT | NOT NULL | JSON-serialized value |
 
 **Current Keys:**
-- `thresholds.dangerous_max` → default 0.5 (RED value boundary)
-- `thresholds.warning_max` → default 0.8
-- `thresholds.caution_max` → default 1.2
-- `thresholds.hold_max` → default 2.0
+- `risk_thresholds` → `{ dangerousMax, warningMax, cautionMax, holdMax }`
+- `dispersibility_thresholds` → `{ excellentMax, goodMax, fairMax, poorMax }` ← NEW
 
 ## Repository Pattern
 
 **Interface:** `src/db/repository.ts`
 - `PartsRepository` (8 methods)
 - `SolventRepository` (6 methods)
+- `NanoParticleRepository` (7 methods) ← NEW: getAll, getById, getByCategory, search, create, update, delete
 - `SettingsRepository` (4 methods)
 
 **Implementation:** `src/db/sqlite-repository.ts`
 - `SqlitePartsRepository`
 - `SqliteSolventRepository`
+- `SqliteNanoParticleRepository` ← NEW
 - `SqliteSettingsRepository`
 
-**Data Transfer Objects (DTOs):**
+**DTOs:**
 ```ts
 CreatePartsGroupDto { name, description? }
 CreatePartDto { groupId, name, materialType?, deltaD, deltaP, deltaH, r0, notes? }
 CreateSolventDto { name, nameEn?, casNumber?, deltaD, deltaP, deltaH, molarVolume?, molWeight?, boilingPoint?, viscosity?, specificGravity?, surfaceTension?, notes? }
+CreateNanoParticleDto { name, nameEn?, category, coreMaterial, surfaceLigand?, deltaD, deltaP, deltaH, r0, particleSize?, notes? }  ← NEW
+```
+
+## Row Mapping Functions
+
+```ts
+rowToPart(row) → Part        // snake_case → camelCase + HSP object
+rowToSolvent(row) → Solvent  // snake_case → camelCase + HSP object
+rowToNanoParticle(row) → NanoParticle  // ← NEW: includes category, coreMaterial, surfaceLigand, particleSize
 ```
 
 ## Seed Data Loading
 
-**File:** `src/db/seed-data.ts`
-**Exported:**
-- `SOLVENT_SEEDS: CreateSolventDto[]` (~85 entries)
-- `seedDatabase(db): void` function
+**Files:**
+- `src/db/seed-data.ts` → `seedDatabase(db)` for solvents + polymer groups
+- `src/db/seed-nano-particles.ts` → `seedNanoParticles(db)` for nanoparticles ← NEW
 
 **Logic in main.ts:**
 ```ts
-const count = db.prepare('SELECT COUNT(*) as cnt FROM solvents').get();
-if (count.cnt === 0) {
-  seedDatabase(db);  // Load only on first launch
-}
+// Solvents: load only on first launch
+if (count.cnt === 0) seedDatabase(db);
+// Nanoparticles: load if table empty (idempotent)
+seedNanoParticles(db);
 ```
-
-**Polymer Groups (seeded):** 7 groups:
-- ゴム類 (Rubbers)
-- プラスチック (Plastics)
-- フッ素樹脂 (Fluoropolymers)
-- 接着剤 (Adhesives) — 10 types: Epoxy, CA, PU, Acrylic, Silicone, EVA, PVAc, CR, Phenolic, PA-HM
-- その他 (Others)
-
-## Type Mapping
-
-Database rows → Domain types via helper functions in `sqlite-repository.ts`:
-
-```ts
-function rowToPart(row): Part {
-  return {
-    id: row.id,
-    groupId: row.group_id,
-    hsp: { deltaD: row.delta_d, deltaP: row.delta_p, deltaH: row.delta_h },
-    r0: row.r0,
-    // ... other fields
-  }
-}
-
-function rowToSolvent(row): Solvent {
-  // Similar transformation, maps snake_case to camelCase
-}
-```
-
-## Query Patterns
-
-### Load Group with Parts
-```sql
-SELECT * FROM parts_groups WHERE id = ?
-  → then SELECT * FROM parts WHERE group_id = ?
-```
-
-### Search Solvents
-```sql
-SELECT * FROM solvents WHERE name LIKE ? OR name_en LIKE ? LIMIT 50
-```
-
-### Create Part with Validation
-```sql
-INSERT INTO parts (group_id, name, delta_d, delta_p, delta_h, r0, ...)
-VALUES (?, ?, ?, ?, ?, ?, ...)
-```
-
-### Get All Thresholds
-```sql
-SELECT value FROM settings WHERE key LIKE 'thresholds.%'
-  → Parse JSON and build RiskThresholds object
-```
-
-## Migration
-
-**Function:** `migrateDatabase(db)` in `src/db/schema.ts`
-- Adds 4 physical property columns via `ALTER TABLE ADD COLUMN` (idempotent)
-- Uses `PRAGMA table_info(solvents)` to check existing columns before ALTER
-- Called in `main.ts` after `initializeDatabase(db)`
 
 ## Data Integrity
 
 - **Foreign Key Constraints:** ON DELETE CASCADE (delete group → deletes parts)
-- **NOT NULL Fields:** name (groups, parts, solvents), HSP values, r0
-- **Default Values:** Timestamps auto-set to current time
+- **NOT NULL Fields:** name, HSP values, r0, category + core_material (nano_particles)
+- **Default Values:** Timestamps auto-set, category defaults to 'other'
 - **Type Safety:** TypeScript mapping prevents schema drift
 
 ---

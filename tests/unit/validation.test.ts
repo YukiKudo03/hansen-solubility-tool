@@ -9,6 +9,8 @@ import {
   validateSolventInput,
   validatePhysicalProperties,
   validateMixtureInput,
+  validateNanoParticleInput,
+  validateDispersibilityThresholds,
 } from '../../src/core/validation';
 
 describe('validateHSPValues', () => {
@@ -241,5 +243,89 @@ describe('validateMixtureInput', () => {
   it('体積比がNaNでエラー', () => {
     expect(validateMixtureInput([{ solventId: 1, volumeRatio: NaN }]))
       .toBe('体積比は正の数値を入力してください');
+  });
+});
+
+describe('validateNanoParticleInput', () => {
+  const valid = {
+    name: 'SWCNT',
+    category: 'carbon',
+    coreMaterial: 'SWCNT',
+    deltaD: 19.4,
+    deltaP: 6.0,
+    deltaH: 4.5,
+    r0: 5.0,
+  };
+
+  it('有効な入力', () => {
+    expect(validateNanoParticleInput(valid)).toBeNull();
+  });
+
+  it('粒子径指定ありで有効', () => {
+    expect(validateNanoParticleInput({ ...valid, particleSize: 10 })).toBeNull();
+  });
+
+  it('名前が空でエラー', () => {
+    expect(validateNanoParticleInput({ ...valid, name: '' })).toBe('名前を入力してください');
+  });
+
+  it('母材が空でエラー', () => {
+    expect(validateNanoParticleInput({ ...valid, coreMaterial: '' })).toBe('母材を入力してください');
+  });
+
+  it('無効なカテゴリでエラー', () => {
+    expect(validateNanoParticleInput({ ...valid, category: 'invalid' })).toBe('無効なカテゴリです');
+  });
+
+  it('有効な全カテゴリ', () => {
+    for (const cat of ['carbon', 'metal', 'metal_oxide', 'quantum_dot', 'polymer', 'other']) {
+      expect(validateNanoParticleInput({ ...valid, category: cat })).toBeNull();
+    }
+  });
+
+  it('HSP値が負でエラー', () => {
+    expect(validateNanoParticleInput({ ...valid, deltaD: -1 })).toBe('δDは0以上の数値を入力してください');
+  });
+
+  it('R₀がゼロでエラー', () => {
+    expect(validateNanoParticleInput({ ...valid, r0: 0 })).toBe('R₀は正の数値を入力してください');
+  });
+
+  it('粒子径がゼロでエラー', () => {
+    expect(validateNanoParticleInput({ ...valid, particleSize: 0 })).toBe('粒子径は正の数値を入力してください');
+  });
+
+  it('粒子径が負でエラー', () => {
+    expect(validateNanoParticleInput({ ...valid, particleSize: -5 })).toBe('粒子径は正の数値を入力してください');
+  });
+
+  it('粒子径未指定は有効', () => {
+    expect(validateNanoParticleInput({ ...valid, particleSize: undefined })).toBeNull();
+  });
+});
+
+describe('validateDispersibilityThresholds', () => {
+  it('有効な閾値（昇順）', () => {
+    expect(validateDispersibilityThresholds({
+      excellentMax: 0.5, goodMax: 0.8, fairMax: 1.0, poorMax: 1.5,
+    })).toBeNull();
+  });
+
+  it('逆順でエラー', () => {
+    expect(validateDispersibilityThresholds({
+      excellentMax: 1.5, goodMax: 1.0, fairMax: 0.8, poorMax: 0.5,
+    })).toBe('閾値は excellentMax < goodMax < fairMax < poorMax の順でなければなりません');
+  });
+
+  it('同値でエラー', () => {
+    expect(validateDispersibilityThresholds({
+      excellentMax: 0.5, goodMax: 0.5, fairMax: 1.0, poorMax: 1.5,
+    })).toBe('閾値は excellentMax < goodMax < fairMax < poorMax の順でなければなりません');
+  });
+
+  it('負の値でエラー', () => {
+    expect(validateDispersibilityThresholds({
+      excellentMax: -0.1, goodMax: 0.8, fairMax: 1.0, poorMax: 1.5,
+    })).toBe('閾値はすべて0以上の数値を入力してください');
   });
 });

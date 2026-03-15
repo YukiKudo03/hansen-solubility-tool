@@ -2,15 +2,17 @@
  * SQLite リポジトリ実装
  */
 import Database from 'better-sqlite3';
-import type { Part, PartsGroup, Solvent, RiskThresholds } from '../core/types';
+import type { Part, PartsGroup, Solvent, RiskThresholds, NanoParticle, NanoParticleCategory } from '../core/types';
 import { DEFAULT_THRESHOLDS } from '../core/risk';
 import type {
   PartsRepository,
   SolventRepository,
   SettingsRepository,
+  NanoParticleRepository,
   CreatePartsGroupDto,
   CreatePartDto,
   CreateSolventDto,
+  CreateNanoParticleDto,
 } from './repository';
 
 /** DBの行からPartを変換 */
@@ -48,6 +50,26 @@ function rowToSolvent(row: Record<string, unknown>): Solvent {
     viscosity: (row.viscosity as number) ?? null,
     specificGravity: (row.specific_gravity as number) ?? null,
     surfaceTension: (row.surface_tension as number) ?? null,
+    notes: (row.notes as string) ?? null,
+  };
+}
+
+/** DBの行からNanoParticleを変換 */
+function rowToNanoParticle(row: Record<string, unknown>): NanoParticle {
+  return {
+    id: row.id as number,
+    name: row.name as string,
+    nameEn: (row.name_en as string) ?? null,
+    category: row.category as NanoParticleCategory,
+    coreMaterial: row.core_material as string,
+    surfaceLigand: (row.surface_ligand as string) ?? null,
+    hsp: {
+      deltaD: row.delta_d as number,
+      deltaP: row.delta_p as number,
+      deltaH: row.delta_h as number,
+    },
+    r0: row.r0 as number,
+    particleSize: (row.particle_size as number) ?? null,
     notes: (row.notes as string) ?? null,
   };
 }
@@ -238,5 +260,82 @@ export class SqliteSettingsRepository implements SettingsRepository {
 
   setThresholds(thresholds: RiskThresholds): void {
     this.setSetting('risk_thresholds', JSON.stringify(thresholds));
+  }
+}
+
+export class SqliteNanoParticleRepository implements NanoParticleRepository {
+  constructor(private db: Database.Database) {}
+
+  getAll(): NanoParticle[] {
+    const rows = this.db.prepare('SELECT * FROM nano_particles ORDER BY id').all() as Record<string, unknown>[];
+    return rows.map(rowToNanoParticle);
+  }
+
+  getById(id: number): NanoParticle | null {
+    const row = this.db.prepare('SELECT * FROM nano_particles WHERE id = ?').get(id) as Record<string, unknown> | undefined;
+    if (!row) return null;
+    return rowToNanoParticle(row);
+  }
+
+  getByCategory(category: NanoParticleCategory): NanoParticle[] {
+    const rows = this.db.prepare('SELECT * FROM nano_particles WHERE category = ? ORDER BY id').all(category) as Record<string, unknown>[];
+    return rows.map(rowToNanoParticle);
+  }
+
+  search(query: string): NanoParticle[] {
+    const rows = this.db
+      .prepare('SELECT * FROM nano_particles WHERE name LIKE ? OR name_en LIKE ? OR core_material LIKE ? OR surface_ligand LIKE ? ORDER BY id')
+      .all(`%${query}%`, `%${query}%`, `%${query}%`, `%${query}%`) as Record<string, unknown>[];
+    return rows.map(rowToNanoParticle);
+  }
+
+  create(dto: CreateNanoParticleDto): NanoParticle {
+    const result = this.db
+      .prepare(
+        'INSERT INTO nano_particles (name, name_en, category, core_material, surface_ligand, delta_d, delta_p, delta_h, r0, particle_size, notes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+      )
+      .run(
+        dto.name,
+        dto.nameEn ?? null,
+        dto.category,
+        dto.coreMaterial,
+        dto.surfaceLigand ?? null,
+        dto.deltaD,
+        dto.deltaP,
+        dto.deltaH,
+        dto.r0,
+        dto.particleSize ?? null,
+        dto.notes ?? null,
+      );
+    return this.getById(Number(result.lastInsertRowid))!;
+  }
+
+  update(id: number, dto: Partial<CreateNanoParticleDto>): NanoParticle | null {
+    const existing = this.db.prepare('SELECT * FROM nano_particles WHERE id = ?').get(id) as Record<string, unknown> | undefined;
+    if (!existing) return null;
+    this.db
+      .prepare(
+        "UPDATE nano_particles SET name = ?, name_en = ?, category = ?, core_material = ?, surface_ligand = ?, delta_d = ?, delta_p = ?, delta_h = ?, r0 = ?, particle_size = ?, notes = ?, updated_at = datetime('now') WHERE id = ?",
+      )
+      .run(
+        dto.name ?? existing.name,
+        dto.nameEn ?? existing.name_en,
+        dto.category ?? existing.category,
+        dto.coreMaterial ?? existing.core_material,
+        dto.surfaceLigand ?? existing.surface_ligand,
+        dto.deltaD ?? existing.delta_d,
+        dto.deltaP ?? existing.delta_p,
+        dto.deltaH ?? existing.delta_h,
+        dto.r0 ?? existing.r0,
+        dto.particleSize ?? existing.particle_size,
+        dto.notes ?? existing.notes,
+        id,
+      );
+    return this.getById(id);
+  }
+
+  delete(id: number): boolean {
+    const result = this.db.prepare('DELETE FROM nano_particles WHERE id = ?').run(id);
+    return result.changes > 0;
   }
 }

@@ -74,7 +74,7 @@ npm run test:e2e         # Playwright E2E (requires built app)
 
 ### Writing Tests
 
-- **Unit tests** go in `tests/unit/` — test pure functions in `src/core/`
+- **Unit tests** go in `tests/unit/` — test pure functions in `src/core/` (hsp, risk, dispersibility, solvent-finder, report, validation, mixture)
 - **Integration tests** go in `tests/integration/` — test SQLite repositories
 - **Component tests** go in `tests/renderer/` — use `@testing-library/react`
 - **E2E tests** go in `tests/e2e/` — use Playwright with Electron
@@ -90,9 +90,12 @@ Use factories from `tests/renderer/factories.ts` for consistent test data.
 ```
 src/
 ├── core/       Pure domain logic (no I/O, 100% testable)
+│               hsp.ts, risk.ts, dispersibility.ts, solvent-finder.ts,
+│               report.ts, validation.ts, mixture.ts, types.ts
 ├── db/         SQLite data access layer (repository pattern)
-├── main/       Electron main process (lifecycle, IPC)
-└── renderer/   React UI (components, hooks)
+│               4 repos: Parts, Solvent, NanoParticle, Settings
+├── main/       Electron main process (lifecycle, IPC, 40+ handlers)
+└── renderer/   React UI (5 tabs, 11 components, 5 hooks)
 ```
 
 See `docs/CODEMAPS/INDEX.md` for detailed architecture.
@@ -112,7 +115,8 @@ See `docs/CODEMAPS/INDEX.md` for detailed architecture.
 - [ ] UI changes have component tests
 - [ ] Database schema changes include migration in `schema.ts` (`migrateDatabase`)
 - [ ] Database changes update seed data if needed
-- [ ] IPC changes update both `ipc-handlers.ts` and `preload.ts`
+- [ ] IPC changes update `ipc-handlers.ts`, `preload.ts`, and `preload.d.ts`
+- [ ] New entity types added to `src/core/types.ts`
 
 ## Docker
 
