@@ -205,3 +205,115 @@ export interface GroupContactAngleResult {
   results: ContactAngleResult[];
   evaluatedAt: Date;
 }
+
+// ─── 膨潤度予測系 ───────────────────────────
+
+/** 膨潤レベル (1=最も膨潤, 5=膨潤なし) — RED小=膨潤大 */
+export enum SwellingLevel {
+  Severe = 1,     // 著しい膨潤（溶解に近い）
+  High = 2,       // 高膨潤
+  Moderate = 3,   // 中程度の膨潤
+  Low = 4,        // 軽微な膨潤
+  Negligible = 5, // 膨潤なし
+}
+
+/** 膨潤度閾値設定 (RED値ベース) */
+export interface SwellingThresholds {
+  severeMax: number;    // default: 0.5
+  highMax: number;      // default: 0.8
+  moderateMax: number;  // default: 1.0
+  lowMax: number;       // default: 1.5
+}
+
+/** 膨潤度予測結果 */
+export interface SwellingResult {
+  part: Part;
+  solvent: Solvent;
+  ra: number;
+  red: number;
+  swellingLevel: SwellingLevel;
+}
+
+/** グループ全体の膨潤度予測結果 */
+export interface GroupSwellingResult {
+  partsGroup: PartsGroup;
+  solvent: Solvent;
+  results: SwellingResult[];
+  evaluatedAt: Date;
+  thresholdsUsed: SwellingThresholds;
+}
+
+// ─── 薬物溶解性予測系 ───────────────────────────
+
+/** 薬物（有効成分） */
+export interface Drug {
+  id: number;
+  name: string;
+  nameEn: string | null;
+  casNumber: string | null;
+  hsp: HSPValues;
+  r0: number;
+  molWeight: number | null;
+  logP: number | null;
+  therapeuticCategory: string | null;
+  notes: string | null;
+}
+
+/** 薬物溶解性レベル (1=最良, 5=不溶) — RED小=溶解性良好 */
+export enum DrugSolubilityLevel {
+  Excellent = 1, // 優秀な溶解性（HSP球の深部）
+  Good = 2,      // 良好な溶解性
+  Partial = 3,   // 部分的に溶解（境界付近）
+  Poor = 4,      // 溶解性低い
+  Insoluble = 5, // 不溶
+}
+
+/** 薬物溶解性閾値設定 (RED値ベース) */
+export interface DrugSolubilityThresholds {
+  excellentMax: number;  // default: 0.5
+  goodMax: number;       // default: 0.8
+  partialMax: number;    // default: 1.0
+  poorMax: number;       // default: 1.5
+}
+
+/** 薬物溶解性予測結果 */
+export interface DrugSolubilityResult {
+  drug: Drug;
+  solvent: Solvent;
+  ra: number;
+  red: number;
+  solubility: DrugSolubilityLevel;
+}
+
+/** 薬物に対する全溶媒スクリーニング結果 */
+export interface DrugSolubilityScreeningResult {
+  drug: Drug;
+  results: DrugSolubilityResult[];
+  evaluatedAt: Date;
+  thresholdsUsed: DrugSolubilityThresholds;
+}
+
+// ─── 溶剤ブレンド最適化系 ───────────────────────────
+
+/** ブレンド最適化の入力（コア層） */
+export interface BlendOptimizationInput {
+  targetHSP: HSPValues;
+  candidateSolvents: Solvent[];
+  maxComponents: 2 | 3;
+  stepSize: number;   // default: 0.05 (5%), 有効範囲: 0 < stepSize <= 1
+  topN: number;       // default: 20
+}
+
+/** ブレンド最適化の個別結果 */
+export interface BlendResult {
+  components: { solvent: Solvent; volumeFraction: number }[];
+  blendHSP: HSPValues;
+  ra: number;
+}
+
+/** ブレンド最適化の全体結果 */
+export interface BlendOptimizationResult {
+  targetHSP: HSPValues;
+  topResults: BlendResult[];
+  evaluatedAt: Date;
+}
