@@ -18,6 +18,7 @@ import BlendOptimizerView from './components/BlendOptimizerView';
 import ChemicalResistanceView from './components/ChemicalResistanceView';
 import PlasticizerView from './components/PlasticizerView';
 import CarrierSelectionView from './components/CarrierSelectionView';
+import EvaluationHistoryView from './components/EvaluationHistoryView';
 
 const VIEW_MAP: Record<Tab, React.ComponentType> = {
   report: ReportView,
@@ -31,6 +32,7 @@ const VIEW_MAP: Record<Tab, React.ComponentType> = {
   chemicalResistance: ChemicalResistanceView,
   plasticizer: PlasticizerView,
   carrierSelection: CarrierSelectionView,
+  history: EvaluationHistoryView,
   settings: SettingsView,
 };
 
