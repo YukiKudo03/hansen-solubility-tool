@@ -426,3 +426,23 @@ export interface CarrierEvaluationResult {
   evaluatedAt: Date;
   thresholdsUsed: CarrierCompatibilityThresholds;
 }
+
+// ─── ブックマーク系 ─────────────────────────────────
+
+/** ブックマーク対象パイプライン */
+export type BookmarkPipeline =
+  | 'risk' | 'contactAngle' | 'swelling' | 'chemicalResistance'
+  | 'nanoDispersion' | 'plasticizer' | 'carrierSelection'
+  | 'blendOptimizer' | 'drugSolubility';
+
+/** ブックマークのパラメータ（パイプラインごとに異なるが共通型で扱う） */
+export type BookmarkParams = Record<string, unknown>;
+
+/** ブックマーク */
+export interface Bookmark {
+  id: number;
+  name: string;
+  pipeline: BookmarkPipeline;
+  params: BookmarkParams;
+  createdAt: Date;
+}

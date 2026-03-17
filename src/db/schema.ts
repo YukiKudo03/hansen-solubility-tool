@@ -83,6 +83,14 @@ CREATE TABLE IF NOT EXISTS settings (
   key   TEXT PRIMARY KEY,
   value TEXT NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS bookmarks (
+  id          INTEGER PRIMARY KEY AUTOINCREMENT,
+  name        TEXT NOT NULL,
+  pipeline    TEXT NOT NULL,
+  params_json TEXT NOT NULL,
+  created_at  TEXT DEFAULT (datetime('now'))
+);
 `;
 
 /**

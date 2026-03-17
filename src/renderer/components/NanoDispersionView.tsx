@@ -6,6 +6,7 @@ import { useNanoParticles } from '../hooks/useNanoParticles';
 import { useNanoDispersion } from '../hooks/useNanoDispersion';
 import DispersibilityBadge from './DispersibilityBadge';
 import SortTableHeader from './SortTableHeader';
+import BookmarkButton from './BookmarkButton';
 import { useCsvExport } from '../hooks/useCsvExport';
 import { useSortableTable } from '../hooks/useSortableTable';
 
@@ -237,6 +238,11 @@ export default function NanoDispersionView() {
               CSV出力
             </button>
           )}
+          <BookmarkButton
+            pipeline="nanoDispersion"
+            params={{ particleId: selectedParticle?.id }}
+            disabled={!selectedParticle}
+          />
         </div>
       </div>
 
