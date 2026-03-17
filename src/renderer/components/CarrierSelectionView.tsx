@@ -3,26 +3,14 @@ import type { Drug, PartsGroup, Part } from '../../core/types';
 import { formatCarrierSelectionCsv } from '../../core/report';
 import PartsGroupSelector from './PartsGroupSelector';
 import CarrierBadge from './CarrierBadge';
+import SortTableHeader from './SortTableHeader';
+import { useCsvExport } from '../hooks/useCsvExport';
+import { useSortableTable } from '../hooks/useSortableTable';
 import { useDrugs } from '../hooks/useDrugs';
 import { useCarrierSelection } from '../hooks/useCarrierSelection';
 
 type Mode = 'individual' | 'screening';
 type SortKey = 'carrierName' | 'deltaD' | 'deltaP' | 'deltaH' | 'r0' | 'ra' | 'red' | 'compatibility';
-type SortDir = 'asc' | 'desc';
-
-function SortHeader({ label, field, sortKey, sortDir, onToggle, className }: {
-  label: string; field: SortKey; sortKey: SortKey; sortDir: SortDir;
-  onToggle: (key: SortKey) => void; className?: string;
-}) {
-  return (
-    <th
-      onClick={() => onToggle(field)}
-      className={`px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 select-none ${className ?? ''}`}
-    >
-      {label} {sortKey === field && (sortDir === 'asc' ? '▲' : '▼')}
-    </th>
-  );
-}
 
 export default function CarrierSelectionView() {
   const [mode, setMode] = useState<Mode>('individual');
@@ -32,10 +20,8 @@ export default function CarrierSelectionView() {
 
   const { drugs, loading: drugsLoading } = useDrugs();
   const { result, loading: evalLoading, error, evaluate, screenAll, clear } = useCarrierSelection();
-  const [csvError, setCsvError] = useState<string | null>(null);
-
-  const [sortKey, setSortKey] = useState<SortKey>('red');
-  const [sortDir, setSortDir] = useState<SortDir>('asc');
+  const { csvError, exportCsv } = useCsvExport(formatCarrierSelectionCsv);
+  const { sortKey, sortDir, toggleSort } = useSortableTable<SortKey>('red');
 
   const canEvaluateIndividual = mode === 'individual' && selectedDrug && selectedGroup && selectedCarrier && !evalLoading;
   const canScreen = mode === 'screening' && selectedDrug && selectedGroup && !evalLoading;
@@ -68,16 +54,7 @@ export default function CarrierSelectionView() {
     }
   };
 
-  const handleExportCsv = async () => {
-    if (!result) return;
-    setCsvError(null);
-    const csv = formatCarrierSelectionCsv(result);
-    try {
-      await window.api.saveCsv(csv);
-    } catch (e) {
-      setCsvError(e instanceof Error ? e.message : 'CSV保存中にエラーが発生しました');
-    }
-  };
+  const handleExportCsv = () => exportCsv(result);
 
   const sortedResults = useMemo(() => {
     if (!result) return [];
@@ -114,15 +91,6 @@ export default function CarrierSelectionView() {
     });
     return items;
   }, [result, sortKey, sortDir]);
-
-  const toggleSort = (key: SortKey) => {
-    if (sortKey === key) {
-      setSortDir(sortDir === 'asc' ? 'desc' : 'asc');
-    } else {
-      setSortKey(key);
-      setSortDir('asc');
-    }
-  };
 
   // 統計サマリー
   const stats = useMemo(() => {
@@ -255,7 +223,7 @@ export default function CarrierSelectionView() {
 
       {/* エラー表示 */}
       {(error || csvError) && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-red-700 text-sm">
+        <div role="alert" className="bg-red-50 border border-red-200 rounded-lg p-4 text-red-700 text-sm">
           {error || csvError}
         </div>
       )}
@@ -291,14 +259,14 @@ export default function CarrierSelectionView() {
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr>
-                  <SortHeader label="キャリア名" field="carrierName" sortKey={sortKey} sortDir={sortDir} onToggle={toggleSort} />
-                  <SortHeader label="δD" field="deltaD" sortKey={sortKey} sortDir={sortDir} onToggle={toggleSort} />
-                  <SortHeader label="δP" field="deltaP" sortKey={sortKey} sortDir={sortDir} onToggle={toggleSort} />
-                  <SortHeader label="δH" field="deltaH" sortKey={sortKey} sortDir={sortDir} onToggle={toggleSort} />
-                  <SortHeader label="R₀" field="r0" sortKey={sortKey} sortDir={sortDir} onToggle={toggleSort} />
-                  <SortHeader label="Ra" field="ra" sortKey={sortKey} sortDir={sortDir} onToggle={toggleSort} />
-                  <SortHeader label="RED" field="red" sortKey={sortKey} sortDir={sortDir} onToggle={toggleSort} />
-                  <SortHeader label="適合性" field="compatibility" sortKey={sortKey} sortDir={sortDir} onToggle={toggleSort} />
+                  <SortTableHeader label="キャリア名" field="carrierName" sortKey={sortKey} sortDir={sortDir} onToggle={toggleSort} />
+                  <SortTableHeader label="δD" field="deltaD" sortKey={sortKey} sortDir={sortDir} onToggle={toggleSort} />
+                  <SortTableHeader label="δP" field="deltaP" sortKey={sortKey} sortDir={sortDir} onToggle={toggleSort} />
+                  <SortTableHeader label="δH" field="deltaH" sortKey={sortKey} sortDir={sortDir} onToggle={toggleSort} />
+                  <SortTableHeader label="R₀" field="r0" sortKey={sortKey} sortDir={sortDir} onToggle={toggleSort} />
+                  <SortTableHeader label="Ra" field="ra" sortKey={sortKey} sortDir={sortDir} onToggle={toggleSort} />
+                  <SortTableHeader label="RED" field="red" sortKey={sortKey} sortDir={sortDir} onToggle={toggleSort} />
+                  <SortTableHeader label="適合性" field="compatibility" sortKey={sortKey} sortDir={sortDir} onToggle={toggleSort} />
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">

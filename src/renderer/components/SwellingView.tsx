@@ -4,34 +4,20 @@ import { formatSwellingCsv } from '../../core/report';
 import PartsGroupSelector from './PartsGroupSelector';
 import SolventSelector from './SolventSelector';
 import SwellingBadge from './SwellingBadge';
+import SortTableHeader from './SortTableHeader';
+import { useCsvExport } from '../hooks/useCsvExport';
+import { useSortableTable } from '../hooks/useSortableTable';
 import { useSwelling } from '../hooks/useSwelling';
 
 type SortKey = 'partName' | 'materialType' | 'deltaD' | 'deltaP' | 'deltaH' | 'r0' | 'ra' | 'red' | 'swellingLevel';
-type SortDir = 'asc' | 'desc';
-
-function SortHeader({ label, field, sortKey, sortDir, onToggle, className }: {
-  label: string; field: SortKey; sortKey: SortKey; sortDir: SortDir;
-  onToggle: (key: SortKey) => void; className?: string;
-}) {
-  return (
-    <th
-      onClick={() => onToggle(field)}
-      className={`px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 select-none ${className ?? ''}`}
-    >
-      {label} {sortKey === field && (sortDir === 'asc' ? '▲' : '▼')}
-    </th>
-  );
-}
 
 export default function SwellingView() {
   const [selectedGroup, setSelectedGroup] = useState<PartsGroup | null>(null);
   const [selectedSolvent, setSelectedSolvent] = useState<Solvent | null>(null);
 
   const { result, loading, error, evaluate, clear } = useSwelling();
-  const [csvError, setCsvError] = useState<string | null>(null);
-
-  const [sortKey, setSortKey] = useState<SortKey>('red');
-  const [sortDir, setSortDir] = useState<SortDir>('asc');
+  const { csvError, exportCsv } = useCsvExport(formatSwellingCsv);
+  const { sortKey, sortDir, toggleSort } = useSortableTable<SortKey>('red');
 
   const canEvaluate = selectedGroup && selectedSolvent && !loading;
 
@@ -40,16 +26,7 @@ export default function SwellingView() {
     await evaluate(selectedGroup.id, selectedSolvent.id);
   };
 
-  const handleExportCsv = async () => {
-    if (!result) return;
-    setCsvError(null);
-    const csv = formatSwellingCsv(result);
-    try {
-      await window.api.saveCsv(csv);
-    } catch (e) {
-      setCsvError(e instanceof Error ? e.message : 'CSV保存中にエラーが発生しました');
-    }
-  };
+  const handleExportCsv = () => exportCsv(result);
 
   // 警告: エラストマー/ゴム以外の材料を含むかチェック
   const hasNonElastomerMaterial = useMemo(() => {
@@ -100,15 +77,6 @@ export default function SwellingView() {
     return items;
   }, [result, sortKey, sortDir]);
 
-  const toggleSort = (key: SortKey) => {
-    if (sortKey === key) {
-      setSortDir(sortDir === 'asc' ? 'desc' : 'asc');
-    } else {
-      setSortKey(key);
-      setSortDir('asc');
-    }
-  };
-
   return (
     <div className="space-y-6">
       {/* 設定エリア */}
@@ -157,7 +125,7 @@ export default function SwellingView() {
 
       {/* エラー表示 */}
       {(error || csvError) && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-red-700 text-sm">
+        <div role="alert" className="bg-red-50 border border-red-200 rounded-lg p-4 text-red-700 text-sm">
           {error || csvError}
         </div>
       )}
@@ -174,15 +142,15 @@ export default function SwellingView() {
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr>
-                  <SortHeader label="Part名" field="partName" sortKey={sortKey} sortDir={sortDir} onToggle={toggleSort} />
-                  <SortHeader label="材料種別" field="materialType" sortKey={sortKey} sortDir={sortDir} onToggle={toggleSort} />
-                  <SortHeader label="δD" field="deltaD" sortKey={sortKey} sortDir={sortDir} onToggle={toggleSort} />
-                  <SortHeader label="δP" field="deltaP" sortKey={sortKey} sortDir={sortDir} onToggle={toggleSort} />
-                  <SortHeader label="δH" field="deltaH" sortKey={sortKey} sortDir={sortDir} onToggle={toggleSort} />
-                  <SortHeader label="R₀" field="r0" sortKey={sortKey} sortDir={sortDir} onToggle={toggleSort} />
-                  <SortHeader label="Ra" field="ra" sortKey={sortKey} sortDir={sortDir} onToggle={toggleSort} />
-                  <SortHeader label="RED" field="red" sortKey={sortKey} sortDir={sortDir} onToggle={toggleSort} />
-                  <SortHeader label="膨潤レベル" field="swellingLevel" sortKey={sortKey} sortDir={sortDir} onToggle={toggleSort} />
+                  <SortTableHeader label="Part名" field="partName" sortKey={sortKey} sortDir={sortDir} onToggle={toggleSort} />
+                  <SortTableHeader label="材料種別" field="materialType" sortKey={sortKey} sortDir={sortDir} onToggle={toggleSort} />
+                  <SortTableHeader label="δD" field="deltaD" sortKey={sortKey} sortDir={sortDir} onToggle={toggleSort} />
+                  <SortTableHeader label="δP" field="deltaP" sortKey={sortKey} sortDir={sortDir} onToggle={toggleSort} />
+                  <SortTableHeader label="δH" field="deltaH" sortKey={sortKey} sortDir={sortDir} onToggle={toggleSort} />
+                  <SortTableHeader label="R₀" field="r0" sortKey={sortKey} sortDir={sortDir} onToggle={toggleSort} />
+                  <SortTableHeader label="Ra" field="ra" sortKey={sortKey} sortDir={sortDir} onToggle={toggleSort} />
+                  <SortTableHeader label="RED" field="red" sortKey={sortKey} sortDir={sortDir} onToggle={toggleSort} />
+                  <SortTableHeader label="膨潤レベル" field="swellingLevel" sortKey={sortKey} sortDir={sortDir} onToggle={toggleSort} />
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">

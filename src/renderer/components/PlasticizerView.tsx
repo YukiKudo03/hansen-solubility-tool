@@ -3,34 +3,20 @@ import type { PartsGroup, Part } from '../../core/types';
 import { formatPlasticizerCsv } from '../../core/report';
 import PartsGroupSelector from './PartsGroupSelector';
 import PlasticizerBadge from './PlasticizerBadge';
+import SortTableHeader from './SortTableHeader';
+import { useCsvExport } from '../hooks/useCsvExport';
+import { useSortableTable } from '../hooks/useSortableTable';
 import { usePlasticizer } from '../hooks/usePlasticizer';
 
 type SortKey = 'plasticizerName' | 'deltaD' | 'deltaP' | 'deltaH' | 'ra' | 'red' | 'compatibility';
-type SortDir = 'asc' | 'desc';
-
-function SortHeader({ label, field, sortKey, sortDir, onToggle, className }: {
-  label: string; field: SortKey; sortKey: SortKey; sortDir: SortDir;
-  onToggle: (key: SortKey) => void; className?: string;
-}) {
-  return (
-    <th
-      onClick={() => onToggle(field)}
-      className={`px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 select-none ${className ?? ''}`}
-    >
-      {label} {sortKey === field && (sortDir === 'asc' ? '▲' : '▼')}
-    </th>
-  );
-}
 
 export default function PlasticizerView() {
   const [selectedGroup, setSelectedGroup] = useState<PartsGroup | null>(null);
   const [selectedPart, setSelectedPart] = useState<Part | null>(null);
 
   const { result, loading, error, screen, clear } = usePlasticizer();
-  const [csvError, setCsvError] = useState<string | null>(null);
-
-  const [sortKey, setSortKey] = useState<SortKey>('red');
-  const [sortDir, setSortDir] = useState<SortDir>('asc');
+  const { csvError, exportCsv } = useCsvExport(formatPlasticizerCsv);
+  const { sortKey, sortDir, toggleSort } = useSortableTable<SortKey>('red');
 
   const canScreen = selectedGroup && selectedPart && !loading;
 
@@ -52,16 +38,7 @@ export default function PlasticizerView() {
     await screen(selectedPart.id, selectedGroup.id);
   };
 
-  const handleExportCsv = async () => {
-    if (!result) return;
-    setCsvError(null);
-    const csv = formatPlasticizerCsv(result);
-    try {
-      await window.api.saveCsv(csv);
-    } catch (e) {
-      setCsvError(e instanceof Error ? e.message : 'CSV保存中にエラーが発生しました');
-    }
-  };
+  const handleExportCsv = () => exportCsv(result);
 
   const sortedResults = useMemo(() => {
     if (!result) return [];
@@ -95,15 +72,6 @@ export default function PlasticizerView() {
     });
     return items;
   }, [result, sortKey, sortDir]);
-
-  const toggleSort = (key: SortKey) => {
-    if (sortKey === key) {
-      setSortDir(sortDir === 'asc' ? 'desc' : 'asc');
-    } else {
-      setSortKey(key);
-      setSortDir('asc');
-    }
-  };
 
   return (
     <div className="space-y-6">
@@ -163,7 +131,7 @@ export default function PlasticizerView() {
 
       {/* エラー表示 */}
       {(error || csvError) && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-red-700 text-sm">
+        <div role="alert" className="bg-red-50 border border-red-200 rounded-lg p-4 text-red-700 text-sm">
           {error || csvError}
         </div>
       )}
@@ -180,13 +148,13 @@ export default function PlasticizerView() {
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr>
-                  <SortHeader label="可塑剤名" field="plasticizerName" sortKey={sortKey} sortDir={sortDir} onToggle={toggleSort} />
-                  <SortHeader label="δD" field="deltaD" sortKey={sortKey} sortDir={sortDir} onToggle={toggleSort} />
-                  <SortHeader label="δP" field="deltaP" sortKey={sortKey} sortDir={sortDir} onToggle={toggleSort} />
-                  <SortHeader label="δH" field="deltaH" sortKey={sortKey} sortDir={sortDir} onToggle={toggleSort} />
-                  <SortHeader label="Ra" field="ra" sortKey={sortKey} sortDir={sortDir} onToggle={toggleSort} />
-                  <SortHeader label="RED" field="red" sortKey={sortKey} sortDir={sortDir} onToggle={toggleSort} />
-                  <SortHeader label="相溶性" field="compatibility" sortKey={sortKey} sortDir={sortDir} onToggle={toggleSort} />
+                  <SortTableHeader label="可塑剤名" field="plasticizerName" sortKey={sortKey} sortDir={sortDir} onToggle={toggleSort} />
+                  <SortTableHeader label="δD" field="deltaD" sortKey={sortKey} sortDir={sortDir} onToggle={toggleSort} />
+                  <SortTableHeader label="δP" field="deltaP" sortKey={sortKey} sortDir={sortDir} onToggle={toggleSort} />
+                  <SortTableHeader label="δH" field="deltaH" sortKey={sortKey} sortDir={sortDir} onToggle={toggleSort} />
+                  <SortTableHeader label="Ra" field="ra" sortKey={sortKey} sortDir={sortDir} onToggle={toggleSort} />
+                  <SortTableHeader label="RED" field="red" sortKey={sortKey} sortDir={sortDir} onToggle={toggleSort} />
+                  <SortTableHeader label="相溶性" field="compatibility" sortKey={sortKey} sortDir={sortDir} onToggle={toggleSort} />
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">

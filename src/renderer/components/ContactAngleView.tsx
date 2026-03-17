@@ -5,25 +5,13 @@ import { getContactAngleWarnings } from '../../core/accuracy-warnings';
 import PartsGroupSelector from './PartsGroupSelector';
 import SolventSelector from './SolventSelector';
 import WettabilityBadge from './WettabilityBadge';
+import SortTableHeader from './SortTableHeader';
+import { useCsvExport } from '../hooks/useCsvExport';
+import { useSortableTable } from '../hooks/useSortableTable';
 import { useContactAngle } from '../hooks/useContactAngle';
 
 type Mode = 'group' | 'screening';
 type SortKey = 'partName' | 'solventName' | 'contactAngle' | 'wettability' | 'gammaLV' | 'gammaSV' | 'gammaSL';
-type SortDir = 'asc' | 'desc';
-
-function SortHeader({ label, field, sortKey, sortDir, onToggle, className }: {
-  label: string; field: SortKey; sortKey: SortKey; sortDir: SortDir;
-  onToggle: (key: SortKey) => void; className?: string;
-}) {
-  return (
-    <th
-      onClick={() => onToggle(field)}
-      className={`px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 select-none ${className ?? ''}`}
-    >
-      {label} {sortKey === field && (sortDir === 'asc' ? '▲' : '▼')}
-    </th>
-  );
-}
 
 export default function ContactAngleView() {
   const [mode, setMode] = useState<Mode>('group');
@@ -32,11 +20,10 @@ export default function ContactAngleView() {
   const [selectedPartId, setSelectedPartId] = useState<number | null>(null);
 
   const { result, loading, error, evaluate, screenAll, clear } = useContactAngle();
-  const [csvError, setCsvError] = useState<string | null>(null);
+  const { csvError, exportCsv } = useCsvExport(formatContactAngleCsv);
 
   // ソート
-  const [sortKey, setSortKey] = useState<SortKey>('contactAngle');
-  const [sortDir, setSortDir] = useState<SortDir>('asc');
+  const { sortKey, sortDir, toggleSort } = useSortableTable<SortKey>('contactAngle');
 
   const canEvaluateGroup = mode === 'group' && selectedGroup && selectedSolvent && !loading;
   const canScreen = mode === 'screening' && selectedGroup && selectedPartId && !loading;
@@ -49,16 +36,7 @@ export default function ContactAngleView() {
     }
   };
 
-  const handleExportCsv = async () => {
-    if (!result) return;
-    setCsvError(null);
-    const csv = formatContactAngleCsv(result);
-    try {
-      await window.api.saveCsv(csv);
-    } catch (e) {
-      setCsvError(e instanceof Error ? e.message : 'CSV保存中にエラーが発生しました');
-    }
-  };
+  const handleExportCsv = () => exportCsv(result);
 
   const sortedResults = useMemo(() => {
     if (!result) return [];
@@ -92,15 +70,6 @@ export default function ContactAngleView() {
     });
     return items;
   }, [result, sortKey, sortDir]);
-
-  const toggleSort = (key: SortKey) => {
-    if (sortKey === key) {
-      setSortDir(sortDir === 'asc' ? 'desc' : 'asc');
-    } else {
-      setSortKey(key);
-      setSortDir('asc');
-    }
-  };
 
   // 統計サマリー
   const stats = useMemo(() => {
@@ -210,7 +179,7 @@ export default function ContactAngleView() {
 
       {/* エラー表示 */}
       {(error || csvError) && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-red-700 text-sm">
+        <div role="alert" className="bg-red-50 border border-red-200 rounded-lg p-4 text-red-700 text-sm">
           {error || csvError}
         </div>
       )}
@@ -257,18 +226,18 @@ export default function ContactAngleView() {
               <thead className="bg-gray-50">
                 <tr>
                   {mode === 'group' ? (
-                    <SortHeader label="部品名" field="partName" sortKey={sortKey} sortDir={sortDir} onToggle={toggleSort} />
+                    <SortTableHeader label="部品名" field="partName" sortKey={sortKey} sortDir={sortDir} onToggle={toggleSort} />
                   ) : (
-                    <SortHeader label="溶媒名" field="solventName" sortKey={sortKey} sortDir={sortDir} onToggle={toggleSort} />
+                    <SortTableHeader label="溶媒名" field="solventName" sortKey={sortKey} sortDir={sortDir} onToggle={toggleSort} />
                   )}
                   <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase">δD</th>
                   <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase">δP</th>
                   <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase">δH</th>
-                  <SortHeader label="γ_LV" field="gammaLV" sortKey={sortKey} sortDir={sortDir} onToggle={toggleSort} />
-                  <SortHeader label="γ_SV" field="gammaSV" sortKey={sortKey} sortDir={sortDir} onToggle={toggleSort} />
-                  <SortHeader label="γ_SL" field="gammaSL" sortKey={sortKey} sortDir={sortDir} onToggle={toggleSort} />
-                  <SortHeader label="接触角" field="contactAngle" sortKey={sortKey} sortDir={sortDir} onToggle={toggleSort} />
-                  <SortHeader label="濡れ性" field="wettability" sortKey={sortKey} sortDir={sortDir} onToggle={toggleSort} />
+                  <SortTableHeader label="γ_LV" field="gammaLV" sortKey={sortKey} sortDir={sortDir} onToggle={toggleSort} />
+                  <SortTableHeader label="γ_SV" field="gammaSV" sortKey={sortKey} sortDir={sortDir} onToggle={toggleSort} />
+                  <SortTableHeader label="γ_SL" field="gammaSL" sortKey={sortKey} sortDir={sortDir} onToggle={toggleSort} />
+                  <SortTableHeader label="接触角" field="contactAngle" sortKey={sortKey} sortDir={sortDir} onToggle={toggleSort} />
+                  <SortTableHeader label="濡れ性" field="wettability" sortKey={sortKey} sortDir={sortDir} onToggle={toggleSort} />
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">

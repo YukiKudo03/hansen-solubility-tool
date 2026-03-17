@@ -19,8 +19,9 @@ export default function PartsGroupSelector({ onSelect, selected }: PartsGroupSel
 
   return (
     <div>
-      <label className="block text-sm font-medium text-gray-700 mb-1">部品グループを選択</label>
+      <label htmlFor="parts-group-select" className="block text-sm font-medium text-gray-700 mb-1">部品グループを選択</label>
       <select
+        id="parts-group-select"
         value={selected?.id ?? ''}
         onChange={(e) => {
           const group = groups.find((g) => g.id === Number(e.target.value));

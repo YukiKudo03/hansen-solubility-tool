@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useRef } from 'react';
+import React, { useState, useMemo, useRef, useEffect } from 'react';
 import type { Solvent, MixtureComponent } from '../../core/types';
 import { calculateMixture } from '../../core/mixture';
 
@@ -22,6 +22,9 @@ export default function MixtureLab() {
   const [mixtureName, setMixtureName] = useState('');
   const [saveMessage, setSaveMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const saveTimerRef = useRef<ReturnType<typeof setTimeout>>();
+
+  useEffect(() => () => { clearTimeout(saveTimerRef.current); }, []);
 
   const updateRow = (index: number, updates: Partial<ComponentRow>) => {
     setRows((prev) => prev.map((r, i) => (i === index ? { ...r, ...updates } : r)));
@@ -81,7 +84,8 @@ export default function MixtureLab() {
       setError(null);
       await window.api.createMixtureSolvent({ components, name });
       setSaveMessage(`「${name}」をデータベースに登録しました`);
-      setTimeout(() => setSaveMessage(null), 3000);
+      clearTimeout(saveTimerRef.current);
+      saveTimerRef.current = setTimeout(() => setSaveMessage(null), 3000);
     } catch (e) {
       setError(e instanceof Error ? e.message : '登録中にエラーが発生しました');
     }
@@ -232,7 +236,7 @@ export default function MixtureLab() {
 
       {/* メッセージ */}
       {error && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-red-700 text-sm">{error}</div>
+        <div role="alert" className="bg-red-50 border border-red-200 rounded-lg p-4 text-red-700 text-sm">{error}</div>
       )}
       {saveMessage && (
         <div className="bg-green-50 border border-green-200 rounded-lg p-4 text-green-700 text-sm">{saveMessage}</div>
