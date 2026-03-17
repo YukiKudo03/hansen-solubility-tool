@@ -22,6 +22,7 @@ import type { GroupEvaluationResult, PartEvaluationResult, MixtureComponent, Nan
 import type { SqliteBookmarkRepository, CreateBookmarkDto } from '../db/bookmark-repository';
 import type { SqliteHistoryRepository } from '../db/history-repository';
 import type { SerializedHistoryEntry } from '../core/evaluation-history';
+import { parseSolventCsv, parsePartCsv } from '../core/csv-import';
 
 /** JSON.parseの安全なラッパー — パース失敗時はfallbackを返す */
 function safeJsonParse<T>(json: string, fallback: T): T {
@@ -608,4 +609,16 @@ export function registerIpcHandlers(
     ipcMain.handle('history:delete', (_, id: number) => historyRepo.delete(id));
     ipcMain.handle('history:deleteOlderThan', (_, days: number) => historyRepo.deleteOlderThan(days));
   }
+
+  // --- CSVインポート ---
+  ipcMain.handle('import:parseSolventCsv', (_, csv: string) => parseSolventCsv(csv));
+  ipcMain.handle('import:parsePartCsv', (_, csv: string) => parsePartCsv(csv));
+  ipcMain.handle('import:openFile', async () => {
+    const result = await dialog.showOpenDialog({
+      filters: [{ name: 'CSV', extensions: ['csv'] }],
+      properties: ['openFile'],
+    });
+    if (result.canceled || result.filePaths.length === 0) return null;
+    return fs.readFileSync(result.filePaths[0], 'utf-8');
+  });
 }

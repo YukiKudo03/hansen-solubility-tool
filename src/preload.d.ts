@@ -120,6 +120,11 @@ export interface ElectronAPI {
   createBookmark(dto: { name: string; pipeline: string; paramsJson: string }): Promise<import('./core/types').Bookmark>;
   deleteBookmark(id: number): Promise<boolean>;
 
+  // CSVインポート
+  importOpenFile(): Promise<string | null>;
+  importParseSolventCsv(csv: string): Promise<import('./core/csv-import').ImportResult<import('./core/csv-import').SolventImportRow>>;
+  importParsePartCsv(csv: string): Promise<import('./core/csv-import').ImportResult<import('./core/csv-import').PartImportRow>>;
+
   // 評価履歴
   getAllHistory(): Promise<import('./db/history-repository').EvaluationHistoryRow[]>;
   getHistoryByPipeline(pipeline: string): Promise<import('./db/history-repository').EvaluationHistoryRow[]>;
