@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import type { RiskThresholds, WettabilityThresholds } from '../../core/types';
 import { DEFAULT_THRESHOLDS } from '../../core/risk';
 import { DEFAULT_WETTABILITY_THRESHOLDS } from '../../core/wettability';
@@ -7,6 +7,9 @@ export default function SettingsView() {
   const [thresholds, setThresholds] = useState<RiskThresholds>({ ...DEFAULT_THRESHOLDS });
   const [wettabilityThresholds, setWettabilityThresholds] = useState<WettabilityThresholds>({ ...DEFAULT_WETTABILITY_THRESHOLDS });
   const [saved, setSaved] = useState(false);
+  const savedTimerRef = useRef<ReturnType<typeof setTimeout>>();
+
+  useEffect(() => () => { clearTimeout(savedTimerRef.current); }, []);
 
   useEffect(() => {
     const load = async () => {
@@ -22,7 +25,8 @@ export default function SettingsView() {
     await window.api.setThresholds(thresholds);
     await window.api.setWettabilityThresholds(wettabilityThresholds);
     setSaved(true);
-    setTimeout(() => setSaved(false), 2000);
+    clearTimeout(savedTimerRef.current);
+    savedTimerRef.current = setTimeout(() => setSaved(false), 2000);
   };
 
   const handleReset = () => {

@@ -5,6 +5,9 @@ import { getDispersionWarnings } from '../../core/accuracy-warnings';
 import { useNanoParticles } from '../hooks/useNanoParticles';
 import { useNanoDispersion } from '../hooks/useNanoDispersion';
 import DispersibilityBadge from './DispersibilityBadge';
+import SortTableHeader from './SortTableHeader';
+import { useCsvExport } from '../hooks/useCsvExport';
+import { useSortableTable } from '../hooks/useSortableTable';
 
 const CATEGORY_LABELS: Record<NanoParticleCategory, string> = {
   carbon: 'カーボン系',
@@ -16,21 +19,6 @@ const CATEGORY_LABELS: Record<NanoParticleCategory, string> = {
 };
 
 type SortKey = 'solventName' | 'ra' | 'red' | 'dispersibility' | 'boilingPoint' | 'viscosity';
-type SortDir = 'asc' | 'desc';
-
-function SortHeader({ label, field, sortKey, sortDir, onToggle, className }: {
-  label: string; field: SortKey; sortKey: SortKey; sortDir: SortDir;
-  onToggle: (key: SortKey) => void; className?: string;
-}) {
-  return (
-    <th
-      onClick={() => onToggle(field)}
-      className={`px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 select-none ${className ?? ''}`}
-    >
-      {label} {sortKey === field && (sortDir === 'asc' ? '▲' : '▼')}
-    </th>
-  );
-}
 
 export default function NanoDispersionView() {
   // 粒子選択
@@ -44,11 +32,10 @@ export default function NanoDispersionView() {
 
   // 評価
   const { result, loading: evalLoading, error, screenAll, screenFiltered, clear } = useNanoDispersion();
-  const [csvError, setCsvError] = useState<string | null>(null);
+  const { csvError, exportCsv } = useCsvExport(formatNanoDispersionCsv);
 
   // ソート
-  const [sortKey, setSortKey] = useState<SortKey>('red');
-  const [sortDir, setSortDir] = useState<SortDir>('asc');
+  const { sortKey, sortDir, toggleSort } = useSortableTable<SortKey>('red');
 
   const canEvaluate = selectedParticle && !evalLoading;
 
@@ -61,16 +48,7 @@ export default function NanoDispersionView() {
     }
   };
 
-  const handleExportCsv = async () => {
-    if (!result) return;
-    setCsvError(null);
-    const csv = formatNanoDispersionCsv(result);
-    try {
-      await window.api.saveCsv(csv);
-    } catch (e) {
-      setCsvError(e instanceof Error ? e.message : 'CSV保存中にエラーが発生しました');
-    }
-  };
+  const handleExportCsv = () => exportCsv(result);
 
   const handleParticleSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const id = Number(e.target.value);
@@ -108,15 +86,6 @@ export default function NanoDispersionView() {
     });
     return items;
   }, [result, sortKey, sortDir]);
-
-  const toggleSort = (key: SortKey) => {
-    if (sortKey === key) {
-      setSortDir(sortDir === 'asc' ? 'desc' : 'asc');
-    } else {
-      setSortKey(key);
-      setSortDir('asc');
-    }
-  };
 
   // 統計サマリー
   const stats = useMemo(() => {
@@ -273,7 +242,7 @@ export default function NanoDispersionView() {
 
       {/* エラー表示 */}
       {(error || csvError) && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-red-700 text-sm">
+        <div role="alert" className="bg-red-50 border border-red-200 rounded-lg p-4 text-red-700 text-sm">
           {error || csvError}
         </div>
       )}
@@ -319,15 +288,15 @@ export default function NanoDispersionView() {
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr>
-                  <SortHeader label="溶媒名" field="solventName" sortKey={sortKey} sortDir={sortDir} onToggle={toggleSort} />
+                  <SortTableHeader label="溶媒名" field="solventName" sortKey={sortKey} sortDir={sortDir} onToggle={toggleSort} />
                   <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase">δD</th>
                   <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase">δP</th>
                   <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase">δH</th>
-                  <SortHeader label="Ra" field="ra" sortKey={sortKey} sortDir={sortDir} onToggle={toggleSort} />
-                  <SortHeader label="RED" field="red" sortKey={sortKey} sortDir={sortDir} onToggle={toggleSort} />
-                  <SortHeader label="分散性" field="dispersibility" sortKey={sortKey} sortDir={sortDir} onToggle={toggleSort} />
-                  <SortHeader label="沸点" field="boilingPoint" sortKey={sortKey} sortDir={sortDir} onToggle={toggleSort} />
-                  <SortHeader label="粘度" field="viscosity" sortKey={sortKey} sortDir={sortDir} onToggle={toggleSort} />
+                  <SortTableHeader label="Ra" field="ra" sortKey={sortKey} sortDir={sortDir} onToggle={toggleSort} />
+                  <SortTableHeader label="RED" field="red" sortKey={sortKey} sortDir={sortDir} onToggle={toggleSort} />
+                  <SortTableHeader label="分散性" field="dispersibility" sortKey={sortKey} sortDir={sortDir} onToggle={toggleSort} />
+                  <SortTableHeader label="沸点" field="boilingPoint" sortKey={sortKey} sortDir={sortDir} onToggle={toggleSort} />
+                  <SortTableHeader label="粘度" field="viscosity" sortKey={sortKey} sortDir={sortDir} onToggle={toggleSort} />
                   <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase">表面張力</th>
                 </tr>
               </thead>
