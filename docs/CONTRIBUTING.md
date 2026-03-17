@@ -51,6 +51,7 @@ This runs two processes concurrently:
 | `npm run test:e2e` | Run Playwright E2E tests |
 | `npm run test:e2e:headed` | Run E2E tests with visible browser |
 | `npm run test:unit` | Run unit tests only (src/core/) |
+| `npm run test:literature` | Run literature validation tests |
 | `npm run test:integration` | Run integration tests only (database) |
 | `npm run typecheck` | Type-check without emitting |
 | `npm run docker:build` | Build Docker image |
@@ -74,7 +75,7 @@ npm run test:e2e         # Playwright E2E (requires built app)
 
 ### Writing Tests
 
-- **Unit tests** go in `tests/unit/` — test pure functions in `src/core/` (hsp, risk, dispersibility, wettability, contact-angle, blend-optimizer, swelling, drug-solubility, chemical-resistance, plasticizer, carrier-selection, solvent-finder, report, validation, mixture)
+- **Unit tests** go in `tests/unit/` — test pure functions in `src/core/` (hsp, risk, dispersibility, wettability, contact-angle, blend-optimizer, swelling, drug-solubility, chemical-resistance, plasticizer, carrier-selection, solvent-finder, report, validation, mixture, accuracy-warnings)
 - **Integration tests** go in `tests/integration/` — test SQLite repositories
 - **Component tests** go in `tests/renderer/` — use `@testing-library/react`
 - **E2E tests** go in `tests/e2e/` — use Playwright with Electron
@@ -90,10 +91,10 @@ Use factories from `tests/renderer/factories.ts` for consistent test data.
 ```
 src/
 ├── core/       Pure domain logic (no I/O, 100% testable)
-│               16 modules: hsp, risk, dispersibility, wettability,
+│               17 modules: hsp, risk, dispersibility, wettability,
 │               contact-angle, blend-optimizer, swelling, drug-solubility,
 │               chemical-resistance, plasticizer, carrier-selection,
-│               solvent-finder, report, validation, mixture, types
+│               solvent-finder, report, validation, mixture, accuracy-warnings, types
 ├── db/         SQLite data access layer (repository pattern)
 │               5 repos: Parts, Solvent, NanoParticle, Drug, Settings
 │               6 seed files: solvents, nano-particles, drugs, coatings, plasticizers, carriers

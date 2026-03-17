@@ -1,4 +1,4 @@
-<!-- Generated: 2026-03-15 | Updated: 2026-03-15 | Files scanned: 40 | Token estimate: ~950 -->
+<!-- Generated: 2026-03-15 | Updated: 2026-03-18 | Files scanned: 40 | Token estimate: ~980 -->
 
 # Frontend Component Architecture
 
@@ -34,14 +34,14 @@ App.tsx (MD3 responsive layout)
 │   └── 5 categories → expandable sub-items → onSelect(tab)
 ├── main (flex-1 overflow-y-auto)
 │   ├── ReportView (A) → PartsGroupSelector + SolventSelector → ResultsTable + RiskBadge
-│   ├── ContactAngleView (C) → 2 modes (group/screening) → WettabilityBadge
+│   ├── ContactAngleView (C) → 2 modes (group/screening) → WettabilityBadge + accuracy warnings
 │   ├── SwellingView (E) → Group + Solvent + elastomer warning → SwellingBadge
-│   ├── ChemicalResistanceView (G) → Group + Solvent → ChemicalResistanceBadge
-│   ├── NanoDispersionView (B) → Category + Particle → DispersibilityBadge
+│   ├── ChemicalResistanceView (G) → Group + Solvent → ChemicalResistanceBadge + RED boundary warning
+│   ├── NanoDispersionView (B) → Category + Particle → DispersibilityBadge + RED boundary warning
 │   ├── PlasticizerView (H) → Group + Part → PlasticizerBadge
 │   ├── CarrierSelectionView (I) → Drug + CarrierGroup → CarrierBadge
 │   ├── BlendOptimizerView (D) → Target HSP + Solvent checkboxes → Ranking table
-│   ├── DrugSolubilityView (F) → Drug + Solvent/screening → DrugSolubilityBadge
+│   ├── DrugSolubilityView (F) → Drug + Solvent/screening → DrugSolubilityBadge + RED boundary warning
 │   ├── DatabaseEditor, MixtureLab, SettingsView
 │   └── ErrorBoundary
 └── BottomNavigation (mobile only)

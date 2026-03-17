@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import type { PartsGroup, Solvent, Part, ContactAngleResult } from '../../core/types';
 import { formatContactAngleCsv } from '../../core/report';
+import { getContactAngleWarnings } from '../../core/accuracy-warnings';
 import PartsGroupSelector from './PartsGroupSelector';
 import SolventSelector from './SolventSelector';
 import WettabilityBadge from './WettabilityBadge';
@@ -111,6 +112,12 @@ export default function ContactAngleView() {
     const bestResult = result.results.find((r) => r.contactAngle === minAngle);
     return { total, hydrophilic, minAngle, maxAngle, bestName: mode === 'group' ? bestResult?.part.name : bestResult?.solvent.name ?? '-' };
   }, [result, mode]);
+
+  // 推定精度の警告
+  const warnings = useMemo(() => {
+    if (!result) return [];
+    return getContactAngleWarnings(result.results);
+  }, [result]);
 
   return (
     <div className="space-y-6">
@@ -229,6 +236,16 @@ export default function ContactAngleView() {
               <div className="text-gray-500">最も濡れやすい{mode === 'group' ? '部材' : '溶媒'}</div>
             </div>
           </div>
+        </div>
+      )}
+
+      {/* 推定精度の警告 */}
+      {warnings.length > 0 && (
+        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 text-yellow-800 text-sm">
+          <div className="font-medium mb-1">推定精度に関する注意</div>
+          <ul className="list-disc list-inside space-y-1">
+            {warnings.map((w, i) => <li key={i}>{w}</li>)}
+          </ul>
         </div>
       )}
 

@@ -238,4 +238,24 @@ describe('estimateContactAngle', () => {
     expect(result.cosTheta).toBeGreaterThanOrEqual(-1);
     expect(result.cosTheta).toBeLessThanOrEqual(1);
   });
+
+  it('γ_LV=0のとき接触角0°・cosθ=1を返す（全δ=0の退化ケース）', () => {
+    const zeroHSP: HSPValues = { deltaD: 0, deltaP: 0, deltaH: 0 };
+    const part = makePart(zeroHSP);
+    const solvent = makeSolvent(zeroHSP);
+    const result = estimateContactAngle(part, solvent);
+
+    // γ_LV=0のとき cosTheta=1, contactAngle=0
+    expect(result.surfaceTensionLV).toBe(0);
+    expect(result.cosTheta).toBe(1);
+    expect(result.contactAngle).toBe(0);
+  });
+});
+
+describe('calculateContactAngle — γ_LV=0エッジケース', () => {
+  it('γ_LV=0のとき0°を返す', () => {
+    const zeroHSP: HSPValues = { deltaD: 0, deltaP: 0, deltaH: 0 };
+    const angle = calculateContactAngle(zeroHSP, zeroHSP);
+    expect(angle).toBe(0);
+  });
 });

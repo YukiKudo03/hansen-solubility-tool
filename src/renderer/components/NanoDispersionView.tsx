@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import type { NanoParticle, NanoParticleCategory, NanoDispersionEvaluationResult, SolventConstraints, SolventDispersibilityResult } from '../../core/types';
 import { formatNanoDispersionCsv } from '../../core/report';
+import { getDispersionWarnings } from '../../core/accuracy-warnings';
 import { useNanoParticles } from '../hooks/useNanoParticles';
 import { useNanoDispersion } from '../hooks/useNanoDispersion';
 import DispersibilityBadge from './DispersibilityBadge';
@@ -125,6 +126,12 @@ export default function NanoDispersionView() {
     const bestRed = Math.min(...result.results.map((r) => r.red));
     const bestSolvent = result.results.find((r) => r.red === bestRed);
     return { total, good, bestRed, bestSolventName: bestSolvent?.solvent.name ?? '-' };
+  }, [result]);
+
+  // RED境界警告
+  const warnings = useMemo(() => {
+    if (!result) return [];
+    return getDispersionWarnings(result.results);
   }, [result]);
 
   return (
@@ -292,6 +299,16 @@ export default function NanoDispersionView() {
               <div className="text-gray-500">最適溶媒</div>
             </div>
           </div>
+        </div>
+      )}
+
+      {/* RED境界の警告 */}
+      {warnings.length > 0 && (
+        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 text-yellow-800 text-sm">
+          <div className="font-medium mb-1">推定精度に関する注意</div>
+          <ul className="list-disc list-inside space-y-1">
+            {warnings.map((w, i) => <li key={i}>{w}</li>)}
+          </ul>
         </div>
       )}
 

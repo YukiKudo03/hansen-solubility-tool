@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { formatCsv, formatContactAngleCsv, formatSwellingCsv, formatDrugSolubilityCsv, formatBlendOptimizationCsv, formatChemicalResistanceCsv, formatPlasticizerCsv, formatCarrierSelectionCsv } from '../../src/core/report';
-import { RiskLevel, WettabilityLevel, SwellingLevel, DrugSolubilityLevel, ChemicalResistanceLevel, PlasticizerCompatibilityLevel, CarrierCompatibilityLevel } from '../../src/core/types';
-import type { GroupEvaluationResult, GroupContactAngleResult, ContactAngleResult, Part, Solvent, PartsGroup, GroupSwellingResult, DrugSolubilityScreeningResult, BlendOptimizationResult, GroupChemicalResistanceResult, PlasticizerEvaluationResult, CarrierEvaluationResult } from '../../src/core/types';
+import { formatCsv, formatContactAngleCsv, formatNanoDispersionCsv, formatSwellingCsv, formatDrugSolubilityCsv, formatBlendOptimizationCsv, formatChemicalResistanceCsv, formatPlasticizerCsv, formatCarrierSelectionCsv } from '../../src/core/report';
+import { RiskLevel, WettabilityLevel, SwellingLevel, DrugSolubilityLevel, ChemicalResistanceLevel, PlasticizerCompatibilityLevel, CarrierCompatibilityLevel, DispersibilityLevel } from '../../src/core/types';
+import type { GroupEvaluationResult, GroupContactAngleResult, ContactAngleResult, Part, Solvent, PartsGroup, GroupSwellingResult, DrugSolubilityScreeningResult, BlendOptimizationResult, GroupChemicalResistanceResult, PlasticizerEvaluationResult, CarrierEvaluationResult, NanoDispersionEvaluationResult, NanoParticle } from '../../src/core/types';
 
 function makePart(overrides: Partial<Part> = {}): Part {
   return {
@@ -551,5 +551,153 @@ describe('formatCarrierSelectionCsv', () => {
     expect(csv).toContain('Ibuprofen');
     expect(csv).toContain('PLA');
     expect(csv).toContain('優秀');
+  });
+});
+
+// ─── formatNanoDispersionCsv ────────────────────────
+
+describe('formatNanoDispersionCsv', () => {
+  function makeNanoParticle(overrides: Partial<NanoParticle> = {}): NanoParticle {
+    return {
+      id: 1,
+      name: 'Graphene',
+      nameEn: 'Graphene',
+      category: 'carbon',
+      coreMaterial: 'Carbon',
+      surfaceLigand: null,
+      hsp: { deltaD: 18.0, deltaP: 9.3, deltaH: 7.7 },
+      r0: 3.5,
+      particleSize: 5.0,
+      notes: null,
+      ...overrides,
+    };
+  }
+
+  it('BOM付きCSVを出力する', () => {
+    const np = makeNanoParticle();
+    const result: NanoDispersionEvaluationResult = {
+      nanoParticle: np,
+      results: [
+        {
+          nanoParticle: np,
+          solvent: makeSolvent(),
+          ra: 2.1,
+          red: 0.6,
+          dispersibility: DispersibilityLevel.Good,
+        },
+      ],
+      evaluatedAt: new Date('2024-01-01'),
+      thresholdsUsed: { excellentMax: 0.5, goodMax: 0.8, fairMax: 1.0, poorMax: 1.5 },
+    };
+    const csv = formatNanoDispersionCsv(result);
+    expect(csv.charCodeAt(0)).toBe(0xFEFF);
+  });
+
+  it('ヘッダー行にナノ粒子・溶媒・REDカラムが含まれる', () => {
+    const np = makeNanoParticle();
+    const result: NanoDispersionEvaluationResult = {
+      nanoParticle: np,
+      results: [
+        {
+          nanoParticle: np,
+          solvent: makeSolvent(),
+          ra: 2.1,
+          red: 0.6,
+          dispersibility: DispersibilityLevel.Good,
+        },
+      ],
+      evaluatedAt: new Date('2024-01-01'),
+      thresholdsUsed: { excellentMax: 0.5, goodMax: 0.8, fairMax: 1.0, poorMax: 1.5 },
+    };
+    const csv = formatNanoDispersionCsv(result);
+    expect(csv).toContain('ナノ粒子名');
+    expect(csv).toContain('溶媒名');
+    expect(csv).toContain('RED');
+    expect(csv).toContain('分散性レベル');
+  });
+
+  it('ナノ粒子名・溶媒名・分散性判定がデータ行に含まれる', () => {
+    const np = makeNanoParticle({ name: 'SWCNT-PVP' });
+    const result: NanoDispersionEvaluationResult = {
+      nanoParticle: np,
+      results: [
+        {
+          nanoParticle: np,
+          solvent: makeSolvent({ name: 'DMF' }),
+          ra: 1.5,
+          red: 0.43,
+          dispersibility: DispersibilityLevel.Excellent,
+        },
+      ],
+      evaluatedAt: new Date('2024-01-01'),
+      thresholdsUsed: { excellentMax: 0.5, goodMax: 0.8, fairMax: 1.0, poorMax: 1.5 },
+    };
+    const csv = formatNanoDispersionCsv(result);
+    expect(csv).toContain('SWCNT-PVP');
+    expect(csv).toContain('DMF');
+    expect(csv).toContain('優秀');
+  });
+
+  it('粒子径・表面修飾が含まれる', () => {
+    const np = makeNanoParticle({ particleSize: 15.5, surfaceLigand: 'オレイルアミン' });
+    const result: NanoDispersionEvaluationResult = {
+      nanoParticle: np,
+      results: [
+        {
+          nanoParticle: np,
+          solvent: makeSolvent(),
+          ra: 3.0,
+          red: 0.86,
+          dispersibility: DispersibilityLevel.Fair,
+        },
+      ],
+      evaluatedAt: new Date('2024-01-01'),
+      thresholdsUsed: { excellentMax: 0.5, goodMax: 0.8, fairMax: 1.0, poorMax: 1.5 },
+    };
+    const csv = formatNanoDispersionCsv(result);
+    expect(csv).toContain('15.5');
+    expect(csv).toContain('オレイルアミン');
+  });
+
+  it('物性値nullの溶媒でも空文字で出力される', () => {
+    const np = makeNanoParticle();
+    const result: NanoDispersionEvaluationResult = {
+      nanoParticle: np,
+      results: [
+        {
+          nanoParticle: np,
+          solvent: makeSolvent({ boilingPoint: null, viscosity: null, specificGravity: null, surfaceTension: null }),
+          ra: 5.0,
+          red: 1.43,
+          dispersibility: DispersibilityLevel.Poor,
+        },
+      ],
+      evaluatedAt: new Date('2024-01-01'),
+      thresholdsUsed: { excellentMax: 0.5, goodMax: 0.8, fairMax: 1.0, poorMax: 1.5 },
+    };
+    const csv = formatNanoDispersionCsv(result);
+    // null物性値は空文字として出力され、CRLFで終わる
+    expect(csv).toContain('\r\n');
+    expect(csv).toContain('不良');
+  });
+
+  it('複数結果行が正しく出力される', () => {
+    const np = makeNanoParticle();
+    const result: NanoDispersionEvaluationResult = {
+      nanoParticle: np,
+      results: [
+        { nanoParticle: np, solvent: makeSolvent({ name: 'NMP' }), ra: 1.0, red: 0.29, dispersibility: DispersibilityLevel.Excellent },
+        { nanoParticle: np, solvent: makeSolvent({ name: 'DMF' }), ra: 2.5, red: 0.71, dispersibility: DispersibilityLevel.Good },
+        { nanoParticle: np, solvent: makeSolvent({ name: 'Water' }), ra: 8.0, red: 2.29, dispersibility: DispersibilityLevel.Bad },
+      ],
+      evaluatedAt: new Date('2024-01-01'),
+      thresholdsUsed: { excellentMax: 0.5, goodMax: 0.8, fairMax: 1.0, poorMax: 1.5 },
+    };
+    const csv = formatNanoDispersionCsv(result);
+    const lines = csv.split('\r\n').filter((l) => l.length > 0);
+    expect(lines.length).toBe(4); // 1 header + 3 data rows
+    expect(csv).toContain('NMP');
+    expect(csv).toContain('DMF');
+    expect(csv).toContain('Water');
   });
 });

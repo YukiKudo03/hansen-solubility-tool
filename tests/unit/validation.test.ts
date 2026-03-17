@@ -409,6 +409,21 @@ describe('validateDrugInput', () => {
   it('CAS番号が空文字でも有効', () => {
     expect(validateDrugInput({ name: 'Test', deltaD: 17.2, deltaP: 9.4, deltaH: 13.3, r0: 5.0, casNumber: '' })).toBeNull();
   });
+  it('分子量が正の数値で有効', () => {
+    expect(validateDrugInput({ name: 'Test', deltaD: 17.2, deltaP: 9.4, deltaH: 13.3, r0: 5.0, molWeight: 206.28 })).toBeNull();
+  });
+  it('分子量が0でエラー', () => {
+    expect(validateDrugInput({ name: 'Test', deltaD: 17.2, deltaP: 9.4, deltaH: 13.3, r0: 5.0, molWeight: 0 })).toBeTruthy();
+  });
+  it('分子量が負でエラー', () => {
+    expect(validateDrugInput({ name: 'Test', deltaD: 17.2, deltaP: 9.4, deltaH: 13.3, r0: 5.0, molWeight: -100 })).toBeTruthy();
+  });
+  it('分子量がNaNでエラー', () => {
+    expect(validateDrugInput({ name: 'Test', deltaD: 17.2, deltaP: 9.4, deltaH: 13.3, r0: 5.0, molWeight: NaN })).toBeTruthy();
+  });
+  it('分子量がundefinedで有効（オプション）', () => {
+    expect(validateDrugInput({ name: 'Test', deltaD: 17.2, deltaP: 9.4, deltaH: 13.3, r0: 5.0 })).toBeNull();
+  });
 });
 
 describe('validateDrugSolubilityThresholds', () => {
