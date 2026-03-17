@@ -15,6 +15,7 @@ import { seedCoatings } from '../db/seed-coatings';
 import { seedPlasticizers } from '../db/seed-plasticizers';
 import { seedCarriers } from '../db/seed-carriers';
 import { registerIpcHandlers } from './ipc-handlers';
+import { autoUpdater } from 'electron-updater';
 
 let mainWindow: BrowserWindow | null = null;
 
@@ -95,6 +96,13 @@ function createWindow(db: Database.Database): void {
 app.whenReady().then(() => {
   const db = initDb();
   createWindow(db);
+
+  // 自動アップデート（パッケージビルド時のみ有効）
+  if (!process.env.VITE_DEV_SERVER_URL) {
+    autoUpdater.autoDownload = true;
+    autoUpdater.autoInstallOnAppQuit = true;
+    autoUpdater.checkForUpdatesAndNotify();
+  }
 
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {
