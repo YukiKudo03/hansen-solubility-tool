@@ -4,6 +4,7 @@ import NavigationDrawer from './components/NavigationDrawer';
 import NavigationRail from './components/NavigationRail';
 import BottomNavigation from './components/BottomNavigation';
 import { useMediaQuery } from './hooks/useMediaQuery';
+import { useTheme } from './hooks/useTheme';
 import type { Tab } from './navigation';
 
 import ReportView from './components/ReportView';
@@ -43,6 +44,7 @@ const VIEW_MAP: Record<Tab, React.ComponentType> = {
 export default function App() {
   const [activeTab, setActiveTab] = useState<Tab>('report');
   const screenSize = useMediaQuery();
+  useTheme(); // テーマの CSS 変数とクラスを適用
   const ActiveView = VIEW_MAP[activeTab];
 
   return (

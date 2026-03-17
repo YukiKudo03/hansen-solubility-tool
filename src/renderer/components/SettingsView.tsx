@@ -2,8 +2,11 @@ import React, { useState, useEffect, useRef } from 'react';
 import type { RiskThresholds, WettabilityThresholds } from '../../core/types';
 import { DEFAULT_THRESHOLDS } from '../../core/risk';
 import { DEFAULT_WETTABILITY_THRESHOLDS } from '../../core/wettability';
+import { useTheme } from '../hooks/useTheme';
+import type { ThemeMode } from '../../core/theme';
 
 export default function SettingsView() {
+  const { mode: themeMode, setMode: setThemeMode } = useTheme();
   const [thresholds, setThresholds] = useState<RiskThresholds>({ ...DEFAULT_THRESHOLDS });
   const [wettabilityThresholds, setWettabilityThresholds] = useState<WettabilityThresholds>({ ...DEFAULT_WETTABILITY_THRESHOLDS });
   const [saved, setSaved] = useState(false);
@@ -42,9 +45,29 @@ export default function SettingsView() {
   ];
 
   return (
-    <div className="max-w-2xl mx-auto">
-      <div className="bg-white rounded-lg shadow p-6">
-        <h2 className="text-lg font-semibold text-gray-800 mb-4">リスク判定閾値設定</h2>
+    <div className="max-w-2xl mx-auto space-y-6">
+      {/* テーマ設定 */}
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+        <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">テーマ設定</h2>
+        <div className="flex gap-3">
+          {([['light', 'ライト'], ['dark', 'ダーク'], ['system', 'システム']] as const).map(([value, label]) => (
+            <button
+              key={value}
+              onClick={() => setThemeMode(value)}
+              className={`px-4 py-2 text-sm rounded-md font-medium transition-colors ${
+                themeMode === value
+                  ? 'bg-blue-100 text-blue-700 border border-blue-300 dark:bg-blue-900 dark:text-blue-200 dark:border-blue-600'
+                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
+              }`}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+        <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">リスク判定閾値設定</h2>
         <p className="text-sm text-gray-600 mb-6">
           RED値（Relative Energy Difference）の閾値を調整して、リスクレベルの判定基準をカスタマイズできます。
         </p>
