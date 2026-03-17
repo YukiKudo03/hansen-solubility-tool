@@ -1,0 +1,45 @@
+/**
+ * 評価履歴のシリアライズ・ユーティリティ
+ */
+
+export const VALID_HISTORY_PIPELINES = [
+  'risk', 'contactAngle', 'swelling', 'chemicalResistance',
+  'nanoDispersion', 'plasticizer', 'carrierSelection',
+  'blendOptimizer', 'drugSolubility',
+] as const;
+
+export type HistoryPipeline = typeof VALID_HISTORY_PIPELINES[number];
+
+export function isValidHistoryPipeline(pipeline: string): pipeline is HistoryPipeline {
+  return (VALID_HISTORY_PIPELINES as readonly string[]).includes(pipeline);
+}
+
+export interface SerializedHistoryEntry {
+  pipeline: string;
+  paramsJson: string;
+  resultJson: string;
+  thresholdsJson: string;
+}
+
+export function serializeHistoryEntry(
+  pipeline: string,
+  params: unknown,
+  result: unknown,
+  thresholds: unknown,
+): SerializedHistoryEntry {
+  return {
+    pipeline,
+    paramsJson: JSON.stringify(params),
+    resultJson: JSON.stringify(result),
+    thresholdsJson: JSON.stringify(thresholds),
+  };
+}
+
+export function deserializeHistoryResult(json: string): unknown | null {
+  try {
+    if (!json) return null;
+    return JSON.parse(json);
+  } catch {
+    return null;
+  }
+}

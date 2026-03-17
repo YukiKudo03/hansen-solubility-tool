@@ -8,6 +8,7 @@ import { initializeDatabase, migrateDatabase } from '../db/schema';
 import { seedDatabase } from '../db/seed-data';
 import { SqlitePartsRepository, SqliteSolventRepository, SqliteSettingsRepository, SqliteNanoParticleRepository, SqliteDrugRepository } from '../db/sqlite-repository';
 import { SqliteBookmarkRepository } from '../db/bookmark-repository';
+import { SqliteHistoryRepository } from '../db/history-repository';
 import { seedNanoParticles } from '../db/seed-nano-particles';
 import { seedDrugs } from '../db/seed-drugs';
 import { seedCoatings } from '../db/seed-coatings';
@@ -75,7 +76,8 @@ function createWindow(db: Database.Database): void {
   const nanoParticleRepo = new SqliteNanoParticleRepository(db);
   const drugRepo = new SqliteDrugRepository(db);
   const bookmarkRepo = new SqliteBookmarkRepository(db);
-  registerIpcHandlers(partsRepo, solventRepo, settingsRepo, nanoParticleRepo, drugRepo, bookmarkRepo);
+  const historyRepo = new SqliteHistoryRepository(db);
+  registerIpcHandlers(partsRepo, solventRepo, settingsRepo, nanoParticleRepo, drugRepo, bookmarkRepo, historyRepo);
 
   // 開発時はVite devサーバー、本番時はビルド済みファイルを読み込む
   if (process.env.VITE_DEV_SERVER_URL) {

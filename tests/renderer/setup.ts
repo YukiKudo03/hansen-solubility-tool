@@ -110,6 +110,13 @@ export function createMockApi(): { [K in keyof ElectronAPI]: ReturnType<typeof v
     getAllBookmarks: vi.fn().mockResolvedValue([]),
     createBookmark: vi.fn().mockResolvedValue({ id: 1 }),
     deleteBookmark: vi.fn().mockResolvedValue(true),
+
+    // 評価履歴
+    getAllHistory: vi.fn().mockResolvedValue([]),
+    getHistoryByPipeline: vi.fn().mockResolvedValue([]),
+    saveHistory: vi.fn().mockResolvedValue({ id: 1 }),
+    deleteHistory: vi.fn().mockResolvedValue(true),
+    deleteHistoryOlderThan: vi.fn().mockResolvedValue(0),
   };
 }
 

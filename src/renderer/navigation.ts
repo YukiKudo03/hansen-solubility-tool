@@ -7,6 +7,7 @@ export type Tab =
   | 'nanoDispersion' | 'plasticizer' | 'carrierSelection'
   | 'blendOptimizer' | 'drugSolubility'
   | 'database' | 'mixture'
+  | 'history'
   | 'settings';
 
 export interface NavItem {
@@ -59,6 +60,7 @@ export const NAV_CATEGORIES: NavCategory[] = [
     items: [
       { id: 'database', label: 'データベース編集' },
       { id: 'mixture', label: '混合溶媒' },
+      { id: 'history', label: '履歴' },
     ],
   },
   {

@@ -91,6 +91,18 @@ CREATE TABLE IF NOT EXISTS bookmarks (
   params_json TEXT NOT NULL,
   created_at  TEXT DEFAULT (datetime('now'))
 );
+
+CREATE TABLE IF NOT EXISTS evaluation_history (
+  id              INTEGER PRIMARY KEY AUTOINCREMENT,
+  pipeline        TEXT NOT NULL,
+  params_json     TEXT NOT NULL,
+  result_json     TEXT NOT NULL,
+  thresholds_json TEXT NOT NULL,
+  note            TEXT,
+  evaluated_at    TEXT DEFAULT (datetime('now'))
+);
+CREATE INDEX IF NOT EXISTS idx_history_pipeline ON evaluation_history(pipeline);
+CREATE INDEX IF NOT EXISTS idx_history_date ON evaluation_history(evaluated_at);
 `;
 
 /**

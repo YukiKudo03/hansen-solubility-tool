@@ -177,6 +177,14 @@ export const api = {
   createBookmark: (dto: { name: string; pipeline: string; paramsJson: string }) =>
     ipcRenderer.invoke('bookmarks:create', dto),
   deleteBookmark: (id: number) => ipcRenderer.invoke('bookmarks:delete', id),
+
+  // 評価履歴
+  getAllHistory: () => ipcRenderer.invoke('history:getAll'),
+  getHistoryByPipeline: (pipeline: string) => ipcRenderer.invoke('history:getByPipeline', pipeline),
+  saveHistory: (entry: { pipeline: string; paramsJson: string; resultJson: string; thresholdsJson: string }, note?: string) =>
+    ipcRenderer.invoke('history:save', entry, note),
+  deleteHistory: (id: number) => ipcRenderer.invoke('history:delete', id),
+  deleteHistoryOlderThan: (days: number) => ipcRenderer.invoke('history:deleteOlderThan', days),
 };
 
 contextBridge.exposeInMainWorld('api', api);

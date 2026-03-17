@@ -119,6 +119,13 @@ export interface ElectronAPI {
   getAllBookmarks(): Promise<import('./core/types').Bookmark[]>;
   createBookmark(dto: { name: string; pipeline: string; paramsJson: string }): Promise<import('./core/types').Bookmark>;
   deleteBookmark(id: number): Promise<boolean>;
+
+  // 評価履歴
+  getAllHistory(): Promise<import('./db/history-repository').EvaluationHistoryRow[]>;
+  getHistoryByPipeline(pipeline: string): Promise<import('./db/history-repository').EvaluationHistoryRow[]>;
+  saveHistory(entry: import('./core/evaluation-history').SerializedHistoryEntry, note?: string): Promise<import('./db/history-repository').EvaluationHistoryRow>;
+  deleteHistory(id: number): Promise<boolean>;
+  deleteHistoryOlderThan(days: number): Promise<number>;
 }
 
 declare global {
