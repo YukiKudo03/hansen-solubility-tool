@@ -114,6 +114,11 @@ export interface ElectronAPI {
   // キャリア閾値設定
   getCarrierThresholds(): Promise<CarrierCompatibilityThresholds>;
   setCarrierThresholds(thresholds: CarrierCompatibilityThresholds): Promise<void>;
+
+  // ブックマーク
+  getAllBookmarks(): Promise<import('./core/types').Bookmark[]>;
+  createBookmark(dto: { name: string; pipeline: string; paramsJson: string }): Promise<import('./core/types').Bookmark>;
+  deleteBookmark(id: number): Promise<boolean>;
 }
 
 declare global {

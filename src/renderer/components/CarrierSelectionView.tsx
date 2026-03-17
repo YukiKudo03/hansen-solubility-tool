@@ -4,6 +4,7 @@ import { formatCarrierSelectionCsv } from '../../core/report';
 import PartsGroupSelector from './PartsGroupSelector';
 import CarrierBadge from './CarrierBadge';
 import SortTableHeader from './SortTableHeader';
+import BookmarkButton from './BookmarkButton';
 import { useCsvExport } from '../hooks/useCsvExport';
 import { useSortableTable } from '../hooks/useSortableTable';
 import { useDrugs } from '../hooks/useDrugs';
@@ -218,6 +219,11 @@ export default function CarrierSelectionView() {
               CSV出力
             </button>
           )}
+          <BookmarkButton
+            pipeline="carrierSelection"
+            params={{ drugId: selectedDrug?.id, partsGroupId: selectedGroup?.id, mode }}
+            disabled={!(canEvaluateIndividual || canScreen)}
+          />
         </div>
       </div>
 

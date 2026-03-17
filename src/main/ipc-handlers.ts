@@ -19,6 +19,7 @@ import { calculateMixture } from '../core/mixture';
 import { estimateContactAngle } from '../core/contact-angle';
 import { DEFAULT_WETTABILITY_THRESHOLDS, classifyWettability } from '../core/wettability';
 import type { GroupEvaluationResult, PartEvaluationResult, MixtureComponent, NanoDispersionEvaluationResult, SolventDispersibilityResult, DispersibilityThresholds, SolventConstraints, ContactAngleResult, GroupContactAngleResult, WettabilityThresholds, SwellingThresholds, SwellingResult, GroupSwellingResult, DrugSolubilityThresholds, DrugSolubilityResult, DrugSolubilityScreeningResult, ChemicalResistanceThresholds, ChemicalResistanceResult, GroupChemicalResistanceResult, PlasticizerCompatibilityThresholds, CarrierCompatibilityThresholds } from '../core/types';
+import type { SqliteBookmarkRepository, CreateBookmarkDto } from '../db/bookmark-repository';
 
 /** JSON.parseの安全なラッパー — パース失敗時はfallbackを返す */
 function safeJsonParse<T>(json: string, fallback: T): T {
@@ -35,6 +36,7 @@ export function registerIpcHandlers(
   settingsRepo: SettingsRepository,
   nanoParticleRepo: NanoParticleRepository,
   drugRepo: DrugRepository,
+  bookmarkRepo?: SqliteBookmarkRepository,
 ): void {
   // --- 部品グループ ---
   ipcMain.handle('parts:getAllGroups', () => partsRepo.getAllGroups());
@@ -587,4 +589,11 @@ export function registerIpcHandlers(
     if (err) throw new Error(err);
     settingsRepo.setSetting('carrier_thresholds', JSON.stringify(thresholds));
   });
+
+  // --- ブックマーク ---
+  if (bookmarkRepo) {
+    ipcMain.handle('bookmarks:getAll', () => bookmarkRepo.getAll());
+    ipcMain.handle('bookmarks:create', (_, dto: CreateBookmarkDto) => bookmarkRepo.create(dto));
+    ipcMain.handle('bookmarks:delete', (_, id: number) => bookmarkRepo.delete(id));
+  }
 }

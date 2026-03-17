@@ -6,6 +6,7 @@ import PartsGroupSelector from './PartsGroupSelector';
 import SolventSelector from './SolventSelector';
 import WettabilityBadge from './WettabilityBadge';
 import SortTableHeader from './SortTableHeader';
+import BookmarkButton from './BookmarkButton';
 import { useCsvExport } from '../hooks/useCsvExport';
 import { useSortableTable } from '../hooks/useSortableTable';
 import { useContactAngle } from '../hooks/useContactAngle';
@@ -174,6 +175,11 @@ export default function ContactAngleView() {
               CSV出力
             </button>
           )}
+          <BookmarkButton
+            pipeline="contactAngle"
+            params={{ partsGroupId: selectedGroup?.id, solventId: selectedSolvent?.id, mode }}
+            disabled={!(canEvaluateGroup || canScreen)}
+          />
         </div>
       </div>
 

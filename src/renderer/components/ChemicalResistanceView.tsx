@@ -6,6 +6,7 @@ import PartsGroupSelector from './PartsGroupSelector';
 import SolventSelector from './SolventSelector';
 import ChemicalResistanceBadge from './ChemicalResistanceBadge';
 import SortTableHeader from './SortTableHeader';
+import BookmarkButton from './BookmarkButton';
 import { useChemicalResistance } from '../hooks/useChemicalResistance';
 import { useCsvExport } from '../hooks/useCsvExport';
 import { useSortableTable } from '../hooks/useSortableTable';
@@ -100,6 +101,11 @@ export default function ChemicalResistanceView() {
               CSV出力
             </button>
           )}
+          <BookmarkButton
+            pipeline="chemicalResistance"
+            params={{ partsGroupId: selectedGroup?.id, solventId: selectedSolvent?.id }}
+            disabled={!selectedGroup || !selectedSolvent}
+          />
         </div>
       </div>
 

@@ -5,6 +5,7 @@ import PartsGroupSelector from './PartsGroupSelector';
 import SolventSelector from './SolventSelector';
 import SwellingBadge from './SwellingBadge';
 import SortTableHeader from './SortTableHeader';
+import BookmarkButton from './BookmarkButton';
 import { useCsvExport } from '../hooks/useCsvExport';
 import { useSortableTable } from '../hooks/useSortableTable';
 import { useSwelling } from '../hooks/useSwelling';
@@ -113,6 +114,11 @@ export default function SwellingView() {
               CSV出力
             </button>
           )}
+          <BookmarkButton
+            pipeline="swelling"
+            params={{ partsGroupId: selectedGroup?.id, solventId: selectedSolvent?.id }}
+            disabled={!selectedGroup || !selectedSolvent}
+          />
         </div>
       </div>
 

@@ -171,6 +171,12 @@ export const api = {
   setCarrierThresholds: (thresholds: {
     excellentMax: number; goodMax: number; fairMax: number; poorMax: number;
   }) => ipcRenderer.invoke('settings:setCarrierThresholds', thresholds),
+
+  // ブックマーク
+  getAllBookmarks: () => ipcRenderer.invoke('bookmarks:getAll'),
+  createBookmark: (dto: { name: string; pipeline: string; paramsJson: string }) =>
+    ipcRenderer.invoke('bookmarks:create', dto),
+  deleteBookmark: (id: number) => ipcRenderer.invoke('bookmarks:delete', id),
 };
 
 contextBridge.exposeInMainWorld('api', api);

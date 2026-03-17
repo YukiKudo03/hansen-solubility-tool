@@ -4,6 +4,7 @@ import { formatPlasticizerCsv } from '../../core/report';
 import PartsGroupSelector from './PartsGroupSelector';
 import PlasticizerBadge from './PlasticizerBadge';
 import SortTableHeader from './SortTableHeader';
+import BookmarkButton from './BookmarkButton';
 import { useCsvExport } from '../hooks/useCsvExport';
 import { useSortableTable } from '../hooks/useSortableTable';
 import { usePlasticizer } from '../hooks/usePlasticizer';
@@ -126,6 +127,11 @@ export default function PlasticizerView() {
               CSV出力
             </button>
           )}
+          <BookmarkButton
+            pipeline="plasticizer"
+            params={{ partId: selectedPart?.id, partsGroupId: selectedGroup?.id }}
+            disabled={!selectedGroup || !selectedPart}
+          />
         </div>
       </div>
 

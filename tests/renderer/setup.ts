@@ -105,6 +105,11 @@ export function createMockApi(): { [K in keyof ElectronAPI]: ReturnType<typeof v
     screenCarriers: vi.fn().mockResolvedValue(null),
     getCarrierThresholds: vi.fn().mockResolvedValue({ excellentMax: 0.5, goodMax: 1.0, fairMax: 2.0, poorMax: 4.0 }),
     setCarrierThresholds: vi.fn().mockResolvedValue(undefined),
+
+    // ブックマーク
+    getAllBookmarks: vi.fn().mockResolvedValue([]),
+    createBookmark: vi.fn().mockResolvedValue({ id: 1 }),
+    deleteBookmark: vi.fn().mockResolvedValue(true),
   };
 }
 

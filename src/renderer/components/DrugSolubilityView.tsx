@@ -5,6 +5,7 @@ import { getRedBoundaryWarnings } from '../../core/accuracy-warnings';
 import SolventSelector from './SolventSelector';
 import DrugSolubilityBadge from './DrugSolubilityBadge';
 import SortTableHeader from './SortTableHeader';
+import BookmarkButton from './BookmarkButton';
 import { useCsvExport } from '../hooks/useCsvExport';
 import { useSortableTable } from '../hooks/useSortableTable';
 import { useDrugs } from '../hooks/useDrugs';
@@ -196,6 +197,11 @@ export default function DrugSolubilityView() {
               CSV出力
             </button>
           )}
+          <BookmarkButton
+            pipeline="drugSolubility"
+            params={{ drugId: selectedDrug?.id, solventId: selectedSolvent?.id, mode }}
+            disabled={!(canEvaluateIndividual || canScreen)}
+          />
         </div>
       </div>
 
