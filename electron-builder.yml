@@ -25,6 +25,32 @@ win:
   icon: build/icon.ico
   signAndEditExecutable: false
 
+mac:
+  target:
+    - target: dmg
+      arch:
+        - x64
+        - arm64
+    - target: zip
+      arch:
+        - x64
+        - arm64
+  icon: build/icon.icns
+  category: public.app-category.developer-tools
+  hardenedRuntime: true
+
+linux:
+  target:
+    - target: AppImage
+      arch:
+        - x64
+    - target: deb
+      arch:
+        - x64
+  icon: build
+  category: Science
+  maintainer: YukiKudo03
+
 nsis:
   oneClick: false
   perMachine: false
@@ -38,3 +64,8 @@ asar: true
 asarUnpack:
   - "**/*.node"
   - "**/better-sqlite3/**"
+
+publish:
+  provider: github
+  owner: YukiKudo03
+  repo: hansen-solubility-tool
