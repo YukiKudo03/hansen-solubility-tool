@@ -172,6 +172,11 @@ export const api = {
     excellentMax: number; goodMax: number; fairMax: number; poorMax: number;
   }) => ipcRenderer.invoke('settings:setCarrierThresholds', thresholds),
 
+  // CSVインポート
+  importOpenFile: () => ipcRenderer.invoke('import:openFile'),
+  importParseSolventCsv: (csv: string) => ipcRenderer.invoke('import:parseSolventCsv', csv),
+  importParsePartCsv: (csv: string) => ipcRenderer.invoke('import:parsePartCsv', csv),
+
   // ブックマーク
   getAllBookmarks: () => ipcRenderer.invoke('bookmarks:getAll'),
   createBookmark: (dto: { name: string; pipeline: string; paramsJson: string }) =>

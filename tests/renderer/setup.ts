@@ -106,6 +106,11 @@ export function createMockApi(): { [K in keyof ElectronAPI]: ReturnType<typeof v
     getCarrierThresholds: vi.fn().mockResolvedValue({ excellentMax: 0.5, goodMax: 1.0, fairMax: 2.0, poorMax: 4.0 }),
     setCarrierThresholds: vi.fn().mockResolvedValue(undefined),
 
+    // CSVインポート
+    importOpenFile: vi.fn().mockResolvedValue(null),
+    importParseSolventCsv: vi.fn().mockResolvedValue({ rows: [], errors: [] }),
+    importParsePartCsv: vi.fn().mockResolvedValue({ rows: [], errors: [] }),
+
     // ブックマーク
     getAllBookmarks: vi.fn().mockResolvedValue([]),
     createBookmark: vi.fn().mockResolvedValue({ id: 1 }),
