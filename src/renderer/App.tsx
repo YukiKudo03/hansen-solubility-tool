@@ -20,6 +20,7 @@ import PlasticizerView from './components/PlasticizerView';
 import CarrierSelectionView from './components/CarrierSelectionView';
 import EvaluationHistoryView from './components/EvaluationHistoryView';
 import ComparisonView from './components/ComparisonView';
+import HSPVisualizationView from './components/HSPVisualizationView';
 
 const VIEW_MAP: Record<Tab, React.ComponentType> = {
   report: ReportView,
@@ -35,6 +36,7 @@ const VIEW_MAP: Record<Tab, React.ComponentType> = {
   carrierSelection: CarrierSelectionView,
   history: EvaluationHistoryView,
   comparison: ComparisonView,
+  hspVisualization: HSPVisualizationView,
   settings: SettingsView,
 };
 
