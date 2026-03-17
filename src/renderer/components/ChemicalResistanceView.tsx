@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import type { PartsGroup, Solvent } from '../../core/types';
 import { formatChemicalResistanceCsv } from '../../core/report';
+import { getRedBoundaryWarnings } from '../../core/accuracy-warnings';
 import PartsGroupSelector from './PartsGroupSelector';
 import SolventSelector from './SolventSelector';
 import ChemicalResistanceBadge from './ChemicalResistanceBadge';
@@ -87,6 +88,14 @@ export default function ChemicalResistanceView() {
     }
   };
 
+  // RED境界警告
+  const warnings = useMemo(() => {
+    if (!result) return [];
+    return getRedBoundaryWarnings(
+      result.results.map((r) => ({ red: r.red, name: r.part.name }))
+    );
+  }, [result]);
+
   return (
     <div className="space-y-6">
       {/* 設定エリア */}
@@ -130,6 +139,16 @@ export default function ChemicalResistanceView() {
       {(error || csvError) && (
         <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-red-700 text-sm">
           {error || csvError}
+        </div>
+      )}
+
+      {/* RED境界の警告 */}
+      {warnings.length > 0 && (
+        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 text-yellow-800 text-sm">
+          <div className="font-medium mb-1">推定精度に関する注意</div>
+          <ul className="list-disc list-inside space-y-1">
+            {warnings.map((w, i) => <li key={i}>{w}</li>)}
+          </ul>
         </div>
       )}
 

@@ -146,7 +146,7 @@ npm run test:e2e          # E2E tests (requires app build first)
 ### Pre-release Checklist
 
 - [ ] `npm run typecheck` passes
-- [ ] `npm test` — all tests green (351+ unit tests, core 95%+ coverage)
+- [ ] `npm test` — all tests green (514+ unit tests, core 95%+ coverage)
 - [ ] `npm run test:e2e` — E2E tests pass
 - [ ] `npm run package` — installer builds successfully
 - [ ] Install and run the packaged app
@@ -161,4 +161,9 @@ npm run test:e2e          # E2E tests (requires app build first)
 - [ ] Verify DDS carrier selection (drug + carrier group/screening)
 - [ ] Verify database editor (add/edit/delete operations for all entities)
 - [ ] Verify mixture lab (create mixture → register to DB)
+- [ ] Verify accuracy warnings display in:
+  - Contact angle view (alcohol/polyol/hydrophilic polymer warnings)
+  - Nano dispersion view (RED boundary warning)
+  - Drug solubility view (RED boundary warning)
+  - Chemical resistance view (RED boundary warning)
 - [ ] Verify settings (all 9 threshold configurations persist)

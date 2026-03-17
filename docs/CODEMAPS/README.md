@@ -45,7 +45,7 @@ Select Group + Solvent → Click "評価実行"
 
 ## Freshness
 
-All codemaps include generation timestamp: `<!-- Generated: 2026-03-15 -->`
+All codemaps include generation timestamp: `<!-- Generated: 2026-03-15 | Updated: 2026-03-18 -->`
 
 Update when:
 - Major feature added
@@ -79,6 +79,6 @@ These codemaps are the **single source of truth** for architecture. Reference in
 
 ---
 
-**Generated:** 2026-03-15 | **Version:** 1.3.0 | **Status:** Current
+**Generated:** 2026-03-15 | **Version:** 1.4.0 | **Status:** Current (updated 2026-03-18)
 
 See [../.reports/codemap-diff.txt](../../.reports/codemap-diff.txt) for generation report.

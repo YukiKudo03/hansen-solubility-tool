@@ -1,4 +1,4 @@
-<!-- Generated: 2026-03-15 | Updated: 2026-03-15 | Files scanned: 106 | Token estimate: ~950 -->
+<!-- Generated: 2026-03-15 | Updated: 2026-03-18 | Files scanned: 112 | Token estimate: ~980 -->
 
 # Hansen Solubility Project — Codemap Index
 
@@ -41,11 +41,11 @@ Pipeline I: DDS Carrier Selection        → RED小=適合性良好（carrier.r0
 - **Language:** TypeScript 5.9 (strict)
 - **Database:** SQLite with better-sqlite3 12.8
 - **Styling:** Tailwind CSS 3.4
-- **Testing:** Vitest 2.1 (349 unit tests)
+- **Testing:** Vitest 2.1 (514 unit tests)
 
 ## Module Tour
 
-### src/core/ (16 files)
+### src/core/ (17 files)
 Pure domain logic (testable, no side effects)
 - `types.ts` — All domain types (HSPValues, Part, Solvent, Drug, NanoParticle, 9 level enums, thresholds, results)
 - `hsp.ts` — Hansen distance: `calculateRa()`, `calculateRed()` (shared by all RED-based pipelines)
@@ -63,6 +63,7 @@ Pure domain logic (testable, no side effects)
 - `report.ts` — CSV export: 9 formatters (BOM-prefixed UTF-8)
 - `validation.ts` — Input validators (12+ functions)
 - `mixture.ts` — Solvent mixture calculations
+- `accuracy-warnings.ts` — Literature-validated accuracy warnings: `getContactAngleWarnings()`, `getDispersionWarnings()`, `getRedBoundaryWarnings()`
 
 ### src/db/ (9 files)
 Data access layer (SQLite via better-sqlite3)
@@ -87,8 +88,8 @@ Data access layer (SQLite via better-sqlite3)
 - `components/` — 27 components (9 Views, 8 Badges, 3 Nav, 4 Selectors, 2 Shared, 1 ErrorBoundary)
 - `hooks/` — 14 hooks (+ useMediaQuery)
 
-### tests/ (16 unit + 15 renderer + integration + e2e)
-- Unit: 349 tests covering all core logic
+### tests/ (20 unit + 15 renderer + integration + e2e)
+- Unit: 514 tests covering all core logic
 - Renderer: Component + hook tests
 
 ## Database Schema Summary
@@ -106,12 +107,12 @@ Data access layer (SQLite via better-sqlite3)
 
 | Category | Files | Purpose |
 |----------|-------|---------|
-| **Core** | 16 | HSP, 9 classifiers, report, validation, mixture, blend-optimizer |
+| **Core** | 17 | HSP, 9 classifiers, report, validation, mixture, blend-optimizer, accuracy-warnings |
 | **Database** | 9 | Schema, repositories, 6 seed files |
 | **Main Process** | 3 | Electron lifecycle, IPC (70+), preload |
 | **Renderer** | 40 | React components (27) + hooks (14) + navigation.ts + entry |
-| **Tests** | 31+ | Unit (349) + Renderer + Integration + E2E |
+| **Tests** | 33+ | Unit (514) + Renderer + Integration + E2E |
 
 ---
 
-**Last Updated:** 2026-03-15 | **Status:** Current (Phase 1 + Phase 2 complete)
+**Last Updated:** 2026-03-18 | **Status:** Current (Phase 1 + Phase 2 + accuracy warnings)

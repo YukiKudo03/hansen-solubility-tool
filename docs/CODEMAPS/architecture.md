@@ -1,4 +1,4 @@
-<!-- Generated: 2026-03-15 | Updated: 2026-03-15 | Files scanned: 65 src | Token estimate: ~950 -->
+<!-- Generated: 2026-03-15 | Updated: 2026-03-18 | Files scanned: 68 src | Token estimate: ~980 -->
 
 # Hansen Solubility System Architecture
 
@@ -18,7 +18,7 @@
 │  │ └──────────────────┘ │          │ └──────────────────┘   │   │
 │  │         ▼            │          │        ▲               │   │
 │  │ ┌──────────────────┐ │          │   14 Hooks             │   │
-│  │ │ Core (16 modules)│ │          │   7 Badges             │   │
+│  │ │ Core (17 modules)│ │          │   7 Badges             │   │
 │  │ │ Pure functions   │ │          └────────────────────────┘   │
 │  │ └──────────────────┘ │                                       │
 │  │         ▼            │                                       │
@@ -86,7 +86,7 @@ App.tsx (MD3 responsive: Drawer ≥840px / Rail 600-839px / BottomNav <600px)
 
 | Layer | Location | Files | Purpose |
 |-------|----------|-------|---------|
-| **Domain** | `src/core/` | 16 | Pure calculations, classification, CSV, validation |
+| **Domain** | `src/core/` | 17 | Pure calculations, classification, CSV, validation, accuracy warnings |
 | **Data Access** | `src/db/` | 9 | Schema, 5 repos, 6 seed files |
 | **Main Process** | `src/main/` | 3 | Electron lifecycle, 70+ IPC handlers, preload |
 | **UI** | `src/renderer/` | 40 | 27 components (9 Views, 8 Badges, 3 Nav, 4 Selectors, 3 Shared), 14 hooks, navigation.ts |
@@ -95,7 +95,7 @@ App.tsx (MD3 responsive: Drawer ≥840px / Rail 600-839px / BottomNav <600px)
 
 ```
 src/
-├── core/                          # Pure domain logic (16 files)
+├── core/                          # Pure domain logic (17 files)
 │   ├── types.ts                   # All types (9 level enums, 20+ interfaces)
 │   ├── hsp.ts                     # calculateRa/RED (shared)
 │   ├── risk.ts                    # Pipeline A
@@ -111,7 +111,8 @@ src/
 │   ├── solvent-finder.ts          # Screening utilities
 │   ├── report.ts                  # 9 CSV formatters
 │   ├── validation.ts              # 12+ validators
-│   └── mixture.ts                 # Mixture calculations
+│   ├── mixture.ts                 # Mixture calculations
+│   └── accuracy-warnings.ts      # Literature-based accuracy warnings (UI layer)
 ├── db/                            # Data access (9 files)
 │   ├── schema.ts                  # 6 tables
 │   ├── repository.ts              # 5 interfaces + DTOs

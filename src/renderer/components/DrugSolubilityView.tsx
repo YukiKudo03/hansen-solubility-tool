@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import type { Drug, Solvent } from '../../core/types';
 import { formatDrugSolubilityCsv } from '../../core/report';
+import { getRedBoundaryWarnings } from '../../core/accuracy-warnings';
 import SolventSelector from './SolventSelector';
 import DrugSolubilityBadge from './DrugSolubilityBadge';
 import { useDrugs } from '../hooks/useDrugs';
@@ -115,6 +116,14 @@ export default function DrugSolubilityView() {
     const bestRed = Math.min(...result.results.map((r) => r.red));
     const bestSolvent = result.results.find((r) => r.red === bestRed);
     return { total, excellent, bestRed, bestSolventName: bestSolvent?.solvent.name ?? '-' };
+  }, [result]);
+
+  // RED境界警告
+  const warnings = useMemo(() => {
+    if (!result) return [];
+    return getRedBoundaryWarnings(
+      result.results.map((r) => ({ red: r.red, name: r.solvent.name }))
+    );
   }, [result]);
 
   return (
@@ -250,6 +259,16 @@ export default function DrugSolubilityView() {
               <div className="text-gray-500">最適溶媒</div>
             </div>
           </div>
+        </div>
+      )}
+
+      {/* RED境界の警告 */}
+      {warnings.length > 0 && (
+        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 text-yellow-800 text-sm">
+          <div className="font-medium mb-1">推定精度に関する注意</div>
+          <ul className="list-disc list-inside space-y-1">
+            {warnings.map((w, i) => <li key={i}>{w}</li>)}
+          </ul>
         </div>
       )}
 
