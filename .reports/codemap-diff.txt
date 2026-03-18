@@ -1,65 +1,32 @@
-Codemap Update Report — 2026-03-18 (Accuracy Warnings)
+Codemap Update Report — 2026-03-18 (Full Phase Completion)
 ==============================================================
 
 ## Summary
-- Change level: ~10% (accuracy warnings feature, test count updates)
-- Codemaps updated: architecture.md, frontend.md, INDEX.md, README.md
-- Previous version: v1.3.0 (MD3 Responsive Layout + Blend Optimizer)
+- Change level: ~45% (Phase 1-3 + UX/Infrastructure + Literature improvements)
+- All codemaps updated: architecture.md, frontend.md, INDEX.md
+- Previous version: v1.3.0 (Accuracy Warnings)
 
-## Changes Detected
+## New Source Files (18 core + 5 components + 2 db + 2 i18n = 27 files)
+- bookmark, evaluation-history, comparison, hsp-visualization
+- temperature-hsp, thermal-expansion-data, csv-import, ghs-safety
+- group-contribution, evaporation, contact-angle-methods, solubility-estimation
+- theme, pdf-report, translations, i18n/index
+- useCsvExport, useSortableTable hooks
+- SortTableHeader, BookmarkButton, ComparisonView, HSPVisualizationView, EvaluationHistoryView
+- bookmark-repository, history-repository
 
-### New Source Files (1 file)
-- src/core/accuracy-warnings.ts — 文献検証に基づく推定精度警告 (86 lines)
-  - getContactAngleWarnings(): アルコール/多価アルコール/親水性ポリマー警告
-  - getDispersionWarnings(): ナノ分散RED境界警告
-  - getRedBoundaryWarnings(): 汎用RED=0.8〜1.2境界警告
+## New Dependencies
+- plotly.js, react-plotly.js, i18next, react-i18next, electron-updater, jspdf
 
-### Modified Source Files (4 files)
-- src/renderer/components/ContactAngleView.tsx — +accuracy warnings (alcohol, polyol, hydrophilic polymer)
-- src/renderer/components/NanoDispersionView.tsx — +RED boundary warnings
-- src/renderer/components/DrugSolubilityView.tsx — +RED boundary warnings
-- src/renderer/components/ChemicalResistanceView.tsx — +RED boundary warnings
+## Metrics: Before → After
 
-### New Test Files (1 file)
-- tests/unit/accuracy-warnings.test.ts — 16 tests (266 lines)
-
-### Previously Untracked Test Files (detected in this scan)
-- tests/unit/contact-angle-literature.test.ts — 25 tests
-- tests/unit/literature-validation.test.ts — 51 tests
-- tests/unit/seed-data-validation.test.ts — 71 tests
-
-## Architecture Changes
-- Core modules: 16 → 17 (accuracy-warnings.ts added)
-- No new IPC handlers (warnings computed in renderer from existing data)
-- No database schema changes
-- UI pattern: Yellow warning box (bg-yellow-50) — reuses SwellingView pattern
-
-## Test Count Changes
-- Unit tests: 349 → 514 (+165)
-  - New: accuracy-warnings.test.ts (16)
-  - Previously untracked: literature-validation (51), contact-angle-literature (25), seed-data-validation (71)
-- Test files: 16 → 20
-- Total passing: 514 (all green)
-
-## Codemap Updates Applied
-
-| File | Status | Key Changes |
-|------|--------|-------------|
-| architecture.md | Updated | Core modules 16→17, file tree updated |
-| frontend.md | Updated | 4 Views annotated with warning display |
-| INDEX.md | Updated | Core 17 files, test count 514, accuracy-warnings entry |
-| data.md | Unchanged | No schema changes |
-| dependencies.md | Unchanged | No new packages |
-| README.md | Updated | Version 1.4.0, timestamp |
-
-## Current Stats
-- Source: 68 files TypeScript
-- Tests: 33+ files, 514 tests passing (unit 514)
-- Core modules: 17
-- New dependencies: none
-
-## Staleness Check
-- architecture.md: Fresh (updated 2026-03-18)
-- frontend.md: Fresh (updated 2026-03-18)
-- data.md: 3 days old (2026-03-15) — still accurate, no schema changes
-- dependencies.md: 3 days old (2026-03-15) — still accurate, no new deps
+| Metric | Before | After |
+|--------|--------|-------|
+| Core modules | 17 | 31 |
+| Components | 27 | 32 |
+| Hooks | 14 | 19 |
+| Tabs | 12 | 15 |
+| IPC handlers | 70+ | 80+ |
+| DB tables | 6 | 8 |
+| Unit tests | 749 | 928+ |
+| Total src | 80 files | 102 files |

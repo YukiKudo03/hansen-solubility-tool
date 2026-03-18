@@ -1,4 +1,4 @@
-<!-- Generated: 2026-03-15 | Updated: 2026-03-18 | Files scanned: 68 src | Token estimate: ~980 -->
+<!-- Generated: 2026-03-18 | Files scanned: 102 src | Token estimate: ~900 -->
 
 # Hansen Solubility System Architecture
 
@@ -11,125 +11,94 @@
 │  ┌──────────────────────┐          ┌────────────────────────┐   │
 │  │  MAIN PROCESS        │  IPC     │  RENDERER PROCESS      │   │
 │  │  (main.ts)           │◄────────►│  (React 19 App.tsx)    │   │
-│  │                      │ 70+ API  │  MD3 responsive (960×680)│   │
+│  │  + electron-updater  │ 80+ API  │  MD3 responsive        │   │
+│  │                      │          │  Dark mode (class)     │   │
 │  │ ┌──────────────────┐ │          │ ┌──────────────────┐   │   │
-│  │ │ IPC Handlers     │ │          │ │ 9 Feature Views  │   │   │
-│  │ │ 70+ handlers     │ │          │ │ + DB/Mix/Settings│   │   │
+│  │ │ IPC Handlers     │ │          │ │ 12 Feature Views │   │   │
+│  │ │ 80+ handlers     │ │          │ │ + DB/Mix/History │   │   │
+│  │ │ + CSV import     │ │          │ │ + Settings       │   │   │
 │  │ └──────────────────┘ │          │ └──────────────────┘   │   │
 │  │         ▼            │          │        ▲               │   │
-│  │ ┌──────────────────┐ │          │   14 Hooks             │   │
-│  │ │ Core (17 modules)│ │          │   7 Badges             │   │
-│  │ │ Pure functions   │ │          └────────────────────────┘   │
-│  │ └──────────────────┘ │                                       │
+│  │ ┌──────────────────┐ │          │   19 Hooks             │   │
+│  │ │ Core (31 modules)│ │          │   8 Badges             │   │
+│  │ │ Pure functions   │ │          │   i18n (ja/en)         │   │
+│  │ └──────────────────┘ │          └────────────────────────┘   │
 │  │         ▼            │                                       │
 │  │ ┌──────────────────┐ │                                       │
-│  │ │ 5 Repositories   │ │                                       │
-│  │ │ Parts, Solvent,  │ │                                       │
-│  │ │ NanoParticle,    │ │                                       │
-│  │ │ Drug, Settings   │ │                                       │
+│  │ │ 7 Repositories   │ │                                       │
+│  │ │ + Bookmark, Hist │ │                                       │
 │  │ └──────────────────┘ │                                       │
 │  │         ▼            │                                       │
 │  │ ┌──────────────────┐ │                                       │
 │  │ │ SQLite (WAL)     │ │                                       │
-│  │ │ 6 tables         │ │                                       │
+│  │ │ 8 tables         │ │                                       │
 │  │ └──────────────────┘ │                                       │
 │  └──────────────────────┘                                       │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
-## Nine Evaluation Pipelines
+## Evaluation Pipelines (9) + Utilities (4)
 
-### Group 1: Original (Ra/RED classifiers)
+### Group 1: Core Classifiers
 ```
-A) Polymer Risk:        ReportView → evaluate(groupId, solventId) → Ra/RED → classifyRisk → RiskLevel(RED小=危険)
-B) Nano Dispersion:     NanoDispersionView → screenAll(particleId) → Ra/RED → classifyDispersibility(RED小=良好)
-C) Contact Angle:       ContactAngleView → estimateContactAngle() → γ_SV/γ_LV/γ_SL → Young's eq → θ → classifyWettability
-```
-
-### Group 2: Phase 1 (Engineering applications)
-```
-D) Blend Optimization:  BlendOptimizerView → optimizeBlend(target, solvents, step, topN) → grid search → Ra最小化
-E) Swelling:            SwellingView → evaluateSwelling(groupId, solventId) → Ra/RED → classifySwelling(RED小=膨潤大)
-F) Drug Solubility:     DrugSolubilityView → screenDrugSolvents(drugId) → Ra/RED → classifyDrugSolubility(RED小=溶解性良)
+A) Polymer Risk:        ReportView → evaluate() → Ra/RED → classifyRisk(RED小=危険)
+B) Nano Dispersion:     NanoDispersionView → screenAll() → classifyDispersibility(RED小=良好)
+C) Contact Angle:       ContactAngleView → estimateContactAngle() → Young's eq → θ → classifyWettability
 ```
 
-### Group 3: Phase 2 (Advanced applications)
+### Group 2: Engineering
 ```
-G) Chemical Resistance: ChemResistanceView → evaluate(groupId, solventId) → Ra/RED → classifyChemResistance(RED大=耐性良 ※逆向き)
-H) Plasticizer:         PlasticizerView → screenPlasticizers(partId, groupId) → Ra/RED → classifyCompatibility(RED小=相溶性良)
-I) Carrier Selection:   CarrierSelectionView → screenCarriers(drugId, groupId) → Ra/RED → classifyCompatibility(carrier.r0使用)
+D) Blend Optimization:  BlendOptimizerView → optimizeBlend() → grid search → Ra最小化
+E) Swelling:            SwellingView → evaluateSwelling() → classifySwelling(RED小=膨潤大)
+F) Drug Solubility:     DrugSolubilityView → screenDrugSolvents() → classifyDrugSolubility
+```
+
+### Group 3: Advanced
+```
+G) Chemical Resistance: ChemResistanceView → evaluate() → classifyChemResistance(RED大=耐性良 ※逆)
+H) Plasticizer:         PlasticizerView → screenPlasticizers() → classifyCompatibility
+I) Carrier Selection:   CarrierSelectionView → screenCarriers() → classifyCompatibility
+```
+
+### Group 4: Analytics & Visualization
+```
+J) Comparison Report:   ComparisonView → buildComparisonMatrix() → 材料×溶媒のRED一括比較
+K) HSP 3D Viz:          HSPVisualizationView → Plotly.js → δD-δP-δH散布+HSP球
+L) Evaluation History:  EvaluationHistoryView → 自動保存された過去の結果を参照
+M) Bookmarks:           BookmarkButton → 評価条件のプリセット保存・復元
 ```
 
 ### Shared Core
-All pipelines share `calculateRa()`/`calculateRed()` from `hsp.ts` except Pipeline C (uses Nakamoto-Yamamoto) and D (uses grid search + blendHSP).
+All RED-based pipelines share `hsp.ts:calculateRa()/calculateRed()`.
+Contact angle uses Nakamoto-Yamamoto + Owens-Wendt (alternative).
+Temperature correction via Barton法 (`temperature-hsp.ts`).
 
-## Entity Mapping (Phase 2: No New Tables)
-
-| Feature | Material Entity | Comparison Entity | Notes |
-|---------|----------------|-------------------|-------|
-| Chemical Resistance | Part (「コーティング材料」group) | Solvent | RED逆向き |
-| Plasticizer | Part (any) | Solvent ([可塑剤] tagged) | notes LIKE filter |
-| Carrier Selection | Drug | Part (「DDSキャリア」group) | carrier.r0 used |
-
-## Component Hierarchy
+## Advanced Computation Modules
 
 ```
-App.tsx (MD3 responsive: Drawer ≥840px / Rail 600-839px / BottomNav <600px)
-├── NavigationDrawer (5 categories: 評価/選定/最適化/データ/設定)
-├── NavigationRail (icon + popover)
-├── BottomNavigation (bottom bar + popup)
-├── 9 Feature Views (A-I) + DatabaseEditor + MixtureLab + SettingsView
-└── ErrorBoundary
+temperature-hsp.ts      Barton法 — HSPの温度補正
+thermal-expansion-data.ts 27溶媒の体積膨張係数
+evaporation.ts          Antoine式+Raoult則 — 蒸発シミュレーション
+group-contribution.ts   Van Krevelen法 — 官能基→HSP推定
+contact-angle-methods.ts Owens-Wendt法 — 代替接触角推定
+solubility-estimation.ts Greenhalgh式 — 溶解度mg/mL推定
+csv-import.ts           CSVパース・バリデーション
+ghs-safety.ts           GHS分類・SVHC判定
+comparison.ts           バッチ評価マトリクス
+hsp-visualization.ts    3Dプロットデータ生成
+theme.ts                MD3 light/dark カラートークン
+pdf-report.ts           PDFレポートデータ生成
 ```
 
 ## Module Boundaries
 
-| Layer | Location | Files | Purpose |
-|-------|----------|-------|---------|
-| **Domain** | `src/core/` | 17 | Pure calculations, classification, CSV, validation, accuracy warnings |
-| **Data Access** | `src/db/` | 9 | Schema, 5 repos, 6 seed files |
-| **Main Process** | `src/main/` | 3 | Electron lifecycle, 70+ IPC handlers, preload |
-| **UI** | `src/renderer/` | 40 | 27 components (9 Views, 8 Badges, 3 Nav, 4 Selectors, 3 Shared), 14 hooks, navigation.ts |
-
-## File Structure
-
-```
-src/
-├── core/                          # Pure domain logic (17 files)
-│   ├── types.ts                   # All types (9 level enums, 20+ interfaces)
-│   ├── hsp.ts                     # calculateRa/RED (shared)
-│   ├── risk.ts                    # Pipeline A
-│   ├── dispersibility.ts          # Pipeline B
-│   ├── wettability.ts             # Pipeline C (classification)
-│   ├── contact-angle.ts           # Pipeline C (calculation)
-│   ├── blend-optimizer.ts         # Pipeline D (grid search)
-│   ├── swelling.ts                # Pipeline E
-│   ├── drug-solubility.ts         # Pipeline F
-│   ├── chemical-resistance.ts     # Pipeline G (RED逆向き)
-│   ├── plasticizer.ts             # Pipeline H
-│   ├── carrier-selection.ts       # Pipeline I
-│   ├── solvent-finder.ts          # Screening utilities
-│   ├── report.ts                  # 9 CSV formatters
-│   ├── validation.ts              # 12+ validators
-│   ├── mixture.ts                 # Mixture calculations
-│   └── accuracy-warnings.ts      # Literature-based accuracy warnings (UI layer)
-├── db/                            # Data access (9 files)
-│   ├── schema.ts                  # 6 tables
-│   ├── repository.ts              # 5 interfaces + DTOs
-│   ├── sqlite-repository.ts       # 5 implementations
-│   ├── seed-data.ts               # 85 solvents + 7 groups
-│   ├── seed-nano-particles.ts     # 18 nanoparticles
-│   ├── seed-drugs.ts              # 15 drugs
-│   ├── seed-coatings.ts           # 12 coatings (PartsGroup)
-│   ├── seed-plasticizers.ts       # 10 plasticizers (Solvent)
-│   └── seed-carriers.ts           # 11 DDS carriers (PartsGroup)
-├── main/                          # Electron main (3 files)
-│   ├── main.ts, ipc-handlers.ts, preload.ts
-├── renderer/                      # React UI (37 files)
-│   ├── components/ (24)           # 9 Views + 7 Badges + 4 Selectors + 3 Shared + ErrorBoundary
-│   └── hooks/ (13)                # Feature hooks
-└── preload.d.ts                   # window.api types (70+ methods)
-```
+| Layer | Location | Files | Lines | Purpose |
+|-------|----------|-------|-------|---------|
+| **Domain** | `src/core/` | 31 | 3,350 | Pure calculations, classifiers, utilities |
+| **Data** | `src/db/` | 11 | 1,660 | Schema(8 tables), 7 repos, 6 seed files |
+| **Main** | `src/main/` | 3 | 940 | Electron, 80+ IPC, auto-updater |
+| **UI** | `src/renderer/` | 55 | 5,180 | 32 components, 19 hooks, i18n |
+| **Tests** | `tests/` | 95 | — | 928 unit + 98 E2E |
 
 ---
 
