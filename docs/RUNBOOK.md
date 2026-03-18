@@ -13,6 +13,14 @@ npm run package            # Build + create Windows installer
 
 **Output:** `out/Hansen溶解度パラメータ評価ツール Setup {version}.exe`
 
+### macOS / Linux
+
+```bash
+npm run package:mac        # macOS (.dmg + .zip, x64 + arm64)
+npm run package:linux      # Linux (.AppImage + .deb, x64)
+npm run package:all        # All platforms
+```
+
 ### Build Artifacts
 
 | Artifact | Location | Purpose |
@@ -21,15 +29,40 @@ npm run package            # Build + create Windows installer
 | Renderer bundle | `dist/renderer/` | Vite-bundled React app |
 | Windows installer | `out/*.exe` | NSIS installer (x64) |
 | Portable exe | `out/*.exe` | Standalone portable build |
+| macOS disk image | `out/*.dmg` | macOS installer (x64 + arm64) |
+| Linux AppImage | `out/*.AppImage` | Linux portable (x64) |
+| Linux deb | `out/*.deb` | Debian package (x64) |
 
 ### Electron Builder Config
 
 - **Config:** `electron-builder.yml`
 - **App ID:** `com.hansen-solubility.tool`
-- **Targets:** NSIS installer + portable (Windows x64)
+- **Targets:** Windows (NSIS + portable), macOS (dmg + zip), Linux (AppImage + deb)
 - **ASAR:** Enabled, with `better-sqlite3` unpacked for native module access
-- **Icon:** `build/icon.ico`
+- **Icon:** `build/icon.ico` (Win), `build/icon.icns` (Mac)
 - **Installer language:** Japanese (code 1041)
+- **Auto-update:** GitHub Releases via `electron-updater`
+
+## Auto-Update
+
+アプリは起動時にGitHub Releasesから最新バージョンを自動確認する。
+
+- `autoDownload: true` — バックグラウンドダウンロード
+- `autoInstallOnAppQuit: true` — 終了時に自動インストール
+- 開発時（`VITE_DEV_SERVER_URL` 設定時）はスキップ
+
+### リリース手順
+
+```bash
+# 1. バージョン更新
+npm version patch  # or minor, major
+
+# 2. ビルド + パッケージ
+npm run package:all
+
+# 3. GitHub Release 作成
+gh release create v1.x.x out/*.exe out/*.dmg out/*.AppImage --title "v1.x.x" --notes "..."
+```
 
 ## Database
 
@@ -41,17 +74,30 @@ npm run package            # Build + create Windows installer
 | macOS | `~/Library/Application Support/hansen-solubility-tool/hansen.db` |
 | Linux | `~/.config/hansen-solubility-tool/hansen.db` |
 
+### Schema (8 tables)
+
+| Table | Purpose |
+|-------|---------|
+| `parts_groups` | ポリマー材料グループ |
+| `parts` | 個別材料（HSP + R₀） |
+| `solvents` | 溶媒（HSP + 物性値） |
+| `nano_particles` | ナノ粒子（HSP + カテゴリ + 表面修飾） |
+| `drugs` | 薬物（HSP + logP + 治療カテゴリ） |
+| `settings` | アプリ設定（閾値等、key-value） |
+| `bookmarks` | 評価条件のブックマーク |
+| `evaluation_history` | 評価履歴の自動保存（上限1000件） |
+
 ### Initialization
 
 On first launch:
 1. SQLite database created at user data path
-2. Schema tables created (`parts_groups`, `parts`, `solvents`, `nano_particles`, `drugs`, `settings`)
+2. Schema tables created (8 tables)
 3. Migration run (adds physical property columns if upgrading from older version)
 4. Seed data loaded:
-   - ~85 solvents with physical properties
-   - 7 polymer groups (~60 parts)
+   - ~135 solvents with physical properties
+   - 7 polymer groups (~41 parts)
    - 18 nanoparticles (CNT, graphene, Ag NP, TiO₂, ZnO, etc.)
-   - 15 drugs (アセトアミノフェン, イブプロフェン, etc.)
+   - 16 drugs (アセトアミノフェン, イブプロフェン, etc.)
    - 12 coating materials (「コーティング材料」group)
    - 10 plasticizers (Solvent with [可塑剤] tag)
    - 11 DDS carriers (「DDSキャリア」group)
@@ -138,32 +184,35 @@ npm run docker:test:integration  # Integration tests only
 
 ```bash
 npm run typecheck         # TypeScript type checking
-npm test                  # All test suites
-npm run test:coverage     # Coverage report
-npm run test:e2e          # E2E tests (requires app build first)
+npm test                  # All test suites (928+ tests)
+npm run test:coverage     # Coverage report (target: 90%+)
+npm run test:e2e          # E2E tests (98+ tests)
+npm run test:literature   # Literature validation (147 cases)
 ```
 
 ### Pre-release Checklist
 
 - [ ] `npm run typecheck` passes
-- [ ] `npm test` — all tests green (514+ unit tests, core 95%+ coverage)
-- [ ] `npm run test:e2e` — E2E tests pass
+- [ ] `npm test` — all tests green (928+ unit tests, coverage 90%+)
+- [ ] `npm run test:e2e` — 98+ E2E tests pass
 - [ ] `npm run package` — installer builds successfully
 - [ ] Install and run the packaged app
 - [ ] Verify polymer evaluation workflow (select group + solvent → evaluate → export CSV)
 - [ ] Verify nanoparticle dispersion screening (select particle → screen all solvents → CSV export)
 - [ ] Verify contact angle estimation (group mode + screening mode)
 - [ ] Verify solvent blend optimization (target HSP + candidate solvents → ranking)
+- [ ] Verify blend optimizer material reference (ポリマー/ナノ粒子/薬物からHSP自動入力)
 - [ ] Verify swelling prediction (group + solvent → swelling levels + elastomer warning)
 - [ ] Verify drug solubility (drug + solvent/screening → solubility levels)
 - [ ] Verify chemical resistance (coating group + solvent → resistance levels)
 - [ ] Verify plasticizer selection (polymer → plasticizer screening)
 - [ ] Verify DDS carrier selection (drug + carrier group/screening)
+- [ ] Verify comparison report (multiple materials × solvents → heatmap)
+- [ ] Verify HSP 3D visualization (group selection → 3D plot with spheres)
+- [ ] Verify bookmarks (save + restore evaluation conditions)
+- [ ] Verify evaluation history (auto-save + filter + delete)
 - [ ] Verify database editor (add/edit/delete operations for all entities)
 - [ ] Verify mixture lab (create mixture → register to DB)
-- [ ] Verify accuracy warnings display in:
-  - Contact angle view (alcohol/polyol/hydrophilic polymer warnings)
-  - Nano dispersion view (RED boundary warning)
-  - Drug solubility view (RED boundary warning)
-  - Chemical resistance view (RED boundary warning)
-- [ ] Verify settings (all 9 threshold configurations persist)
+- [ ] Verify dark mode toggle (Light / Dark / System)
+- [ ] Verify accuracy warnings display in applicable views
+- [ ] Verify settings (all threshold configurations persist + theme persist)
