@@ -9,9 +9,12 @@ export default function HSPVisualizationView() {
   const [selectedGroup, setSelectedGroup] = useState<PartsGroup | null>(null);
   const [showSpheres, setShowSpheres] = useState(true);
   const [solvents, setSolvents] = useState<Solvent[]>([]);
+  const [loadError, setLoadError] = useState<string | null>(null);
 
   useEffect(() => {
-    window.api.getAllSolvents().then(setSolvents);
+    window.api.getAllSolvents()
+      .then(setSolvents)
+      .catch((e) => setLoadError(e instanceof Error ? e.message : '溶媒の読み込みに失敗しました'));
   }, []);
 
   // 溶媒の散布点データ
