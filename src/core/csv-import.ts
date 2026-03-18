@@ -34,8 +34,9 @@ function parseNumber(value: string): number | undefined {
 }
 
 function parseRequiredNumber(value: string): number {
-  const n = Number(value.trim());
-  return n;
+  const trimmed = value.trim();
+  if (trimmed === '') return NaN;
+  return Number(trimmed);
 }
 
 /**

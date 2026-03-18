@@ -22,7 +22,12 @@ import type { GroupEvaluationResult, PartEvaluationResult, MixtureComponent, Nan
 import type { SqliteBookmarkRepository, CreateBookmarkDto } from '../db/bookmark-repository';
 import type { SqliteHistoryRepository } from '../db/history-repository';
 import type { SerializedHistoryEntry } from '../core/evaluation-history';
+import { isValidHistoryPipeline } from '../core/evaluation-history';
+import { validateBookmark } from '../core/bookmark';
 import { parseSolventCsv, parsePartCsv } from '../core/csv-import';
+
+/** CSVインポートの最大サイズ (10MB) */
+const MAX_CSV_SIZE = 10 * 1024 * 1024;
 
 /** JSON.parseの安全なラッパー — パース失敗時はfallbackを返す */
 function safeJsonParse<T>(json: string, fallback: T): T {
@@ -39,8 +44,8 @@ export function registerIpcHandlers(
   settingsRepo: SettingsRepository,
   nanoParticleRepo: NanoParticleRepository,
   drugRepo: DrugRepository,
-  bookmarkRepo?: SqliteBookmarkRepository,
-  historyRepo?: SqliteHistoryRepository,
+  bookmarkRepo: SqliteBookmarkRepository,
+  historyRepo: SqliteHistoryRepository,
 ): void {
   // --- 部品グループ ---
   ipcMain.handle('parts:getAllGroups', () => partsRepo.getAllGroups());
@@ -595,24 +600,36 @@ export function registerIpcHandlers(
   });
 
   // --- ブックマーク ---
-  if (bookmarkRepo) {
-    ipcMain.handle('bookmarks:getAll', () => bookmarkRepo.getAll());
-    ipcMain.handle('bookmarks:create', (_, dto: CreateBookmarkDto) => bookmarkRepo.create(dto));
-    ipcMain.handle('bookmarks:delete', (_, id: number) => bookmarkRepo.delete(id));
-  }
+  ipcMain.handle('bookmarks:getAll', () => bookmarkRepo.getAll());
+  ipcMain.handle('bookmarks:create', (_, dto: CreateBookmarkDto) => {
+    const err = validateBookmark(dto.name, dto.pipeline, safeJsonParse(dto.paramsJson, {}));
+    if (err) throw new Error(err);
+    return bookmarkRepo.create(dto);
+  });
+  ipcMain.handle('bookmarks:delete', (_, id: number) => bookmarkRepo.delete(id));
 
   // --- 評価履歴 ---
-  if (historyRepo) {
-    ipcMain.handle('history:getAll', () => historyRepo.getAll());
-    ipcMain.handle('history:getByPipeline', (_, pipeline: string) => historyRepo.getByPipeline(pipeline));
-    ipcMain.handle('history:save', (_, entry: SerializedHistoryEntry, note?: string) => historyRepo.create(entry, note));
-    ipcMain.handle('history:delete', (_, id: number) => historyRepo.delete(id));
-    ipcMain.handle('history:deleteOlderThan', (_, days: number) => historyRepo.deleteOlderThan(days));
-  }
+  ipcMain.handle('history:getAll', () => historyRepo.getAll());
+  ipcMain.handle('history:getByPipeline', (_, pipeline: string) => {
+    if (!isValidHistoryPipeline(pipeline)) throw new Error(`不正なパイプライン名です: ${pipeline}`);
+    return historyRepo.getByPipeline(pipeline);
+  });
+  ipcMain.handle('history:save', (_, entry: SerializedHistoryEntry, note?: string) => historyRepo.create(entry, note));
+  ipcMain.handle('history:delete', (_, id: number) => historyRepo.delete(id));
+  ipcMain.handle('history:deleteOlderThan', (_, days: number) => {
+    if (!Number.isFinite(days) || days < 1) throw new Error('日数は1以上の整数を指定してください');
+    return historyRepo.deleteOlderThan(Math.floor(days));
+  });
 
   // --- CSVインポート ---
-  ipcMain.handle('import:parseSolventCsv', (_, csv: string) => parseSolventCsv(csv));
-  ipcMain.handle('import:parsePartCsv', (_, csv: string) => parsePartCsv(csv));
+  ipcMain.handle('import:parseSolventCsv', (_, csv: string) => {
+    if (csv.length > MAX_CSV_SIZE) throw new Error(`CSVファイルが大きすぎます（上限: ${MAX_CSV_SIZE / 1024 / 1024}MB）`);
+    return parseSolventCsv(csv);
+  });
+  ipcMain.handle('import:parsePartCsv', (_, csv: string) => {
+    if (csv.length > MAX_CSV_SIZE) throw new Error(`CSVファイルが大きすぎます（上限: ${MAX_CSV_SIZE / 1024 / 1024}MB）`);
+    return parsePartCsv(csv);
+  });
   ipcMain.handle('import:openFile', async () => {
     const result = await dialog.showOpenDialog({
       filters: [{ name: 'CSV', extensions: ['csv'] }],

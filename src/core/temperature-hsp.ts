@@ -29,7 +29,11 @@ export function estimateDensityRatio(
 ): number {
   const deltaT = temperature - referenceTemp;
   // ρ(T)/ρ(T0) ≈ 1 / (1 + α × ΔT)
-  return 1 / (1 + alpha * deltaT);
+  const denominator = 1 + alpha * deltaT;
+  if (Math.abs(denominator) < 1e-10) {
+    throw new Error('密度比が発散します — 温度範囲を確認してください');
+  }
+  return 1 / denominator;
 }
 
 /**
