@@ -1,118 +1,132 @@
-<!-- Generated: 2026-03-15 | Updated: 2026-03-18 | Files scanned: 112 | Token estimate: ~980 -->
+<!-- Generated: 2026-03-18 | Files scanned: 197 | Token estimate: ~950 -->
 
 # Hansen Solubility Project — Codemap Index
 
-A production-grade Electron desktop application for HSP-based material compatibility evaluation. **9 evaluation pipelines** covering polymer dissolution, nanoparticle dispersion, contact angle, solvent blending, swelling, drug solubility, chemical resistance, plasticizer selection, and DDS carrier selection.
+A production-grade Electron desktop application for HSP-based material compatibility evaluation. **9 evaluation pipelines** + comparison report + 3D visualization + bookmarks + evaluation history.
 
 ## Quick Navigation
 
 ### System Design
-- **[architecture.md](./architecture.md)** — System diagram, 9 evaluation pipelines, module boundaries
+- **[architecture.md](./architecture.md)** — System diagram, pipelines, module boundaries
 
 ### Implementation Details
-- **[frontend.md](./frontend.md)** — MD3 responsive layout (Drawer/Rail/BottomNav), 5カテゴリ, hooks (14), IPC (70+ methods)
-- **[data.md](./data.md)** — SQLite schema (6 tables), repositories (5), seed data (85 solvents + 18 nanoparticles + 15 drugs + 12 coatings + 10 plasticizers + 11 carriers)
-- **[dependencies.md](./dependencies.md)** — External packages, build tools, Docker support
+- **[frontend.md](./frontend.md)** — MD3 responsive layout, 15 tabs, 19 hooks, dark mode
+- **[data.md](./data.md)** — SQLite schema (8 tables), repositories (7), seed data
+- **[dependencies.md](./dependencies.md)** — External packages, build tools
 
 ## Key Insights
 
 ### Architecture
-- **Electron Multi-Process:** Main process (business logic) ↔ Renderer process (React UI) via IPC
-- **Pure Core:** `src/core/` contains no I/O — 16 modules for calculations, classification, CSV export
-- **Repository Pattern:** `src/db/` abstracts SQLite via interfaces (5 repos: Parts, Solvent, NanoParticle, Drug, Settings)
-- **Type Safety:** 100% TypeScript across all layers with strict mode enabled
+- **Electron Multi-Process:** Main (business logic + IPC) ↔ Renderer (React UI)
+- **Pure Core:** `src/core/` contains no I/O — 31 modules
+- **Repository Pattern:** `src/db/` — 7 repos (Parts, Solvent, NanoParticle, Drug, Settings, Bookmark, History)
+- **i18n:** i18next (ja/en), **Dark Mode:** Tailwind `darkMode: 'class'`
+- **Auto-Update:** electron-updater via GitHub Releases
+- **Cross-Platform:** Win (NSIS) / macOS (dmg) / Linux (AppImage)
 
-### Nine Evaluation Pipelines
+### Evaluation Pipelines
 
 ```
-Pipeline A: Polymer-Solvent Risk         → RED小=危険（溶解する）
-Pipeline B: Nanoparticle Dispersion      → RED小=良好（分散する）
-Pipeline C: Contact Angle                → θ小=親水, θ大=疎水
-Pipeline D: Solvent Blend Optimization   → Ra最小化（逆問題）
-Pipeline E: Swelling Prediction          → RED小=膨潤大
-Pipeline F: Drug Solubility              → RED小=溶解性良好
-Pipeline G: Chemical Resistance          → RED大=耐性良好（逆向き）
-Pipeline H: Plasticizer Selection        → RED小=相溶性良好
-Pipeline I: DDS Carrier Selection        → RED小=適合性良好（carrier.r0使用）
+A: Polymer-Solvent Risk         → RED小=危険
+B: Nanoparticle Dispersion      → RED小=良好
+C: Contact Angle                → θ小=親水
+D: Solvent Blend Optimization   → Ra最小化
+E: Swelling Prediction          → RED小=膨潤大
+F: Drug Solubility              → RED小=溶解性良好
+G: Chemical Resistance          → RED大=耐性良好（逆向き）
+H: Plasticizer Selection        → RED小=相溶性良好
+I: DDS Carrier Selection        → RED小=適合性良好
++ Comparison Report             → 複数材料×溶媒の横断RED比較
++ HSP 3D Visualization          → Plotly.js δD-δP-δH空間プロット
 ```
 
 ### Tech Stack
 - **Framework:** Electron 41 + React 19 + Vite 5
 - **Language:** TypeScript 5.9 (strict)
-- **Database:** SQLite with better-sqlite3 12.8
-- **Styling:** Tailwind CSS 3.4
-- **Testing:** Vitest 2.1 (514 unit tests)
+- **Database:** SQLite (better-sqlite3 12.8), WAL mode
+- **Styling:** Tailwind CSS 3.4, MD3 design tokens, dark mode
+- **3D Plot:** Plotly.js (plotly.js-basic-dist-min)
+- **i18n:** i18next + react-i18next
+- **Testing:** Vitest 2.1 (928+ unit) + Playwright 1.58 (98+ E2E)
 
 ## Module Tour
 
-### src/core/ (17 files)
+### src/core/ (31 files, ~3350 lines)
 Pure domain logic (testable, no side effects)
-- `types.ts` — All domain types (HSPValues, Part, Solvent, Drug, NanoParticle, 9 level enums, thresholds, results)
-- `hsp.ts` — Hansen distance: `calculateRa()`, `calculateRed()` (shared by all RED-based pipelines)
-- `risk.ts` — Pipeline A: `classifyRisk()` → RiskLevel 1-5
-- `dispersibility.ts` — Pipeline B: `classifyDispersibility()` → DispersibilityLevel 1-5
-- `wettability.ts` — Pipeline C: `classifyWettability()` → WettabilityLevel 1-6
-- `contact-angle.ts` — Nakamoto-Yamamoto式: surface tension + Young's equation
-- `blend-optimizer.ts` — Pipeline D: `optimizeBlend()` grid search
-- `swelling.ts` — Pipeline E: `classifySwelling()` → SwellingLevel 1-5
-- `drug-solubility.ts` — Pipeline F: `classifyDrugSolubility()`, `screenDrugSolvents()`
-- `chemical-resistance.ts` — Pipeline G: `classifyChemicalResistance()` (RED逆向き)
-- `plasticizer.ts` — Pipeline H: `classifyPlasticizerCompatibility()`, `screenPlasticizers()`
-- `carrier-selection.ts` — Pipeline I: `classifyCarrierCompatibility()`, `screenCarriers()`
-- `solvent-finder.ts` — `screenSolvents()`, `filterByConstraints()`
-- `report.ts` — CSV export: 9 formatters (BOM-prefixed UTF-8)
-- `validation.ts` — Input validators (12+ functions)
-- `mixture.ts` — Solvent mixture calculations
-- `accuracy-warnings.ts` — Literature-validated accuracy warnings: `getContactAngleWarnings()`, `getDispersionWarnings()`, `getRedBoundaryWarnings()`
 
-### src/db/ (9 files)
-Data access layer (SQLite via better-sqlite3)
-- `schema.ts` — 6 tables: parts_groups, parts, solvents, nano_particles, drugs, settings
+**計算エンジン:**
+- `hsp.ts` — `calculateRa()`, `calculateRed()` (全パイプライン共通)
+- `contact-angle.ts` — Nakamoto-Yamamoto式
+- `contact-angle-methods.ts` — Owens-Wendt法（代替手法）
+- `temperature-hsp.ts` — Barton法の温度補正
+- `thermal-expansion-data.ts` — 27溶媒の体積膨張係数
+- `blend-optimizer.ts` — グリッドサーチ最適化
+- `evaporation.ts` — Antoine式+Raoult則の蒸発シミュレーション
+- `group-contribution.ts` — Van Krevelen-Hoftyzer法HSP推定
+- `solubility-estimation.ts` — Greenhalgh-Williams式溶解度推定
+- `mixture.ts` — 溶媒混合HSP計算
+- `comparison.ts` — バッチ評価マトリクス
+- `hsp-visualization.ts` — 3Dプロットデータ生成
+
+**分類器 (9種):**
+- `risk.ts`, `dispersibility.ts`, `wettability.ts`, `swelling.ts`
+- `drug-solubility.ts`, `chemical-resistance.ts`, `plasticizer.ts`, `carrier-selection.ts`
+- `solvent-finder.ts` — スクリーニングユーティリティ
+
+**その他:**
+- `types.ts` — 全型定義 (450+ lines)
+- `validation.ts`, `report.ts` (9 CSV formatters), `accuracy-warnings.ts`
+- `bookmark.ts`, `evaluation-history.ts`, `csv-import.ts`
+- `ghs-safety.ts`, `theme.ts`, `pdf-report.ts`
+
+### src/db/ (11 files, ~1660 lines)
+- `schema.ts` — 8 tables + 2 indexes
 - `repository.ts` — 5 repository interfaces + DTOs
 - `sqlite-repository.ts` — 5 SQLite implementations
-- `seed-data.ts` — ~85 solvents + 7 polymer groups
-- `seed-nano-particles.ts` — 18 nanoparticles
-- `seed-drugs.ts` — 15 drugs (API)
-- `seed-coatings.ts` — 12 coating materials (PartsGroup)
-- `seed-plasticizers.ts` — 10 plasticizers (Solvent with [可塑剤] tag)
-- `seed-carriers.ts` — 11 DDS carriers (PartsGroup)
+- `bookmark-repository.ts`, `history-repository.ts` — 新機能用repos
+- 6 seed files: solvents(135), nano-particles(18), drugs(16), coatings(12), plasticizers(10), carriers(11)
 
-### src/main/ (3 files)
-- `main.ts` — App startup, DB init, seed loading (6 seed functions)
-- `ipc-handlers.ts` — **70+ IPC handlers**
-- `preload.ts` — Context-isolated bridge (70+ methods)
+### src/main/ (3 files, ~940 lines)
+- `main.ts` — App startup, DB init, auto-updater
+- `ipc-handlers.ts` — **80+ IPC handlers** (CRUD + 評価 + ブックマーク + 履歴 + インポート)
+- `preload.ts` — Context-isolated bridge
 
-### src/renderer/ (37 files)
-- `App.tsx` — MD3 responsive layout (NavigationDrawer/Rail/BottomNav)
-- `navigation.ts` — 5カテゴリ・12タブ定義
-- `components/` — 27 components (9 Views, 8 Badges, 3 Nav, 4 Selectors, 2 Shared, 1 ErrorBoundary)
-- `hooks/` — 14 hooks (+ useMediaQuery)
+### src/renderer/ (55 files, ~5180 lines)
+- `App.tsx` — MD3 responsive layout + `useTheme()`
+- `navigation.ts` — 5カテゴリ・15タブ
+- `components/` — 32 components (12 Views, 8 Badges, 3 Nav, SortTableHeader, BookmarkButton, etc.)
+- `hooks/` — 19 hooks (useCsvExport, useSortableTable, useBookmarks, useTheme, etc.)
 
-### tests/ (20 unit + 15 renderer + integration + e2e)
-- Unit: 514 tests covering all core logic
-- Renderer: Component + hook tests
+### src/i18n/ (2 files)
+- `translations.ts` — ja/en 60+キー
+- `index.ts` — i18next初期化
 
-## Database Schema Summary
+### tests/ (95 files, 928+ unit + 98+ E2E)
 
-| Table | Purpose | Rows | Relationships |
-|-------|---------|------|---------------|
-| `parts_groups` | Material groups | ~10 | 1 → Many with parts |
-| `parts` | Polymers + coatings + carriers | ~83 | Many ← 1 from parts_groups |
-| `solvents` | Solvents + plasticizers | ~95 | No FK (plasticizers tagged in notes) |
-| `nano_particles` | Nanoparticle materials | 18 | No FK |
-| `drugs` | Pharmaceutical APIs | 15 | No FK |
-| `settings` | Config (thresholds) | ~8 | Key-value store |
+## Database Schema (8 tables)
+
+| Table | Rows | Purpose |
+|-------|------|---------|
+| `parts_groups` | ~10 | Material groups |
+| `parts` | ~83 | Polymers + coatings + carriers |
+| `solvents` | ~145 | Solvents + plasticizers |
+| `nano_particles` | 18 | Nanoparticle materials |
+| `drugs` | 16 | Pharmaceutical APIs |
+| `settings` | ~10 | Config (key-value) |
+| `bookmarks` | dynamic | 評価条件のブックマーク |
+| `evaluation_history` | dynamic (≤1000) | 評価結果の自動保存 |
 
 ## File Statistics
 
-| Category | Files | Purpose |
-|----------|-------|---------|
-| **Core** | 17 | HSP, 9 classifiers, report, validation, mixture, blend-optimizer, accuracy-warnings |
-| **Database** | 9 | Schema, repositories, 6 seed files |
-| **Main Process** | 3 | Electron lifecycle, IPC (70+), preload |
-| **Renderer** | 40 | React components (27) + hooks (14) + navigation.ts + entry |
-| **Tests** | 33+ | Unit (514) + Renderer + Integration + E2E |
+| Category | Files | Lines | Key Contents |
+|----------|-------|-------|-------------|
+| **Core** | 31 | 3,350 | 計算エンジン, 9分類器, ユーティリティ |
+| **Database** | 11 | 1,660 | Schema, 7 repos, 6 seed files |
+| **Main** | 3 | 940 | Electron, IPC (80+), preload |
+| **Renderer** | 55 | 5,180 | 32 components, 19 hooks, i18n |
+| **Tests** | 95 | — | 928 unit + 98 E2E |
+| **Total** | 197 | 11,130+ | — |
 
 ---
 
-**Last Updated:** 2026-03-18 | **Status:** Current (Phase 1 + Phase 2 + accuracy warnings)
+**Last Updated:** 2026-03-18 | **Status:** Current (全Phase完了 + 文献改善)
