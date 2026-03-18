@@ -44,6 +44,9 @@ This runs two processes concurrently:
 | `npm run build:renderer` | Bundle renderer with Vite |
 | `npm start` | Launch built Electron app |
 | `npm run package` | Build + package Windows installer (.exe) |
+| `npm run package:mac` | Build + package macOS installer (.dmg) |
+| `npm run package:linux` | Build + package Linux installer (.AppImage/.deb) |
+| `npm run package:all` | Build + package all platforms |
 | `npm run package:dir` | Build + package to directory (no installer) |
 | `npm test` | Run all tests (unit + integration + renderer) |
 | `npm run test:watch` | Run tests in watch mode |
@@ -67,15 +70,16 @@ This runs two processes concurrently:
 
 ```bash
 npm test                  # All tests
-npm run test:unit        # Core logic (hsp, risk, report, validation)
+npm run test:unit        # Core logic (31 modules)
 npm run test:integration # Database operations
-npm run test:coverage    # With coverage report
+npm run test:coverage    # With coverage report (target: 90%+)
 npm run test:e2e         # Playwright E2E (requires built app)
+npm run test:literature  # Literature value validation (147 cases)
 ```
 
 ### Writing Tests
 
-- **Unit tests** go in `tests/unit/` — test pure functions in `src/core/` (hsp, risk, dispersibility, wettability, contact-angle, blend-optimizer, swelling, drug-solubility, chemical-resistance, plasticizer, carrier-selection, solvent-finder, report, validation, mixture, accuracy-warnings)
+- **Unit tests** go in `tests/unit/` — test pure functions in `src/core/`
 - **Integration tests** go in `tests/integration/` — test SQLite repositories
 - **Component tests** go in `tests/renderer/` — use `@testing-library/react`
 - **E2E tests** go in `tests/e2e/` — use Playwright with Electron
@@ -86,23 +90,36 @@ Test framework: **Vitest** (globals enabled, no imports needed for `describe`/`i
 
 Use factories from `tests/renderer/factories.ts` for consistent test data.
 
+### TDD Workflow
+
+新機能はTDD（Red→Green→Refactor）で実装する:
+1. テストを先に書く（Red: 失敗するテスト）
+2. 最小限の実装で通す（Green）
+3. リファクタリング
+
 ## Project Structure
 
 ```
 src/
 ├── core/       Pure domain logic (no I/O, 100% testable)
-│               17 modules: hsp, risk, dispersibility, wettability,
-│               contact-angle, blend-optimizer, swelling, drug-solubility,
-│               chemical-resistance, plasticizer, carrier-selection,
-│               solvent-finder, report, validation, mixture, accuracy-warnings, types
+│               31 modules: hsp, risk, dispersibility, wettability,
+│               contact-angle, contact-angle-methods, blend-optimizer,
+│               swelling, drug-solubility, chemical-resistance, plasticizer,
+│               carrier-selection, solvent-finder, report, validation, mixture,
+│               accuracy-warnings, bookmark, evaluation-history, comparison,
+│               hsp-visualization, temperature-hsp, thermal-expansion-data,
+│               csv-import, ghs-safety, group-contribution, evaporation,
+│               solubility-estimation, theme, pdf-report, types
 ├── db/         SQLite data access layer (repository pattern)
-│               5 repos: Parts, Solvent, NanoParticle, Drug, Settings
+│               7 repos: Parts, Solvent, NanoParticle, Drug, Settings, Bookmark, History
 │               6 seed files: solvents, nano-particles, drugs, coatings, plasticizers, carriers
-├── main/       Electron main process (lifecycle, IPC, 70+ handlers)
+├── i18n/       多言語対応 (i18next: 日本語/英語)
+├── main/       Electron main process (lifecycle, IPC, 80+ handlers)
+│               auto-updater (electron-updater)
 └── renderer/   MD3 responsive UI (960×680)
-                navigation.ts — 5カテゴリ・12タブ定義
-                27 components (9 Views, 8 Badges, 3 Nav, 4 Selectors, etc.)
-                14 hooks (incl. useMediaQuery for responsive breakpoints)
+                navigation.ts — 5カテゴリ・15タブ定義
+                32 components (12 Views, 8 Badges, 3 Nav, 4 Selectors, etc.)
+                19 hooks (incl. useTheme, useCsvExport, useSortableTable, useBookmarks, etc.)
 ```
 
 See `docs/CODEMAPS/INDEX.md` for detailed architecture.
@@ -111,19 +128,22 @@ See `docs/CODEMAPS/INDEX.md` for detailed architecture.
 
 - **Language:** TypeScript (strict mode)
 - **Styling:** Tailwind CSS + MD3 design tokens (`tailwind.config.ts` で定義)
+- **Dark mode:** `darkMode: 'class'` — CSS変数ベースのテーマ切替
 - **No linter configured** — follow existing patterns
 - **Naming:** camelCase for TS, snake_case for DB columns
+- **Shared components:** `SortTableHeader`, `useCsvExport`, `useSortableTable` を活用して重複を避ける
 
 ## PR Checklist
 
-- [ ] All tests pass (`npm test`)
+- [ ] All tests pass (`npm test` — 928+ tests)
 - [ ] Type check passes (`npm run typecheck`)
-- [ ] New features have unit tests
+- [ ] New features have unit tests (TDD recommended)
 - [ ] UI changes have component tests
 - [ ] Database schema changes include migration in `schema.ts` (`migrateDatabase`)
 - [ ] Database changes update seed data if needed
 - [ ] IPC changes update `ipc-handlers.ts`, `preload.ts`, and `preload.d.ts`
 - [ ] New entity types added to `src/core/types.ts`
+- [ ] Accessibility: `htmlFor`, `aria-label`, `role="alert"` for errors, keyboard navigation
 
 ## Docker
 
