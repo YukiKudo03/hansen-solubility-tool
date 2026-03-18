@@ -224,7 +224,22 @@
 - Graphene vs DMF (RED=1.056) のようにR₀の設定で境界判定が変わるケースがある
 - 文献間でR₀が±1.0程度異なることがあり、RED≈1.0付近の判定には注意が必要
 
-### 今後の改善候補
-- 接触角推定にOwens-Wendt法やvan Oss法を代替オプションとして追加
-- ナノ粒子HSPの表面修飾依存性のドキュメント強化
-- 薬物溶解性の定量的予測（溶解度mg/mLとの相関）の追加検討
+### 対応済み改善項目
+
+#### Owens-Wendt法の追加（対応済み）
+- `src/core/contact-angle-methods.ts` に Owens-Wendt 法を実装
+- HSPの分散成分(δD→γ^d)と極性成分(δP+δH→γ^p)を分離して界面張力を計算
+- **結果**: PMMA vs Water でθ=93.2°（Nakamoto-Yamamoto法: 84.6°、文献値: 68°）
+- **考察**: バルクHSPの限界（表面再配向を反映不可）により、どちらの手法でも親水性ポリマーは過大推定
+- van Oss法(Acid-Base法)はHSPからγ^+/γ^-の分離が困難なため見送り
+
+#### ナノ粒子の表面修飾依存性警告（対応済み）
+- `getNanoParticleModificationWarnings()` を `accuracy-warnings.ts` に追加
+- 表面修飾を持つ粒子のR₀ばらつき(±1.0)を警告
+- 粒子径 < 5nm の量子サイズ効果リスクを警告
+
+#### 薬物溶解度の定量的推定（対応済み）
+- `src/core/solubility-estimation.ts` に Greenhalgh-Williams 経験式ベースの推定を実装
+- log₁₀(S) ≈ 2.0 - 2.5×RED² - 0.3×logP（精度: ±1桁）
+- 5段階ラベル: 高溶解性(>100) / 溶解性あり(10-100) / やや難溶(1-10) / 難溶(0.01-1) / 不溶(<0.01)
+- logP未設定時のフォールバック推定に対応
