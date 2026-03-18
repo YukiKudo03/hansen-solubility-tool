@@ -5,7 +5,7 @@
  * 計算ロジックのバグではなく、Nakamoto-Yamamoto式およびHSP距離計算の理論的限界。
  */
 
-import type { ContactAngleResult, SolventDispersibilityResult } from './types';
+import type { ContactAngleResult, SolventDispersibilityResult, NanoParticle } from './types';
 
 /** δH > 14 かつ δP > 5 のアルコール的HSPプロファイル */
 function isAlcoholProfile(deltaP: number, deltaH: number): boolean {
@@ -83,4 +83,25 @@ export function getRedBoundaryWarnings(
   return [
     'RED値が0.8〜1.2の範囲にある結果はHansen球の境界付近です。R₀の設定値によって判定が変わる可能性があります',
   ];
+}
+
+/**
+ * ナノ粒子の表面修飾・粒子径に関する精度警告を生成
+ */
+export function getNanoParticleModificationWarnings(particle: NanoParticle): string[] {
+  const warnings: string[] = [];
+
+  if (particle.surfaceLigand) {
+    warnings.push(
+      `表面修飾（${particle.surfaceLigand}）を持つナノ粒子のHSP値は修飾条件に依存します。相互作用半径R₀は文献間で±1.0程度のばらつきがあり、RED≈1.0付近の判定には注意が必要です`,
+    );
+  }
+
+  if (particle.particleSize !== null && particle.particleSize < 5) {
+    warnings.push(
+      `粒子径 ${particle.particleSize} nm は量子サイズ効果が表れる領域です。バルクHSP値との乖離が生じる可能性があります`,
+    );
+  }
+
+  return warnings;
 }
