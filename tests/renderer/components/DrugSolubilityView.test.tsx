@@ -28,16 +28,17 @@ const drug = {
 };
 
 describe('DrugSolubilityView', () => {
-  it('タイトルが表示される', () => {
+  it('タイトルが表示される', async () => {
     mockApi.getAllDrugs.mockResolvedValue([]);
     mockApi.searchSolvents.mockResolvedValue([]);
 
     render(<DrugSolubilityView />);
 
     expect(screen.getByRole('heading', { name: '薬物溶解性評価' })).toBeInTheDocument();
+    await waitFor(() => expect(mockApi.getAllDrugs).toHaveBeenCalled());
   });
 
-  it('モード切替ボタンが表示される', () => {
+  it('モード切替ボタンが表示される', async () => {
     mockApi.getAllDrugs.mockResolvedValue([]);
     mockApi.searchSolvents.mockResolvedValue([]);
 
@@ -45,6 +46,7 @@ describe('DrugSolubilityView', () => {
 
     expect(screen.getByText('個別評価')).toBeInTheDocument();
     expect(screen.getByText('全溶媒スクリーニング')).toBeInTheDocument();
+    await waitFor(() => expect(mockApi.getAllDrugs).toHaveBeenCalled());
   });
 
   it('スクリーニングモードで評価実行後に結果が表示される', async () => {

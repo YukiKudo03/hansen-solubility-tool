@@ -427,13 +427,74 @@ export interface CarrierEvaluationResult {
   thresholdsUsed: CarrierCompatibilityThresholds;
 }
 
+// ─── 接着性予測系 ───────────────────────────
+
+/** 接着性レベル (1=最良, 5=接着不可) — Ra小=接着性良好 */
+export enum AdhesionLevel {
+  Excellent = 1,
+  Good = 2,
+  Fair = 3,
+  Poor = 4,
+  Failed = 5,
+}
+
+/** 接着性閾値設定 (Ra値ベース) */
+export interface AdhesionThresholds {
+  excellentMax: number;
+  goodMax: number;
+  fairMax: number;
+  poorMax: number;
+}
+
+/** 接着性予測結果 */
+export interface AdhesionResult {
+  part: Part;
+  solvent: Solvent;
+  ra: number;
+  adhesionLevel: AdhesionLevel;
+}
+
+/** グループ全体の接着性予測結果 */
+export interface GroupAdhesionResult {
+  partsGroup: PartsGroup;
+  solvent: Solvent;
+  results: AdhesionResult[];
+  evaluatedAt: Date;
+  thresholdsUsed: AdhesionThresholds;
+}
+
+// ─── HSP球フィッティング系 ───────────────────────────
+
+/** 溶媒の溶解試験分類データ */
+export interface SolventClassificationInput {
+  solventId: number;
+  isGood: boolean;
+}
+
+// ─── グリーン溶媒代替系 ───────────────────────────
+
+/** グリーン溶媒代替候補結果（IPC用簡略型） */
+export interface GreenSubstitutionResultDTO {
+  targetSolventName: string;
+  candidates: Array<{
+    solventName: string;
+    solventId: number;
+    ra: number;
+    safetyRating: string | null;
+    environmentalScore: number | null;
+    healthScore: number | null;
+    overallScore: number;
+  }>;
+  evaluatedAt: Date;
+}
+
 // ─── ブックマーク系 ─────────────────────────────────
 
 /** ブックマーク対象パイプライン */
 export type BookmarkPipeline =
   | 'risk' | 'contactAngle' | 'swelling' | 'chemicalResistance'
   | 'nanoDispersion' | 'plasticizer' | 'carrierSelection'
-  | 'blendOptimizer' | 'drugSolubility';
+  | 'blendOptimizer' | 'drugSolubility' | 'adhesion';
 
 /** ブックマークのパラメータ（パイプラインごとに異なるが共通型で扱う） */
 export type BookmarkParams = Record<string, unknown>;

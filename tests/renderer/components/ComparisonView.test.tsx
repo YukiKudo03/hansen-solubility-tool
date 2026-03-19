@@ -15,25 +15,28 @@ beforeEach(() => {
 });
 
 describe('ComparisonView', () => {
-  it('タイトルが表示される', () => {
+  it('タイトルが表示される', async () => {
     mockApi.getAllGroups.mockResolvedValue([]);
     mockApi.searchSolvents.mockResolvedValue([]);
     render(<ComparisonView />);
     expect(screen.getByText('横断比較レポート')).toBeInTheDocument();
+    await waitFor(() => expect(mockApi.getAllGroups).toHaveBeenCalled());
   });
 
-  it('グループセレクターが表示される', () => {
+  it('グループセレクターが表示される', async () => {
     mockApi.getAllGroups.mockResolvedValue([]);
     mockApi.searchSolvents.mockResolvedValue([]);
     render(<ComparisonView />);
     expect(screen.getByText(/部品グループを選択/)).toBeInTheDocument();
+    await waitFor(() => expect(mockApi.getAllGroups).toHaveBeenCalled());
   });
 
-  it('比較実行ボタンが表示される', () => {
+  it('比較実行ボタンが表示される', async () => {
     mockApi.getAllGroups.mockResolvedValue([]);
     mockApi.searchSolvents.mockResolvedValue([]);
     render(<ComparisonView />);
     expect(screen.getByText('比較実行')).toBeInTheDocument();
+    await waitFor(() => expect(mockApi.getAllGroups).toHaveBeenCalled());
   });
 
   it('グループ選択と溶媒選択後に比較実行できる', async () => {

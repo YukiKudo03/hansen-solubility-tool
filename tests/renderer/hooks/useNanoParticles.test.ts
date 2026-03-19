@@ -1,6 +1,6 @@
 // @vitest-environment happy-dom
 import { describe, it, expect, beforeEach } from 'vitest';
-import { renderHook, waitFor } from '@testing-library/react';
+import { renderHook, waitFor, act } from '@testing-library/react';
 import { useNanoParticles } from '../../../src/renderer/hooks/useNanoParticles';
 import { setupMockApi } from '../setup';
 import { resetIdCounter } from '../factories';
@@ -77,7 +77,7 @@ describe('useNanoParticles', () => {
 
     const particles = [{ id: 1, name: 'Graphene' }];
     mockApi.getAllNanoParticles.mockResolvedValue(particles);
-    await result.current.reload();
+    await act(async () => { await result.current.reload(); });
 
     await waitFor(() => {
       expect(result.current.particles).toEqual(particles);

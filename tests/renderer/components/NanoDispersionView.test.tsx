@@ -53,21 +53,23 @@ function buildNanoResult() {
 }
 
 describe('NanoDispersionView', () => {
-  it('タイトルが表示される', () => {
+  it('タイトルが表示される', async () => {
     mockApi.getAllNanoParticles.mockResolvedValue([]);
 
     render(<NanoDispersionView />);
 
     expect(screen.getByText('ナノ粒子分散評価')).toBeInTheDocument();
+    await waitFor(() => expect(mockApi.getAllNanoParticles).toHaveBeenCalled());
   });
 
-  it('カテゴリフィルタが表示される', () => {
+  it('カテゴリフィルタが表示される', async () => {
     mockApi.getAllNanoParticles.mockResolvedValue([]);
 
     render(<NanoDispersionView />);
 
     expect(screen.getByText('カテゴリ')).toBeInTheDocument();
     expect(screen.getByText('すべて')).toBeInTheDocument();
+    await waitFor(() => expect(mockApi.getAllNanoParticles).toHaveBeenCalled());
   });
 
   it('ナノ粒子を選択してスクリーニング実行後に結果が表示される', async () => {

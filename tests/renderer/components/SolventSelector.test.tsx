@@ -49,7 +49,7 @@ describe('SolventSelector', () => {
     expect(onSelect).toHaveBeenCalledWith(solvent);
   });
 
-  it('selected渡し時に選択済み表示', () => {
+  it('selected渡し時に選択済み表示', async () => {
     const solvent = buildSolvent({ name: 'メタノール', nameEn: 'Methanol' });
 
     render(<SolventSelector onSelect={vi.fn()} selected={solvent} />);
@@ -57,6 +57,7 @@ describe('SolventSelector', () => {
     expect(screen.getByText('メタノール')).toBeInTheDocument();
     expect(screen.getByText('(Methanol)')).toBeInTheDocument();
     expect(screen.getByText('変更')).toBeInTheDocument();
+    await waitFor(() => expect(mockApi.searchSolvents).toHaveBeenCalled());
   });
 
   it('「変更」ボタンでonSelectがnull的値で呼ばれる', async () => {

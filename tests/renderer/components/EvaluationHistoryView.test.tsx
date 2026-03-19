@@ -24,6 +24,7 @@ describe('EvaluationHistoryView', () => {
     mockApi.getAllHistory.mockResolvedValue([]);
     render(<EvaluationHistoryView />);
     expect(screen.getByText('評価履歴')).toBeInTheDocument();
+    await waitFor(() => expect(mockApi.getAllHistory).toHaveBeenCalled());
   });
 
   it('履歴一覧が表示される', async () => {
@@ -50,6 +51,7 @@ describe('EvaluationHistoryView', () => {
     render(<EvaluationHistoryView />);
 
     expect(screen.getByText('すべて')).toBeInTheDocument();
+    await waitFor(() => expect(mockApi.getAllHistory).toHaveBeenCalled());
   });
 
   it('削除ボタンでdeleteHistoryが呼ばれる', async () => {
@@ -67,5 +69,7 @@ describe('EvaluationHistoryView', () => {
     await waitFor(() => {
       expect(mockApi.deleteHistory).toHaveBeenCalledWith(1);
     });
+    // deleteEntry内のreload()完了を待つ
+    await waitFor(() => expect(mockApi.getAllHistory).toHaveBeenCalledTimes(2));
   });
 });

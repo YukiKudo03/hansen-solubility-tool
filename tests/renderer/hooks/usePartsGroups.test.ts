@@ -1,6 +1,6 @@
 // @vitest-environment happy-dom
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { renderHook, waitFor } from '@testing-library/react';
+import { renderHook, waitFor, act } from '@testing-library/react';
 import { usePartsGroups } from '../../../src/renderer/hooks/usePartsGroups';
 import { setupMockApi } from '../setup';
 import { buildPartsGroup, resetIdCounter } from '../factories';
@@ -55,7 +55,7 @@ describe('usePartsGroups', () => {
     const groups = [buildPartsGroup()];
     mockApi.getAllGroups.mockResolvedValue(groups);
 
-    await result.current.reload();
+    await act(async () => { await result.current.reload(); });
 
     await waitFor(() => {
       expect(result.current.groups).toEqual(groups);

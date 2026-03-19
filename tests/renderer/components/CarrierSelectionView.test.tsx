@@ -28,16 +28,17 @@ const drug = {
 };
 
 describe('CarrierSelectionView', () => {
-  it('タイトルが表示される', () => {
+  it('タイトルが表示される', async () => {
     mockApi.getAllDrugs.mockResolvedValue([]);
     mockApi.getAllGroups.mockResolvedValue([]);
 
     render(<CarrierSelectionView />);
 
     expect(screen.getByText('キャリア選定（DDS）')).toBeInTheDocument();
+    await waitFor(() => expect(mockApi.getAllDrugs).toHaveBeenCalled());
   });
 
-  it('モード切替ボタンが表示される', () => {
+  it('モード切替ボタンが表示される', async () => {
     mockApi.getAllDrugs.mockResolvedValue([]);
     mockApi.getAllGroups.mockResolvedValue([]);
 
@@ -45,6 +46,7 @@ describe('CarrierSelectionView', () => {
 
     expect(screen.getByText('個別評価')).toBeInTheDocument();
     expect(screen.getByText('グループスクリーニング')).toBeInTheDocument();
+    await waitFor(() => expect(mockApi.getAllDrugs).toHaveBeenCalled());
   });
 
   it('スクリーニングモードで評価実行後に結果が表示される', async () => {

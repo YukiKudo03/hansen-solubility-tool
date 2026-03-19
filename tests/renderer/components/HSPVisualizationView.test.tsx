@@ -19,18 +19,20 @@ beforeEach(() => {
 });
 
 describe('HSPVisualizationView', () => {
-  it('タイトルが表示される', () => {
+  it('タイトルが表示される', async () => {
     mockApi.getAllGroups.mockResolvedValue([]);
     mockApi.searchSolvents.mockResolvedValue([]);
     render(<HSPVisualizationView />);
     expect(screen.getByText('HSP 3D可視化')).toBeInTheDocument();
+    await waitFor(() => expect(mockApi.getAllGroups).toHaveBeenCalled());
   });
 
-  it('グループセレクターが表示される', () => {
+  it('グループセレクターが表示される', async () => {
     mockApi.getAllGroups.mockResolvedValue([]);
     mockApi.searchSolvents.mockResolvedValue([]);
     render(<HSPVisualizationView />);
     expect(screen.getByText(/部品グループを選択/)).toBeInTheDocument();
+    await waitFor(() => expect(mockApi.getAllGroups).toHaveBeenCalled());
   });
 
   it('グループ選択後にPlotlyチャートが表示される', async () => {
@@ -49,10 +51,11 @@ describe('HSPVisualizationView', () => {
     });
   });
 
-  it('「HSP球を表示」トグルが存在する', () => {
+  it('「HSP球を表示」トグルが存在する', async () => {
     mockApi.getAllGroups.mockResolvedValue([]);
     mockApi.searchSolvents.mockResolvedValue([]);
     render(<HSPVisualizationView />);
     expect(screen.getByText(/HSP球を表示/)).toBeInTheDocument();
+    await waitFor(() => expect(mockApi.getAllGroups).toHaveBeenCalled());
   });
 });

@@ -21,6 +21,7 @@ describe('DatabaseEditor', () => {
       render(<DatabaseEditor />);
       expect(screen.getByText('部品グループ')).toBeInTheDocument();
       expect(screen.getByText('溶媒')).toBeInTheDocument();
+      await waitFor(() => expect(mockApi.getAllGroups).toHaveBeenCalled());
     });
 
     it('「溶媒」タブクリックで溶媒テーブルが表示される', async () => {
