@@ -162,6 +162,18 @@ describe('validateMultiObjectiveInput', () => {
       targetDeltaD: 18, targetDeltaP: 10, targetDeltaH: 12, r0: -5,
     })).not.toBeNull();
   });
+
+  it('targetDeltaD が負でエラー', () => {
+    expect(validateMultiObjectiveInput({
+      targetDeltaD: -5, targetDeltaP: 10, targetDeltaH: 12, r0: 8,
+    })).not.toBeNull();
+  });
+
+  it('targetDeltaP が負でエラー', () => {
+    expect(validateMultiObjectiveInput({
+      targetDeltaD: 18, targetDeltaP: -1, targetDeltaH: 12, r0: 8,
+    })).not.toBeNull();
+  });
 });
 
 describe('validateGroupContributionInput', () => {

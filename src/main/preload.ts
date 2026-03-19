@@ -224,8 +224,16 @@ export const api = {
   getBagleyPlotData: () => ipcRenderer.invoke('visualization:bagleyPlot'),
   getProjection2DData: () => ipcRenderer.invoke('visualization:projection2d'),
 
-  // 汎用 IPC invoke (可視化パイプライン等)
-  invoke: (channel: string, ...args: unknown[]) => ipcRenderer.invoke(channel, ...args),
+  // 汎用 IPC invoke — 許可チャネルのみ通過
+  invoke: (channel: string, ...args: unknown[]) => {
+    const ALLOWED_CHANNELS = [
+      'visualization:teasPlot', 'visualization:bagleyPlot', 'visualization:projection2d',
+    ] as const;
+    if (!(ALLOWED_CHANNELS as readonly string[]).includes(channel)) {
+      return Promise.reject(new Error(`未許可のIPCチャネル: ${channel}`));
+    }
+    return ipcRenderer.invoke(channel, ...args);
+  },
 };
 
 contextBridge.exposeInMainWorld('api', api);

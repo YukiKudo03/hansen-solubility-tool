@@ -292,8 +292,8 @@ export default function MultiObjectiveView() {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {sortedResults.map((r, idx) => (
-                  <tr key={idx} className="hover:bg-gray-50">
+                {sortedResults.map((r) => (
+                  <tr key={r.solvent.id} className="hover:bg-gray-50">
                     <td className="px-3 py-2.5 text-sm font-medium text-gray-900">{r.solvent.name}</td>
                     <td className="px-3 py-2.5 text-sm text-gray-500">{r.red.toFixed(3)}</td>
                     <td className={`px-3 py-2.5 text-sm ${scoreColor(r.scores.hspMatch)}`}>{r.scores.hspMatch.toFixed(3)}</td>

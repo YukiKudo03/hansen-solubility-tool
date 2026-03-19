@@ -68,7 +68,7 @@ export function createMockApi(): { [K in keyof ElectronAPI]: ReturnType<typeof v
 
     // 膨潤度予測
     evaluateSwelling: vi.fn().mockResolvedValue(null),
-    getSwellingThresholds: vi.fn().mockResolvedValue({ minimalMax: 0.5, slightMax: 1.0, moderateMax: 2.0, severeMax: 5.0 }),
+    getSwellingThresholds: vi.fn().mockResolvedValue({ severeMax: 0.5, highMax: 1.0, moderateMax: 2.0, lowMax: 5.0 }),
     setSwellingThresholds: vi.fn().mockResolvedValue(undefined),
 
     // 薬物

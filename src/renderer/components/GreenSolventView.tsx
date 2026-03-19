@@ -177,11 +177,11 @@ export default function GreenSolventView() {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {sortedResults.map((c, idx) => {
+                {sortedResults.map((c) => {
                   const rating = c.safetyInfo?.safetyRating;
                   const badge = rating ? SAFETY_BADGE[rating] : { bg: 'bg-gray-100', text: 'text-gray-600', label: 'N/A' };
                   return (
-                    <tr key={idx} className="hover:bg-gray-50">
+                    <tr key={c.solvent.id} className="hover:bg-gray-50">
                       <td className="px-3 py-2.5 text-sm font-medium text-gray-900">{c.solvent.name}</td>
                       <td className="px-3 py-2.5 text-sm text-gray-500">{c.ra.toFixed(3)}</td>
                       <td className="px-3 py-2.5">

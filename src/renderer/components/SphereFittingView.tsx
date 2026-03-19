@@ -221,8 +221,8 @@ export default function SphereFittingView() {
                       誤分類 ({result.misclassified.length}件)
                     </h4>
                     <ul className="text-sm text-yellow-700 space-y-1">
-                      {result.misclassified.map((m, i) => (
-                        <li key={i}>
+                      {result.misclassified.map((m) => (
+                        <li key={m.name}>
                           {m.name}: 期待={m.isGood ? 'Good (球内)' : 'Bad (球外)'}, Ra={m.ra.toFixed(2)}, RED={m.red.toFixed(2)}
                         </li>
                       ))}

@@ -327,9 +327,10 @@ export function registerIpcHandlers(
     // 接触角昇順でソート
     results.sort((a, b) => a.contactAngle - b.contactAngle);
 
+    if (solvents.length === 0) throw new Error('溶媒が登録されていません');
     const result: GroupContactAngleResult = {
       partsGroup: group,
-      solvent: solvents[0],
+      solvent: results[0]?.solvent ?? solvents[0],
       results,
       evaluatedAt: new Date(),
     };

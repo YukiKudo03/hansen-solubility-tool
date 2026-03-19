@@ -286,19 +286,21 @@ export function validateAdhesionThresholds(t: unknown): string | null {
 export function validateSolventClassifications(input: unknown): string | null {
   if (!Array.isArray(input)) return '分類データは配列でなければなりません';
   if (input.length === 0) return '分類データが空です';
-  const hasGood = input.some((c: any) => c.isGood === true);
-  const hasBad = input.some((c: any) => c.isGood === false);
-  if (!hasGood) return '少なくとも1つの良溶媒が必要です';
-  if (!hasBad) return '少なくとも1つの貧溶媒が必要です';
   for (let i = 0; i < input.length; i++) {
-    const c = input[i] as any;
-    if (typeof c.solventId !== 'number' || !Number.isInteger(c.solventId) || c.solventId <= 0) {
+    const c: unknown = input[i];
+    if (c == null || typeof c !== 'object') return `分類[${i}]: オブジェクトでなければなりません`;
+    const entry = c as Record<string, unknown>;
+    if (typeof entry.solventId !== 'number' || !Number.isInteger(entry.solventId) || entry.solventId <= 0) {
       return `分類[${i}]: solventId は正の整数でなければなりません`;
     }
-    if (typeof c.isGood !== 'boolean') {
+    if (typeof entry.isGood !== 'boolean') {
       return `分類[${i}]: isGood はブーリアンでなければなりません`;
     }
   }
+  const hasGood = input.some((c) => (c as Record<string, unknown>).isGood === true);
+  const hasBad = input.some((c) => (c as Record<string, unknown>).isGood === false);
+  if (!hasGood) return '少なくとも1つの良溶媒が必要です';
+  if (!hasBad) return '少なくとも1つの貧溶媒が必要です';
   return null;
 }
 
@@ -322,6 +324,9 @@ export function validateMultiObjectiveInput(params: unknown): string | null {
   for (const k of ['targetDeltaD', 'targetDeltaP', 'targetDeltaH', 'r0']) {
     if (typeof p[k] !== 'number' || !isFinite(p[k] as number)) return `${k} は有限数値でなければなりません`;
   }
+  for (const k of ['targetDeltaD', 'targetDeltaP', 'targetDeltaH']) {
+    if ((p[k] as number) < 0) return `${k} は非負でなければなりません`;
+  }
   if ((p.r0 as number) <= 0) return 'r0 は正の数値でなければなりません';
   return null;
 }
@@ -333,16 +338,20 @@ export function validateGroupContributionInput(input: unknown): string | null {
   if (!Array.isArray(obj.firstOrderGroups)) return 'firstOrderGroups は配列でなければなりません';
   if (obj.firstOrderGroups.length === 0) return '1次基グループを少なくとも1つ指定してください';
   for (let i = 0; i < obj.firstOrderGroups.length; i++) {
-    const g = (obj.firstOrderGroups as any[])[i];
-    if (typeof g.groupId !== 'string' || g.groupId.length === 0) return `firstOrderGroups[${i}]: groupId は非空文字列でなければなりません`;
-    if (typeof g.count !== 'number' || !Number.isInteger(g.count) || g.count <= 0) return `firstOrderGroups[${i}]: count は正の整数でなければなりません`;
+    const g: unknown = (obj.firstOrderGroups as unknown[])[i];
+    if (g == null || typeof g !== 'object') return `firstOrderGroups[${i}]: オブジェクトでなければなりません`;
+    const entry = g as Record<string, unknown>;
+    if (typeof entry.groupId !== 'string' || entry.groupId.length === 0) return `firstOrderGroups[${i}]: groupId は非空文字列でなければなりません`;
+    if (typeof entry.count !== 'number' || !Number.isInteger(entry.count) || entry.count <= 0) return `firstOrderGroups[${i}]: count は正の整数でなければなりません`;
   }
   if (obj.secondOrderGroups !== undefined) {
     if (!Array.isArray(obj.secondOrderGroups)) return 'secondOrderGroups は配列でなければなりません';
     for (let i = 0; i < obj.secondOrderGroups.length; i++) {
-      const g = (obj.secondOrderGroups as any[])[i];
-      if (typeof g.groupId !== 'string' || g.groupId.length === 0) return `secondOrderGroups[${i}]: groupId は非空文字列でなければなりません`;
-      if (typeof g.count !== 'number' || !Number.isInteger(g.count) || g.count <= 0) return `secondOrderGroups[${i}]: count は正の整数でなければなりません`;
+      const g: unknown = (obj.secondOrderGroups as unknown[])[i];
+      if (g == null || typeof g !== 'object') return `secondOrderGroups[${i}]: オブジェクトでなければなりません`;
+      const entry = g as Record<string, unknown>;
+      if (typeof entry.groupId !== 'string' || entry.groupId.length === 0) return `secondOrderGroups[${i}]: groupId は非空文字列でなければなりません`;
+      if (typeof entry.count !== 'number' || !Number.isInteger(entry.count) || entry.count <= 0) return `secondOrderGroups[${i}]: count は正の整数でなければなりません`;
     }
   }
   return null;

@@ -125,8 +125,8 @@ const ProjectionChart: React.FC<ProjectionChartProps> = ({ pane, onHover }) => {
         name: point.name,
         xVal: point.x,
         yVal: point.y,
-        screenX: e.clientX - svgRect.left + svgRect.left,
-        screenY: e.clientY - svgRect.top + svgRect.top,
+        screenX: e.clientX,
+        screenY: e.clientY,
         xLabel: pane.xLabel,
         yLabel: pane.yLabel,
       });

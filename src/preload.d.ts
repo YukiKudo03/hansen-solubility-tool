@@ -133,7 +133,7 @@ export interface ElectronAPI {
   deleteHistoryOlderThan(days: number): Promise<number>;
 
   // 接着性評価
-  evaluateAdhesion(partsGroupId: number, solventId: number): Promise<any>;
+  evaluateAdhesion(partsGroupId: number, solventId: number): Promise<import('./core/types').GroupAdhesionResult>;
   getAdhesionThresholds(): Promise<import('./core/adhesion').AdhesionThresholds>;
   setAdhesionThresholds(thresholds: import('./core/adhesion').AdhesionThresholds): Promise<void>;
 
