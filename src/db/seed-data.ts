@@ -1,6 +1,6 @@
 /**
  * 初期シードデータ
- * 溶媒: AccuDyneテーブル + 文献値から約85種
+ * 溶媒: AccuDyneテーブル + 文献値から約97種
  * ポリマー: リサーチレポート6種 + 主要ポリマー追加
  */
 import Database from 'better-sqlite3';
@@ -120,6 +120,24 @@ export const SOLVENT_SEEDS: CreateSolventDto[] = [
   { name: 'ジエチルカーボネート', nameEn: 'Diethyl carbonate', casNumber: '105-58-8', deltaD: 15.1, deltaP: 3.1, deltaH: 6.1, molWeight: 118.13, molarVolume: 121.0, boilingPoint: 126.8, viscosity: 0.75, specificGravity: 0.975, surfaceTension: 26.3 },
   { name: 'トリエチルアミン', nameEn: 'Triethylamine', casNumber: '121-44-8', deltaD: 15.5, deltaP: 0.4, deltaH: 1.0, molWeight: 101.19, molarVolume: 139.6, boilingPoint: 88.8, viscosity: 0.35, specificGravity: 0.726, surfaceTension: 20.2 },
   { name: '2-ブタノン', nameEn: '2-Butanone', casNumber: '78-93-3', deltaD: 16.0, deltaP: 9.0, deltaH: 5.1, molWeight: 72.11, molarVolume: 90.1, boilingPoint: 79.6, viscosity: 0.40, specificGravity: 0.805, surfaceTension: 24.0, notes: 'MEKの別名' },
+
+  // --- グリーン/バイオベース溶媒 ---
+  { name: '2-メチルテトラヒドロフラン', nameEn: '2-MeTHF', casNumber: '96-47-9', deltaD: 16.9, deltaP: 5.0, deltaH: 4.3, molWeight: 86.13, molarVolume: 101.3, boilingPoint: 80.0, viscosity: 0.46, specificGravity: 0.855, surfaceTension: 24.8, notes: 'グリーン溶媒; バイオマス由来' },
+  { name: 'シクロペンチルメチルエーテル', nameEn: 'CPME', casNumber: '5614-37-9', deltaD: 16.4, deltaP: 4.3, deltaH: 4.3, molWeight: 100.16, molarVolume: 117.4, boilingPoint: 106.0, viscosity: 0.55, specificGravity: 0.860, surfaceTension: 24.5, notes: 'グリーン溶媒; 低水溶性' },
+  { name: 'アニソール', nameEn: 'Anisole', casNumber: '100-66-3', deltaD: 17.8, deltaP: 4.1, deltaH: 6.7, molWeight: 108.14, molarVolume: 109.3, boilingPoint: 154.0, viscosity: 1.02, specificGravity: 0.995, surfaceTension: 35.1, notes: 'グリーン溶媒; 芳香族代替' },
+  { name: 'γ-バレロラクトン', nameEn: 'GVL', casNumber: '108-29-2', deltaD: 16.9, deltaP: 11.5, deltaH: 6.3, molWeight: 100.12, molarVolume: 89.6, boilingPoint: 207.0, viscosity: 2.18, specificGravity: 1.049, surfaceTension: 34.0, notes: 'グリーン溶媒; バイオマス由来' },
+  { name: 'グリセロールカーボネート', nameEn: 'Glycerol Carbonate', casNumber: '931-40-8', deltaD: 17.4, deltaP: 22.2, deltaH: 17.8, molWeight: 118.09, molarVolume: 83.4, boilingPoint: 354.0, viscosity: 85.4, specificGravity: 1.398, surfaceTension: 43.5, notes: 'グリーン溶媒; 超高沸点' },
+  { name: 'リモネン', nameEn: 'D-Limonene', casNumber: '5989-27-5', deltaD: 17.2, deltaP: 1.8, deltaH: 4.3, molWeight: 136.23, molarVolume: 162.1, boilingPoint: 176.0, viscosity: 0.92, specificGravity: 0.842, surfaceTension: 26.2, notes: 'グリーン溶媒; 柑橘系天然溶媒' },
+  { name: 'p-シメン', nameEn: 'p-Cymene', casNumber: '99-87-6', deltaD: 17.3, deltaP: 1.0, deltaH: 2.0, molWeight: 134.22, molarVolume: 156.6, boilingPoint: 177.0, viscosity: 0.80, specificGravity: 0.857, surfaceTension: 28.0, notes: 'グリーン溶媒; テルペン系' },
+
+  // --- 高極性溶媒 ---
+  { name: 'ジエチレングリコール', nameEn: 'Diethylene Glycol', casNumber: '111-46-6', deltaD: 16.6, deltaP: 12.0, deltaH: 20.7, molWeight: 106.12, molarVolume: 95.3, boilingPoint: 245.0, viscosity: 30.2, specificGravity: 1.118, surfaceTension: 44.8, notes: 'HSPiP; 高沸点グリコール' },
+  { name: 'ジメチルイソソルビド', nameEn: 'DMI (Dimethyl Isosorbide)', casNumber: '5306-85-4', deltaD: 17.6, deltaP: 7.1, deltaH: 7.5, molWeight: 174.19, molarVolume: 155.0, boilingPoint: 234.0, viscosity: 5.30, specificGravity: 1.120, surfaceTension: 37.0, notes: 'グリーン溶媒; バイオマス由来; 化粧品向け' },
+
+  // --- 追加の工業用溶媒 ---
+  { name: '酢酸イソプロピル', nameEn: 'Isopropyl Acetate', casNumber: '108-21-4', deltaD: 15.1, deltaP: 4.7, deltaH: 8.6, molWeight: 102.13, molarVolume: 117.1, boilingPoint: 88.6, viscosity: 0.47, specificGravity: 0.872, surfaceTension: 23.4, notes: 'HSPiP; 低毒性エステル' },
+  { name: 'メシチレン', nameEn: 'Mesitylene', casNumber: '108-67-8', deltaD: 18.0, deltaP: 0.6, deltaH: 0.6, molWeight: 120.19, molarVolume: 139.6, boilingPoint: 164.7, viscosity: 0.73, specificGravity: 0.864, surfaceTension: 28.8, notes: 'HSPiP; 芳香族; 電子材料洗浄' },
+  { name: 'テトラヒドロフルフリルアルコール', nameEn: 'THFA', casNumber: '97-99-4', deltaD: 17.8, deltaP: 8.2, deltaH: 13.9, molWeight: 102.13, molarVolume: 98.6, boilingPoint: 178.0, viscosity: 5.49, specificGravity: 1.054, surfaceTension: 37.0, notes: 'グリーン溶媒; フラン系アルコール' },
 ];
 
 /** ポリマー（部品グループ＋部品）シードデータ */

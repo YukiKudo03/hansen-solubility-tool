@@ -1,6 +1,6 @@
 // @vitest-environment happy-dom
 import { describe, it, expect, beforeEach } from 'vitest';
-import { renderHook, waitFor } from '@testing-library/react';
+import { renderHook, waitFor, act } from '@testing-library/react';
 import { useSolvents } from '../../../src/renderer/hooks/useSolvents';
 import { setupMockApi } from '../setup';
 import { buildSolvent, resetIdCounter } from '../factories';
@@ -61,7 +61,7 @@ describe('useSolvents', () => {
 
     const solvents = [buildSolvent()];
     mockApi.searchSolvents.mockResolvedValue(solvents);
-    await result.current.reload();
+    await act(async () => { await result.current.reload(); });
 
     await waitFor(() => expect(result.current.solvents).toEqual(solvents));
   });

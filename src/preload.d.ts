@@ -131,6 +131,9 @@ export interface ElectronAPI {
   saveHistory(entry: import('./core/evaluation-history').SerializedHistoryEntry, note?: string): Promise<import('./db/history-repository').EvaluationHistoryRow>;
   deleteHistory(id: number): Promise<boolean>;
   deleteHistoryOlderThan(days: number): Promise<number>;
+
+  // 汎用 IPC invoke (可視化パイプライン等)
+  invoke(channel: string, ...args: unknown[]): Promise<any>;
 }
 
 declare global {

@@ -31,7 +31,7 @@ function buildSwellingResult(group: ReturnType<typeof buildPartsGroup>, solvent:
 }
 
 describe('SwellingView', () => {
-  it('タイトルとセレクターが表示される', () => {
+  it('タイトルとセレクターが表示される', async () => {
     mockApi.getAllGroups.mockResolvedValue([]);
     mockApi.searchSolvents.mockResolvedValue([]);
 
@@ -40,15 +40,17 @@ describe('SwellingView', () => {
     expect(screen.getByText('膨潤度予測')).toBeInTheDocument();
     expect(screen.getByText(/部品グループを選択/)).toBeInTheDocument();
     expect(screen.getByText(/溶媒を選択/)).toBeInTheDocument();
+    await waitFor(() => expect(mockApi.getAllGroups).toHaveBeenCalled());
   });
 
-  it('評価ボタンが表示される', () => {
+  it('評価ボタンが表示される', async () => {
     mockApi.getAllGroups.mockResolvedValue([]);
     mockApi.searchSolvents.mockResolvedValue([]);
 
     render(<SwellingView />);
 
     expect(screen.getByText('膨潤度評価')).toBeInTheDocument();
+    await waitFor(() => expect(mockApi.getAllGroups).toHaveBeenCalled());
   });
 
   it('評価実行後に結果テーブルが表示される', async () => {
@@ -87,7 +89,10 @@ describe('SwellingView', () => {
 
     render(<SwellingView />);
 
-    await waitFor(() => expect(screen.getByRole('combobox')).toBeInTheDocument());
+    await waitFor(() => {
+      const combobox = screen.getByRole('combobox');
+      expect(combobox.querySelectorAll('option').length).toBeGreaterThan(1);
+    });
     await user.selectOptions(screen.getByRole('combobox'), String(group.id));
 
     const input = screen.getByPlaceholderText(/溶媒名/);

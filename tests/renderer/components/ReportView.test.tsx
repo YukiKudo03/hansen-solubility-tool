@@ -24,6 +24,7 @@ describe('ReportView', () => {
     expect(screen.getByText('評価条件')).toBeInTheDocument();
     expect(screen.getByText(/部品グループを選択/)).toBeInTheDocument();
     expect(screen.getByText(/溶媒を選択/)).toBeInTheDocument();
+    await waitFor(() => expect(mockApi.getAllGroups).toHaveBeenCalled());
   });
 
   it('「評価実行」ボタンが表示される', async () => {
@@ -33,6 +34,7 @@ describe('ReportView', () => {
     render(<ReportView />);
 
     expect(screen.getByText('評価実行')).toBeInTheDocument();
+    await waitFor(() => expect(mockApi.getAllGroups).toHaveBeenCalled());
   });
 
   it('評価実行後にResultsTableが表示される', async () => {
@@ -79,8 +81,11 @@ describe('ReportView', () => {
 
     render(<ReportView />);
 
-    // グループ選択
-    await waitFor(() => expect(screen.getByRole('combobox')).toBeInTheDocument());
+    // グループ選択（optionがポピュレートされるまで待つ）
+    await waitFor(() => {
+      const combobox = screen.getByRole('combobox');
+      expect(combobox.querySelectorAll('option').length).toBeGreaterThan(1);
+    });
     await user.selectOptions(screen.getByRole('combobox'), String(group.id));
 
     // 溶媒選択

@@ -25,6 +25,14 @@ import type { SerializedHistoryEntry } from '../core/evaluation-history';
 import { isValidHistoryPipeline } from '../core/evaluation-history';
 import { validateBookmark } from '../core/bookmark';
 import { parseSolventCsv, parsePartCsv } from '../core/csv-import';
+import { classifyAdhesion, DEFAULT_ADHESION_THRESHOLDS } from '../core/adhesion';
+import { fitHSPSphere } from '../core/sphere-fitting';
+import { findGreenAlternatives } from '../core/green-solvent';
+import { screenMultiObjective } from '../core/multi-objective';
+import { buildTeasPlotData } from '../core/teas-plot';
+import { buildBagleyPlotData } from '../core/bagley-plot';
+import { buildProjection2DData } from '../core/projection-2d';
+import { estimateHSPStefanisPanayiotou, getAvailableFirstOrderGroups, getAvailableSecondOrderGroups } from '../core/group-contribution';
 
 /** CSVインポートの最大サイズ (10MB) */
 const MAX_CSV_SIZE = 10 * 1024 * 1024;
@@ -637,5 +645,115 @@ export function registerIpcHandlers(
     });
     if (result.canceled || result.filePaths.length === 0) return null;
     return fs.readFileSync(result.filePaths[0], 'utf-8');
+  });
+
+  // --- 接着性予測 ---
+  ipcMain.handle('adhesion:evaluate', (_, partsGroupId: number, solventId: number) => {
+    const group = partsRepo.getGroupById(partsGroupId);
+    if (!group) throw new Error(`部品グループ (ID: ${partsGroupId}) が見つかりません`);
+    const solvent = solventRepo.getSolventById(solventId);
+    if (!solvent) throw new Error(`溶媒 (ID: ${solventId}) が見つかりません`);
+
+    const thresholdsJson = settingsRepo.getSetting('adhesion_thresholds');
+    const thresholds = thresholdsJson
+      ? safeJsonParse(thresholdsJson, { ...DEFAULT_ADHESION_THRESHOLDS })
+      : { ...DEFAULT_ADHESION_THRESHOLDS };
+
+    const results = group.parts.map((part) => {
+      const ra = calculateRa(part.hsp, solvent.hsp);
+      const adhesionLevel = classifyAdhesion(ra, thresholds);
+      return { part, solvent, ra, adhesionLevel };
+    });
+
+    return {
+      partsGroup: group,
+      solvent,
+      results,
+      evaluatedAt: new Date(),
+      thresholdsUsed: thresholds,
+    };
+  });
+
+  // --- 接着性閾値設定 ---
+  ipcMain.handle('settings:getAdhesionThresholds', () => {
+    const json = settingsRepo.getSetting('adhesion_thresholds');
+    if (!json) return { ...DEFAULT_ADHESION_THRESHOLDS };
+    return safeJsonParse(json, { ...DEFAULT_ADHESION_THRESHOLDS });
+  });
+  ipcMain.handle('settings:setAdhesionThresholds', (_, thresholds) => {
+    settingsRepo.setSetting('adhesion_thresholds', JSON.stringify(thresholds));
+  });
+
+  // --- HSP球フィッティング ---
+  ipcMain.handle('sphereFitting:fit', (_, classifications: Array<{solventId: number; isGood: boolean}>) => {
+    const data = classifications.map((c) => {
+      const solvent = solventRepo.getSolventById(c.solventId);
+      if (!solvent) throw new Error(`溶媒 (ID: ${c.solventId}) が見つかりません`);
+      return { solvent: { hsp: solvent.hsp, name: solvent.name }, isGood: c.isGood };
+    });
+    return fitHSPSphere(data);
+  });
+
+  // --- グリーン溶媒代替 ---
+  ipcMain.handle('greenSolvent:find', (_, targetSolventId: number, maxResults?: number) => {
+    const target = solventRepo.getSolventById(targetSolventId);
+    if (!target) throw new Error(`溶媒 (ID: ${targetSolventId}) が見つかりません`);
+    const allSolvents = solventRepo.getAllSolvents();
+    return findGreenAlternatives(target, allSolvents, maxResults ?? 20);
+  });
+
+  // --- 多目的溶媒選定 ---
+  ipcMain.handle('multiObjective:screen', (_, params: {
+    targetDeltaD: number; targetDeltaP: number; targetDeltaH: number;
+    r0: number; weights?: import('../core/multi-objective').ObjectiveWeights;
+    preferredBoilingPointRange?: { min: number; max: number };
+    maxViscosity?: number; maxSurfaceTension?: number;
+  }) => {
+    const solvents = solventRepo.getAllSolvents();
+    return screenMultiObjective(
+      {
+        targetHSP: { deltaD: params.targetDeltaD, deltaP: params.targetDeltaP, deltaH: params.targetDeltaH },
+        r0: params.r0,
+        preferredBoilingPointRange: params.preferredBoilingPointRange,
+        maxViscosity: params.maxViscosity,
+        maxSurfaceTension: params.maxSurfaceTension,
+      },
+      solvents,
+      params.weights,
+    );
+  });
+
+  // --- Teas/Bagley/2D射影データ ---
+  ipcMain.handle('visualization:teasPlot', () => {
+    const solvents = solventRepo.getAllSolvents();
+    const groups = partsRepo.getAllGroups();
+    const parts = groups.flatMap((g) => g.parts);
+    return buildTeasPlotData(solvents, parts);
+  });
+
+  ipcMain.handle('visualization:bagleyPlot', () => {
+    const solvents = solventRepo.getAllSolvents();
+    const groups = partsRepo.getAllGroups();
+    const parts = groups.flatMap((g) => g.parts);
+    return buildBagleyPlotData(solvents, parts);
+  });
+
+  ipcMain.handle('visualization:projection2d', () => {
+    const solvents = solventRepo.getAllSolvents();
+    const groups = partsRepo.getAllGroups();
+    const parts = groups.flatMap((g) => g.parts);
+    return buildProjection2DData(solvents, parts);
+  });
+
+  // --- 族寄与法 ---
+  ipcMain.handle('groupContribution:estimate', (_, input: import('../core/group-contribution').GroupContributionInput) => {
+    return estimateHSPStefanisPanayiotou(input);
+  });
+
+  ipcMain.handle('groupContribution:getGroups', () => {
+    return {
+      firstOrder: getAvailableFirstOrderGroups(),
+      secondOrder: getAvailableSecondOrderGroups(),
+    };
   });
 }

@@ -21,7 +21,7 @@ function getSelectors() {
 }
 
 describe('PlasticizerView', () => {
-  it('タイトルとセレクターが表示される', () => {
+  it('タイトルとセレクターが表示される', async () => {
     mockApi.getAllGroups.mockResolvedValue([]);
 
     render(<PlasticizerView />);
@@ -29,14 +29,16 @@ describe('PlasticizerView', () => {
     expect(screen.getByText('可塑剤選定')).toBeInTheDocument();
     expect(screen.getByText(/部品グループを選択/)).toBeInTheDocument();
     expect(screen.getByText(/部品を選択/)).toBeInTheDocument();
+    await waitFor(() => expect(mockApi.getAllGroups).toHaveBeenCalled());
   });
 
-  it('スクリーニング実行ボタンが表示される', () => {
+  it('スクリーニング実行ボタンが表示される', async () => {
     mockApi.getAllGroups.mockResolvedValue([]);
 
     render(<PlasticizerView />);
 
     expect(screen.getByText('スクリーニング実行')).toBeInTheDocument();
+    await waitFor(() => expect(mockApi.getAllGroups).toHaveBeenCalled());
   });
 
   it('グループ選択後に部品セレクターに部品が表示される', async () => {

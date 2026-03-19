@@ -28,29 +28,33 @@ beforeEach(() => {
 });
 
 describe('App', () => {
-  it('ヘッダーにアプリタイトル表示', () => {
+  it('ヘッダーにアプリタイトル表示', async () => {
     render(<App />);
     expect(screen.getByText('Hansen溶解度パラメータ 溶解性評価ツール')).toBeInTheDocument();
+    await waitFor(() => expect(mockApi.getAllGroups).toHaveBeenCalled());
   });
 
-  it('ナビゲーションカテゴリが表示される', () => {
+  it('ナビゲーションカテゴリが表示される', async () => {
     render(<App />);
     expect(screen.getByText('評価')).toBeInTheDocument();
     expect(screen.getByText('選定')).toBeInTheDocument();
     expect(screen.getByText('最適化')).toBeInTheDocument();
     expect(screen.getByText('データ')).toBeInTheDocument();
     expect(screen.getByText('設定')).toBeInTheDocument();
+    await waitFor(() => expect(mockApi.getAllGroups).toHaveBeenCalled());
   });
 
-  it('初期タブが「溶解性評価」', () => {
+  it('初期タブが「溶解性評価」', async () => {
     render(<App />);
     expect(screen.getByText('評価条件')).toBeInTheDocument();
+    await waitFor(() => expect(mockApi.getAllGroups).toHaveBeenCalled());
   });
 
-  it('MD3 Surface背景色が適用される', () => {
+  it('MD3 Surface背景色が適用される', async () => {
     const { container } = render(<App />);
     const appRoot = container.firstChild as HTMLElement;
     expect(appRoot.className).toContain('bg-md3-surface');
+    await waitFor(() => expect(mockApi.getAllGroups).toHaveBeenCalled());
   });
 
   it('ナビ項目クリックでビューが切り替わる', async () => {
@@ -70,8 +74,9 @@ describe('App', () => {
     });
   });
 
-  it('NavigationDrawerが表示される（デスクトップ幅）', () => {
+  it('NavigationDrawerが表示される（デスクトップ幅）', async () => {
     render(<App />);
     expect(screen.getByTestId('navigation-drawer')).toBeInTheDocument();
+    await waitFor(() => expect(mockApi.getAllGroups).toHaveBeenCalled());
   });
 });

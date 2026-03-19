@@ -1,6 +1,6 @@
 # Codemaps — Architecture Documentation
 
-This directory contains token-lean architectural documentation for the Hansen Solubility project, auto-generated on 2026-03-15.
+This directory contains token-lean architectural documentation for the Hansen Solubility project, updated on 2026-03-20.
 
 ## Quick Start
 
@@ -14,13 +14,13 @@ This directory contains token-lean architectural documentation for the Hansen So
 
 | Codemap | Size | Purpose |
 |---------|------|---------|
-| [INDEX.md](./INDEX.md) | 7.4K | Navigation guide, module tour, critical paths |
-| [architecture.md](./architecture.md) | 8.8K | System diagram, IPC boundaries, data flow |
-| [frontend.md](./frontend.md) | 6.0K | React components, hooks, styling |
+| [INDEX.md](./INDEX.md) | 8.2K | Navigation guide, module tour, critical paths |
+| [architecture.md](./architecture.md) | 9.5K | System diagram, 17 evaluators, data flow |
+| [frontend.md](./frontend.md) | 7.1K | 40 components, 6 nav categories, 23 tabs |
 | [data.md](./data.md) | 5.8K | SQLite schema, repositories, seed data |
 | [dependencies.md](./dependencies.md) | 5.6K | Packages, build tools, Docker |
 
-**Total:** 940 lines, ~33.6K, ~2,800 tokens
+**Total:** 1050 lines, ~36.2K, ~3,000 tokens
 
 ## Key Information
 
@@ -31,10 +31,10 @@ This directory contains token-lean architectural documentation for the Hansen So
 - Context-isolated IPC communication
 
 ### Core Modules
-- **src/core/** — Pure TS calculations (HSP math, risk classification)
-- **src/db/** — SQLite layer (4 tables, ~85 seed solvents)
-- **src/main/** — Electron lifecycle and IPC orchestration
-- **src/renderer/** — React components and hooks
+- **src/core/** — 17 evaluation engines + 9 classifiers (38 files, 4,700 lines)
+- **src/db/** — SQLite layer (8 tables, ~145 seed solvents)
+- **src/main/** — Electron lifecycle + 100+ IPC handlers
+- **src/renderer/** — 40 React components, 19 hooks, 6 nav categories
 
 ### Evaluation Pipeline
 ```
@@ -45,7 +45,7 @@ Select Group + Solvent → Click "評価実行"
 
 ## Freshness
 
-All codemaps include generation timestamp: `<!-- Generated: 2026-03-15 | Updated: 2026-03-18 -->`
+All codemaps include generation timestamp: `<!-- Generated: 2026-03-20 -->`
 
 Update when:
 - Major feature added
@@ -79,6 +79,6 @@ These codemaps are the **single source of truth** for architecture. Reference in
 
 ---
 
-**Generated:** 2026-03-15 | **Version:** 1.4.0 | **Status:** Current (updated 2026-03-18)
+**Generated:** 2026-03-20 | **Version:** 1.5.0 | **Status:** Current (17 evaluators, 975 tests, 91% coverage)
 
 See [../.reports/codemap-diff.txt](../../.reports/codemap-diff.txt) for generation report.

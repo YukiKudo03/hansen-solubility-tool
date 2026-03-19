@@ -34,7 +34,7 @@ function buildContactAngleResult(group: ReturnType<typeof buildPartsGroup>, solv
 }
 
 describe('ContactAngleView', () => {
-  it('タイトルとセレクターが表示される', () => {
+  it('タイトルとセレクターが表示される', async () => {
     mockApi.getAllGroups.mockResolvedValue([]);
     mockApi.searchSolvents.mockResolvedValue([]);
 
@@ -42,9 +42,10 @@ describe('ContactAngleView', () => {
 
     expect(screen.getByRole('heading', { name: '接触角推定' })).toBeInTheDocument();
     expect(screen.getByText(/部品グループを選択/)).toBeInTheDocument();
+    await waitFor(() => expect(mockApi.getAllGroups).toHaveBeenCalled());
   });
 
-  it('モード切替ボタンが表示される', () => {
+  it('モード切替ボタンが表示される', async () => {
     mockApi.getAllGroups.mockResolvedValue([]);
     mockApi.searchSolvents.mockResolvedValue([]);
 
@@ -52,6 +53,7 @@ describe('ContactAngleView', () => {
 
     expect(screen.getByText('グループ評価')).toBeInTheDocument();
     expect(screen.getByText('溶媒スクリーニング')).toBeInTheDocument();
+    await waitFor(() => expect(mockApi.getAllGroups).toHaveBeenCalled());
   });
 
   it('グループモードで評価実行後に結果テーブルが表示される', async () => {

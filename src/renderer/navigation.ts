@@ -6,6 +6,8 @@ export type Tab =
   | 'report' | 'contactAngle' | 'swelling' | 'chemicalResistance'
   | 'nanoDispersion' | 'plasticizer' | 'carrierSelection'
   | 'blendOptimizer' | 'drugSolubility'
+  | 'adhesion' | 'teasPlot' | 'bagleyPlot' | 'projection2d'
+  | 'sphereFitting' | 'greenSolvent' | 'multiObjective' | 'groupContribution'
   | 'database' | 'mixture'
   | 'history' | 'comparison' | 'hspVisualization'
   | 'settings';
@@ -32,6 +34,7 @@ export const NAV_CATEGORIES: NavCategory[] = [
       { id: 'contactAngle', label: '接触角推定' },
       { id: 'swelling', label: '膨潤度予測' },
       { id: 'chemicalResistance', label: '耐薬品性予測' },
+      { id: 'adhesion', label: '接着性予測' },
     ],
   },
   {
@@ -52,7 +55,9 @@ export const NAV_CATEGORIES: NavCategory[] = [
       { id: 'blendOptimizer', label: 'ブレンド最適化' },
       { id: 'drugSolubility', label: '薬物溶解性' },
       { id: 'comparison', label: '比較レポート' },
-      { id: 'hspVisualization', label: '3D可視化' },
+      { id: 'sphereFitting', label: 'HSP球算出' },
+      { id: 'greenSolvent', label: 'グリーン溶媒' },
+      { id: 'multiObjective', label: '多目的選定' },
     ],
   },
   {
@@ -63,6 +68,18 @@ export const NAV_CATEGORIES: NavCategory[] = [
       { id: 'database', label: 'データベース編集' },
       { id: 'mixture', label: '混合溶媒' },
       { id: 'history', label: '履歴' },
+    ],
+  },
+  {
+    id: 'analysis',
+    label: '分析',
+    icon: '📈',
+    items: [
+      { id: 'hspVisualization', label: '3D可視化' },
+      { id: 'teasPlot', label: 'Teasプロット' },
+      { id: 'bagleyPlot', label: 'Bagleyプロット' },
+      { id: 'projection2d', label: '2D射影' },
+      { id: 'groupContribution', label: '族寄与法' },
     ],
   },
   {

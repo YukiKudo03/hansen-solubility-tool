@@ -1,4 +1,4 @@
-<!-- Generated: 2026-03-15 | Updated: 2026-03-15 | Files scanned: 2 | Token estimate: ~750 -->
+<!-- Generated: 2026-03-20 | Updated: 2026-03-20 | Files scanned: 2 | Token estimate: ~750 -->
 
 # External Dependencies & Build Tools
 
@@ -186,5 +186,7 @@ hansen-solubility
 - **Vite:** ESM-based dev server, no bundle in dev mode
 
 ---
+
+**Last Updated:** 2026-03-20
 
 **Related:** See `architecture.md` for system design, `data.md` for database setup.

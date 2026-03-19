@@ -190,6 +190,9 @@ export const api = {
     ipcRenderer.invoke('history:save', entry, note),
   deleteHistory: (id: number) => ipcRenderer.invoke('history:delete', id),
   deleteHistoryOlderThan: (days: number) => ipcRenderer.invoke('history:deleteOlderThan', days),
+
+  // 汎用 IPC invoke (可視化パイプライン等)
+  invoke: (channel: string, ...args: unknown[]) => ipcRenderer.invoke(channel, ...args),
 };
 
 contextBridge.exposeInMainWorld('api', api);

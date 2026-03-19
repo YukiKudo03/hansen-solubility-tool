@@ -52,7 +52,14 @@
       "Bash(git status:*)",
       "Bash(git checkout:*)",
       "Bash(gh pr:*)",
-      "Bash(git stash:*)"
+      "Bash(git stash:*)",
+      "Bash(cd:*)",
+      "Bash(grep:*)",
+      "Bash(python3:*)",
+      "Bash(do sed:*)",
+      "Bash(done)",
+      "Bash(descending)",
+      "Bash(git pull:*)"
     ]
   }
 }

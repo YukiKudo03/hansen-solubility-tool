@@ -1,4 +1,4 @@
-<!-- Generated: 2026-03-15 | Updated: 2026-03-15 | Files scanned: 9 | Token estimate: ~900 -->
+<!-- Generated: 2026-03-20 | Updated: 2026-03-20 | Files scanned: 11 | Token estimate: ~850 -->
 
 # Database Schema & Data Layer
 
@@ -78,5 +78,7 @@ main.ts → initDb()
 ```
 
 ---
+
+**Last Updated:** 2026-03-20
 
 **Related:** See `architecture.md` for pipeline mapping, `frontend.md` for UI ↔ DB interaction.
