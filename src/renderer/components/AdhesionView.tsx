@@ -3,12 +3,10 @@
  */
 import React, { useState, useMemo, useCallback } from 'react';
 import type { PartsGroup, Solvent } from '../../core/types';
+import { AdhesionLevel } from '../../core/adhesion';
 import PartsGroupSelector from './PartsGroupSelector';
 import SolventSelector from './SolventSelector';
 import SortTableHeader from './SortTableHeader';
-
-/** 接着性レベル */
-type AdhesionLevel = 'Excellent' | 'Good' | 'Fair' | 'Poor' | 'Failed';
 
 interface AdhesionResultItem {
   part: { id: number; name: string; materialType?: string };
@@ -22,22 +20,22 @@ interface AdhesionResult {
   results: AdhesionResultItem[];
 }
 
-const ADHESION_BADGE: Record<AdhesionLevel, { bg: string; text: string; label: string }> = {
-  Excellent: { bg: 'bg-green-100', text: 'text-green-800', label: '優秀' },
-  Good:      { bg: 'bg-teal-100', text: 'text-teal-800', label: '良好' },
-  Fair:      { bg: 'bg-yellow-100', text: 'text-yellow-800', label: '普通' },
-  Poor:      { bg: 'bg-orange-100', text: 'text-orange-800', label: '不良' },
-  Failed:    { bg: 'bg-red-100', text: 'text-red-800', label: '不可' },
+const ADHESION_BADGE: Record<number, { bg: string; text: string; label: string }> = {
+  [AdhesionLevel.Excellent]: { bg: 'bg-green-100', text: 'text-green-800', label: '優秀' },
+  [AdhesionLevel.Good]:      { bg: 'bg-teal-100', text: 'text-teal-800', label: '良好' },
+  [AdhesionLevel.Fair]:      { bg: 'bg-yellow-100', text: 'text-yellow-800', label: '普通' },
+  [AdhesionLevel.Poor]:      { bg: 'bg-orange-100', text: 'text-orange-800', label: '不良' },
+  [AdhesionLevel.Failed]:    { bg: 'bg-red-100', text: 'text-red-800', label: '不可' },
 };
 
 type SortKey = 'partName' | 'ra' | 'adhesionLevel';
 
-const LEVEL_ORDER: Record<AdhesionLevel, number> = {
-  Excellent: 5,
-  Good: 4,
-  Fair: 3,
-  Poor: 2,
-  Failed: 1,
+const LEVEL_ORDER: Record<number, number> = {
+  [AdhesionLevel.Excellent]: 5,
+  [AdhesionLevel.Good]: 4,
+  [AdhesionLevel.Fair]: 3,
+  [AdhesionLevel.Poor]: 2,
+  [AdhesionLevel.Failed]: 1,
 };
 
 export default function AdhesionView() {
@@ -75,7 +73,7 @@ export default function AdhesionView() {
     setLoading(true);
     setError(null);
     try {
-      const evalResult = await window.api.invoke('adhesion:evaluate', selectedGroup.id, selectedSolvent.id);
+      const evalResult = await window.api.evaluateAdhesion(selectedGroup.id, selectedSolvent.id);
       setResult(evalResult as AdhesionResult);
     } catch (e) {
       setError(e instanceof Error ? e.message : '接着性評価中にエラーが発生しました');
@@ -112,7 +110,7 @@ export default function AdhesionView() {
           cmp = a.ra - b.ra;
           break;
         case 'adhesionLevel':
-          cmp = LEVEL_ORDER[a.adhesionLevel] - LEVEL_ORDER[b.adhesionLevel];
+          cmp = (LEVEL_ORDER[a.adhesionLevel] ?? 0) - (LEVEL_ORDER[b.adhesionLevel] ?? 0);
           break;
       }
       return sortDir === 'asc' ? cmp : -cmp;
@@ -185,14 +183,14 @@ export default function AdhesionView() {
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
                 {sortedResults.map((r) => {
-                  const badge = ADHESION_BADGE[r.adhesionLevel];
+                  const badge = ADHESION_BADGE[r.adhesionLevel] ?? { bg: 'bg-gray-100', text: 'text-gray-800', label: '不明' };
                   return (
                     <tr key={r.part.id} className="hover:bg-gray-50">
                       <td className="px-3 py-2.5 text-sm font-medium text-gray-900">{r.part.name}</td>
                       <td className="px-3 py-2.5 text-sm text-gray-500">{r.ra.toFixed(3)}</td>
                       <td className="px-3 py-2.5">
                         <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium ${badge.bg} ${badge.text}`}>
-                          {r.adhesionLevel} — {badge.label}
+                          {badge.label}
                         </span>
                       </td>
                     </tr>

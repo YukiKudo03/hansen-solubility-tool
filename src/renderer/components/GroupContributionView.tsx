@@ -2,31 +2,30 @@
  * 族寄与法 — 構造基から HSP を推定 (Stefanis-Panayiotou法)
  */
 import React, { useState, useEffect, useMemo } from 'react';
+import type { GroupContributionResult } from '../../core/group-contribution';
 
-interface GroupDefinition {
-  id: number;
+interface GroupDef {
+  id: string;
   name: string;
-  description?: string;
-  order: 1 | 2;
 }
 
-interface GroupInput {
-  groupId: number;
-  count: number;
-}
+const CONFIDENCE_LABEL: Record<string, string> = {
+  high: '高',
+  medium: '中',
+  low: '低',
+};
 
-interface EstimationResult {
-  deltaD: number;
-  deltaP: number;
-  deltaH: number;
-  confidence: number;
-  warnings: string[];
-}
+const CONFIDENCE_COLOR: Record<string, string> = {
+  high: 'text-green-700',
+  medium: 'text-yellow-700',
+  low: 'text-red-700',
+};
 
 export default function GroupContributionView() {
-  const [groups, setGroups] = useState<GroupDefinition[]>([]);
-  const [counts, setCounts] = useState<Record<number, number>>({});
-  const [result, setResult] = useState<EstimationResult | null>(null);
+  const [firstOrderGroups, setFirstOrderGroups] = useState<GroupDef[]>([]);
+  const [secondOrderGroups, setSecondOrderGroups] = useState<GroupDef[]>([]);
+  const [counts, setCounts] = useState<Record<string, number>>({});
+  const [result, setResult] = useState<GroupContributionResult | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [groupsLoading, setGroupsLoading] = useState(true);
@@ -37,8 +36,9 @@ export default function GroupContributionView() {
     const load = async () => {
       setGroupsLoading(true);
       try {
-        const res = await window.api.invoke('groupContribution:getGroups');
-        setGroups(res as GroupDefinition[]);
+        const res = await window.api.getGroupContributionGroups();
+        setFirstOrderGroups(res.firstOrder);
+        setSecondOrderGroups(res.secondOrder);
       } catch (e) {
         setError(e instanceof Error ? e.message : 'グループ定義の読み込みに失敗しました');
       } finally {
@@ -48,28 +48,27 @@ export default function GroupContributionView() {
     load();
   }, []);
 
-  const firstOrderGroups = useMemo(() => groups.filter((g) => g.order === 1), [groups]);
-  const secondOrderGroups = useMemo(() => groups.filter((g) => g.order === 2), [groups]);
+  const allGroups = useMemo(() => [...firstOrderGroups, ...secondOrderGroups], [firstOrderGroups, secondOrderGroups]);
 
   const selectedGroups = useMemo(() => {
     return Object.entries(counts)
       .filter(([, count]) => count > 0)
-      .map(([idStr, count]) => {
-        const id = Number(idStr);
-        const group = groups.find((g) => g.id === id);
-        return { id, name: group?.name ?? `Group ${id}`, count, order: group?.order ?? 1 };
+      .map(([id, count]) => {
+        const group = allGroups.find((g) => g.id === id);
+        const isFirst = firstOrderGroups.some((g) => g.id === id);
+        return { id, name: group?.name ?? `Group ${id}`, count, order: isFirst ? 1 : 2 };
       })
       .sort((a, b) => a.order - b.order || a.name.localeCompare(b.name, 'ja'));
-  }, [counts, groups]);
+  }, [counts, allGroups, firstOrderGroups]);
 
   const hasFirstOrder = selectedGroups.some((g) => g.order === 1);
 
-  const handleIncrement = (id: number) => {
+  const handleIncrement = (id: string) => {
     setCounts((prev) => ({ ...prev, [id]: (prev[id] ?? 0) + 1 }));
     setResult(null);
   };
 
-  const handleDecrement = (id: number) => {
+  const handleDecrement = (id: string) => {
     setCounts((prev) => {
       const current = prev[id] ?? 0;
       if (current <= 0) return prev;
@@ -93,11 +92,18 @@ export default function GroupContributionView() {
     setLoading(true);
     setError(null);
     try {
-      const input: GroupInput[] = Object.entries(counts)
-        .filter(([, count]) => count > 0)
-        .map(([idStr, count]) => ({ groupId: Number(idStr), count }));
-      const res = await window.api.invoke('groupContribution:estimate', input);
-      setResult(res as EstimationResult);
+      const firstOrderInput = Object.entries(counts)
+        .filter(([id, count]) => count > 0 && firstOrderGroups.some((g) => g.id === id))
+        .map(([id, count]) => ({ groupId: id, count }));
+      const secondOrderInput = Object.entries(counts)
+        .filter(([id, count]) => count > 0 && secondOrderGroups.some((g) => g.id === id))
+        .map(([id, count]) => ({ groupId: id, count }));
+
+      const res = await window.api.estimateGroupContribution({
+        firstOrderGroups: firstOrderInput,
+        secondOrderGroups: secondOrderInput.length > 0 ? secondOrderInput : undefined,
+      });
+      setResult(res);
     } catch (e) {
       setError(e instanceof Error ? e.message : 'HSP推定中にエラーが発生しました');
     } finally {
@@ -105,7 +111,7 @@ export default function GroupContributionView() {
     }
   };
 
-  const renderGroupTable = (groupList: GroupDefinition[], title: string) => (
+  const renderGroupTable = (groupList: GroupDef[], title: string) => (
     <div>
       <h4 className="text-xs font-medium text-gray-600 mb-2">{title}</h4>
       <div className="border border-gray-200 rounded-md max-h-64 overflow-y-auto">
@@ -123,9 +129,6 @@ export default function GroupContributionView() {
                 <tr key={g.id} className={count > 0 ? 'bg-blue-50' : 'hover:bg-gray-50'}>
                   <td className="px-3 py-1.5 text-sm text-gray-700">
                     {g.name}
-                    {g.description && (
-                      <span className="text-xs text-gray-400 ml-1">({g.description})</span>
-                    )}
                   </td>
                   <td className="px-3 py-1.5 text-center">
                     <div className="inline-flex items-center gap-1">
@@ -153,12 +156,6 @@ export default function GroupContributionView() {
       </div>
     </div>
   );
-
-  const confidenceColor = (c: number) => {
-    if (c >= 0.8) return 'text-green-700';
-    if (c >= 0.5) return 'text-yellow-700';
-    return 'text-red-700';
-  };
 
   return (
     <div className="space-y-6">
@@ -249,20 +246,20 @@ export default function GroupContributionView() {
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
             <div className="text-center p-3 bg-blue-50 rounded-lg">
-              <div className="text-2xl font-bold text-gray-800">{result.deltaD.toFixed(2)}</div>
+              <div className="text-2xl font-bold text-gray-800">{result.hsp.deltaD.toFixed(2)}</div>
               <div className="text-xs text-gray-500">δD (MPa½)</div>
             </div>
             <div className="text-center p-3 bg-blue-50 rounded-lg">
-              <div className="text-2xl font-bold text-gray-800">{result.deltaP.toFixed(2)}</div>
+              <div className="text-2xl font-bold text-gray-800">{result.hsp.deltaP.toFixed(2)}</div>
               <div className="text-xs text-gray-500">δP (MPa½)</div>
             </div>
             <div className="text-center p-3 bg-blue-50 rounded-lg">
-              <div className="text-2xl font-bold text-gray-800">{result.deltaH.toFixed(2)}</div>
+              <div className="text-2xl font-bold text-gray-800">{result.hsp.deltaH.toFixed(2)}</div>
               <div className="text-xs text-gray-500">δH (MPa½)</div>
             </div>
             <div className="text-center p-3 bg-gray-50 rounded-lg">
-              <div className={`text-2xl font-bold ${confidenceColor(result.confidence)}`}>
-                {(result.confidence * 100).toFixed(0)}%
+              <div className={`text-2xl font-bold ${CONFIDENCE_COLOR[result.confidence] ?? 'text-gray-800'}`}>
+                {CONFIDENCE_LABEL[result.confidence] ?? result.confidence}
               </div>
               <div className="text-xs text-gray-500">信頼度</div>
             </div>

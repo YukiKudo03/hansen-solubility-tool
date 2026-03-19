@@ -122,6 +122,32 @@ export function createMockApi(): { [K in keyof ElectronAPI]: ReturnType<typeof v
     saveHistory: vi.fn().mockResolvedValue({ id: 1 }),
     deleteHistory: vi.fn().mockResolvedValue(true),
     deleteHistoryOlderThan: vi.fn().mockResolvedValue(0),
+
+    // 接着性評価
+    evaluateAdhesion: vi.fn().mockResolvedValue(null),
+    getAdhesionThresholds: vi.fn().mockResolvedValue({ excellentMax: 2.0, goodMax: 4.0, fairMax: 6.0, poorMax: 8.0 }),
+    setAdhesionThresholds: vi.fn().mockResolvedValue(undefined),
+
+    // HSP球フィッティング
+    fitSphere: vi.fn().mockResolvedValue(null),
+
+    // グリーン溶媒
+    findGreenAlternatives: vi.fn().mockResolvedValue(null),
+
+    // 多目的溶媒選定
+    screenMultiObjective: vi.fn().mockResolvedValue(null),
+
+    // 族寄与法
+    estimateGroupContribution: vi.fn().mockResolvedValue(null),
+    getGroupContributionGroups: vi.fn().mockResolvedValue({ firstOrder: [], secondOrder: [] }),
+
+    // 可視化
+    getTeasPlotData: vi.fn().mockResolvedValue(null),
+    getBagleyPlotData: vi.fn().mockResolvedValue(null),
+    getProjection2DData: vi.fn().mockResolvedValue(null),
+
+    // 汎用 IPC invoke
+    invoke: vi.fn().mockResolvedValue(null),
   };
 }
 

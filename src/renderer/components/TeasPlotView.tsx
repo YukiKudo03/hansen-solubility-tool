@@ -58,7 +58,7 @@ export default function TeasPlotView() {
   useEffect(() => {
     setLoading(true);
     setError(null);
-    window.api.invoke('visualization:teasPlot')
+    window.api.getTeasPlotData()
       .then((result: TeasPlotData) => setData(result))
       .catch((e: unknown) => {
         setError(e instanceof Error ? e.message : 'Teasプロットデータの取得に失敗しました');

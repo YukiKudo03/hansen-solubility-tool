@@ -191,6 +191,39 @@ export const api = {
   deleteHistory: (id: number) => ipcRenderer.invoke('history:delete', id),
   deleteHistoryOlderThan: (days: number) => ipcRenderer.invoke('history:deleteOlderThan', days),
 
+  // 接着性評価
+  evaluateAdhesion: (partsGroupId: number, solventId: number) =>
+    ipcRenderer.invoke('adhesion:evaluate', partsGroupId, solventId),
+  getAdhesionThresholds: () => ipcRenderer.invoke('settings:getAdhesionThresholds'),
+  setAdhesionThresholds: (thresholds: { excellentMax: number; goodMax: number; fairMax: number; poorMax: number }) =>
+    ipcRenderer.invoke('settings:setAdhesionThresholds', thresholds),
+
+  // HSP球フィッティング
+  fitSphere: (classifications: Array<{solventId: number; isGood: boolean}>) =>
+    ipcRenderer.invoke('sphereFitting:fit', classifications),
+
+  // グリーン溶媒
+  findGreenAlternatives: (targetSolventId: number, maxResults?: number) =>
+    ipcRenderer.invoke('greenSolvent:find', targetSolventId, maxResults),
+
+  // 多目的溶媒選定
+  screenMultiObjective: (params: {
+    targetDeltaD: number; targetDeltaP: number; targetDeltaH: number;
+    r0: number; weights?: Record<string, number>;
+    preferredBoilingPointRange?: { min: number; max: number };
+    maxViscosity?: number; maxSurfaceTension?: number;
+  }) => ipcRenderer.invoke('multiObjective:screen', params),
+
+  // 族寄与法
+  estimateGroupContribution: (input: { firstOrderGroups: Array<{groupId: string; count: number}>; secondOrderGroups?: Array<{groupId: string; count: number}> }) =>
+    ipcRenderer.invoke('groupContribution:estimate', input),
+  getGroupContributionGroups: () => ipcRenderer.invoke('groupContribution:getGroups'),
+
+  // 可視化
+  getTeasPlotData: () => ipcRenderer.invoke('visualization:teasPlot'),
+  getBagleyPlotData: () => ipcRenderer.invoke('visualization:bagleyPlot'),
+  getProjection2DData: () => ipcRenderer.invoke('visualization:projection2d'),
+
   // 汎用 IPC invoke (可視化パイプライン等)
   invoke: (channel: string, ...args: unknown[]) => ipcRenderer.invoke(channel, ...args),
 };

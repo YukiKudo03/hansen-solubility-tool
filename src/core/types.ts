@@ -429,22 +429,8 @@ export interface CarrierEvaluationResult {
 
 // ─── 接着性予測系 ───────────────────────────
 
-/** 接着性レベル (1=最良, 5=接着不可) — Ra小=接着性良好 */
-export enum AdhesionLevel {
-  Excellent = 1,
-  Good = 2,
-  Fair = 3,
-  Poor = 4,
-  Failed = 5,
-}
-
-/** 接着性閾値設定 (Ra値ベース) */
-export interface AdhesionThresholds {
-  excellentMax: number;
-  goodMax: number;
-  fairMax: number;
-  poorMax: number;
-}
+// AdhesionLevel, AdhesionThresholds は src/core/adhesion.ts で定義
+export { AdhesionLevel, type AdhesionThresholds } from './adhesion';
 
 /** 接着性予測結果 */
 export interface AdhesionResult {
