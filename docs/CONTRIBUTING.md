@@ -69,8 +69,8 @@ This runs two processes concurrently:
 ### Run Tests
 
 ```bash
-npm test                  # All tests
-npm run test:unit        # Core logic (31 modules)
+npm test                  # All tests (975 tests, 79 files)
+npm run test:unit        # Core logic (38 modules)
 npm run test:integration # Database operations
 npm run test:coverage    # With coverage report (target: 90%+)
 npm run test:e2e         # Playwright E2E (requires built app)
@@ -102,14 +102,16 @@ Use factories from `tests/renderer/factories.ts` for consistent test data.
 ```
 src/
 ├── core/       Pure domain logic (no I/O, 100% testable)
-│               31 modules: hsp, risk, dispersibility, wettability,
+│               38 modules: hsp, risk, dispersibility, wettability,
 │               contact-angle, contact-angle-methods, blend-optimizer,
 │               swelling, drug-solubility, chemical-resistance, plasticizer,
 │               carrier-selection, solvent-finder, report, validation, mixture,
 │               accuracy-warnings, bookmark, evaluation-history, comparison,
 │               hsp-visualization, temperature-hsp, thermal-expansion-data,
 │               csv-import, ghs-safety, group-contribution, evaporation,
-│               solubility-estimation, theme, pdf-report, types
+│               solubility-estimation, theme, pdf-report, adhesion, bagley-plot,
+│               green-solvent, multi-objective, projection-2d, sphere-fitting,
+│               teas-plot, types
 ├── db/         SQLite data access layer (repository pattern)
 │               7 repos: Parts, Solvent, NanoParticle, Drug, Settings, Bookmark, History
 │               6 seed files: solvents, nano-particles, drugs, coatings, plasticizers, carriers
@@ -117,9 +119,9 @@ src/
 ├── main/       Electron main process (lifecycle, IPC, 80+ handlers)
 │               auto-updater (electron-updater)
 └── renderer/   MD3 responsive UI (960×680)
-                navigation.ts — 5カテゴリ・15タブ定義
-                32 components (12 Views, 8 Badges, 3 Nav, 4 Selectors, etc.)
-                19 hooks (incl. useTheme, useCsvExport, useSortableTable, useBookmarks, etc.)
+                navigation.ts — 6カテゴリ・23タブ定義
+                40 components (21 Views, 8 Badges, 3 Nav, 4 Selectors, etc.)
+                20+ hooks (incl. useTheme, useCsvExport, useSortableTable, useBookmarks, etc.)
 ```
 
 See `docs/CODEMAPS/INDEX.md` for detailed architecture.
@@ -135,7 +137,7 @@ See `docs/CODEMAPS/INDEX.md` for detailed architecture.
 
 ## PR Checklist
 
-- [ ] All tests pass (`npm test` — 928+ tests)
+- [ ] All tests pass (`npm test` — 975 tests, 79 test files)
 - [ ] Type check passes (`npm run typecheck`)
 - [ ] New features have unit tests (TDD recommended)
 - [ ] UI changes have component tests

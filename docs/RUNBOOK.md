@@ -184,7 +184,7 @@ npm run docker:test:integration  # Integration tests only
 
 ```bash
 npm run typecheck         # TypeScript type checking
-npm test                  # All test suites (928+ tests)
+npm test                  # All test suites (975 tests across 79 files)
 npm run test:coverage     # Coverage report (target: 90%+)
 npm run test:e2e          # E2E tests (98+ tests)
 npm run test:literature   # Literature validation (147 cases)
@@ -193,11 +193,12 @@ npm run test:literature   # Literature validation (147 cases)
 ### Pre-release Checklist
 
 - [ ] `npm run typecheck` passes
-- [ ] `npm test` — all tests green (928+ unit tests, coverage 90%+)
+- [ ] `npm test` — all tests green (975 unit/integration/component tests, coverage 90%+)
 - [ ] `npm run test:e2e` — 98+ E2E tests pass
 - [ ] `npm run package` — installer builds successfully
 - [ ] Install and run the packaged app
 - [ ] Verify polymer evaluation workflow (select group + solvent → evaluate → export CSV)
+- [ ] Verify adhesion prediction (group + solvent → adhesion levels)
 - [ ] Verify nanoparticle dispersion screening (select particle → screen all solvents → CSV export)
 - [ ] Verify contact angle estimation (group mode + screening mode)
 - [ ] Verify solvent blend optimization (target HSP + candidate solvents → ranking)
@@ -207,8 +208,15 @@ npm run test:literature   # Literature validation (147 cases)
 - [ ] Verify chemical resistance (coating group + solvent → resistance levels)
 - [ ] Verify plasticizer selection (polymer → plasticizer screening)
 - [ ] Verify DDS carrier selection (drug + carrier group/screening)
+- [ ] Verify multi-objective solvent selection (target HSP + multiple criteria → ranking)
+- [ ] Verify green solvent screening (environmental criteria filtering)
+- [ ] Verify HSP sphere fitting (material data → optimal HSP + R₀ calculation)
 - [ ] Verify comparison report (multiple materials × solvents → heatmap)
 - [ ] Verify HSP 3D visualization (group selection → 3D plot with spheres)
+- [ ] Verify TEAS plot analysis (solvent Hansen parameters visualization)
+- [ ] Verify Bagley plot analysis (temperature-dependent viscosity)
+- [ ] Verify 2D projection analysis (dimensional reduction visualization)
+- [ ] Verify group contribution estimation (molecular structure → HSP prediction)
 - [ ] Verify bookmarks (save + restore evaluation conditions)
 - [ ] Verify evaluation history (auto-save + filter + delete)
 - [ ] Verify database editor (add/edit/delete operations for all entities)
