@@ -6,7 +6,7 @@ import path from 'path';
 import Database from 'better-sqlite3';
 import { initializeDatabase, migrateDatabase } from '../db/schema';
 import { seedDatabase } from '../db/seed-data';
-import { SqlitePartsRepository, SqliteSolventRepository, SqliteSettingsRepository, SqliteNanoParticleRepository, SqliteDrugRepository } from '../db/sqlite-repository';
+import { SqlitePartsRepository, SqliteSolventRepository, SqliteSettingsRepository, SqliteNanoParticleRepository, SqliteDrugRepository, SqliteDispersantRepository } from '../db/sqlite-repository';
 import { SqliteBookmarkRepository } from '../db/bookmark-repository';
 import { SqliteHistoryRepository } from '../db/history-repository';
 import { seedNanoParticles } from '../db/seed-nano-particles';
@@ -14,6 +14,7 @@ import { seedDrugs } from '../db/seed-drugs';
 import { seedCoatings } from '../db/seed-coatings';
 import { seedPlasticizers } from '../db/seed-plasticizers';
 import { seedCarriers } from '../db/seed-carriers';
+import { seedDispersants } from '../db/seed-dispersants';
 import { registerIpcHandlers } from './ipc-handlers';
 import { autoUpdater } from 'electron-updater';
 
@@ -51,6 +52,9 @@ function initDb(): Database.Database {
   // DDSキャリアシードデータ投入
   seedCarriers(db);
 
+  // 分散剤シードデータ投入
+  seedDispersants(db);
+
   return db;
 }
 
@@ -76,9 +80,10 @@ function createWindow(db: Database.Database): void {
   const settingsRepo = new SqliteSettingsRepository(db);
   const nanoParticleRepo = new SqliteNanoParticleRepository(db);
   const drugRepo = new SqliteDrugRepository(db);
+  const dispersantRepo = new SqliteDispersantRepository(db);
   const bookmarkRepo = new SqliteBookmarkRepository(db);
   const historyRepo = new SqliteHistoryRepository(db);
-  registerIpcHandlers(partsRepo, solventRepo, settingsRepo, nanoParticleRepo, drugRepo, bookmarkRepo, historyRepo);
+  registerIpcHandlers(partsRepo, solventRepo, settingsRepo, nanoParticleRepo, drugRepo, bookmarkRepo, historyRepo, dispersantRepo);
 
   // 開発時はVite devサーバー、本番時はビルド済みファイルを読み込む
   if (process.env.VITE_DEV_SERVER_URL) {

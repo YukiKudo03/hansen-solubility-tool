@@ -20,6 +20,7 @@ import { describe, it, expect } from 'vitest';
 import { SOLVENT_SEEDS, POLYMER_GROUP_SEEDS } from '../../src/db/seed-data';
 import { NANO_PARTICLE_SEEDS } from '../../src/db/seed-nano-particles';
 import { DRUG_SEEDS } from '../../src/db/seed-drugs';
+import { DISPERSANT_SEEDS } from '../../src/db/seed-dispersants';
 
 const HSP_TOLERANCE = 0.5; // MPa^(1/2)
 
@@ -247,5 +248,57 @@ describe('シードデータ照合: 薬物 [Abbott2010, Gharagheizi2008, HSPiP]'
 
   it('薬物シードデータの総数を確認', () => {
     expect(DRUG_SEEDS.length).toBeGreaterThanOrEqual(15);
+  });
+});
+
+// ─── 分散剤シードデータの検証 ──────────────────────────
+
+describe('シードデータ照合: 分散剤', () => {
+  const VALID_TYPES = ['polymeric', 'surfactant', 'silane_coupling', 'other'];
+
+  it('分散剤シードデータの総数を確認', () => {
+    expect(DISPERSANT_SEEDS.length).toBeGreaterThanOrEqual(10);
+  });
+
+  it('全レコードに必須フィールドが存在する', () => {
+    for (const d of DISPERSANT_SEEDS) {
+      expect(d.name, `${d.name}: name`).toBeTruthy();
+      expect(VALID_TYPES, `${d.name}: dispersantType`).toContain(d.dispersantType);
+      // アンカー基HSP
+      expect(d.anchorDeltaD, `${d.name}: anchorDeltaD`).toBeGreaterThan(0);
+      expect(d.anchorDeltaP, `${d.name}: anchorDeltaP`).toBeGreaterThanOrEqual(0);
+      expect(d.anchorDeltaH, `${d.name}: anchorDeltaH`).toBeGreaterThanOrEqual(0);
+      expect(d.anchorR0, `${d.name}: anchorR0`).toBeGreaterThan(0);
+      // 溶媒和鎖HSP
+      expect(d.solvationDeltaD, `${d.name}: solvationDeltaD`).toBeGreaterThan(0);
+      expect(d.solvationDeltaP, `${d.name}: solvationDeltaP`).toBeGreaterThanOrEqual(0);
+      expect(d.solvationDeltaH, `${d.name}: solvationDeltaH`).toBeGreaterThanOrEqual(0);
+      expect(d.solvationR0, `${d.name}: solvationR0`).toBeGreaterThan(0);
+      // 全体HSP
+      expect(d.overallDeltaD, `${d.name}: overallDeltaD`).toBeGreaterThan(0);
+      expect(d.overallDeltaP, `${d.name}: overallDeltaP`).toBeGreaterThanOrEqual(0);
+      expect(d.overallDeltaH, `${d.name}: overallDeltaH`).toBeGreaterThanOrEqual(0);
+    }
+  });
+
+  it('HSP値が妥当な範囲内 (δD: 10-25, δP: 0-25, δH: 0-45)', () => {
+    for (const d of DISPERSANT_SEEDS) {
+      for (const prefix of ['anchor', 'solvation', 'overall'] as const) {
+        const dd = d[`${prefix}DeltaD`];
+        const dp = d[`${prefix}DeltaP`];
+        const dh = d[`${prefix}DeltaH`];
+        expect(dd, `${d.name} ${prefix} δD`).toBeGreaterThanOrEqual(10);
+        expect(dd, `${d.name} ${prefix} δD`).toBeLessThanOrEqual(25);
+        expect(dp, `${d.name} ${prefix} δP`).toBeLessThanOrEqual(25);
+        expect(dh, `${d.name} ${prefix} δH`).toBeLessThanOrEqual(45);
+      }
+    }
+  });
+
+  it('全タイプがカバーされている', () => {
+    const types = new Set(DISPERSANT_SEEDS.map((d) => d.dispersantType));
+    expect(types.has('polymeric')).toBe(true);
+    expect(types.has('surfactant')).toBe(true);
+    expect(types.has('silane_coupling')).toBe(true);
   });
 });

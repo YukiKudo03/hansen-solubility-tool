@@ -3,12 +3,12 @@
  */
 import { ipcMain, dialog } from 'electron';
 import fs from 'fs';
-import type { PartsRepository, SolventRepository, SettingsRepository, NanoParticleRepository, DrugRepository } from '../db/repository';
+import type { PartsRepository, SolventRepository, SettingsRepository, NanoParticleRepository, DrugRepository, DispersantRepository } from '../db/repository';
 import { calculateRa, calculateRed } from '../core/hsp';
 import { classifyRisk } from '../core/risk';
 import { classifyDispersibility, DEFAULT_DISPERSIBILITY_THRESHOLDS } from '../core/dispersibility';
 import { screenSolvents, filterByConstraints } from '../core/solvent-finder';
-import { validatePartInput, validateSolventInput, validateName, validateThresholds, validateMixtureInput, validateNanoParticleInput, validateDispersibilityThresholds, validateWettabilityThresholds, validateBlendOptimizationInput, validateSwellingThresholds, validateDrugInput, validateDrugSolubilityThresholds, validateChemicalResistanceThresholds, validatePlasticizerThresholds, validateCarrierThresholds, validateAdhesionThresholds, validateSolventClassifications, validateGreenSolventInput, validateMultiObjectiveInput, validateGroupContributionInput } from '../core/validation';
+import { validatePartInput, validateSolventInput, validateName, validateThresholds, validateMixtureInput, validateNanoParticleInput, validateDispersibilityThresholds, validateWettabilityThresholds, validateBlendOptimizationInput, validateSwellingThresholds, validateDrugInput, validateDrugSolubilityThresholds, validateChemicalResistanceThresholds, validatePlasticizerThresholds, validateCarrierThresholds, validateAdhesionThresholds, validateSolventClassifications, validateGreenSolventInput, validateMultiObjectiveInput, validateGroupContributionInput, validateDispersantInput, validateDispersantThresholds } from '../core/validation';
 import { classifyChemicalResistance, DEFAULT_CHEMICAL_RESISTANCE_THRESHOLDS } from '../core/chemical-resistance';
 import { classifyPlasticizerCompatibility, DEFAULT_PLASTICIZER_THRESHOLDS, screenPlasticizers } from '../core/plasticizer';
 import { classifyCarrierCompatibility, DEFAULT_CARRIER_THRESHOLDS, screenCarriers } from '../core/carrier-selection';
@@ -26,6 +26,8 @@ import { isValidHistoryPipeline } from '../core/evaluation-history';
 import { validateBookmark } from '../core/bookmark';
 import { parseSolventCsv, parsePartCsv } from '../core/csv-import';
 import { classifyAdhesion, DEFAULT_ADHESION_THRESHOLDS } from '../core/adhesion';
+import { screenDispersants, screenSolventsForDispersant, screenDispersantsFallback, DEFAULT_DISPERSANT_THRESHOLDS } from '../core/dispersant-selection';
+import type { DispersantAffinityThresholds } from '../core/types';
 import { fitHSPSphere } from '../core/sphere-fitting';
 import { findGreenAlternatives } from '../core/green-solvent';
 import { screenMultiObjective } from '../core/multi-objective';
@@ -54,6 +56,7 @@ export function registerIpcHandlers(
   drugRepo: DrugRepository,
   bookmarkRepo: SqliteBookmarkRepository,
   historyRepo: SqliteHistoryRepository,
+  dispersantRepo: DispersantRepository,
 ): void {
   // --- 部品グループ ---
   ipcMain.handle('parts:getAllGroups', () => partsRepo.getAllGroups());
@@ -766,5 +769,80 @@ export function registerIpcHandlers(
       firstOrder: getAvailableFirstOrderGroups(),
       secondOrder: getAvailableSecondOrderGroups(),
     };
+  });
+
+  // --- 分散剤CRUD ---
+  ipcMain.handle('dispersants:getAll', () => dispersantRepo.getAll());
+  ipcMain.handle('dispersants:getById', (_, id: number) => dispersantRepo.getById(id));
+  ipcMain.handle('dispersants:getByType', (_, type: string) => dispersantRepo.getByType(type as import('../core/types').DispersantType));
+  ipcMain.handle('dispersants:search', (_, query: string) => dispersantRepo.search(query));
+  ipcMain.handle('dispersants:create', (_, dto) => {
+    const err = validateDispersantInput(dto);
+    if (err) throw new Error(err);
+    return dispersantRepo.create(dto);
+  });
+  ipcMain.handle('dispersants:update', (_, id, dto) => {
+    if (dto.name !== undefined) { const err = validateName(dto.name); if (err) throw new Error(err); }
+    return dispersantRepo.update(id, dto);
+  });
+  ipcMain.handle('dispersants:delete', (_, id: number) => dispersantRepo.delete(id));
+
+  // --- 分散剤選定: 分散剤スクリーニング ---
+  ipcMain.handle('dispersantSelection:screen', (_, particleId: number, solventId: number) => {
+    const particle = nanoParticleRepo.getById(particleId);
+    if (!particle) throw new Error(`ナノ粒子 (ID: ${particleId}) が見つかりません`);
+    const solvent = solventRepo.getSolventById(solventId);
+    if (!solvent) throw new Error(`溶媒 (ID: ${solventId}) が見つかりません`);
+
+    const thresholdsJson = settingsRepo.getSetting('dispersant_thresholds');
+    const thresholds: DispersantAffinityThresholds = thresholdsJson
+      ? safeJsonParse(thresholdsJson, DEFAULT_DISPERSANT_THRESHOLDS)
+      : { ...DEFAULT_DISPERSANT_THRESHOLDS };
+
+    const dispersants = dispersantRepo.getAll();
+    return screenDispersants(particle, solvent, dispersants, thresholds);
+  });
+
+  // --- 分散剤選定: 逆引き溶媒スクリーニング ---
+  ipcMain.handle('dispersantSelection:screenSolvents', (_, particleId: number, dispersantId: number) => {
+    const particle = nanoParticleRepo.getById(particleId);
+    if (!particle) throw new Error(`ナノ粒子 (ID: ${particleId}) が見つかりません`);
+    const dispersant = dispersantRepo.getById(dispersantId);
+    if (!dispersant) throw new Error(`分散剤 (ID: ${dispersantId}) が見つかりません`);
+
+    const thresholdsJson = settingsRepo.getSetting('dispersant_thresholds');
+    const thresholds: DispersantAffinityThresholds = thresholdsJson
+      ? safeJsonParse(thresholdsJson, DEFAULT_DISPERSANT_THRESHOLDS)
+      : { ...DEFAULT_DISPERSANT_THRESHOLDS };
+
+    const solvents = solventRepo.getAllSolvents();
+    return screenSolventsForDispersant(particle, dispersant, solvents, thresholds);
+  });
+
+  // --- 分散剤選定: フォールバック（全体HSPのみ） ---
+  ipcMain.handle('dispersantSelection:screenFallback', (_, particleId: number) => {
+    const particle = nanoParticleRepo.getById(particleId);
+    if (!particle) throw new Error(`ナノ粒子 (ID: ${particleId}) が見つかりません`);
+
+    const thresholdsJson = settingsRepo.getSetting('dispersant_thresholds');
+    const thresholds: DispersantAffinityThresholds = thresholdsJson
+      ? safeJsonParse(thresholdsJson, DEFAULT_DISPERSANT_THRESHOLDS)
+      : { ...DEFAULT_DISPERSANT_THRESHOLDS };
+
+    const dispersants = dispersantRepo.getAll();
+    return screenDispersantsFallback(particle, dispersants, thresholds);
+  });
+
+  // --- 分散剤選定: 閾値設定 ---
+  ipcMain.handle('settings:getDispersantThresholds', () => {
+    const json = settingsRepo.getSetting('dispersant_thresholds');
+    return json ? safeJsonParse(json, DEFAULT_DISPERSANT_THRESHOLDS) : { ...DEFAULT_DISPERSANT_THRESHOLDS };
+  });
+
+  ipcMain.handle('settings:setDispersantThresholds', (_, thresholds: DispersantAffinityThresholds) => {
+    const err = validateDispersantThresholds(thresholds);
+    if (err) throw new Error(err);
+    settingsRepo.setSetting('dispersant_thresholds', JSON.stringify(thresholds));
+    return thresholds;
   });
 }

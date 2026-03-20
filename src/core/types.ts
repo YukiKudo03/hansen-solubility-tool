@@ -476,13 +476,116 @@ export interface GreenSubstitutionResultDTO {
   evaluatedAt: Date;
 }
 
+// ─── 分散剤選定支援系 ───────────────────────────
+
+/** 分散剤タイプ */
+export type DispersantType =
+  | 'polymeric'       // 高分子分散剤
+  | 'surfactant'      // 界面活性剤
+  | 'silane_coupling'  // シランカップリング剤
+  | 'other';          // その他
+
+/** 分散剤 */
+export interface Dispersant {
+  id: number;
+  name: string;
+  nameEn: string | null;
+  dispersantType: DispersantType;
+  anchorHSP: HSPValues;     // アンカー基（粒子吸着部位）のHSP
+  anchorR0: number;         // アンカー基の相互作用半径
+  solvationHSP: HSPValues;  // 溶媒和鎖（分散媒溶解部位）のHSP
+  solvationR0: number;      // 溶媒和鎖の相互作用半径
+  overallHSP: HSPValues;    // 全体HSP（フォールバック評価用）
+  hlb: number | null;       // HLB値
+  molWeight: number | null;  // 分子量 (g/mol)
+  tradeName: string | null;  // 商品名
+  manufacturer: string | null; // メーカー名
+  notes: string | null;
+}
+
+/** 分散剤親和性レベル (1=最良, 5=不適) — RED小=親和性良好 */
+export enum DispersantAffinityLevel {
+  Excellent = 1, // 優秀（最適な分散剤候補）
+  Good = 2,      // 良好
+  Fair = 3,      // 可能（境界付近）
+  Poor = 4,      // 不良
+  Bad = 5,       // 不適
+}
+
+/** 分散剤親和性閾値設定 (RED値ベース) */
+export interface DispersantAffinityThresholds {
+  excellentMax: number;  // default: 0.5
+  goodMax: number;       // default: 0.8
+  fairMax: number;       // default: 1.0
+  poorMax: number;       // default: 1.5
+}
+
+/** 分散剤スクリーニング結果（個別） */
+export interface DispersantScreeningResult {
+  dispersant: Dispersant;
+  particle: NanoParticle;
+  solvent: Solvent;
+  raAnchor: number;
+  redAnchor: number;
+  affinityAnchor: DispersantAffinityLevel;
+  raSolvation: number;
+  redSolvation: number;
+  affinitySolvation: DispersantAffinityLevel;
+  compositeScore: number;   // 幾何平均 √(RED_a × RED_s)
+  overallLevel: DispersantAffinityLevel;
+}
+
+/** フォールバック評価結果（全体HSPのみ使用） */
+export interface DispersantFallbackResult {
+  dispersant: Dispersant;
+  particle: NanoParticle;
+  solvent: Solvent;
+  raOverall: number;
+  redOverall: number;
+  affinity: DispersantAffinityLevel;
+}
+
+/** 分散剤スクリーニング全体結果 */
+export interface DispersantEvaluationResult {
+  particle: NanoParticle;
+  solvent: Solvent;
+  results: DispersantScreeningResult[];
+  evaluatedAt: Date;
+  thresholdsUsed: DispersantAffinityThresholds;
+}
+
+/** 逆引き溶媒スクリーニング結果（個別） */
+export interface SolventForDispersantResult {
+  dispersant: Dispersant;
+  particle: NanoParticle;
+  solvent: Solvent;
+  raAnchor: number;
+  redAnchor: number;
+  affinityAnchor: DispersantAffinityLevel;
+  raSolvation: number;
+  redSolvation: number;
+  affinitySolvation: DispersantAffinityLevel;
+  compositeScore: number;
+  overallLevel: DispersantAffinityLevel;
+}
+
+/** 逆引き溶媒スクリーニング全体結果 */
+export interface SolventForDispersantEvaluationResult {
+  particle: NanoParticle;
+  dispersant: Dispersant;
+  results: SolventForDispersantResult[];
+  evaluatedAt: Date;
+  thresholdsUsed: DispersantAffinityThresholds;
+}
+
 // ─── ブックマーク系 ─────────────────────────────────
 
 /** ブックマーク対象パイプライン */
 export type BookmarkPipeline =
   | 'risk' | 'contactAngle' | 'swelling' | 'chemicalResistance'
   | 'nanoDispersion' | 'plasticizer' | 'carrierSelection'
-  | 'blendOptimizer' | 'drugSolubility' | 'adhesion';
+  | 'blendOptimizer' | 'drugSolubility' | 'adhesion'
+  | 'dispersantSelection';
 
 /** ブックマークのパラメータ（パイプラインごとに異なるが共通型で扱う） */
 export type BookmarkParams = Record<string, unknown>;

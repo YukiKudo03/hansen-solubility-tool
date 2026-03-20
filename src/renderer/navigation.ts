@@ -4,7 +4,7 @@
 
 export type Tab =
   | 'report' | 'contactAngle' | 'swelling' | 'chemicalResistance'
-  | 'nanoDispersion' | 'plasticizer' | 'carrierSelection'
+  | 'nanoDispersion' | 'plasticizer' | 'carrierSelection' | 'dispersantSelection'
   | 'blendOptimizer' | 'drugSolubility'
   | 'adhesion' | 'teasPlot' | 'bagleyPlot' | 'projection2d'
   | 'sphereFitting' | 'greenSolvent' | 'multiObjective' | 'groupContribution'
@@ -43,6 +43,7 @@ export const NAV_CATEGORIES: NavCategory[] = [
     icon: '🔍',
     items: [
       { id: 'nanoDispersion', label: 'ナノ粒子分散' },
+      { id: 'dispersantSelection', label: '分散剤選定' },
       { id: 'plasticizer', label: '可塑剤選定' },
       { id: 'carrierSelection', label: 'キャリア選定' },
     ],

@@ -1,4 +1,4 @@
-<!-- Generated: 2026-03-20 | Files scanned: 125 src | Token estimate: ~950 -->
+<!-- Generated: 2026-03-21 | Files scanned: 131 src | Token estimate: ~980 -->
 
 # Hansen Solubility System Architecture
 
@@ -19,28 +19,28 @@
 │  │ │ + CSV import     │ │          │ │ + Settings       │   │   │
 │  │ └──────────────────┘ │          │ └──────────────────┘   │   │
 │  │         ▼            │          │        ▲               │   │
-│  │ ┌──────────────────┐ │          │   19 Hooks             │   │
-│  │ │ Core (38 modules)│ │          │   8 Badges             │   │
-│  │ │ 17 evaluators    │ │          │   i18n (ja/en)         │   │
+│  │ ┌──────────────────┐ │          │   20 Hooks             │   │
+│  │ │ Core (39 modules)│ │          │   9 Badges             │   │
+│  │ │ 18 evaluators    │ │          │   i18n (ja/en)         │   │
 │  │ │ Pure functions   │ │          │   i18n (ja/en)         │   │
 │  │ └──────────────────┘ │          └────────────────────────┘   │
 │  │         ▼            │                                       │
 │  │ ┌──────────────────┐ │                                       │
-│  │ │ 7 Repositories   │ │                                       │
+│  │ │ 8 Repositories   │ │                                       │
 │  │ │ + Bookmark, Hist │ │                                       │
 │  │ └──────────────────┘ │                                       │
 │  │         ▼            │                                       │
 │  │ ┌──────────────────┐ │                                       │
 │  │ │ SQLite (WAL)     │ │                                       │
-│  │ │ 8 tables         │ │                                       │
+│  │ │ 9 tables         │ │                                       │
 │  │ └──────────────────┘ │                                       │
 │  └──────────────────────┘                                       │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
-## Evaluation Pipelines (17 total)
+## Evaluation Pipelines (18 total)
 
-### Group A: Core Classifiers (9)
+### Group A: Core Classifiers (10)
 ```
 A) Polymer Risk:        ReportView → evaluate() → Ra/RED → classifyRisk(RED小=危険)
 B) Nano Dispersion:     NanoDispersionView → screenAll() → classifyDispersibility(RED小=良好)
@@ -51,18 +51,19 @@ F) Drug Solubility:     DrugSolubilityView → screenDrugSolvents() → classify
 G) Chemical Resistance: ChemResistanceView → evaluate() → classifyChemResistance(RED大=耐性良 ※逆)
 H) Plasticizer:         PlasticizerView → screenPlasticizers() → classifyCompatibility
 I) Carrier Selection:   CarrierSelectionView → screenCarriers() → classifyCompatibility
+J) Dispersant Selection: DispersantSelectionView → screenDispersants() → dual-HSP anchor+solvation → classifyAffinity
 ```
 
 ### Group B: Advanced Evaluators (8)
 ```
-J) Adhesion:            AdhesionView → evaluateAdhesion() → 接着強度スコア
-K) TEAS Plot:           TeasPlotView → computeTeasMetrics() → 毒性/爆発/美観/安全分析
-L) Bagley Plot:         BagleyPlotView → computeBagley() → 膜形成能評価
-M) 2D Projection:       Projection2DView → project2D() → δD-δP平面上の散布図
-N) Sphere Fitting:      SphereFittingView → fitOptimalSphere() → 最適HSP球算出
-O) Green Solvent:       GreenSolventView → scoreGreenSolvent() → 環境友好性スコア
-P) Multi-Objective:     MultiObjectiveView → paretoOptimization() → Pareto最適複合選定
-Q) Group Contribution:  GroupContributionView → estimateHSPbyGroups() → 官能基HSP推定
+K) Adhesion:            AdhesionView → evaluateAdhesion() → 接着強度スコア
+L) TEAS Plot:           TeasPlotView → computeTeasMetrics() → 毒性/爆発/美観/安全分析
+M) Bagley Plot:         BagleyPlotView → computeBagley() → 膜形成能評価
+N) 2D Projection:       Projection2DView → project2D() → δD-δP平面上の散布図
+O) Sphere Fitting:      SphereFittingView → fitOptimalSphere() → 最適HSP球算出
+P) Green Solvent:       GreenSolventView → scoreGreenSolvent() → 環境友好性スコア
+Q) Multi-Objective:     MultiObjectiveView → paretoOptimization() → Pareto最適複合選定
+R) Group Contribution:  GroupContributionView → estimateHSPbyGroups() → 官能基HSP推定
 ```
 
 ### Group C: Analytics & Utilities (3)
@@ -88,7 +89,8 @@ Core Calculations:
   contact-angle-methods.ts Owens-Wendt法 — 代替接触角推定
   solubility-estimation.ts Greenhalgh式 — 溶解度mg/mL推定
 
-Advanced Analysis (新規):
+Advanced Analysis:
+  dispersant-selection.ts Dual-HSP分散剤スクリーニング（anchor+solvation）
   group-contribution.ts   Van Krevelen法 — 官能基→HSP推定 (+201行)
   adhesion.ts             接着強度計算エンジン
   teas-plot.ts            TEAS分析メトリクス
@@ -111,14 +113,14 @@ Utilities:
 
 | Layer | Location | Files | Lines | Purpose |
 |-------|----------|-------|-------|---------|
-| **Domain** | `src/core/` | 38 | 4,700 | 17 evaluators, 9 classifiers, utilities |
-| **Data** | `src/db/` | 11 | 1,680 | Schema(8 tables), 7 repos, 6 seed files |
-| **Main** | `src/main/` | 3 | 1,075 | Electron, 100+ IPC, auto-updater |
-| **UI** | `src/renderer/` | 62 | 6,770 | 40 components, 19 hooks, i18n |
-| **Tests** | `tests/` | 79 | — | 975 unit + 98 E2E |
+| **Domain** | `src/core/` | 39 | 4,900 | 18 evaluators, 10 classifiers, utilities |
+| **Data** | `src/db/` | 12 | 1,780 | Schema(9 tables), 8 repos, 7 seed files |
+| **Main** | `src/main/` | 3 | 1,100 | Electron, 110+ IPC, auto-updater |
+| **UI** | `src/renderer/` | 65 | 7,000 | 42 components, 20 hooks, i18n |
+| **Tests** | `tests/` | 133 | — | 1100+ unit/renderer + 25 E2E specs |
 
 ---
 
-**Last Updated:** 2026-03-20
+**Last Updated:** 2026-03-21
 
 **Next:** See `backend.md` for IPC/handlers, `frontend.md` for components, `data.md` for schema.

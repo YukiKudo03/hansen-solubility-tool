@@ -368,3 +368,53 @@ export function validateMixtureInput(components: { solventId: number; volumeRati
   }
   return null;
 }
+
+const VALID_DISPERSANT_TYPES = ['polymeric', 'surfactant', 'silane_coupling', 'other'];
+
+export function validateDispersantInput(input: {
+  name: string;
+  dispersantType: string;
+  anchorDeltaD: number; anchorDeltaP: number; anchorDeltaH: number; anchorR0: number;
+  solvationDeltaD: number; solvationDeltaP: number; solvationDeltaH: number; solvationR0: number;
+  overallDeltaD: number; overallDeltaP: number; overallDeltaH: number;
+  hlb?: number;
+  molWeight?: number;
+}): string | null {
+  const nameErr = validateName(input.name);
+  if (nameErr) return nameErr;
+  if (!VALID_DISPERSANT_TYPES.includes(input.dispersantType)) return '無効な分散剤タイプです';
+  // アンカー基HSP
+  const anchorHSPErr = validateHSPValues(input.anchorDeltaD, input.anchorDeltaP, input.anchorDeltaH);
+  if (anchorHSPErr) return `アンカー基: ${anchorHSPErr}`;
+  const anchorR0Err = validateR0(input.anchorR0);
+  if (anchorR0Err) return `アンカー基: ${anchorR0Err}`;
+  // 溶媒和鎖HSP
+  const solvHSPErr = validateHSPValues(input.solvationDeltaD, input.solvationDeltaP, input.solvationDeltaH);
+  if (solvHSPErr) return `溶媒和鎖: ${solvHSPErr}`;
+  const solvR0Err = validateR0(input.solvationR0);
+  if (solvR0Err) return `溶媒和鎖: ${solvR0Err}`;
+  // 全体HSP
+  const overallHSPErr = validateHSPValues(input.overallDeltaD, input.overallDeltaP, input.overallDeltaH);
+  if (overallHSPErr) return `全体: ${overallHSPErr}`;
+  // 任意項目
+  if (input.hlb !== undefined && input.hlb !== null && (!Number.isFinite(input.hlb) || input.hlb < 0)) {
+    return 'HLB値は0以上の数値を入力してください';
+  }
+  if (input.molWeight !== undefined && input.molWeight !== null && (!Number.isFinite(input.molWeight) || input.molWeight <= 0)) {
+    return '分子量は正の数値を入力してください';
+  }
+  return null;
+}
+
+export function validateDispersantThresholds(t: {
+  excellentMax: number; goodMax: number; fairMax: number; poorMax: number;
+}): string | null {
+  const vals = [t.excellentMax, t.goodMax, t.fairMax, t.poorMax];
+  if (vals.some((v) => !Number.isFinite(v) || v < 0)) {
+    return '閾値はすべて0以上の数値を入力してください';
+  }
+  if (!(t.excellentMax < t.goodMax && t.goodMax < t.fairMax && t.fairMax < t.poorMax)) {
+    return '閾値は excellentMax < goodMax < fairMax < poorMax の順でなければなりません';
+  }
+  return null;
+}

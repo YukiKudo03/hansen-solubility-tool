@@ -2,7 +2,7 @@
  * CSV レポート生成
  * BOM付きUTF-8でExcelでの文字化けを防止
  */
-import type { GroupEvaluationResult, NanoDispersionEvaluationResult, GroupContactAngleResult, GroupSwellingResult, DrugSolubilityScreeningResult, BlendOptimizationResult, GroupChemicalResistanceResult, PlasticizerEvaluationResult, CarrierEvaluationResult } from './types';
+import type { GroupEvaluationResult, NanoDispersionEvaluationResult, GroupContactAngleResult, GroupSwellingResult, DrugSolubilityScreeningResult, BlendOptimizationResult, GroupChemicalResistanceResult, PlasticizerEvaluationResult, CarrierEvaluationResult, DispersantEvaluationResult } from './types';
 import { getRiskLevelInfo } from './risk';
 import { getDispersibilityLevelInfo } from './dispersibility';
 import { getWettabilityLevelInfo } from './wettability';
@@ -11,6 +11,7 @@ import { getDrugSolubilityLevelInfo } from './drug-solubility';
 import { getChemicalResistanceLevelInfo } from './chemical-resistance';
 import { getPlasticizerCompatibilityLevelInfo } from './plasticizer';
 import { getCarrierCompatibilityLevelInfo } from './carrier-selection';
+import { getDispersantAffinityLevelInfo } from './dispersant-selection';
 
 /** CSVフィールドをエスケープする（カンマ・引用符・改行を含む場合） */
 function escapeCsvField(value: string): string {
@@ -485,6 +486,54 @@ export function formatBlendOptimizationCsv(result: BlendOptimizationResult): str
       round3(r.blendHSP.deltaP),
       round3(r.blendHSP.deltaH),
       round3(r.ra),
+      result.evaluatedAt.toISOString(),
+    ].join(',');
+  });
+
+  return BOM + [headers.join(','), ...rows].join('\r\n') + '\r\n';
+}
+
+/**
+ * 分散剤選定結果をCSV文字列に変換する
+ * @returns BOM付きUTF-8 CSV文字列
+ */
+export function formatDispersantSelectionCsv(result: DispersantEvaluationResult): string {
+  const BOM = '\uFEFF';
+  const headers = [
+    '分散剤名',
+    '分散剤タイプ',
+    '粒子名',
+    '溶媒名',
+    'アンカー基 Ra',
+    'アンカー基 RED',
+    'アンカー基 判定',
+    '溶媒和鎖 Ra',
+    '溶媒和鎖 RED',
+    '溶媒和鎖 判定',
+    '総合スコア',
+    '総合レベル',
+    '総合判定',
+    '評価日時',
+  ];
+
+  const rows = result.results.map((r) => {
+    const anchorInfo = getDispersantAffinityLevelInfo(r.affinityAnchor);
+    const solvInfo = getDispersantAffinityLevelInfo(r.affinitySolvation);
+    const overallInfo = getDispersantAffinityLevelInfo(r.overallLevel);
+    return [
+      escapeCsvField(r.dispersant.name),
+      r.dispersant.dispersantType,
+      escapeCsvField(r.particle.name),
+      escapeCsvField(r.solvent.name),
+      round3(r.raAnchor),
+      round3(r.redAnchor),
+      escapeCsvField(anchorInfo.label),
+      round3(r.raSolvation),
+      round3(r.redSolvation),
+      escapeCsvField(solvInfo.label),
+      round3(r.compositeScore),
+      `Level ${r.overallLevel}`,
+      escapeCsvField(`${overallInfo.label}（${overallInfo.description}）`),
       result.evaluatedAt.toISOString(),
     ].join(',');
   });

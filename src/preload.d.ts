@@ -1,8 +1,9 @@
 /**
  * Preload API 型定義 — window.api の型
  */
-import type { PartsGroup, Solvent, RiskThresholds, GroupEvaluationResult, NanoParticle, NanoParticleCategory, NanoDispersionEvaluationResult, DispersibilityThresholds, SolventConstraints, GroupContactAngleResult, WettabilityThresholds, Drug, GroupSwellingResult, SwellingThresholds, DrugSolubilityScreeningResult, DrugSolubilityThresholds, BlendOptimizationResult, GroupChemicalResistanceResult, ChemicalResistanceThresholds, PlasticizerEvaluationResult, PlasticizerCompatibilityThresholds, CarrierEvaluationResult, CarrierCompatibilityThresholds } from './core/types';
-import type { CreatePartsGroupDto, CreatePartDto, CreateSolventDto, CreateNanoParticleDto, CreateDrugDto } from './db/repository';
+import type { PartsGroup, Solvent, RiskThresholds, GroupEvaluationResult, NanoParticle, NanoParticleCategory, NanoDispersionEvaluationResult, DispersibilityThresholds, SolventConstraints, GroupContactAngleResult, WettabilityThresholds, Drug, GroupSwellingResult, SwellingThresholds, DrugSolubilityScreeningResult, DrugSolubilityThresholds, BlendOptimizationResult, GroupChemicalResistanceResult, ChemicalResistanceThresholds, PlasticizerEvaluationResult, PlasticizerCompatibilityThresholds, CarrierEvaluationResult, CarrierCompatibilityThresholds, Dispersant, DispersantType, DispersantEvaluationResult, DispersantAffinityThresholds, DispersantFallbackResult } from './core/types';
+import type { CreatePartsGroupDto, CreatePartDto, CreateSolventDto, CreateNanoParticleDto, CreateDrugDto, CreateDispersantDto } from './db/repository';
+import type { SolventForDispersantEvaluationResult } from './core/types';
 
 export interface ElectronAPI {
   // 部品グループ
@@ -159,6 +160,22 @@ export interface ElectronAPI {
   getTeasPlotData(): Promise<import('./core/teas-plot').TeasPlotData>;
   getBagleyPlotData(): Promise<import('./core/bagley-plot').BagleyPlotData>;
   getProjection2DData(): Promise<import('./core/projection-2d').Projection2DData>;
+
+  // 分散剤
+  getAllDispersants(): Promise<Dispersant[]>;
+  getDispersantById(id: number): Promise<Dispersant | null>;
+  getDispersantsByType(type: DispersantType): Promise<Dispersant[]>;
+  searchDispersants(query: string): Promise<Dispersant[]>;
+  createDispersant(dto: CreateDispersantDto): Promise<Dispersant>;
+  updateDispersant(id: number, dto: Partial<CreateDispersantDto>): Promise<Dispersant | null>;
+  deleteDispersant(id: number): Promise<boolean>;
+
+  // 分散剤選定
+  screenDispersants(particleId: number, solventId: number): Promise<DispersantEvaluationResult>;
+  screenSolventsForDispersant(particleId: number, dispersantId: number): Promise<SolventForDispersantEvaluationResult>;
+  screenDispersantsFallback(particleId: number): Promise<DispersantFallbackResult[]>;
+  getDispersantThresholds(): Promise<DispersantAffinityThresholds>;
+  setDispersantThresholds(thresholds: DispersantAffinityThresholds): Promise<DispersantAffinityThresholds>;
 
   // 汎用 IPC invoke (可視化パイプライン等)
   invoke(channel: string, ...args: unknown[]): Promise<any>;

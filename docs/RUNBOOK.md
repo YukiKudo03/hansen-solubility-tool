@@ -74,7 +74,7 @@ gh release create v1.x.x out/*.exe out/*.dmg out/*.AppImage --title "v1.x.x" --n
 | macOS | `~/Library/Application Support/hansen-solubility-tool/hansen.db` |
 | Linux | `~/.config/hansen-solubility-tool/hansen.db` |
 
-### Schema (8 tables)
+### Schema (9 tables)
 
 | Table | Purpose |
 |-------|---------|
@@ -83,6 +83,7 @@ gh release create v1.x.x out/*.exe out/*.dmg out/*.AppImage --title "v1.x.x" --n
 | `solvents` | 溶媒（HSP + 物性値） |
 | `nano_particles` | ナノ粒子（HSP + カテゴリ + 表面修飾） |
 | `drugs` | 薬物（HSP + logP + 治療カテゴリ） |
+| `dispersants` | 分散剤（anchor HSP + solvation HSP + HLB） |
 | `settings` | アプリ設定（閾値等、key-value） |
 | `bookmarks` | 評価条件のブックマーク |
 | `evaluation_history` | 評価履歴の自動保存（上限1000件） |
@@ -91,7 +92,7 @@ gh release create v1.x.x out/*.exe out/*.dmg out/*.AppImage --title "v1.x.x" --n
 
 On first launch:
 1. SQLite database created at user data path
-2. Schema tables created (8 tables)
+2. Schema tables created (9 tables)
 3. Migration run (adds physical property columns if upgrading from older version)
 4. Seed data loaded:
    - ~135 solvents with physical properties
@@ -101,6 +102,7 @@ On first launch:
    - 12 coating materials (「コーティング材料」group)
    - 10 plasticizers (Solvent with [可塑剤] tag)
    - 11 DDS carriers (「DDSキャリア」group)
+   - ~10 dispersants (oleylamine, PVP, SDS, Tween 80, etc.)
 
 ### Backup
 
@@ -184,7 +186,7 @@ npm run docker:test:integration  # Integration tests only
 
 ```bash
 npm run typecheck         # TypeScript type checking
-npm test                  # All test suites (1094 tests across 100 files)
+npm test                  # All test suites (1100+ tests across 100+ files)
 npm run test:coverage     # Coverage report (target: 90%+)
 npm run test:e2e          # E2E tests (98+ tests)
 npm run test:literature   # Literature validation (147 cases)
@@ -193,7 +195,7 @@ npm run test:literature   # Literature validation (147 cases)
 ### Pre-release Checklist
 
 - [ ] `npm run typecheck` passes
-- [ ] `npm test` — all tests green (1094 unit/integration/component tests, coverage 90%+)
+- [ ] `npm test` — all tests green (1100+ unit/integration/component tests, coverage 90%+)
 - [ ] `npm run test:e2e` — 98+ E2E tests pass
 - [ ] `npm run package` — installer builds successfully
 - [ ] Install and run the packaged app
@@ -208,6 +210,7 @@ npm run test:literature   # Literature validation (147 cases)
 - [ ] Verify chemical resistance (coating group + solvent → resistance levels)
 - [ ] Verify plasticizer selection (polymer → plasticizer screening)
 - [ ] Verify DDS carrier selection (drug + carrier group/screening)
+- [ ] Verify dispersant selection (particle + solvent → dual-HSP anchor/solvation ranking)
 - [ ] Verify multi-objective solvent selection (target HSP + multiple criteria → ranking)
 - [ ] Verify green solvent screening (environmental criteria filtering)
 - [ ] Verify HSP sphere fitting (material data → optimal HSP + R₀ calculation)

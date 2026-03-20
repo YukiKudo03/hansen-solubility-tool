@@ -1,6 +1,6 @@
 # Codemaps — Architecture Documentation
 
-This directory contains token-lean architectural documentation for the Hansen Solubility project, updated on 2026-03-20.
+This directory contains token-lean architectural documentation for the Hansen Solubility project, updated on 2026-03-21.
 
 ## Quick Start
 
@@ -15,8 +15,8 @@ This directory contains token-lean architectural documentation for the Hansen So
 | Codemap | Size | Purpose |
 |---------|------|---------|
 | [INDEX.md](./INDEX.md) | 8.2K | Navigation guide, module tour, critical paths |
-| [architecture.md](./architecture.md) | 9.5K | System diagram, 17 evaluators, data flow |
-| [frontend.md](./frontend.md) | 7.1K | 40 components, 6 nav categories, 23 tabs |
+| [architecture.md](./architecture.md) | 9.5K | System diagram, 18 evaluators, data flow |
+| [frontend.md](./frontend.md) | 7.1K | 42 components, 6 nav categories, 24 tabs |
 | [data.md](./data.md) | 5.8K | SQLite schema, repositories, seed data |
 | [dependencies.md](./dependencies.md) | 5.6K | Packages, build tools, Docker |
 
@@ -31,10 +31,10 @@ This directory contains token-lean architectural documentation for the Hansen So
 - Context-isolated IPC communication
 
 ### Core Modules
-- **src/core/** — 17 evaluation engines + 9 classifiers (38 files, 4,700 lines)
-- **src/db/** — SQLite layer (8 tables, ~145 seed solvents)
-- **src/main/** — Electron lifecycle + 100+ IPC handlers
-- **src/renderer/** — 40 React components, 19 hooks, 6 nav categories
+- **src/core/** — 18 evaluation engines + 10 classifiers (39 files, 4,900 lines)
+- **src/db/** — SQLite layer (9 tables, ~145 seed solvents + ~10 dispersants)
+- **src/main/** — Electron lifecycle + 110+ IPC handlers
+- **src/renderer/** — 42 React components, 20 hooks, 6 nav categories
 
 ### Evaluation Pipeline
 ```
@@ -45,7 +45,7 @@ Select Group + Solvent → Click "評価実行"
 
 ## Freshness
 
-All codemaps include generation timestamp: `<!-- Generated: 2026-03-20 -->`
+All codemaps include generation timestamp: `<!-- Generated: 2026-03-21 -->`
 
 Update when:
 - Major feature added
@@ -79,6 +79,6 @@ These codemaps are the **single source of truth** for architecture. Reference in
 
 ---
 
-**Generated:** 2026-03-20 | **Version:** 1.5.0 | **Status:** Current (17 evaluators, 1094 tests, 87%+ coverage)
+**Generated:** 2026-03-21 | **Version:** 1.6.0 | **Status:** Current (18 evaluators, 133 test files, 91% coverage)
 
 See [../.reports/codemap-diff.txt](../../.reports/codemap-diff.txt) for generation report.

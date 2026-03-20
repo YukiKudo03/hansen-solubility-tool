@@ -1,8 +1,8 @@
-<!-- Generated: 2026-03-20 | Files scanned: 225 | Token estimate: ~950 -->
+<!-- Generated: 2026-03-21 | Files scanned: 237 | Token estimate: ~980 -->
 
 # Hansen Solubility Project — Codemap Index
 
-A production-grade Electron desktop application for HSP-based material compatibility evaluation. **17 evaluation pipelines** + comparison report + 3D visualization + advanced analytics + bookmarks + evaluation history.
+A production-grade Electron desktop application for HSP-based material compatibility evaluation. **18 evaluation pipelines** + comparison report + 3D visualization + advanced analytics + bookmarks + evaluation history.
 
 ## Quick Navigation
 
@@ -10,17 +10,17 @@ A production-grade Electron desktop application for HSP-based material compatibi
 - **[architecture.md](./architecture.md)** — System diagram, pipelines, module boundaries
 
 ### Implementation Details
-- **[backend.md](./backend.md)** — IPC handlers (100+), repository pattern, validation
-- **[frontend.md](./frontend.md)** — MD3 responsive layout, 23 tabs, 19 hooks, dark mode
-- **[data.md](./data.md)** — SQLite schema (8 tables), repositories (7), seed data
+- **[backend.md](./backend.md)** — IPC handlers (110+), repository pattern, validation
+- **[frontend.md](./frontend.md)** — MD3 responsive layout, 24 tabs, 20 hooks, dark mode
+- **[data.md](./data.md)** — SQLite schema (9 tables), repositories (8), seed data
 - **[dependencies.md](./dependencies.md)** — External packages, build tools
 
 ## Key Insights
 
 ### Architecture
 - **Electron Multi-Process:** Main (business logic + IPC) ↔ Renderer (React UI)
-- **Pure Core:** `src/core/` contains no I/O — 31 modules
-- **Repository Pattern:** `src/db/` — 7 repos (Parts, Solvent, NanoParticle, Drug, Settings, Bookmark, History)
+- **Pure Core:** `src/core/` contains no I/O — 32 modules
+- **Repository Pattern:** `src/db/` — 8 repos (Parts, Solvent, NanoParticle, Drug, Dispersant, Settings, Bookmark, History)
 - **i18n:** i18next (ja/en), **Dark Mode:** Tailwind `darkMode: 'class'`
 - **Auto-Update:** electron-updater via GitHub Releases
 - **Cross-Platform:** Win (NSIS) / macOS (dmg) / Linux (AppImage)
@@ -28,7 +28,7 @@ A production-grade Electron desktop application for HSP-based material compatibi
 ### Evaluation Pipelines
 
 ```
-Core (9):
+Core (10):
   A: Polymer-Solvent Risk         → RED小=危険
   B: Nanoparticle Dispersion      → RED小=良好
   C: Contact Angle                → θ小=親水
@@ -38,16 +38,17 @@ Core (9):
   G: Chemical Resistance          → RED大=耐性良好（逆向き）
   H: Plasticizer Selection        → RED小=相溶性良好
   I: DDS Carrier Selection        → RED小=適合性良好
+  J: Dispersant Selection         → dual-HSP anchor+solvation → 複合RED
 
 Advanced (8):
-  J: Adhesion Prediction          → 接着強度評価
-  K: TEAS Plot                    → Toxic, Explosive, Aesthetic, Safe分析
-  L: Bagley Plot                  → 膜形成能評価
-  M: 2D Projection                → δD-δP平面射影
-  N: Sphere Fitting               → HSP最適球当てはめ
-  O: Green Solvent Selection      → 環境友好的溶媒評価
-  P: Multi-Objective Selection    → Pareto最適複合選定
-  Q: Group Contribution HSP       → 官能基からのHSP推定
+  K: Adhesion Prediction          → 接着強度評価
+  L: TEAS Plot                    → Toxic, Explosive, Aesthetic, Safe分析
+  M: Bagley Plot                  → 膜形成能評価
+  N: 2D Projection                → δD-δP平面射影
+  O: Sphere Fitting               → HSP最適球当てはめ
+  P: Green Solvent Selection      → 環境友好的溶媒評価
+  Q: Multi-Objective Selection    → Pareto最適複合選定
+  R: Group Contribution HSP       → 官能基からのHSP推定
 
 Analytics (3):
   + Comparison Report             → 複数材料×溶媒の横断RED比較
@@ -62,11 +63,11 @@ Analytics (3):
 - **Styling:** Tailwind CSS 3.4, MD3 design tokens, dark mode
 - **3D Plot:** Plotly.js (plotly.js-basic-dist-min)
 - **i18n:** i18next + react-i18next
-- **Testing:** Vitest 2.1 (928+ unit) + Playwright 1.58 (98+ E2E)
+- **Testing:** Vitest 2.1 (1000+ unit) + Playwright 1.58 (98+ E2E)
 
 ## Module Tour
 
-### src/core/ (38 files, ~4700 lines)
+### src/core/ (39 files, ~4900 lines)
 Pure domain logic (testable, no side effects)
 
 **計算エンジン 基本:**
@@ -82,6 +83,7 @@ Pure domain logic (testable, no side effects)
 - `hsp-visualization.ts` — 3Dプロットデータ生成
 
 **新規計算エンジン (拡張分析):**
+- `dispersant-selection.ts` — Dual-HSP分散剤スクリーニング（anchor+solvation評価）
 - `group-contribution.ts` — Van Krevelen-Hoftyzer法HSP推定 (+201行)
 - `solubility-estimation.ts` — Greenhalgh-Williams式溶解度推定
 - `adhesion.ts` — 接着強度評価エンジン
@@ -103,29 +105,29 @@ Pure domain logic (testable, no side effects)
 - `bookmark.ts`, `evaluation-history.ts`, `csv-import.ts`
 - `ghs-safety.ts`, `theme.ts`, `pdf-report.ts`
 
-### src/db/ (11 files, ~1660 lines)
-- `schema.ts` — 8 tables + 2 indexes
-- `repository.ts` — 5 repository interfaces + DTOs
-- `sqlite-repository.ts` — 5 SQLite implementations
+### src/db/ (12 files, ~1780 lines)
+- `schema.ts` — 9 tables + 2 indexes
+- `repository.ts` — 6 repository interfaces + DTOs
+- `sqlite-repository.ts` — 6 SQLite implementations
 - `bookmark-repository.ts`, `history-repository.ts` — 新機能用repos
-- 6 seed files: solvents(135), nano-particles(18), drugs(16), coatings(12), plasticizers(10), carriers(11)
+- 7 seed files: solvents(135), nano-particles(18), drugs(16), coatings(12), plasticizers(10), carriers(11), dispersants(~10)
 
 ### src/main/ (3 files, ~1075 lines)
 - `main.ts` — App startup, DB init, auto-updater
-- `ipc-handlers.ts` — **100+ IPC handlers** (CRUD + 17評価 + ブックマーク + 履歴 + インポート)
+- `ipc-handlers.ts` — **110+ IPC handlers** (CRUD + 18評価 + ブックマーク + 履歴 + インポート)
 - `preload.ts` — Context-isolated bridge
 
-### src/renderer/ (62 files, ~6770 lines)
+### src/renderer/ (65 files, ~7000 lines)
 - `App.tsx` — MD3 responsive layout + `useTheme()`
-- `navigation.ts` — 6カテゴリ・23タブ (新: 分析タブ追加)
-- `components/` — 40 components (21 Views, 8 Badges, 3 Nav, SortTableHeader, BookmarkButton, etc.)
-- `hooks/` — 19 hooks (useCsvExport, useSortableTable, useBookmarks, useTheme, etc.)
+- `navigation.ts` — 6カテゴリ・24タブ (新: 分散剤選定タブ追加)
+- `components/` — 42 components (22 Views, 9 Badges, 3 Nav, SortTableHeader, BookmarkButton, etc.)
+- `hooks/` — 20 hooks (useCsvExport, useSortableTable, useBookmarks, useTheme, useDispersantSelection, etc.)
 
 ### src/i18n/ (2 files)
 - `translations.ts` — ja/en 60+キー
 - `index.ts` — i18next初期化
 
-### tests/ (92 files, 1094+ unit + E2E combined)
+### tests/ (133 files, 1100+ unit/renderer + 25 E2E specs)
 
 ## Database Schema (8 tables)
 
@@ -136,6 +138,7 @@ Pure domain logic (testable, no side effects)
 | `solvents` | ~95 | Solvents + plasticizers (tagged) |
 | `nano_particles` | 18 | Nanoparticle materials |
 | `drugs` | 16 | Pharmaceutical APIs |
+| `dispersants` | ~10 | Surfactant dispersants (dual-HSP) |
 | `settings` | ~10 | Config (key-value) |
 | `bookmarks` | dynamic | 評価条件のブックマーク |
 | `evaluation_history` | dynamic (≤1000) | 評価結果の自動保存 |
@@ -144,13 +147,13 @@ Pure domain logic (testable, no side effects)
 
 | Category | Files | Lines | Key Contents |
 |----------|-------|-------|-------------|
-| **Core** | 38 | 4,700 | 17評価エンジン, 9分類器, ユーティリティ |
-| **Database** | 11 | 1,680 | Schema, 7 repos, 6 seed files |
-| **Main** | 3 | 1,127 | Electron, IPC (100+), preload |
-| **Renderer** | 42 | 6,770 | 40 components, 19 hooks, i18n |
-| **Tests** | 92 | — | 1094+ tests |
-| **Total** | 242 | 14,352+ | — |
+| **Core** | 39 | 4,900 | 18評価エンジン, 10分類器, ユーティリティ |
+| **Database** | 12 | 1,780 | Schema, 8 repos, 7 seed files |
+| **Main** | 3 | 1,100 | Electron, IPC (110+), preload |
+| **Renderer** | 65 | 7,000 | 42 components, 20 hooks, i18n |
+| **Tests** | 133 | — | 1100+ unit/renderer + 25 E2E |
+| **Total** | 254 | 14,880+ | — |
 
 ---
 
-**Last Updated:** 2026-03-20 | **Status:** 17 evaluation pipelines complete, test coverage 91%
+**Last Updated:** 2026-03-21 | **Status:** 18 evaluation pipelines complete, test coverage 91%

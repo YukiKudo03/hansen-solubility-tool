@@ -1,4 +1,4 @@
-<!-- Generated: 2026-03-20 | Updated: 2026-03-20 | Files scanned: 11 | Token estimate: ~850 -->
+<!-- Generated: 2026-03-21 | Updated: 2026-03-21 | Files scanned: 12 | Token estimate: ~900 -->
 
 # Database Schema & Data Layer
 
@@ -7,9 +7,9 @@
 - **File:** `{userData}/hansen.db`
 - **Driver:** better-sqlite3 12.8.0
 - **Mode:** WAL, foreign_keys ON
-- **Init:** `schema.ts` → `migrateDatabase()` → 6 seed functions
+- **Init:** `schema.ts` → `migrateDatabase()` → 7 seed functions
 
-## Tables (6)
+## Tables (7)
 
 ### parts_groups → parts (1:N, CASCADE)
 Groups of polymer/coating/carrier materials.
@@ -46,6 +46,10 @@ Chemical solvents + plasticizers (identified by `[可塑剤]` tag in notes).
 | Key Columns | name/name_en, cas_number, delta_d/p/h, r0, mol_weight, log_p, therapeutic_category |
 **Seed:** 15 drugs (鎮痛薬, 抗炎症薬, 降圧薬, 抗真菌薬, 抗菌薬, 抗てんかん薬, 気管支拡張薬, 中枢神経刺激薬)
 
+### dispersants
+| Key Columns | name, anchor_delta_d/p/h (粒子親和HSP), solvation_delta_d/p/h (溶媒親和HSP), solvation_r0, hlb, type, notes |
+**Seed:** ~10 dispersants (oleylamine, PVP, SDS, Tween 80, etc.) — dual-HSP model for anchor+solvation evaluation
+
 ### settings (KV store)
 **Keys:** risk_thresholds, dispersibility_thresholds, wettability_thresholds, swelling_thresholds, drug_solubility_thresholds, chemical_resistance_thresholds, plasticizer_thresholds, carrier_thresholds
 
@@ -59,15 +63,16 @@ Chemical solvents + plasticizers (identified by `[可塑剤]` tag in notes).
 | SolventRepository | getAllSolvents, getSolventById, searchSolvents, **getPlasticizers**, createSolvent, updateSolvent, deleteSolvent | CreateSolventDto |
 | NanoParticleRepository | getAll, getById, getByCategory, search, create, update, delete | CreateNanoParticleDto |
 | DrugRepository | getAll, getById, getByTherapeuticCategory, search, create, update, delete | CreateDrugDto |
+| **DispersantRepository** | getAll, getById, create, update, delete | CreateDispersantDto |
 | SettingsRepository | getSetting, setSetting, getThresholds, setThresholds | — |
 
-**Implementation:** `sqlite-repository.ts` — 5 classes (SqliteParts/Solvent/NanoParticle/Drug/Settings Repository)
+**Implementation:** `sqlite-repository.ts` — 6 classes (SqliteParts/Solvent/NanoParticle/Drug/Dispersant/Settings Repository)
 
 ## Seed Data Pipeline
 
 ```
 main.ts → initDb()
-  → initializeDatabase(db)    # CREATE TABLE IF NOT EXISTS (6 tables)
+  → initializeDatabase(db)    # CREATE TABLE IF NOT EXISTS (7 tables)
   → migrateDatabase(db)       # ALTER TABLE for legacy columns
   → seedDatabase(db)          # 85 solvents + 7 polymer groups (if empty)
   → seedNanoParticles(db)     # 18 nanoparticles (if empty)
@@ -75,10 +80,11 @@ main.ts → initDb()
   → seedCoatings(db)          # 12 coatings as PartsGroup (if group absent)
   → seedPlasticizers(db)      # 10 plasticizers as Solvents (if none tagged)
   → seedCarriers(db)          # 11 DDS carriers as PartsGroup (if group absent)
+  → seedDispersants(db)       # ~10 dispersants (if empty)
 ```
 
 ---
 
-**Last Updated:** 2026-03-20
+**Last Updated:** 2026-03-21
 
 **Related:** See `architecture.md` for overview, `backend.md` for repository implementation, `frontend.md` for UI interaction.

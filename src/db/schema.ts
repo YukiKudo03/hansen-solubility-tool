@@ -79,6 +79,31 @@ CREATE TABLE IF NOT EXISTS drugs (
   updated_at            TEXT DEFAULT (datetime('now'))
 );
 
+CREATE TABLE IF NOT EXISTS dispersants (
+  id                INTEGER PRIMARY KEY AUTOINCREMENT,
+  name              TEXT NOT NULL,
+  name_en           TEXT,
+  dispersant_type   TEXT NOT NULL DEFAULT 'other',
+  anchor_delta_d    REAL NOT NULL,
+  anchor_delta_p    REAL NOT NULL,
+  anchor_delta_h    REAL NOT NULL,
+  anchor_r0         REAL NOT NULL,
+  solvation_delta_d REAL NOT NULL,
+  solvation_delta_p REAL NOT NULL,
+  solvation_delta_h REAL NOT NULL,
+  solvation_r0      REAL NOT NULL,
+  overall_delta_d   REAL NOT NULL,
+  overall_delta_p   REAL NOT NULL,
+  overall_delta_h   REAL NOT NULL,
+  hlb               REAL,
+  mol_weight        REAL,
+  trade_name        TEXT,
+  manufacturer      TEXT,
+  notes             TEXT,
+  created_at        TEXT DEFAULT (datetime('now')),
+  updated_at        TEXT DEFAULT (datetime('now'))
+);
+
 CREATE TABLE IF NOT EXISTS settings (
   key   TEXT PRIMARY KEY,
   value TEXT NOT NULL
@@ -119,19 +144,50 @@ export function initializeDatabase(db: Database.Database): void {
  * ALTER TABLE ADD COLUMN は冪等に実行（既存カラムはスキップ）
  */
 export function migrateDatabase(db: Database.Database): void {
-  const columns = db.pragma('table_info(solvents)') as { name: string }[];
-  const existingCols = new Set(columns.map((c) => c.name));
+  // 溶媒テーブルへのカラム追加
+  const solventColumns = db.pragma('table_info(solvents)') as { name: string }[];
+  const existingSolventCols = new Set(solventColumns.map((c) => c.name));
 
-  const newColumns = [
+  const solventNewCols: Array<{ name: string; type: string }> = [
     { name: 'boiling_point', type: 'REAL' },
     { name: 'viscosity', type: 'REAL' },
     { name: 'specific_gravity', type: 'REAL' },
     { name: 'surface_tension', type: 'REAL' },
   ];
 
-  for (const col of newColumns) {
-    if (!existingCols.has(col.name)) {
-      db.exec(`ALTER TABLE solvents ADD COLUMN ${col.name} ${col.type}`);
+  for (const col of solventNewCols) {
+    if (!existingSolventCols.has(col.name)) {
+      db.prepare(`ALTER TABLE solvents ADD COLUMN ${col.name} ${col.type}`).run();
     }
   }
+
+  // dispersantsテーブルの冪等作成（既存DBへのマイグレーション対応）
+  db.exec(DISPERSANTS_TABLE_SQL);
 }
+
+const DISPERSANTS_TABLE_SQL = `
+  CREATE TABLE IF NOT EXISTS dispersants (
+    id                INTEGER PRIMARY KEY AUTOINCREMENT,
+    name              TEXT NOT NULL,
+    name_en           TEXT,
+    dispersant_type   TEXT NOT NULL DEFAULT 'other',
+    anchor_delta_d    REAL NOT NULL,
+    anchor_delta_p    REAL NOT NULL,
+    anchor_delta_h    REAL NOT NULL,
+    anchor_r0         REAL NOT NULL,
+    solvation_delta_d REAL NOT NULL,
+    solvation_delta_p REAL NOT NULL,
+    solvation_delta_h REAL NOT NULL,
+    solvation_r0      REAL NOT NULL,
+    overall_delta_d   REAL NOT NULL,
+    overall_delta_p   REAL NOT NULL,
+    overall_delta_h   REAL NOT NULL,
+    hlb               REAL,
+    mol_weight        REAL,
+    trade_name        TEXT,
+    manufacturer      TEXT,
+    notes             TEXT,
+    created_at        TEXT DEFAULT (datetime('now')),
+    updated_at        TEXT DEFAULT (datetime('now'))
+  );
+`;

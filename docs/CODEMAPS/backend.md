@@ -1,4 +1,4 @@
-<!-- Generated: 2026-03-20 | Files scanned: 14 main/db | Token estimate: ~950 -->
+<!-- Generated: 2026-03-21 | Files scanned: 15 main/db | Token estimate: ~980 -->
 
 # Backend — Main Process & IPC Handlers
 
@@ -23,7 +23,7 @@ main.ts → initDb() → Database initialization
 5. Configure auto-updater (electron-updater)
 6. Load dev server or production HTML
 
-## IPC Handlers (src/main/ipc-handlers.ts — 770 lines)
+## IPC Handlers (src/main/ipc-handlers.ts — 820 lines)
 
 ### Pattern
 
@@ -40,7 +40,7 @@ All handlers:
 - No async (synchronous DB)
 - Return serializable objects
 
-### Handler Categories (100+)
+### Handler Categories (110+)
 
 #### Parts Management (8)
 ```
@@ -129,13 +129,22 @@ carrierSelection:screen(drugId)
   • screenCarriers(drug, carriers) → compatibility ranking
 ```
 
-#### Pipeline J: Adhesion (1)
+#### Pipeline J: Dispersant Selection (4)
+```
+dispersants:getAll/getById/create/update/delete (5 handlers)
+dispersants:screen(particleId, solventId)
+  • evaluateAnchorAffinity(dispersant, particle) → RED_anchor
+  • evaluateSolvationCompatibility(dispersant, solvent) → RED_solvation
+  • compositeRed = √(RED_a × RED_s) → classifyAffinity
+```
+
+#### Pipeline K: Adhesion (1)
 ```
 adhesion:evaluate(groupId, solventId)
   • classifyAdhesion(RED, thresholds) → adhesion strength score
 ```
 
-#### Pipeline K-Q: Advanced Analytics (8)
+#### Pipeline L-R: Advanced Analytics (8)
 ```
 sphereFitting:fitOptimalSphere(solventIds) → HSP球当てはめ
 greenSolvent:findAlternatives(solventId) → eco-friendly ranking
@@ -228,6 +237,14 @@ interface DrugRepository {
   delete(id)
 }
 
+interface DispersantRepository {
+  getAll(): Dispersant[]
+  getById(id): Dispersant | null
+  create(dto): Dispersant
+  update(id, dto)
+  delete(id)
+}
+
 interface SettingsRepository {
   getSetting(key): string | null
   setSetting(key, value)
@@ -257,6 +274,7 @@ class SqlitePartsRepository { /* 150+ lines */ }
 class SqliteSolventRepository { /* 120+ lines */ }
 class SqliteNanoParticleRepository { /* 100+ lines */ }
 class SqliteDrugRepository { /* 100+ lines */ }
+class SqliteDispersantRepository { /* 100+ lines */ }
 class SqliteSettingsRepository { /* 80+ lines */ }
 class SqliteBookmarkRepository { /* 100+ lines */ }
 class SqliteHistoryRepository { /* 150+ lines */ }
@@ -266,7 +284,7 @@ All use `db.prepare(sql).run()` / `.get()` / `.all()`.
 
 ## Database Schema (schema.ts)
 
-### 8 Tables
+### 9 Tables
 
 | Table | Columns | Constraints | Seed |
 |-------|---------|-------------|------|
@@ -275,6 +293,7 @@ All use `db.prepare(sql).run()` / `.get()` / `.all()`.
 | `solvents` | id, name, name_en, cas_number, hsp.*, molar_volume, boiling_point, viscosity, etc. | PK id | ~95 solvents + plasticizers |
 | `nano_particles` | id, name, category, core_material, hsp.*, r0, particle_size, created_at | PK id | 18 particles |
 | `drugs` | id, name, name_en, cas_number, hsp.*, r0, therapeutic_category, created_at | PK id | 16 drugs |
+| `dispersants` | id, name, anchor_d/p/h, solvation_d/p/h, solvation_r0, hlb, type, notes | PK id | ~10 dispersants |
 | `settings` | key, value | PK key | ~10 threshold configs |
 | `bookmarks` | id, pipeline, name, conditions (JSON), created_at, updated_at | PK id | (user-created) |
 | `evaluation_history` | id, pipeline, conditions (JSON), results (JSON), status, created_at | PK id, auto-prune ≤1000 | (auto-saved) |
@@ -292,6 +311,7 @@ initDb() {
   seedCoatings(db)            // Insert coating PartsGroup
   seedPlasticizers(db)        // Insert plasticizer Solvents (tagged)
   seedCarriers(db)            // Insert DDS carrier PartsGroup
+  seedDispersants(db)         // Insert ~10 dispersants (if empty)
   return db
 }
 ```
@@ -316,6 +336,7 @@ ipcMain.handle('parts:create', (_, dto) => {
 - `validateThresholds()` — all pipelines' threshold objects
 - `validateNanoParticleInput()` — category + HSP + r0
 - `validateDrugInput()` — name + HSP + therapeutic category
+- `validateDispersantInput()` — name + anchor HSP + solvation HSP + solvation r0
 - `validateBlendOptimizationInput()` — target HSP + part IDs
 
 ## Preload Bridge (preload.ts)
@@ -337,4 +358,4 @@ Whitelist pattern prevents arbitrary IPC calls.
 
 **Related:** See `architecture.md` for overview, `frontend.md` for UI components, `data.md` for repository interfaces.
 
-**Last Updated:** 2026-03-20
+**Last Updated:** 2026-03-21

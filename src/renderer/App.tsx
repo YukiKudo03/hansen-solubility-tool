@@ -19,6 +19,7 @@ import BlendOptimizerView from './components/BlendOptimizerView';
 import ChemicalResistanceView from './components/ChemicalResistanceView';
 import PlasticizerView from './components/PlasticizerView';
 import CarrierSelectionView from './components/CarrierSelectionView';
+import DispersantSelectionView from './components/DispersantSelectionView';
 import EvaluationHistoryView from './components/EvaluationHistoryView';
 import ComparisonView from './components/ComparisonView';
 import HSPVisualizationView from './components/HSPVisualizationView';
@@ -35,6 +36,7 @@ const VIEW_MAP: Record<Tab, React.ComponentType> = {
   chemicalResistance: ChemicalResistanceView,
   plasticizer: PlasticizerView,
   carrierSelection: CarrierSelectionView,
+  dispersantSelection: DispersantSelectionView,
   history: EvaluationHistoryView,
   comparison: ComparisonView,
   hspVisualization: HSPVisualizationView,
