@@ -184,7 +184,7 @@ npm run docker:test:integration  # Integration tests only
 
 ```bash
 npm run typecheck         # TypeScript type checking
-npm test                  # All test suites (975 tests across 79 files)
+npm test                  # All test suites (1094 tests across 100 files)
 npm run test:coverage     # Coverage report (target: 90%+)
 npm run test:e2e          # E2E tests (98+ tests)
 npm run test:literature   # Literature validation (147 cases)
@@ -193,7 +193,7 @@ npm run test:literature   # Literature validation (147 cases)
 ### Pre-release Checklist
 
 - [ ] `npm run typecheck` passes
-- [ ] `npm test` — all tests green (975 unit/integration/component tests, coverage 90%+)
+- [ ] `npm test` — all tests green (1094 unit/integration/component tests, coverage 90%+)
 - [ ] `npm run test:e2e` — 98+ E2E tests pass
 - [ ] `npm run package` — installer builds successfully
 - [ ] Install and run the packaged app

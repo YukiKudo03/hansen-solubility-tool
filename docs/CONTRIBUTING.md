@@ -69,7 +69,7 @@ This runs two processes concurrently:
 ### Run Tests
 
 ```bash
-npm test                  # All tests (975 tests, 79 files)
+npm test                  # All tests (1094 tests, 100 files)
 npm run test:unit        # Core logic (38 modules)
 npm run test:integration # Database operations
 npm run test:coverage    # With coverage report (target: 90%+)
@@ -137,7 +137,7 @@ See `docs/CODEMAPS/INDEX.md` for detailed architecture.
 
 ## PR Checklist
 
-- [ ] All tests pass (`npm test` — 975 tests, 79 test files)
+- [ ] All tests pass (`npm test` — 1094 tests, 100 test files)
 - [ ] Type check passes (`npm run typecheck`)
 - [ ] New features have unit tests (TDD recommended)
 - [ ] UI changes have component tests

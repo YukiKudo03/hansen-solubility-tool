@@ -125,8 +125,8 @@ const ProjectionChart: React.FC<ProjectionChartProps> = ({ pane, onHover }) => {
         name: point.name,
         xVal: point.x,
         yVal: point.y,
-        screenX: e.clientX - svgRect.left + svgRect.left,
-        screenY: e.clientY - svgRect.top + svgRect.top,
+        screenX: e.clientX,
+        screenY: e.clientY,
         xLabel: pane.xLabel,
         yLabel: pane.yLabel,
       });
@@ -265,7 +265,7 @@ export default function Projection2DView() {
   useEffect(() => {
     setLoading(true);
     setError(null);
-    window.api.invoke('visualization:projection2d')
+    window.api.getProjection2DData()
       .then((result: Projection2DData) => setData(result))
       .catch((e: unknown) => {
         setError(e instanceof Error ? e.message : '2D射影データの取得に失敗しました');

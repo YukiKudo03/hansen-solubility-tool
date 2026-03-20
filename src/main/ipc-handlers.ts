@@ -8,7 +8,7 @@ import { calculateRa, calculateRed } from '../core/hsp';
 import { classifyRisk } from '../core/risk';
 import { classifyDispersibility, DEFAULT_DISPERSIBILITY_THRESHOLDS } from '../core/dispersibility';
 import { screenSolvents, filterByConstraints } from '../core/solvent-finder';
-import { validatePartInput, validateSolventInput, validateName, validateThresholds, validateMixtureInput, validateNanoParticleInput, validateDispersibilityThresholds, validateWettabilityThresholds, validateBlendOptimizationInput, validateSwellingThresholds, validateDrugInput, validateDrugSolubilityThresholds, validateChemicalResistanceThresholds, validatePlasticizerThresholds, validateCarrierThresholds } from '../core/validation';
+import { validatePartInput, validateSolventInput, validateName, validateThresholds, validateMixtureInput, validateNanoParticleInput, validateDispersibilityThresholds, validateWettabilityThresholds, validateBlendOptimizationInput, validateSwellingThresholds, validateDrugInput, validateDrugSolubilityThresholds, validateChemicalResistanceThresholds, validatePlasticizerThresholds, validateCarrierThresholds, validateAdhesionThresholds, validateSolventClassifications, validateGreenSolventInput, validateMultiObjectiveInput, validateGroupContributionInput } from '../core/validation';
 import { classifyChemicalResistance, DEFAULT_CHEMICAL_RESISTANCE_THRESHOLDS } from '../core/chemical-resistance';
 import { classifyPlasticizerCompatibility, DEFAULT_PLASTICIZER_THRESHOLDS, screenPlasticizers } from '../core/plasticizer';
 import { classifyCarrierCompatibility, DEFAULT_CARRIER_THRESHOLDS, screenCarriers } from '../core/carrier-selection';
@@ -327,9 +327,10 @@ export function registerIpcHandlers(
     // 接触角昇順でソート
     results.sort((a, b) => a.contactAngle - b.contactAngle);
 
+    if (solvents.length === 0) throw new Error('溶媒が登録されていません');
     const result: GroupContactAngleResult = {
       partsGroup: group,
-      solvent: solvents[0],
+      solvent: results[0]?.solvent ?? solvents[0],
       results,
       evaluatedAt: new Date(),
     };
@@ -681,11 +682,15 @@ export function registerIpcHandlers(
     return safeJsonParse(json, { ...DEFAULT_ADHESION_THRESHOLDS });
   });
   ipcMain.handle('settings:setAdhesionThresholds', (_, thresholds) => {
+    const err = validateAdhesionThresholds(thresholds);
+    if (err) throw new Error(err);
     settingsRepo.setSetting('adhesion_thresholds', JSON.stringify(thresholds));
   });
 
   // --- HSP球フィッティング ---
   ipcMain.handle('sphereFitting:fit', (_, classifications: Array<{solventId: number; isGood: boolean}>) => {
+    const classErr = validateSolventClassifications(classifications);
+    if (classErr) throw new Error(classErr);
     const data = classifications.map((c) => {
       const solvent = solventRepo.getSolventById(c.solventId);
       if (!solvent) throw new Error(`溶媒 (ID: ${c.solventId}) が見つかりません`);
@@ -696,6 +701,8 @@ export function registerIpcHandlers(
 
   // --- グリーン溶媒代替 ---
   ipcMain.handle('greenSolvent:find', (_, targetSolventId: number, maxResults?: number) => {
+    const greenErr = validateGreenSolventInput(targetSolventId, maxResults);
+    if (greenErr) throw new Error(greenErr);
     const target = solventRepo.getSolventById(targetSolventId);
     if (!target) throw new Error(`溶媒 (ID: ${targetSolventId}) が見つかりません`);
     const allSolvents = solventRepo.getAllSolvents();
@@ -709,6 +716,8 @@ export function registerIpcHandlers(
     preferredBoilingPointRange?: { min: number; max: number };
     maxViscosity?: number; maxSurfaceTension?: number;
   }) => {
+    const moErr = validateMultiObjectiveInput(params);
+    if (moErr) throw new Error(moErr);
     const solvents = solventRepo.getAllSolvents();
     return screenMultiObjective(
       {
@@ -747,6 +756,8 @@ export function registerIpcHandlers(
 
   // --- 族寄与法 ---
   ipcMain.handle('groupContribution:estimate', (_, input: import('../core/group-contribution').GroupContributionInput) => {
+    const gcErr = validateGroupContributionInput(input);
+    if (gcErr) throw new Error(gcErr);
     return estimateHSPStefanisPanayiotou(input);
   });
 

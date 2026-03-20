@@ -189,4 +189,4 @@ hansen-solubility
 
 **Last Updated:** 2026-03-20
 
-**Related:** See `architecture.md` for system design, `data.md` for database setup.
+**Related:** See `architecture.md` for system design, `backend.md` for main process, `data.md` for database.

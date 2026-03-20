@@ -64,7 +64,7 @@ export default function BagleyPlotView() {
   useEffect(() => {
     setLoading(true);
     setError(null);
-    window.api.invoke('visualization:bagleyPlot')
+    window.api.getBagleyPlotData()
       .then((result: BagleyPlotData) => setData(result))
       .catch((e: unknown) => {
         setError(e instanceof Error ? e.message : 'Bagleyプロットデータの取得に失敗しました');

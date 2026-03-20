@@ -60,15 +60,6 @@ function objectiveFunction(
   return -score;
 }
 
-function addVertices(a: Vertex, b: Vertex, scale: number): Vertex {
-  return [
-    a[0] + scale * (b[0] - a[0]),
-    a[1] + scale * (b[1] - a[1]),
-    a[2] + scale * (b[2] - a[2]),
-    a[3] + scale * (b[3] - a[3]),
-  ];
-}
-
 function centroid(vertices: Vertex[], excludeIndex: number): Vertex {
   const n = vertices.length - 1;
   const result: Vertex = [0, 0, 0, 0];

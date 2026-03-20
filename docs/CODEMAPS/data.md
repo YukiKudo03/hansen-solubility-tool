@@ -81,4 +81,4 @@ main.ts → initDb()
 
 **Last Updated:** 2026-03-20
 
-**Related:** See `architecture.md` for pipeline mapping, `frontend.md` for UI ↔ DB interaction.
+**Related:** See `architecture.md` for overview, `backend.md` for repository implementation, `frontend.md` for UI interaction.

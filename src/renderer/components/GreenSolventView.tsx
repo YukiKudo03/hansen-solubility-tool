@@ -3,19 +3,9 @@
  */
 import React, { useState, useMemo, useCallback } from 'react';
 import type { Solvent } from '../../core/types';
+import type { SubstitutionResult, SubstitutionCandidate, SafetyRating } from '../../core/green-solvent';
 import SolventSelector from './SolventSelector';
 import SortTableHeader from './SortTableHeader';
-
-type SafetyRating = 'recommended' | 'acceptable' | 'problematic' | 'hazardous' | 'banned';
-
-interface GreenSolventResult {
-  solventName: string;
-  ra: number;
-  safetyRating: SafetyRating;
-  environmentScore: number;
-  healthScore: number;
-  overallScore: number;
-}
 
 const SAFETY_BADGE: Record<SafetyRating, { bg: string; text: string; label: string }> = {
   recommended: { bg: 'bg-green-100', text: 'text-green-800', label: '推奨' },
@@ -27,7 +17,7 @@ const SAFETY_BADGE: Record<SafetyRating, { bg: string; text: string; label: stri
 
 type SortKey = 'solventName' | 'ra' | 'safetyRating' | 'environmentScore' | 'healthScore' | 'overallScore';
 
-const SAFETY_ORDER: Record<SafetyRating, number> = {
+const SAFETY_ORDER: Record<string, number> = {
   recommended: 5,
   acceptable: 4,
   problematic: 3,
@@ -38,14 +28,14 @@ const SAFETY_ORDER: Record<SafetyRating, number> = {
 export default function GreenSolventView() {
   const [selectedSolvent, setSelectedSolvent] = useState<Solvent | null>(null);
 
-  const [results, setResults] = useState<GreenSolventResult[]>([]);
+  const [candidates, setCandidates] = useState<SubstitutionCandidate[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [csvError, setCsvError] = useState<string | null>(null);
   const [hasResult, setHasResult] = useState(false);
 
   // ソート
-  const [sortKey, setSortKey] = useState<SortKey>('ra');
+  const [sortKey, setSortKey] = useState<SortKey>('overallScore');
   const [sortDir, setSortDir] = useState<'asc' | 'desc'>('asc');
 
   const toggleSort = useCallback((field: string) => {
@@ -61,7 +51,7 @@ export default function GreenSolventView() {
   const canSearch = selectedSolvent && !loading;
 
   const clear = useCallback(() => {
-    setResults([]);
+    setCandidates([]);
     setError(null);
     setHasResult(false);
   }, []);
@@ -71,8 +61,8 @@ export default function GreenSolventView() {
     setLoading(true);
     setError(null);
     try {
-      const res = await window.api.invoke('greenSolvent:find', selectedSolvent.id, 20);
-      setResults(res as GreenSolventResult[]);
+      const res = await window.api.findGreenAlternatives(selectedSolvent.id, 20);
+      setCandidates(res.candidates);
       setHasResult(true);
     } catch (e) {
       setError(e instanceof Error ? e.message : '代替溶媒検索中にエラーが発生しました');
@@ -84,8 +74,8 @@ export default function GreenSolventView() {
   const handleExportCsv = async () => {
     setCsvError(null);
     const header = '溶媒名,Ra (HSP距離),安全性評価,環境スコア,健康スコア,総合スコア';
-    const rows = results.map(
-      (r) => `"${r.solventName}",${r.ra.toFixed(3)},${r.safetyRating},${r.environmentScore.toFixed(3)},${r.healthScore.toFixed(3)},${r.overallScore.toFixed(3)}`
+    const rows = candidates.map(
+      (c) => `"${c.solvent.name}",${c.ra.toFixed(3)},${c.safetyInfo?.safetyRating ?? 'N/A'},${(c.safetyInfo?.environmentalScore ?? 0).toFixed(3)},${(c.safetyInfo?.healthScore ?? 0).toFixed(3)},${c.overallScore.toFixed(3)}`
     );
     const csv = [header, ...rows].join('\n');
     try {
@@ -96,24 +86,24 @@ export default function GreenSolventView() {
   };
 
   const sortedResults = useMemo(() => {
-    const items = [...results];
+    const items = [...candidates];
     items.sort((a, b) => {
       let cmp = 0;
       switch (sortKey) {
         case 'solventName':
-          cmp = a.solventName.localeCompare(b.solventName, 'ja');
+          cmp = a.solvent.name.localeCompare(b.solvent.name, 'ja');
           break;
         case 'ra':
           cmp = a.ra - b.ra;
           break;
         case 'safetyRating':
-          cmp = SAFETY_ORDER[a.safetyRating] - SAFETY_ORDER[b.safetyRating];
+          cmp = (SAFETY_ORDER[a.safetyInfo?.safetyRating ?? ''] ?? 0) - (SAFETY_ORDER[b.safetyInfo?.safetyRating ?? ''] ?? 0);
           break;
         case 'environmentScore':
-          cmp = a.environmentScore - b.environmentScore;
+          cmp = (a.safetyInfo?.environmentalScore ?? 0) - (b.safetyInfo?.environmentalScore ?? 0);
           break;
         case 'healthScore':
-          cmp = a.healthScore - b.healthScore;
+          cmp = (a.safetyInfo?.healthScore ?? 0) - (b.safetyInfo?.healthScore ?? 0);
           break;
         case 'overallScore':
           cmp = a.overallScore - b.overallScore;
@@ -122,7 +112,7 @@ export default function GreenSolventView() {
       return sortDir === 'asc' ? cmp : -cmp;
     });
     return items;
-  }, [results, sortKey, sortDir]);
+  }, [candidates, sortKey, sortDir]);
 
   return (
     <div className="space-y-6">
@@ -148,7 +138,7 @@ export default function GreenSolventView() {
           >
             {loading ? '検索中...' : '代替溶媒を検索'}
           </button>
-          {hasResult && results.length > 0 && (
+          {hasResult && candidates.length > 0 && (
             <button
               onClick={handleExportCsv}
               className="px-6 py-2.5 bg-green-600 text-white rounded-md font-medium text-sm hover:bg-green-700 transition-colors"
@@ -167,11 +157,11 @@ export default function GreenSolventView() {
       )}
 
       {/* 結果テーブル */}
-      {hasResult && results.length > 0 && (
+      {hasResult && candidates.length > 0 && (
         <div className="bg-white rounded-lg shadow overflow-hidden">
           <div className="px-6 py-4 border-b border-gray-200">
             <h3 className="text-sm font-semibold text-gray-800">
-              代替候補: {selectedSolvent?.name} の代替溶媒 ({results.length}件)
+              代替候補: {selectedSolvent?.name} の代替溶媒 ({candidates.length}件)
             </h3>
           </div>
           <div className="overflow-x-auto">
@@ -187,20 +177,21 @@ export default function GreenSolventView() {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {sortedResults.map((r, idx) => {
-                  const badge = SAFETY_BADGE[r.safetyRating];
+                {sortedResults.map((c) => {
+                  const rating = c.safetyInfo?.safetyRating;
+                  const badge = rating ? SAFETY_BADGE[rating] : { bg: 'bg-gray-100', text: 'text-gray-600', label: 'N/A' };
                   return (
-                    <tr key={idx} className="hover:bg-gray-50">
-                      <td className="px-3 py-2.5 text-sm font-medium text-gray-900">{r.solventName}</td>
-                      <td className="px-3 py-2.5 text-sm text-gray-500">{r.ra.toFixed(3)}</td>
+                    <tr key={c.solvent.id} className="hover:bg-gray-50">
+                      <td className="px-3 py-2.5 text-sm font-medium text-gray-900">{c.solvent.name}</td>
+                      <td className="px-3 py-2.5 text-sm text-gray-500">{c.ra.toFixed(3)}</td>
                       <td className="px-3 py-2.5">
                         <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${badge.bg} ${badge.text}`}>
                           {badge.label}
                         </span>
                       </td>
-                      <td className="px-3 py-2.5 text-sm text-gray-500">{r.environmentScore.toFixed(3)}</td>
-                      <td className="px-3 py-2.5 text-sm text-gray-500">{r.healthScore.toFixed(3)}</td>
-                      <td className="px-3 py-2.5 text-sm font-medium text-gray-900">{r.overallScore.toFixed(3)}</td>
+                      <td className="px-3 py-2.5 text-sm text-gray-500">{(c.safetyInfo?.environmentalScore ?? 0).toFixed(1)}</td>
+                      <td className="px-3 py-2.5 text-sm text-gray-500">{(c.safetyInfo?.healthScore ?? 0).toFixed(1)}</td>
+                      <td className="px-3 py-2.5 text-sm font-medium text-gray-900">{c.overallScore.toFixed(3)}</td>
                     </tr>
                   );
                 })}
@@ -210,7 +201,7 @@ export default function GreenSolventView() {
         </div>
       )}
 
-      {hasResult && results.length === 0 && (
+      {hasResult && candidates.length === 0 && (
         <div className="bg-white rounded-lg shadow p-6 text-center text-sm text-gray-500">
           代替候補が見つかりませんでした。
         </div>

@@ -262,6 +262,101 @@ export function validateCarrierThresholds(t: {
   return null;
 }
 
+// ============================================================================
+// 新規IPCハンドラ用の入力バリデーション
+// ============================================================================
+
+/** 接着性閾値バリデーション */
+export function validateAdhesionThresholds(t: unknown): string | null {
+  if (t == null || typeof t !== 'object') return '閾値オブジェクトが必要です';
+  const obj = t as Record<string, unknown>;
+  const keys = ['excellentMax', 'goodMax', 'fairMax', 'poorMax'] as const;
+  for (const k of keys) {
+    if (typeof obj[k] !== 'number' || !isFinite(obj[k] as number)) return `${k} は有限数値でなければなりません`;
+    if ((obj[k] as number) < 0) return `${k} は非負でなければなりません`;
+  }
+  const { excellentMax, goodMax, fairMax, poorMax } = obj as unknown as { excellentMax: number; goodMax: number; fairMax: number; poorMax: number };
+  if (!(excellentMax < goodMax && goodMax < fairMax && fairMax < poorMax)) {
+    return '閾値は excellentMax < goodMax < fairMax < poorMax の順でなければなりません';
+  }
+  return null;
+}
+
+/** 溶媒分類配列バリデーション */
+export function validateSolventClassifications(input: unknown): string | null {
+  if (!Array.isArray(input)) return '分類データは配列でなければなりません';
+  if (input.length === 0) return '分類データが空です';
+  for (let i = 0; i < input.length; i++) {
+    const c: unknown = input[i];
+    if (c == null || typeof c !== 'object') return `分類[${i}]: オブジェクトでなければなりません`;
+    const entry = c as Record<string, unknown>;
+    if (typeof entry.solventId !== 'number' || !Number.isInteger(entry.solventId) || entry.solventId <= 0) {
+      return `分類[${i}]: solventId は正の整数でなければなりません`;
+    }
+    if (typeof entry.isGood !== 'boolean') {
+      return `分類[${i}]: isGood はブーリアンでなければなりません`;
+    }
+  }
+  const hasGood = input.some((c) => (c as Record<string, unknown>).isGood === true);
+  const hasBad = input.some((c) => (c as Record<string, unknown>).isGood === false);
+  if (!hasGood) return '少なくとも1つの良溶媒が必要です';
+  if (!hasBad) return '少なくとも1つの貧溶媒が必要です';
+  return null;
+}
+
+/** グリーン溶媒入力バリデーション */
+export function validateGreenSolventInput(targetSolventId: unknown, maxResults?: unknown): string | null {
+  if (typeof targetSolventId !== 'number' || !Number.isInteger(targetSolventId) || targetSolventId <= 0) {
+    return 'targetSolventId は正の整数でなければなりません';
+  }
+  if (maxResults !== undefined && maxResults !== null) {
+    if (typeof maxResults !== 'number' || !Number.isInteger(maxResults) || maxResults <= 0) {
+      return 'maxResults は正の整数でなければなりません';
+    }
+  }
+  return null;
+}
+
+/** 多目的最適化入力バリデーション */
+export function validateMultiObjectiveInput(params: unknown): string | null {
+  if (params == null || typeof params !== 'object') return 'パラメータオブジェクトが必要です';
+  const p = params as Record<string, unknown>;
+  for (const k of ['targetDeltaD', 'targetDeltaP', 'targetDeltaH', 'r0']) {
+    if (typeof p[k] !== 'number' || !isFinite(p[k] as number)) return `${k} は有限数値でなければなりません`;
+  }
+  for (const k of ['targetDeltaD', 'targetDeltaP', 'targetDeltaH']) {
+    if ((p[k] as number) < 0) return `${k} は非負でなければなりません`;
+  }
+  if ((p.r0 as number) <= 0) return 'r0 は正の数値でなければなりません';
+  return null;
+}
+
+/** 族寄与法入力バリデーション */
+export function validateGroupContributionInput(input: unknown): string | null {
+  if (input == null || typeof input !== 'object') return '入力オブジェクトが必要です';
+  const obj = input as Record<string, unknown>;
+  if (!Array.isArray(obj.firstOrderGroups)) return 'firstOrderGroups は配列でなければなりません';
+  if (obj.firstOrderGroups.length === 0) return '1次基グループを少なくとも1つ指定してください';
+  for (let i = 0; i < obj.firstOrderGroups.length; i++) {
+    const g: unknown = (obj.firstOrderGroups as unknown[])[i];
+    if (g == null || typeof g !== 'object') return `firstOrderGroups[${i}]: オブジェクトでなければなりません`;
+    const entry = g as Record<string, unknown>;
+    if (typeof entry.groupId !== 'string' || entry.groupId.length === 0) return `firstOrderGroups[${i}]: groupId は非空文字列でなければなりません`;
+    if (typeof entry.count !== 'number' || !Number.isInteger(entry.count) || entry.count <= 0) return `firstOrderGroups[${i}]: count は正の整数でなければなりません`;
+  }
+  if (obj.secondOrderGroups !== undefined) {
+    if (!Array.isArray(obj.secondOrderGroups)) return 'secondOrderGroups は配列でなければなりません';
+    for (let i = 0; i < obj.secondOrderGroups.length; i++) {
+      const g: unknown = (obj.secondOrderGroups as unknown[])[i];
+      if (g == null || typeof g !== 'object') return `secondOrderGroups[${i}]: オブジェクトでなければなりません`;
+      const entry = g as Record<string, unknown>;
+      if (typeof entry.groupId !== 'string' || entry.groupId.length === 0) return `secondOrderGroups[${i}]: groupId は非空文字列でなければなりません`;
+      if (typeof entry.count !== 'number' || !Number.isInteger(entry.count) || entry.count <= 0) return `secondOrderGroups[${i}]: count は正の整数でなければなりません`;
+    }
+  }
+  return null;
+}
+
 export function validateMixtureInput(components: { solventId: number; volumeRatio: number }[]): string | null {
   if (components.length < 1) {
     return '1つ以上の溶媒を追加してください';

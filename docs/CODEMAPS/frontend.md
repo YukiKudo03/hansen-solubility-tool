@@ -141,6 +141,6 @@ Advanced analytics handlers (8)
 
 ---
 
-**Related:** See `architecture.md` for pipeline details, `data.md` for database schema.
+**Related:** See `architecture.md` for system overview, `backend.md` for IPC handlers, `data.md` for schema.
 
 **Last Updated:** 2026-03-20

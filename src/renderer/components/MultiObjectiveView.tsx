@@ -2,35 +2,8 @@
  * 多目的溶媒選定 — 複数基準による溶媒スクリーニング
  */
 import React, { useState, useMemo, useCallback } from 'react';
+import type { MultiObjectiveScreeningResult, MultiObjectiveResult } from '../../core/multi-objective';
 import SortTableHeader from './SortTableHeader';
-
-interface ScreeningParams {
-  targetDeltaD: number;
-  targetDeltaP: number;
-  targetDeltaH: number;
-  r0: number;
-  minBoilingPoint?: number;
-  maxBoilingPoint?: number;
-  maxViscosity?: number;
-  maxSurfaceTension?: number;
-  weights: {
-    hsp: number;
-    boilingPoint: number;
-    viscosity: number;
-    surfaceTension: number;
-    safety: number;
-  };
-}
-
-interface ScreeningResultItem {
-  solventName: string;
-  red: number;
-  hspScore: number;
-  boilingPointScore: number;
-  viscosityScore: number;
-  safetyScore: number;
-  overallScore: number;
-}
 
 type SortKey = 'solventName' | 'red' | 'hspScore' | 'boilingPointScore' | 'viscosityScore' | 'safetyScore' | 'overallScore';
 
@@ -62,7 +35,7 @@ export default function MultiObjectiveView() {
   const [weightSafety, setWeightSafety] = useState(0.2);
 
   // 結果
-  const [results, setResults] = useState<ScreeningResultItem[]>([]);
+  const [results, setResults] = useState<MultiObjectiveResult[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [hasResult, setHasResult] = useState(false);
@@ -98,29 +71,29 @@ export default function MultiObjectiveView() {
     const r = parseFloat(r0);
     if (isNaN(dD) || isNaN(dP) || isNaN(dH) || isNaN(r)) return;
 
-    const params: ScreeningParams = {
-      targetDeltaD: dD,
-      targetDeltaP: dP,
-      targetDeltaH: dH,
-      r0: r,
-      minBoilingPoint: minBoilingPoint ? Number(minBoilingPoint) : undefined,
-      maxBoilingPoint: maxBoilingPoint ? Number(maxBoilingPoint) : undefined,
-      maxViscosity: maxViscosity ? Number(maxViscosity) : undefined,
-      maxSurfaceTension: maxSurfaceTension ? Number(maxSurfaceTension) : undefined,
-      weights: {
-        hsp: weightHsp,
-        boilingPoint: weightBp,
-        viscosity: weightViscosity,
-        surfaceTension: weightSurfaceTension,
-        safety: weightSafety,
-      },
-    };
-
     setLoading(true);
     setError(null);
     try {
-      const res = await window.api.invoke('multiObjective:screen', params);
-      setResults(res as ScreeningResultItem[]);
+      const response = await window.api.screenMultiObjective({
+        targetDeltaD: dD,
+        targetDeltaP: dP,
+        targetDeltaH: dH,
+        r0: r,
+        preferredBoilingPointRange: minBoilingPoint || maxBoilingPoint
+          ? { min: minBoilingPoint ? Number(minBoilingPoint) : -Infinity, max: maxBoilingPoint ? Number(maxBoilingPoint) : Infinity }
+          : undefined,
+        maxViscosity: maxViscosity ? Number(maxViscosity) : undefined,
+        maxSurfaceTension: maxSurfaceTension ? Number(maxSurfaceTension) : undefined,
+        weights: {
+          hspMatch: weightHsp,
+          boilingPoint: weightBp,
+          viscosity: weightViscosity,
+          surfaceTension: weightSurfaceTension,
+          safety: weightSafety,
+          cost: 0.0,
+        },
+      });
+      setResults(response.results);
       setHasResult(true);
     } catch (e) {
       setError(e instanceof Error ? e.message : 'スクリーニング中にエラーが発生しました');
@@ -135,25 +108,25 @@ export default function MultiObjectiveView() {
       let cmp = 0;
       switch (sortKey) {
         case 'solventName':
-          cmp = a.solventName.localeCompare(b.solventName, 'ja');
+          cmp = a.solvent.name.localeCompare(b.solvent.name, 'ja');
           break;
         case 'red':
           cmp = a.red - b.red;
           break;
         case 'hspScore':
-          cmp = a.hspScore - b.hspScore;
+          cmp = a.scores.hspMatch - b.scores.hspMatch;
           break;
         case 'boilingPointScore':
-          cmp = a.boilingPointScore - b.boilingPointScore;
+          cmp = a.scores.boilingPoint - b.scores.boilingPoint;
           break;
         case 'viscosityScore':
-          cmp = a.viscosityScore - b.viscosityScore;
+          cmp = a.scores.viscosity - b.scores.viscosity;
           break;
         case 'safetyScore':
-          cmp = a.safetyScore - b.safetyScore;
+          cmp = a.scores.safety - b.scores.safety;
           break;
         case 'overallScore':
-          cmp = a.overallScore - b.overallScore;
+          cmp = a.scores.overall - b.scores.overall;
           break;
       }
       return sortDir === 'asc' ? cmp : -cmp;
@@ -227,43 +200,19 @@ export default function MultiObjectiveView() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div>
               <label className="block text-xs text-gray-500 mb-1">最低沸点 (°C)</label>
-              <input
-                type="number"
-                value={minBoilingPoint}
-                onChange={(e) => setMinBoilingPoint(e.target.value)}
-                className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-blue-500 focus:border-blue-500"
-                placeholder="例: 60"
-              />
+              <input type="number" value={minBoilingPoint} onChange={(e) => setMinBoilingPoint(e.target.value)} className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-blue-500 focus:border-blue-500" placeholder="例: 60" />
             </div>
             <div>
               <label className="block text-xs text-gray-500 mb-1">最高沸点 (°C)</label>
-              <input
-                type="number"
-                value={maxBoilingPoint}
-                onChange={(e) => setMaxBoilingPoint(e.target.value)}
-                className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-blue-500 focus:border-blue-500"
-                placeholder="例: 200"
-              />
+              <input type="number" value={maxBoilingPoint} onChange={(e) => setMaxBoilingPoint(e.target.value)} className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-blue-500 focus:border-blue-500" placeholder="例: 200" />
             </div>
             <div>
               <label className="block text-xs text-gray-500 mb-1">最大粘度 (mPa·s)</label>
-              <input
-                type="number"
-                value={maxViscosity}
-                onChange={(e) => setMaxViscosity(e.target.value)}
-                className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-blue-500 focus:border-blue-500"
-                placeholder="例: 2.0"
-              />
+              <input type="number" value={maxViscosity} onChange={(e) => setMaxViscosity(e.target.value)} className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-blue-500 focus:border-blue-500" placeholder="例: 2.0" />
             </div>
             <div>
               <label className="block text-xs text-gray-500 mb-1">最大表面張力 (mN/m)</label>
-              <input
-                type="number"
-                value={maxSurfaceTension}
-                onChange={(e) => setMaxSurfaceTension(e.target.value)}
-                className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-blue-500 focus:border-blue-500"
-                placeholder="例: 30"
-              />
+              <input type="number" value={maxSurfaceTension} onChange={(e) => setMaxSurfaceTension(e.target.value)} className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-blue-500 focus:border-blue-500" placeholder="例: 30" />
             </div>
           </div>
         </div>
@@ -343,15 +292,15 @@ export default function MultiObjectiveView() {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {sortedResults.map((r, idx) => (
-                  <tr key={idx} className="hover:bg-gray-50">
-                    <td className="px-3 py-2.5 text-sm font-medium text-gray-900">{r.solventName}</td>
+                {sortedResults.map((r) => (
+                  <tr key={r.solvent.id} className="hover:bg-gray-50">
+                    <td className="px-3 py-2.5 text-sm font-medium text-gray-900">{r.solvent.name}</td>
                     <td className="px-3 py-2.5 text-sm text-gray-500">{r.red.toFixed(3)}</td>
-                    <td className={`px-3 py-2.5 text-sm ${scoreColor(r.hspScore)}`}>{r.hspScore.toFixed(3)}</td>
-                    <td className={`px-3 py-2.5 text-sm ${scoreColor(r.boilingPointScore)}`}>{r.boilingPointScore.toFixed(3)}</td>
-                    <td className={`px-3 py-2.5 text-sm ${scoreColor(r.viscosityScore)}`}>{r.viscosityScore.toFixed(3)}</td>
-                    <td className={`px-3 py-2.5 text-sm ${scoreColor(r.safetyScore)}`}>{r.safetyScore.toFixed(3)}</td>
-                    <td className={`px-3 py-2.5 text-sm font-bold ${scoreColor(r.overallScore)}`}>{r.overallScore.toFixed(3)}</td>
+                    <td className={`px-3 py-2.5 text-sm ${scoreColor(r.scores.hspMatch)}`}>{r.scores.hspMatch.toFixed(3)}</td>
+                    <td className={`px-3 py-2.5 text-sm ${scoreColor(r.scores.boilingPoint)}`}>{r.scores.boilingPoint.toFixed(3)}</td>
+                    <td className={`px-3 py-2.5 text-sm ${scoreColor(r.scores.viscosity)}`}>{r.scores.viscosity.toFixed(3)}</td>
+                    <td className={`px-3 py-2.5 text-sm ${scoreColor(r.scores.safety)}`}>{r.scores.safety.toFixed(3)}</td>
+                    <td className={`px-3 py-2.5 text-sm font-bold ${scoreColor(r.scores.overall)}`}>{r.scores.overall.toFixed(3)}</td>
                   </tr>
                 ))}
               </tbody>

@@ -3,6 +3,9 @@ import {
   GROUP_CONTRIBUTION_TABLE,
   estimateHSPFromGroups,
   parseSimpleMolecularFormula,
+  estimateHSPStefanisPanayiotou,
+  getAvailableFirstOrderGroups,
+  getAvailableSecondOrderGroups,
 } from '../../src/core/group-contribution';
 
 describe('GROUP_CONTRIBUTION_TABLE', () => {
@@ -72,6 +75,88 @@ describe('estimateHSPFromGroups', () => {
   });
 });
 
+describe('estimateHSPStefanisPanayiotou', () => {
+  it('メチル基2個でHSP推定結果を返す', () => {
+    const result = estimateHSPStefanisPanayiotou({
+      firstOrderGroups: [{ groupId: 'CH3', count: 2 }],
+    });
+    expect(result).toHaveProperty('hsp');
+    expect(result).toHaveProperty('method');
+    expect(result).toHaveProperty('confidence');
+    expect(result).toHaveProperty('warnings');
+    expect(result.method).toBe('stefanis-panayiotou');
+    expect(typeof result.hsp.deltaD).toBe('number');
+    expect(typeof result.hsp.deltaP).toBe('number');
+    expect(typeof result.hsp.deltaH).toBe('number');
+  });
+
+  it('confidence は high, medium, low のいずれか', () => {
+    const result = estimateHSPStefanisPanayiotou({
+      firstOrderGroups: [
+        { groupId: 'CH3', count: 1 },
+        { groupId: 'CH2', count: 3 },
+        { groupId: 'OH', count: 1 },
+      ],
+    });
+    expect(['high', 'medium', 'low']).toContain(result.confidence);
+  });
+
+  it('空の firstOrderGroups でエラー', () => {
+    expect(() => estimateHSPStefanisPanayiotou({ firstOrderGroups: [] })).toThrow();
+  });
+
+  it('不明なグループでも warnings に追加される', () => {
+    const result = estimateHSPStefanisPanayiotou({
+      firstOrderGroups: [
+        { groupId: 'CH3', count: 1 },
+        { groupId: 'UNKNOWN_GROUP', count: 1 },
+      ],
+    });
+    expect(result.warnings.length).toBeGreaterThan(0);
+    expect(result.warnings.some((w) => w.includes('UNKNOWN_GROUP'))).toBe(true);
+  });
+
+  it('2次基を含む推定が動作する', () => {
+    const result = estimateHSPStefanisPanayiotou({
+      firstOrderGroups: [{ groupId: 'CH3', count: 1 }, { groupId: 'OH', count: 1 }],
+      secondOrderGroups: [{ groupId: 'alcohol', count: 1 }],
+    });
+    expect(result.hsp.deltaD).toBeGreaterThan(0);
+  });
+});
+
+describe('getAvailableFirstOrderGroups', () => {
+  it('配列を返す', () => {
+    const groups = getAvailableFirstOrderGroups();
+    expect(Array.isArray(groups)).toBe(true);
+    expect(groups.length).toBeGreaterThan(0);
+  });
+
+  it('各エントリが id と name を持つ', () => {
+    const groups = getAvailableFirstOrderGroups();
+    for (const g of groups) {
+      expect(typeof g.id).toBe('string');
+      expect(typeof g.name).toBe('string');
+    }
+  });
+});
+
+describe('getAvailableSecondOrderGroups', () => {
+  it('配列を返す', () => {
+    const groups = getAvailableSecondOrderGroups();
+    expect(Array.isArray(groups)).toBe(true);
+    expect(groups.length).toBeGreaterThan(0);
+  });
+
+  it('各エントリが id と name を持つ', () => {
+    const groups = getAvailableSecondOrderGroups();
+    for (const g of groups) {
+      expect(typeof g.id).toBe('string');
+      expect(typeof g.name).toBe('string');
+    }
+  });
+});
+
 describe('parseSimpleMolecularFormula', () => {
   it('メタン CH4 → -CH3 ×1 + H ×1 のように分解（概算）', () => {
     // この関数は概算であり、正確な構造解析ではない
@@ -79,4 +164,6 @@ describe('parseSimpleMolecularFormula', () => {
     // メタノールの場合、最低限グループが返される
     expect(groups.length).toBeGreaterThanOrEqual(0); // 実装次第
   });
+
+  it.todo('parseSimpleMolecularFormula: SMILES パーサー統合時に実装');
 });

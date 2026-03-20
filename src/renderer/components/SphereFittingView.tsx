@@ -2,20 +2,12 @@
  * HSP球算出 — 溶解試験データから最適なHSP球を算出
  */
 import React, { useState, useEffect, useMemo } from 'react';
+import type { SphereFitResult } from '../../core/sphere-fitting';
 
 interface SolventEntry {
   id: number;
   name: string;
   hsp: { deltaD: number; deltaP: number; deltaH: number };
-}
-
-interface SphereFitResult {
-  center: { deltaD: number; deltaP: number; deltaH: number };
-  r0: number;
-  fitness: number;
-  correct: number;
-  total: number;
-  misclassified: Array<{ solventName: string; expected: 'good' | 'bad'; actual: 'inside' | 'outside' }>;
 }
 
 export default function SphereFittingView() {
@@ -32,7 +24,7 @@ export default function SphereFittingView() {
     const load = async () => {
       setSolventsLoading(true);
       try {
-        const all = await window.api.invoke('solvents:getAll');
+        const all = await window.api.getAllSolvents();
         setSolvents(all as SolventEntry[]);
       } catch (e) {
         setError(e instanceof Error ? e.message : '溶媒データの読み込みに失敗しました');
@@ -81,8 +73,13 @@ export default function SphereFittingView() {
     setLoading(true);
     setError(null);
     try {
-      const fitResult = await window.api.invoke('sphereFitting:fit', classifications);
-      setResult(fitResult as SphereFitResult);
+      // Transform Record<number, 'good'|'bad'> to Array<{solventId: number; isGood: boolean}>
+      const classificationArray = Object.entries(classifications).map(([idStr, cls]) => ({
+        solventId: Number(idStr),
+        isGood: cls === 'good',
+      }));
+      const fitResult = await window.api.fitSphere(classificationArray);
+      setResult(fitResult);
     } catch (e) {
       setError(e instanceof Error ? e.message : 'HSP球算出中にエラーが発生しました');
     } finally {
@@ -208,7 +205,7 @@ export default function SphereFittingView() {
                     </div>
                     <div>
                       <span className="text-gray-500">正解率:</span>{' '}
-                      <span className="font-medium">{result.correct} / {result.total}</span>
+                      <span className="font-medium">{result.correctCount} / {result.totalCount}</span>
                     </div>
                     <div>
                       <span className="text-gray-500">適合度:</span>{' '}
@@ -224,9 +221,9 @@ export default function SphereFittingView() {
                       誤分類 ({result.misclassified.length}件)
                     </h4>
                     <ul className="text-sm text-yellow-700 space-y-1">
-                      {result.misclassified.map((m, i) => (
-                        <li key={i}>
-                          {m.solventName}: 期待={m.expected === 'good' ? 'Good (球内)' : 'Bad (球外)'}, 実際={m.actual === 'inside' ? '球内' : '球外'}
+                      {result.misclassified.map((m) => (
+                        <li key={m.name}>
+                          {m.name}: 期待={m.isGood ? 'Good (球内)' : 'Bad (球外)'}, Ra={m.ra.toFixed(2)}, RED={m.red.toFixed(2)}
                         </li>
                       ))}
                     </ul>

@@ -121,4 +121,4 @@ Utilities:
 
 **Last Updated:** 2026-03-20
 
-**Next:** See `frontend.md` for component details, `data.md` for database schema.
+**Next:** See `backend.md` for IPC/handlers, `frontend.md` for components, `data.md` for schema.

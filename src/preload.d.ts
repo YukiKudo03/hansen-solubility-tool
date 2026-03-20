@@ -132,6 +132,34 @@ export interface ElectronAPI {
   deleteHistory(id: number): Promise<boolean>;
   deleteHistoryOlderThan(days: number): Promise<number>;
 
+  // 接着性評価
+  evaluateAdhesion(partsGroupId: number, solventId: number): Promise<import('./core/types').GroupAdhesionResult>;
+  getAdhesionThresholds(): Promise<import('./core/adhesion').AdhesionThresholds>;
+  setAdhesionThresholds(thresholds: import('./core/adhesion').AdhesionThresholds): Promise<void>;
+
+  // HSP球フィッティング
+  fitSphere(classifications: Array<{solventId: number; isGood: boolean}>): Promise<import('./core/sphere-fitting').SphereFitResult>;
+
+  // グリーン溶媒
+  findGreenAlternatives(targetSolventId: number, maxResults?: number): Promise<import('./core/green-solvent').SubstitutionResult>;
+
+  // 多目的溶媒選定
+  screenMultiObjective(params: {
+    targetDeltaD: number; targetDeltaP: number; targetDeltaH: number;
+    r0: number; weights?: import('./core/multi-objective').ObjectiveWeights;
+    preferredBoilingPointRange?: { min: number; max: number };
+    maxViscosity?: number; maxSurfaceTension?: number;
+  }): Promise<import('./core/multi-objective').MultiObjectiveScreeningResult>;
+
+  // 族寄与法
+  estimateGroupContribution(input: import('./core/group-contribution').GroupContributionInput): Promise<import('./core/group-contribution').GroupContributionResult>;
+  getGroupContributionGroups(): Promise<{ firstOrder: Array<{id: string; name: string}>; secondOrder: Array<{id: string; name: string}> }>;
+
+  // 可視化
+  getTeasPlotData(): Promise<import('./core/teas-plot').TeasPlotData>;
+  getBagleyPlotData(): Promise<import('./core/bagley-plot').BagleyPlotData>;
+  getProjection2DData(): Promise<import('./core/projection-2d').Projection2DData>;
+
   // 汎用 IPC invoke (可視化パイプライン等)
   invoke(channel: string, ...args: unknown[]): Promise<any>;
 }
