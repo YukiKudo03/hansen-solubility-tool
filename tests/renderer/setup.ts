@@ -146,6 +146,22 @@ export function createMockApi(): { [K in keyof ElectronAPI]: ReturnType<typeof v
     getBagleyPlotData: vi.fn().mockResolvedValue(null),
     getProjection2DData: vi.fn().mockResolvedValue(null),
 
+    // 分散剤
+    getAllDispersants: vi.fn().mockResolvedValue([]),
+    getDispersantById: vi.fn().mockResolvedValue(null),
+    getDispersantsByType: vi.fn().mockResolvedValue([]),
+    searchDispersants: vi.fn().mockResolvedValue([]),
+    createDispersant: vi.fn().mockResolvedValue({ id: 1, name: '', nameEn: null, dispersantType: 'other', anchorHSP: { deltaD: 0, deltaP: 0, deltaH: 0 }, anchorR0: 1, solvationHSP: { deltaD: 0, deltaP: 0, deltaH: 0 }, solvationR0: 1, overallHSP: { deltaD: 0, deltaP: 0, deltaH: 0 }, hlb: null, molWeight: null, tradeName: null, manufacturer: null, notes: null }),
+    updateDispersant: vi.fn().mockResolvedValue(null),
+    deleteDispersant: vi.fn().mockResolvedValue(true),
+
+    // 分散剤選定
+    screenDispersants: vi.fn().mockResolvedValue(null),
+    screenSolventsForDispersant: vi.fn().mockResolvedValue(null),
+    screenDispersantsFallback: vi.fn().mockResolvedValue(null),
+    getDispersantThresholds: vi.fn().mockResolvedValue({ excellentMax: 0.5, goodMax: 0.8, fairMax: 1.0, poorMax: 1.5 }),
+    setDispersantThresholds: vi.fn().mockResolvedValue(undefined),
+
     // 汎用 IPC invoke
     invoke: vi.fn().mockResolvedValue(null),
   };

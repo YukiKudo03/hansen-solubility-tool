@@ -1,4 +1,4 @@
-<!-- Generated: 2026-03-20 | Files scanned: 62 renderer | Token estimate: ~950 -->
+<!-- Generated: 2026-03-21 | Files scanned: 65 renderer | Token estimate: ~980 -->
 
 # Frontend Component Architecture
 
@@ -18,7 +18,7 @@ Screen Width    Navigation Pattern       Component
 | Category | Icon | Items |
 |----------|------|-------|
 | 評価 | 📊 | 溶解性評価, 接触角推定, 膨潤度予測, 耐薬品性予測, **接着性予測** |
-| 選定 | 🔍 | ナノ粒子分散, 可塑剤選定, キャリア選定 |
+| 選定 | 🔍 | ナノ粒子分散, **分散剤選定**, 可塑剤選定, キャリア選定 |
 | 最適化 | ⚡ | ブレンド最適化, 薬物溶解性, 比較レポート, **HSP球算出, グリーン溶媒, 多目的選定** |
 | データ | 💾 | データベース編集, 混合溶媒, 履歴 |
 | **分析** | **📈** | **3D可視化, Teasプロット, Bagleyプロット, 2D射影, 族寄与法** |
@@ -42,6 +42,7 @@ App.tsx (MD3 responsive + useTheme() dark mode)
 │   │  └── AdhesionView (J) → 接着強度評価
 │   ├─ 選定Views:
 │   │  ├── NanoDispersionView (B) → Category + Particle → DispersibilityBadge
+│   │  ├── DispersantSelectionView (J) → Particle + Solvent → DispersantBadge (dual-HSP)
 │   │  ├── PlasticizerView (H) → Group + Part → PlasticizerBadge
 │   │  └── CarrierSelectionView (I) → Drug + CarrierGroup → CarrierBadge
 │   ├─ 最適化Views:
@@ -78,7 +79,7 @@ App.tsx (MD3 responsive + useTheme() dark mode)
 | `ResultsTable` | 汎用結果テーブル |
 | `ErrorBoundary` | React エラーバウンダリ |
 
-## Badges (8 components, MD3 Tonal style)
+## Badges (9 components, MD3 Tonal style)
 
 All badges use `rounded-md3-sm text-md3-label-md`.
 
@@ -92,8 +93,9 @@ All badges use `rounded-md3-sm text-md3-label-md`.
 | ChemicalResistanceBadge | 1-5 | **L1=worst** | **red** | **green** |
 | PlasticizerBadge | 1-5 | L1=best | green | red |
 | CarrierBadge | 1-5 | L1=best | green | red |
+| DispersantBadge | 1-5 | L1=best | green | red |
 
-## Hooks (19)
+## Hooks (20)
 
 | Hook | Purpose |
 |------|---------|
@@ -116,6 +118,7 @@ All badges use `rounded-md3-sm text-md3-label-md`.
 | useChemicalResistance | Chemical resistance |
 | usePlasticizer | Plasticizer screening |
 | useCarrierSelection | Carrier selection |
+| useDispersantSelection | Dispersant screening (dual-HSP) |
 
 ## Dark Mode & Theming
 
@@ -130,11 +133,11 @@ All badges use `rounded-md3-sm text-md3-label-md`.
 - 60+翻訳キー (ja/en)
 - localStorage で言語設定永続化
 
-## IPC Interface (window.api) — 100+ Methods
+## IPC Interface (window.api) — 110+ Methods
 
 ```
-Parts CRUD (8), Solvents CRUD+Plasticizers (8), NanoParticles CRUD (7), Drugs CRUD (7)
-Pipeline A-Q evaluation/screening (26), Settings get/set (18)
+Parts CRUD (8), Solvents CRUD+Plasticizers (8), NanoParticles CRUD (7), Drugs CRUD (7), Dispersants CRUD (5)
+Pipeline A-R evaluation/screening (30), Settings get/set (18)
 Bookmarks (3), History (5), CSV Import (3), Export saveCsv (1)
 Advanced analytics handlers (8)
 ```
@@ -143,4 +146,4 @@ Advanced analytics handlers (8)
 
 **Related:** See `architecture.md` for system overview, `backend.md` for IPC handlers, `data.md` for schema.
 
-**Last Updated:** 2026-03-20
+**Last Updated:** 2026-03-21

@@ -105,3 +105,14 @@ export function getNanoParticleModificationWarnings(particle: NanoParticle): str
 
   return warnings;
 }
+
+/**
+ * 分散剤選定結果に対する警告を生成
+ */
+export function getDispersantSelectionWarnings(): string[] {
+  return [
+    'アンカー基・溶媒和鎖の分離HSP値には推定値が含まれます。シードデータの出典をnotesで確認し、必要に応じてデータベースエディタで編集してください',
+    '分散安定性にはHSP親和性以外の要因（電荷反発、立体効果、溶媒粘度、粒子サイズ・形状等）も影響します。HSPベースの評価は必要条件であり十分条件ではありません',
+    '総合スコアは幾何平均√(RED_a×RED_s)で算出しています。片方のREDが極端に大きい場合は、max補正により総合判定が引き下げられます',
+  ];
+}

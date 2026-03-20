@@ -1,7 +1,7 @@
 /**
  * リポジトリインターフェース定義
  */
-import type { Part, PartsGroup, Solvent, RiskThresholds, NanoParticle, NanoParticleCategory, Drug } from '../core/types';
+import type { Part, PartsGroup, Solvent, RiskThresholds, NanoParticle, NanoParticleCategory, Drug, Dispersant, DispersantType } from '../core/types';
 
 /** 部品グループ作成DTO */
 export interface CreatePartsGroupDto {
@@ -108,6 +108,39 @@ export interface DrugRepository {
   search(query: string): Drug[];
   create(dto: CreateDrugDto): Drug;
   update(id: number, dto: Partial<CreateDrugDto>): Drug | null;
+  delete(id: number): boolean;
+}
+
+/** 分散剤作成DTO */
+export interface CreateDispersantDto {
+  name: string;
+  nameEn?: string;
+  dispersantType: DispersantType;
+  anchorDeltaD: number;
+  anchorDeltaP: number;
+  anchorDeltaH: number;
+  anchorR0: number;
+  solvationDeltaD: number;
+  solvationDeltaP: number;
+  solvationDeltaH: number;
+  solvationR0: number;
+  overallDeltaD: number;
+  overallDeltaP: number;
+  overallDeltaH: number;
+  hlb?: number;
+  molWeight?: number;
+  tradeName?: string;
+  manufacturer?: string;
+  notes?: string;
+}
+
+export interface DispersantRepository {
+  getAll(): Dispersant[];
+  getById(id: number): Dispersant | null;
+  getByType(type: DispersantType): Dispersant[];
+  search(query: string): Dispersant[];
+  create(dto: CreateDispersantDto): Dispersant;
+  update(id: number, dto: Partial<CreateDispersantDto>): Dispersant | null;
   delete(id: number): boolean;
 }
 

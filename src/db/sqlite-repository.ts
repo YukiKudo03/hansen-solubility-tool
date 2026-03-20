@@ -2,7 +2,7 @@
  * SQLite リポジトリ実装
  */
 import Database from 'better-sqlite3';
-import type { Part, PartsGroup, Solvent, RiskThresholds, NanoParticle, NanoParticleCategory, Drug } from '../core/types';
+import type { Part, PartsGroup, Solvent, RiskThresholds, NanoParticle, NanoParticleCategory, Drug, Dispersant, DispersantType } from '../core/types';
 import { DEFAULT_THRESHOLDS } from '../core/risk';
 import type {
   PartsRepository,
@@ -10,11 +10,13 @@ import type {
   SettingsRepository,
   NanoParticleRepository,
   DrugRepository,
+  DispersantRepository,
   CreatePartsGroupDto,
   CreatePartDto,
   CreateSolventDto,
   CreateNanoParticleDto,
   CreateDrugDto,
+  CreateDispersantDto,
 } from './repository';
 
 /** DBの行からPartを変換 */
@@ -440,6 +442,136 @@ export class SqliteDrugRepository implements DrugRepository {
 
   delete(id: number): boolean {
     const result = this.db.prepare('DELETE FROM drugs WHERE id = ?').run(id);
+    return result.changes > 0;
+  }
+}
+
+// ─── 分散剤リポジトリ ──────────────────────────────
+
+function rowToDispersant(row: Record<string, unknown>): Dispersant {
+  return {
+    id: row.id as number,
+    name: row.name as string,
+    nameEn: (row.name_en as string) ?? null,
+    dispersantType: row.dispersant_type as DispersantType,
+    anchorHSP: {
+      deltaD: row.anchor_delta_d as number,
+      deltaP: row.anchor_delta_p as number,
+      deltaH: row.anchor_delta_h as number,
+    },
+    anchorR0: row.anchor_r0 as number,
+    solvationHSP: {
+      deltaD: row.solvation_delta_d as number,
+      deltaP: row.solvation_delta_p as number,
+      deltaH: row.solvation_delta_h as number,
+    },
+    solvationR0: row.solvation_r0 as number,
+    overallHSP: {
+      deltaD: row.overall_delta_d as number,
+      deltaP: row.overall_delta_p as number,
+      deltaH: row.overall_delta_h as number,
+    },
+    hlb: (row.hlb as number) ?? null,
+    molWeight: (row.mol_weight as number) ?? null,
+    tradeName: (row.trade_name as string) ?? null,
+    manufacturer: (row.manufacturer as string) ?? null,
+    notes: (row.notes as string) ?? null,
+  };
+}
+
+export class SqliteDispersantRepository implements DispersantRepository {
+  constructor(private db: Database.Database) {}
+
+  getAll(): Dispersant[] {
+    const rows = this.db.prepare('SELECT * FROM dispersants ORDER BY id').all() as Record<string, unknown>[];
+    return rows.map(rowToDispersant);
+  }
+
+  getById(id: number): Dispersant | null {
+    const row = this.db.prepare('SELECT * FROM dispersants WHERE id = ?').get(id) as Record<string, unknown> | undefined;
+    if (!row) return null;
+    return rowToDispersant(row);
+  }
+
+  getByType(type: DispersantType): Dispersant[] {
+    const rows = this.db.prepare('SELECT * FROM dispersants WHERE dispersant_type = ? ORDER BY id').all(type) as Record<string, unknown>[];
+    return rows.map(rowToDispersant);
+  }
+
+  search(query: string): Dispersant[] {
+    const rows = this.db
+      .prepare('SELECT * FROM dispersants WHERE name LIKE ? OR name_en LIKE ? OR trade_name LIKE ? OR manufacturer LIKE ? ORDER BY id')
+      .all(`%${query}%`, `%${query}%`, `%${query}%`, `%${query}%`) as Record<string, unknown>[];
+    return rows.map(rowToDispersant);
+  }
+
+  create(dto: CreateDispersantDto): Dispersant {
+    const result = this.db
+      .prepare(
+        `INSERT INTO dispersants (name, name_en, dispersant_type,
+          anchor_delta_d, anchor_delta_p, anchor_delta_h, anchor_r0,
+          solvation_delta_d, solvation_delta_p, solvation_delta_h, solvation_r0,
+          overall_delta_d, overall_delta_p, overall_delta_h,
+          hlb, mol_weight, trade_name, manufacturer, notes)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      )
+      .run(
+        dto.name,
+        dto.nameEn ?? null,
+        dto.dispersantType,
+        dto.anchorDeltaD, dto.anchorDeltaP, dto.anchorDeltaH, dto.anchorR0,
+        dto.solvationDeltaD, dto.solvationDeltaP, dto.solvationDeltaH, dto.solvationR0,
+        dto.overallDeltaD, dto.overallDeltaP, dto.overallDeltaH,
+        dto.hlb ?? null,
+        dto.molWeight ?? null,
+        dto.tradeName ?? null,
+        dto.manufacturer ?? null,
+        dto.notes ?? null,
+      );
+    return this.getById(Number(result.lastInsertRowid))!;
+  }
+
+  update(id: number, dto: Partial<CreateDispersantDto>): Dispersant | null {
+    const existing = this.db.prepare('SELECT * FROM dispersants WHERE id = ?').get(id) as Record<string, unknown> | undefined;
+    if (!existing) return null;
+    this.db
+      .prepare(
+        `UPDATE dispersants SET
+          name = ?, name_en = ?, dispersant_type = ?,
+          anchor_delta_d = ?, anchor_delta_p = ?, anchor_delta_h = ?, anchor_r0 = ?,
+          solvation_delta_d = ?, solvation_delta_p = ?, solvation_delta_h = ?, solvation_r0 = ?,
+          overall_delta_d = ?, overall_delta_p = ?, overall_delta_h = ?,
+          hlb = ?, mol_weight = ?, trade_name = ?, manufacturer = ?, notes = ?,
+          updated_at = datetime('now')
+        WHERE id = ?`,
+      )
+      .run(
+        dto.name ?? existing.name,
+        dto.nameEn ?? existing.name_en,
+        dto.dispersantType ?? existing.dispersant_type,
+        dto.anchorDeltaD ?? existing.anchor_delta_d,
+        dto.anchorDeltaP ?? existing.anchor_delta_p,
+        dto.anchorDeltaH ?? existing.anchor_delta_h,
+        dto.anchorR0 ?? existing.anchor_r0,
+        dto.solvationDeltaD ?? existing.solvation_delta_d,
+        dto.solvationDeltaP ?? existing.solvation_delta_p,
+        dto.solvationDeltaH ?? existing.solvation_delta_h,
+        dto.solvationR0 ?? existing.solvation_r0,
+        dto.overallDeltaD ?? existing.overall_delta_d,
+        dto.overallDeltaP ?? existing.overall_delta_p,
+        dto.overallDeltaH ?? existing.overall_delta_h,
+        dto.hlb ?? existing.hlb,
+        dto.molWeight ?? existing.mol_weight,
+        dto.tradeName ?? existing.trade_name,
+        dto.manufacturer ?? existing.manufacturer,
+        dto.notes ?? existing.notes,
+        id,
+      );
+    return this.getById(id);
+  }
+
+  delete(id: number): boolean {
+    const result = this.db.prepare('DELETE FROM dispersants WHERE id = ?').run(id);
     return result.changes > 0;
   }
 }

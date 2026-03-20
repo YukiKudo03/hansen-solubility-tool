@@ -224,6 +224,26 @@ export const api = {
   getBagleyPlotData: () => ipcRenderer.invoke('visualization:bagleyPlot'),
   getProjection2DData: () => ipcRenderer.invoke('visualization:projection2d'),
 
+  // 分散剤
+  getAllDispersants: () => ipcRenderer.invoke('dispersants:getAll'),
+  getDispersantById: (id: number) => ipcRenderer.invoke('dispersants:getById', id),
+  getDispersantsByType: (type: string) => ipcRenderer.invoke('dispersants:getByType', type),
+  searchDispersants: (query: string) => ipcRenderer.invoke('dispersants:search', query),
+  createDispersant: (dto: Record<string, unknown>) => ipcRenderer.invoke('dispersants:create', dto),
+  updateDispersant: (id: number, dto: Record<string, unknown>) => ipcRenderer.invoke('dispersants:update', id, dto),
+  deleteDispersant: (id: number) => ipcRenderer.invoke('dispersants:delete', id),
+
+  // 分散剤選定
+  screenDispersants: (particleId: number, solventId: number) =>
+    ipcRenderer.invoke('dispersantSelection:screen', particleId, solventId),
+  screenSolventsForDispersant: (particleId: number, dispersantId: number) =>
+    ipcRenderer.invoke('dispersantSelection:screenSolvents', particleId, dispersantId),
+  screenDispersantsFallback: (particleId: number) =>
+    ipcRenderer.invoke('dispersantSelection:screenFallback', particleId),
+  getDispersantThresholds: () => ipcRenderer.invoke('settings:getDispersantThresholds'),
+  setDispersantThresholds: (thresholds: { excellentMax: number; goodMax: number; fairMax: number; poorMax: number }) =>
+    ipcRenderer.invoke('settings:setDispersantThresholds', thresholds),
+
   // 汎用 IPC invoke — 許可チャネルのみ通過
   invoke: (channel: string, ...args: unknown[]) => {
     const ALLOWED_CHANNELS = [
