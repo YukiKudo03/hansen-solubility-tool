@@ -10,7 +10,8 @@ A production-grade Electron desktop application for HSP-based material compatibi
 - **[architecture.md](./architecture.md)** — System diagram, pipelines, module boundaries
 
 ### Implementation Details
-- **[frontend.md](./frontend.md)** — MD3 responsive layout, 15 tabs, 19 hooks, dark mode
+- **[backend.md](./backend.md)** — IPC handlers (100+), repository pattern, validation
+- **[frontend.md](./frontend.md)** — MD3 responsive layout, 23 tabs, 19 hooks, dark mode
 - **[data.md](./data.md)** — SQLite schema (8 tables), repositories (7), seed data
 - **[dependencies.md](./dependencies.md)** — External packages, build tools
 
@@ -117,14 +118,14 @@ Pure domain logic (testable, no side effects)
 ### src/renderer/ (62 files, ~6770 lines)
 - `App.tsx` — MD3 responsive layout + `useTheme()`
 - `navigation.ts` — 6カテゴリ・23タブ (新: 分析タブ追加)
-- `components/` — 40 components (20 Views, 8 Badges, 3 Nav, SortTableHeader, BookmarkButton, etc.)
+- `components/` — 40 components (21 Views, 8 Badges, 3 Nav, SortTableHeader, BookmarkButton, etc.)
 - `hooks/` — 19 hooks (useCsvExport, useSortableTable, useBookmarks, useTheme, etc.)
 
 ### src/i18n/ (2 files)
 - `translations.ts` — ja/en 60+キー
 - `index.ts` — i18next初期化
 
-### tests/ (79 files, 975+ unit + 98+ E2E)
+### tests/ (92 files, 1094+ unit + E2E combined)
 
 ## Database Schema (8 tables)
 
@@ -132,7 +133,7 @@ Pure domain logic (testable, no side effects)
 |-------|------|---------|
 | `parts_groups` | ~10 | Material groups |
 | `parts` | ~83 | Polymers + coatings + carriers |
-| `solvents` | ~145 | Solvents + plasticizers |
+| `solvents` | ~95 | Solvents + plasticizers (tagged) |
 | `nano_particles` | 18 | Nanoparticle materials |
 | `drugs` | 16 | Pharmaceutical APIs |
 | `settings` | ~10 | Config (key-value) |
@@ -145,10 +146,10 @@ Pure domain logic (testable, no side effects)
 |----------|-------|-------|-------------|
 | **Core** | 38 | 4,700 | 17評価エンジン, 9分類器, ユーティリティ |
 | **Database** | 11 | 1,680 | Schema, 7 repos, 6 seed files |
-| **Main** | 3 | 1,075 | Electron, IPC (100+), preload |
-| **Renderer** | 62 | 6,770 | 40 components, 19 hooks, i18n |
-| **Tests** | 79 | — | 975 unit + 98 E2E |
-| **Total** | 225 | 14,225+ | — |
+| **Main** | 3 | 1,127 | Electron, IPC (100+), preload |
+| **Renderer** | 42 | 6,770 | 40 components, 19 hooks, i18n |
+| **Tests** | 92 | — | 1094+ tests |
+| **Total** | 242 | 14,352+ | — |
 
 ---
 

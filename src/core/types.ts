@@ -430,7 +430,9 @@ export interface CarrierEvaluationResult {
 // ─── 接着性予測系 ───────────────────────────
 
 // AdhesionLevel, AdhesionThresholds は src/core/adhesion.ts で定義
-export { AdhesionLevel, type AdhesionThresholds } from './adhesion';
+import { AdhesionLevel } from './adhesion';
+import type { AdhesionThresholds } from './adhesion';
+export { AdhesionLevel, type AdhesionThresholds };
 
 /** 接着性予測結果 */
 export interface AdhesionResult {
