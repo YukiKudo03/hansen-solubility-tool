@@ -59,7 +59,24 @@
       "Bash(do sed:*)",
       "Bash(done)",
       "Bash(descending)",
-      "Bash(git pull:*)"
+      "Bash(git pull:*)",
+      "Bash(npm -v)",
+      "Bash(tee /tmp/test-output.txt)",
+      "Bash(/c/Users/yukky/Documents/claude_projects/hansen_solubility/.reports/codemap-diff.txt:*)",
+      "Bash(npm test:*)",
+      "Bash(timeout 15 node_modules/electron/dist/electron.exe .)",
+      "Bash(node_modules/electron/dist/electron.exe --version)",
+      "Bash(timeout 10 node_modules/electron/dist/electron.exe .)",
+      "Bash(sort -t'|' -k2 -n)",
+      "Bash(git:*)",
+      "Bash(/tmp/codemap_summary.md:*)",
+      "Bash(for file:*)",
+      "Bash(do echo:*)",
+      "Bash(powershell -Command \"irm bun.sh/install.ps1 | iex\")",
+      "Bash(export PATH=\"$HOME/.bun/bin:$PATH\")",
+      "Bash(bun --version)",
+      "mcp__plugin_discord_discord__reply",
+      "Bash(npx jest:*)"
     ]
   }
 }
