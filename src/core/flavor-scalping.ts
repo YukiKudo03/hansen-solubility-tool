@@ -1,36 +1,20 @@
 /**
- * フレーバースカルピング予測 — 包装材とアロマ成分間のRED値に基づく吸着リスク評価
+ * フレーバースカルピング予測 — flavor-scalping-prediction のアダプタ
  *
- * RED値が小さい = 相溶性高い = アロマ成分が包装材に吸着されやすい = High (スカルピング)
- * RED値が大きい = 相溶性低い = アロマ成分が保持される = Low
+ * Part/Solvent ベースのインターフェースを提供し、内部で flavor-scalping-prediction に委譲する。
  */
-import { calculateRa, calculateRed } from './hsp';
+import {
+  classifyScalping as _classifyScalping,
+  getScalpingLevelInfo as _getScalpingLevelInfo,
+  screenFlavorScalping as _screenFlavorScalping,
+  ScalpingLevel,
+  DEFAULT_SCALPING_THRESHOLDS,
+} from './flavor-scalping-prediction';
+import type { ScalpingThresholds, ScalpingLevelInfo } from './flavor-scalping-prediction';
 import type { Part, Solvent } from './types';
 
-/** スカルピングレベル */
-export enum ScalpingLevel {
-  High = 'High',        // 高いスカルピングリスク（吸着されやすい）
-  Moderate = 'Moderate', // 中程度のリスク
-  Low = 'Low',           // 低リスク（保持される）
-}
-
-/** スカルピング閾値 (RED値ベース) */
-export interface ScalpingThresholds {
-  highMax: number;     // default: 0.8 — RED ≤ highMax → High
-  moderateMax: number; // default: 1.2 — RED ≤ moderateMax → Moderate, else Low
-}
-
-export const DEFAULT_SCALPING_THRESHOLDS: ScalpingThresholds = {
-  highMax: 0.8,
-  moderateMax: 1.2,
-};
-
-/** スカルピング分類 */
-export function classifyScalping(red: number, thresholds: ScalpingThresholds): ScalpingLevel {
-  if (red <= thresholds.highMax) return ScalpingLevel.High;
-  if (red <= thresholds.moderateMax) return ScalpingLevel.Moderate;
-  return ScalpingLevel.Low;
-}
+export { ScalpingLevel, DEFAULT_SCALPING_THRESHOLDS };
+export type { ScalpingThresholds };
 
 /** 個別スクリーニング結果 */
 export interface FlavorScalpingResult {
@@ -49,21 +33,32 @@ export interface FlavorScalpingEvaluationResult {
   thresholdsUsed: ScalpingThresholds;
 }
 
-/** 全アロマ成分をスクリーニング */
+/** スカルピング分類 (委譲) */
+export function classifyScalping(red: number, thresholds: ScalpingThresholds): ScalpingLevel {
+  return _classifyScalping(red, thresholds);
+}
+
+/** レベル情報取得 (委譲) */
+export function getScalpingLevelInfo(level: ScalpingLevel): ScalpingLevelInfo {
+  return _getScalpingLevelInfo(level);
+}
+
+/** 全アロマ成分をスクリーニング — Part/Solvent ラッパー */
 export function screenFlavorScalping(
   packaging: Part,
   aromas: Solvent[],
   thresholds: ScalpingThresholds,
 ): FlavorScalpingEvaluationResult {
-  const results: FlavorScalpingResult[] = aromas.map((aroma) => {
-    const ra = calculateRa(packaging.hsp, aroma.hsp);
-    const red = calculateRed(packaging.hsp, aroma.hsp, packaging.r0);
-    const scalpingLevel = classifyScalping(red, thresholds);
-    return { aroma, packaging, ra, red, scalpingLevel };
-  });
+  const inputs = aromas.map((s) => ({ name: s.name, hsp: s.hsp }));
+  const coreResults = _screenFlavorScalping(packaging.hsp, packaging.r0, inputs, thresholds);
 
-  // RED昇順（吸着されやすい順）
-  results.sort((a, b) => a.red - b.red);
+  const results: FlavorScalpingResult[] = coreResults.map((cr) => ({
+    aroma: aromas.find((a) => a.name === cr.flavorName)!,
+    packaging,
+    ra: cr.ra,
+    red: cr.red,
+    scalpingLevel: cr.scalpingLevel,
+  }));
 
   return {
     packaging,
@@ -71,13 +66,4 @@ export function screenFlavorScalping(
     evaluatedAt: new Date(),
     thresholdsUsed: thresholds,
   };
-}
-
-/** レベル情報取得 */
-export function getScalpingLevelInfo(level: ScalpingLevel): { label: string; description: string } {
-  switch (level) {
-    case ScalpingLevel.High: return { label: 'High', description: '高いスカルピングリスク' };
-    case ScalpingLevel.Moderate: return { label: 'Moderate', description: '中程度のリスク' };
-    case ScalpingLevel.Low: return { label: 'Low', description: '低リスク' };
-  }
 }
