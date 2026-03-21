@@ -19,6 +19,8 @@ export const VALID_HISTORY_PIPELINES = [
   'sunscreenUVFilter', 'inhalationDrug', 'proteinAggregation', 'biologicBuffer',
   'cleaningFormulation', 'naturalDyeExtraction', 'essentialOilExtraction',
   'soilRemediation', 'residualSolvent',
+  'temperatureHspCorrection', 'pressureHspCorrection', 'supercriticalCO2',
+  'coatingDefect', 'photoresistDeveloper', 'perovskiteSolvent', 'organicSemiconductorFilm', 'uvCurableInk',
 ] as const;
 
 export type HistoryPipeline = typeof VALID_HISTORY_PIPELINES[number];

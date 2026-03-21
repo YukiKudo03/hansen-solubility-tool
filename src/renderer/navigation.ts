@@ -21,6 +21,8 @@ export type Tab =
   | 'sunscreenUVFilter' | 'inhalationDrug' | 'proteinAggregation' | 'biologicBuffer'
   | 'cleaningFormulation' | 'naturalDyeExtraction' | 'essentialOilExtraction'
   | 'soilRemediation' | 'residualSolvent'
+  | 'temperatureHspCorrection' | 'pressureHspCorrection' | 'supercriticalCO2'
+  | 'coatingDefect' | 'photoresistDeveloper' | 'perovskiteSolvent' | 'organicSemiconductorFilm' | 'uvCurableInk'
   | 'settings';
 
 export interface NavItem {
@@ -62,6 +64,8 @@ export const NAV_CATEGORIES: NavCategory[] = [
       { id: 'inhalationDrug', label: '吸入薬適合性' },
       { id: 'proteinAggregation', label: 'タンパク質凝集' },
       { id: 'residualSolvent', label: '残留溶媒' },
+      { id: 'coatingDefect', label: 'コーティング欠陥' },
+      { id: 'photoresistDeveloper', label: 'レジスト現像' },
     ],
   },
   {
@@ -99,12 +103,16 @@ export const NAV_CATEGORIES: NavCategory[] = [
     icon: '⚡',
     items: [
       { id: 'blendOptimizer', label: 'ブレンド最適化' },
+      { id: 'supercriticalCO2', label: '超臨界CO2' },
       { id: 'cleaningFormulation', label: '洗浄剤配合' },
       { id: 'drugSolubility', label: '薬物溶解性' },
       { id: 'comparison', label: '比較レポート' },
       { id: 'sphereFitting', label: 'HSP球算出' },
       { id: 'greenSolvent', label: 'グリーン溶媒' },
       { id: 'multiObjective', label: '多目的選定' },
+      { id: 'perovskiteSolvent', label: 'ペロブスカイト溶媒' },
+      { id: 'organicSemiconductorFilm', label: '有機半導体膜' },
+      { id: 'uvCurableInk', label: 'UV硬化インク' },
     ],
   },
   {
@@ -129,6 +137,8 @@ export const NAV_CATEGORIES: NavCategory[] = [
       { id: 'groupContribution', label: '族寄与法' },
       { id: 'copolymerHspEstimation', label: 'コポリマーHSP推定' },
       { id: 'surfaceTreatmentQuantification', label: '表面処理効果' },
+      { id: 'temperatureHspCorrection', label: '温度HSP補正' },
+      { id: 'pressureHspCorrection', label: '圧力HSP補正' },
     ],
   },
   {

@@ -60,6 +60,14 @@ import NaturalDyeExtractionView from './components/NaturalDyeExtractionView';
 import EssentialOilExtractionView from './components/EssentialOilExtractionView';
 import SoilRemediationView from './components/SoilRemediationView';
 import ResidualSolventView from './components/ResidualSolventView';
+import TemperatureHSPCorrectionView from './components/TemperatureHSPCorrectionView';
+import PressureHSPCorrectionView from './components/PressureHSPCorrectionView';
+import SupercriticalCO2View from './components/SupercriticalCO2View';
+import CoatingDefectView from './components/CoatingDefectView';
+import PhotoresistDeveloperView from './components/PhotoresistDeveloperView';
+import PerovskiteSolventView from './components/PerovskiteSolventView';
+import OrganicSemiconductorFilmView from './components/OrganicSemiconductorFilmView';
+import UVCurableInkView from './components/UVCurableInkView';
 
 const VIEW_MAP: Record<Tab, React.ComponentType> = {
   report: ReportView,
@@ -114,6 +122,14 @@ const VIEW_MAP: Record<Tab, React.ComponentType> = {
   essentialOilExtraction: EssentialOilExtractionView,
   soilRemediation: SoilRemediationView,
   residualSolvent: ResidualSolventView,
+  temperatureHspCorrection: TemperatureHSPCorrectionView,
+  pressureHspCorrection: PressureHSPCorrectionView,
+  supercriticalCO2: SupercriticalCO2View,
+  coatingDefect: CoatingDefectView,
+  photoresistDeveloper: PhotoresistDeveloperView,
+  perovskiteSolvent: PerovskiteSolventView,
+  organicSemiconductorFilm: OrganicSemiconductorFilmView,
+  uvCurableInk: UVCurableInkView,
   settings: SettingsView,
 };
 

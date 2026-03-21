@@ -371,6 +371,74 @@ export interface ElectronAPI {
   // バイオ製剤バッファー選定
   screenBiologicBuffers(proteinHSP: import('./core/types').HSPValues, r0: number, bufferIds: number[], temperature?: number): Promise<import('./core/biologic-formulation-buffer').BufferScreeningResult[]>;
 
+  // 温度HSP補正
+  evaluateTemperatureHSPCorrection(params: {
+    hsp: import('./core/types').HSPValues;
+    temperature: number;
+    referenceTemp?: number;
+    alpha: number;
+    solventName?: string;
+  }): Promise<{
+    original: import('./core/types').HSPValues;
+    corrected: import('./core/types').HSPValues;
+    temperature: number;
+    referenceTemp: number;
+    alpha: number;
+    solventName?: string;
+    associatingCorrectionApplied: boolean;
+    evaluatedAt: Date;
+  }>;
+
+  // 圧力HSP補正
+  evaluatePressureHSPCorrection(params: {
+    hsp: import('./core/types').HSPValues;
+    pressureRef?: number;
+    pressureTarget: number;
+    temperature: number;
+    isothermalCompressibility?: number;
+  }): Promise<{
+    original: import('./core/types').HSPValues;
+    corrected: import('./core/types').HSPValues;
+    pressureRef: number;
+    pressureTarget: number;
+    temperature: number;
+    isothermalCompressibility: number;
+    evaluatedAt: Date;
+  }>;
+
+  // 超臨界CO2共溶媒選定
+  screenSupercriticalCO2Cosolvents(params: {
+    targetHSP: import('./core/types').HSPValues;
+    targetR0: number;
+    pressure: number;
+    temperature: number;
+    cosolvents: Array<{ name: string; hsp: import('./core/types').HSPValues }>;
+    fractions?: number[];
+  }): Promise<import('./core/supercritical-co2-cosolvent').SCCO2CosolventScreeningResult>;
+
+  // コーティング欠陥予測
+  predictCoatingDefects(params: {
+    coatingHSP: import('./core/types').HSPValues;
+    substrateHSP: import('./core/types').HSPValues;
+    solventHSP: import('./core/types').HSPValues;
+  }): Promise<import('./core/coating-defect-prediction').CoatingDefectResult>;
+
+  // フォトレジスト現像液適合性
+  evaluatePhotoresistDeveloper(params: {
+    unexposedHSP: import('./core/types').HSPValues;
+    exposedHSP: import('./core/types').HSPValues;
+    developerHSP: import('./core/types').HSPValues;
+  }): Promise<import('./core/photoresist-developer').PhotoresistDeveloperResult>;
+
+  // ペロブスカイト溶媒設計
+  screenPerovskiteSolvents(precursorHSP: import('./core/types').HSPValues, r0: number, solventIds: number[]): Promise<import('./core/perovskite-solvent-engineering').PerovskiteSolventResult[]>;
+
+  // 有機半導体薄膜形成
+  screenOrganicSemiconductorFilm(oscHSP: import('./core/types').HSPValues, r0: number, solventIds: number[]): Promise<import('./core/organic-semiconductor-film').OSCSolventResult[]>;
+
+  // UV硬化インクモノマー選定
+  screenUVCurableInkMonomers(oligomerHSP: import('./core/types').HSPValues, r0: number, monomerIds: number[]): Promise<import('./core/uv-curable-ink-monomer').UVInkMonomerResult[]>;
+
   // 汎用 IPC invoke (可視化パイプライン等)
   invoke(channel: string, ...args: unknown[]): Promise<any>;
 }

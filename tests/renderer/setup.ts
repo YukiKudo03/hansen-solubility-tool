@@ -232,6 +232,15 @@ export function createMockApi(): { [K in keyof ElectronAPI]: ReturnType<typeof v
     // 残留溶媒予測
     screenResidualSolvent: vi.fn().mockResolvedValue([]),
 
+    // 温度HSP補正
+    evaluateTemperatureHSPCorrection: vi.fn().mockResolvedValue(null),
+
+    // 圧力HSP補正
+    evaluatePressureHSPCorrection: vi.fn().mockResolvedValue(null),
+
+    // 超臨界CO2共溶媒選定
+    screenSupercriticalCO2Cosolvents: vi.fn().mockResolvedValue(null),
+
     // 汎用 IPC invoke
     invoke: vi.fn().mockResolvedValue(null),
   };

@@ -73,7 +73,18 @@ import { screenUVFilterCompatibility } from '../core/sunscreen-uv-filter';
 import { evaluateInhalationCompatibility } from '../core/inhalation-drug-propellant';
 import { evaluateProteinAggregationRisk } from '../core/protein-aggregation-risk';
 import { screenBiologicBuffers } from '../core/biologic-formulation-buffer';
-import { validateSunscreenUVFilterInput, validateInhalationDrugInput, validateProteinAggregationInput, validateBiologicBufferInput } from '../core/validation';
+import { validateSunscreenUVFilterInput, validateInhalationDrugInput, validateProteinAggregationInput, validateBiologicBufferInput, validateTemperatureHSPCorrectionInput, validatePressureHSPCorrectionInput, validateSCCO2CosolventInput } from '../core/validation';
+import { correctHSPForTemperature } from '../core/temperature-hsp';
+import { correctHSPForPressure, estimateCO2HSP } from '../core/pressure-hsp';
+import { correctDeltaHAssociating, isAssociatingLiquid } from '../core/associating-liquid-correction';
+import { screenSCCO2Cosolvents } from '../core/supercritical-co2-cosolvent';
+import type { CosolventCandidate } from '../core/supercritical-co2-cosolvent';
+import { validateCoatingDefectInput, validatePhotoresistDeveloperInput, validatePerovskiteSolventInput, validateOrganicSemiconductorFilmInput, validateUVCurableInkMonomerInput } from '../core/validation';
+import { predictCoatingDefects } from '../core/coating-defect-prediction';
+import { evaluatePhotoresistDeveloper } from '../core/photoresist-developer';
+import { screenPerovskiteSolvents } from '../core/perovskite-solvent-engineering';
+import { screenOSCSolvents } from '../core/organic-semiconductor-film';
+import { screenUVInkMonomers } from '../core/uv-curable-ink-monomer';
 
 /** CSVインポートの最大サイズ (10MB) */
 const MAX_CSV_SIZE = 10 * 1024 * 1024;
@@ -1580,5 +1591,138 @@ export function registerIpcHandlers(
     const err = validateBiologicBufferInput(proteinHSP, r0, buffers);
     if (err) throw new Error(err);
     return screenBiologicBuffers(proteinHSP, r0, buffers, temperature);
+  });
+
+  // --- 温度HSP補正 ---
+  ipcMain.handle('temperatureHspCorrection:evaluate', (_, params: {
+    hsp: HSPValues;
+    temperature: number;
+    referenceTemp?: number;
+    alpha: number;
+    solventName?: string;
+  }) => {
+    const err = validateTemperatureHSPCorrectionInput(params);
+    if (err) throw new Error(err);
+    const refTemp = params.referenceTemp ?? 25;
+    const corrected = correctHSPForTemperature(params.hsp, params.temperature, refTemp, params.alpha);
+    // 会合性液体のdH補正統合
+    let associatingCorrectionApplied = false;
+    if (params.solventName && isAssociatingLiquid(params.solventName)) {
+      const tempK = params.temperature + 273.15;
+      const refK = refTemp + 273.15;
+      corrected.deltaH = correctDeltaHAssociating(params.hsp.deltaH, tempK, refK, params.solventName);
+      associatingCorrectionApplied = true;
+    }
+    return {
+      original: params.hsp,
+      corrected,
+      temperature: params.temperature,
+      referenceTemp: refTemp,
+      alpha: params.alpha,
+      solventName: params.solventName,
+      associatingCorrectionApplied,
+      evaluatedAt: new Date(),
+    };
+  });
+
+  // --- 圧力HSP補正 ---
+  ipcMain.handle('pressureHspCorrection:evaluate', (_, params: {
+    hsp: HSPValues;
+    pressureRef?: number;
+    pressureTarget: number;
+    temperature: number;
+    isothermalCompressibility?: number;
+  }) => {
+    const err = validatePressureHSPCorrectionInput(params);
+    if (err) throw new Error(err);
+    const pressureRef = params.pressureRef ?? 0.1;
+    const beta = params.isothermalCompressibility ?? 1e-3;
+    const corrected = correctHSPForPressure(params.hsp, pressureRef, params.pressureTarget, params.temperature, beta);
+    return {
+      original: params.hsp,
+      corrected,
+      pressureRef,
+      pressureTarget: params.pressureTarget,
+      temperature: params.temperature,
+      isothermalCompressibility: beta,
+      evaluatedAt: new Date(),
+    };
+  });
+
+  // --- 超臨界CO2共溶媒選定 ---
+  ipcMain.handle('supercriticalCO2:screen', (_, params: {
+    targetHSP: HSPValues;
+    targetR0: number;
+    pressure: number;
+    temperature: number;
+    cosolvents: Array<{ name: string; hsp: HSPValues }>;
+    fractions?: number[];
+  }) => {
+    const err = validateSCCO2CosolventInput(params);
+    if (err) throw new Error(err);
+    return screenSCCO2Cosolvents(
+      params.targetHSP,
+      params.targetR0,
+      params.pressure,
+      params.temperature,
+      params.cosolvents,
+      params.fractions,
+    );
+  });
+
+  // ─── dissolution-contrast群 ─────────────────────────────────
+
+  // --- コーティング欠陥予測 ---
+  ipcMain.handle('coatingDefect:predict', (_, params: {
+    coatingHSP: HSPValues; substrateHSP: HSPValues; solventHSP: HSPValues;
+  }) => {
+    const err = validateCoatingDefectInput(params);
+    if (err) throw new Error(err);
+    return predictCoatingDefects(params.coatingHSP, params.substrateHSP, params.solventHSP);
+  });
+
+  // --- フォトレジスト現像液適合性 ---
+  ipcMain.handle('photoresistDeveloper:evaluate', (_, params: {
+    unexposedHSP: HSPValues; exposedHSP: HSPValues; developerHSP: HSPValues;
+  }) => {
+    const err = validatePhotoresistDeveloperInput(params);
+    if (err) throw new Error(err);
+    return evaluatePhotoresistDeveloper(params.unexposedHSP, params.exposedHSP, params.developerHSP);
+  });
+
+  // --- ペロブスカイト溶媒設計 ---
+  ipcMain.handle('perovskiteSolvent:screen', (_, precursorHSP: HSPValues, r0: number, solventIds: number[]) => {
+    const solvents = solventIds.map((id) => {
+      const s = solventRepo.getSolventById(id);
+      if (!s) throw new Error(`溶媒 (ID: ${id}) が見つかりません`);
+      return { name: s.name, hsp: s.hsp };
+    });
+    const err = validatePerovskiteSolventInput(precursorHSP, r0, solvents);
+    if (err) throw new Error(err);
+    return screenPerovskiteSolvents(precursorHSP, r0, solvents);
+  });
+
+  // --- 有機半導体薄膜形成 ---
+  ipcMain.handle('organicSemiconductorFilm:screen', (_, oscHSP: HSPValues, r0: number, solventIds: number[]) => {
+    const solvents = solventIds.map((id) => {
+      const s = solventRepo.getSolventById(id);
+      if (!s) throw new Error(`溶媒 (ID: ${id}) が見つかりません`);
+      return { name: s.name, hsp: s.hsp, boilingPoint: s.boilingPoint };
+    });
+    const err = validateOrganicSemiconductorFilmInput(oscHSP, r0, solvents);
+    if (err) throw new Error(err);
+    return screenOSCSolvents(oscHSP, r0, solvents);
+  });
+
+  // --- UV硬化インクモノマー選定 ---
+  ipcMain.handle('uvCurableInk:screen', (_, oligomerHSP: HSPValues, r0: number, monomerIds: number[]) => {
+    const monomers = monomerIds.map((id) => {
+      const s = solventRepo.getSolventById(id);
+      if (!s) throw new Error(`モノマー (ID: ${id}) が見つかりません`);
+      return { name: s.name, hsp: s.hsp };
+    });
+    const err = validateUVCurableInkMonomerInput(oligomerHSP, r0, monomers);
+    if (err) throw new Error(err);
+    return screenUVInkMonomers(oligomerHSP, r0, monomers);
   });
 }

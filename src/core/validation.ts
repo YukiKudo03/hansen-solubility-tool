@@ -819,6 +819,49 @@ export function validateResidualSolventInput(
   return validateHSPR0Array(filmHSP, r0, solvents, '溶媒');
 }
 
+/** 温度HSP補正入力バリデーション */
+export function validateTemperatureHSPCorrectionInput(params: unknown): string | null {
+  if (params == null || typeof params !== 'object') return 'パラメータオブジェクトが必要です';
+  const p = params as Record<string, unknown>;
+  const hspErr = validateHSPObject(p.hsp, '');
+  if (hspErr) return `HSP: ${hspErr}`;
+  if (typeof p.temperature !== 'number' || !Number.isFinite(p.temperature)) return '温度は有限数値でなければなりません';
+  if (typeof p.alpha !== 'number' || !Number.isFinite(p.alpha) || p.alpha <= 0) return '体積膨張係数は正の数値でなければなりません';
+  return null;
+}
+
+/** 圧力HSP補正入力バリデーション */
+export function validatePressureHSPCorrectionInput(params: unknown): string | null {
+  if (params == null || typeof params !== 'object') return 'パラメータオブジェクトが必要です';
+  const p = params as Record<string, unknown>;
+  const hspErr = validateHSPObject(p.hsp, '');
+  if (hspErr) return `HSP: ${hspErr}`;
+  if (typeof p.pressureTarget !== 'number' || !Number.isFinite(p.pressureTarget) || p.pressureTarget <= 0) return '目標圧力は正の数値でなければなりません';
+  if (typeof p.temperature !== 'number' || !Number.isFinite(p.temperature) || p.temperature <= 0) return '温度は正の値でなければなりません';
+  return null;
+}
+
+/** 超臨界CO2共溶媒選定入力バリデーション */
+export function validateSCCO2CosolventInput(params: unknown): string | null {
+  if (params == null || typeof params !== 'object') return 'パラメータオブジェクトが必要です';
+  const p = params as Record<string, unknown>;
+  const tgtErr = validateHSPObject(p.targetHSP, 'ターゲット');
+  if (tgtErr) return `ターゲットHSP: ${tgtErr}`;
+  if (typeof p.targetR0 !== 'number' || !Number.isFinite(p.targetR0) || p.targetR0 <= 0) return 'R₀は正の数値を入力してください';
+  if (typeof p.pressure !== 'number' || !Number.isFinite(p.pressure) || p.pressure <= 0) return '圧力は正の値でなければなりません';
+  if (typeof p.temperature !== 'number' || !Number.isFinite(p.temperature) || p.temperature <= 0) return '温度は正の値でなければなりません';
+  if (!Array.isArray(p.cosolvents) || p.cosolvents.length === 0) return '共溶媒候補を1つ以上指定してください';
+  for (let i = 0; i < p.cosolvents.length; i++) {
+    const c: unknown = (p.cosolvents as unknown[])[i];
+    if (c == null || typeof c !== 'object') return `cosolvents[${i}]: オブジェクトでなければなりません`;
+    const entry = c as Record<string, unknown>;
+    if (typeof entry.name !== 'string' || entry.name.trim().length === 0) return `cosolvents[${i}]: 名前を入力してください`;
+    const hErr = validateHSPObject(entry.hsp, `cosolvents[${i}]`);
+    if (hErr) return `cosolvents[${i}]: ${hErr}`;
+  }
+  return null;
+}
+
 /** 密着強度閾値バリデーション */
 export function validateAdhesionStrengthThresholds(t: unknown): string | null {
   if (t == null || typeof t !== 'object') return '閾値オブジェクトが必要です';
@@ -935,4 +978,61 @@ export function validateHydrogenStorageInput(params: unknown): string | null {
   if (typeof p.r0 !== 'number' || !Number.isFinite(p.r0) || p.r0 <= 0) return 'R₀は正の数値を入力してください';
   if (!Array.isArray(p.solventIds) || p.solventIds.length === 0) return '溶媒を1つ以上指定してください';
   return null;
+}
+
+// ============================================================================
+// dissolution-contrast群パイプライン用の入力バリデーション
+// ============================================================================
+
+/** コーティング欠陥予測入力バリデーション */
+export function validateCoatingDefectInput(params: unknown): string | null {
+  if (params == null || typeof params !== 'object') return 'パラメータオブジェクトが必要です';
+  const p = params as Record<string, unknown>;
+  const coatingErr = validateHSPObject(p.coatingHSP, 'コーティング');
+  if (coatingErr) return `コーティングHSP: ${coatingErr}`;
+  const substrateErr = validateHSPObject(p.substrateHSP, '基材');
+  if (substrateErr) return `基材HSP: ${substrateErr}`;
+  const solventErr = validateHSPObject(p.solventHSP, '溶媒');
+  if (solventErr) return `溶媒HSP: ${solventErr}`;
+  return null;
+}
+
+/** フォトレジスト現像液入力バリデーション */
+export function validatePhotoresistDeveloperInput(params: unknown): string | null {
+  if (params == null || typeof params !== 'object') return 'パラメータオブジェクトが必要です';
+  const p = params as Record<string, unknown>;
+  const unexposedErr = validateHSPObject(p.unexposedHSP, '未露光レジスト');
+  if (unexposedErr) return `未露光レジストHSP: ${unexposedErr}`;
+  const exposedErr = validateHSPObject(p.exposedHSP, '露光後レジスト');
+  if (exposedErr) return `露光後レジストHSP: ${exposedErr}`;
+  const devErr = validateHSPObject(p.developerHSP, '現像液');
+  if (devErr) return `現像液HSP: ${devErr}`;
+  return null;
+}
+
+/** ペロブスカイト溶媒設計入力バリデーション */
+export function validatePerovskiteSolventInput(
+  precursorHSP: { deltaD: number; deltaP: number; deltaH: number },
+  r0: number,
+  solvents: unknown[],
+): string | null {
+  return validateHSPR0Array(precursorHSP, r0, solvents, '溶媒');
+}
+
+/** 有機半導体薄膜形成入力バリデーション */
+export function validateOrganicSemiconductorFilmInput(
+  oscHSP: { deltaD: number; deltaP: number; deltaH: number },
+  r0: number,
+  solvents: unknown[],
+): string | null {
+  return validateHSPR0Array(oscHSP, r0, solvents, '溶媒');
+}
+
+/** UV硬化インクモノマー選定入力バリデーション */
+export function validateUVCurableInkMonomerInput(
+  oligomerHSP: { deltaD: number; deltaP: number; deltaH: number },
+  r0: number,
+  monomers: unknown[],
+): string | null {
+  return validateHSPR0Array(oligomerHSP, r0, monomers, 'モノマー');
 }

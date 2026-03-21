@@ -22,6 +22,16 @@ import type { DielectricScreeningResult } from './dielectric-film';
 import { FilmQualityLevel } from './dielectric-film';
 import type { ExcipientResult } from './excipient-compatibility';
 import { CompatibilityLevel } from './excipient-compatibility';
+import type { CoatingDefectResult } from './coating-defect-prediction';
+import { getDefectRiskInfo } from './coating-defect-prediction';
+import type { PhotoresistDeveloperResult } from './photoresist-developer';
+import { getContrastQualityInfo } from './photoresist-developer';
+import type { PerovskiteSolventResult } from './perovskite-solvent-engineering';
+import { getSolventRoleInfo } from './perovskite-solvent-engineering';
+import type { OSCSolventResult } from './organic-semiconductor-film';
+import { getFilmFormationLevelInfo } from './organic-semiconductor-film';
+import type { UVInkMonomerResult } from './uv-curable-ink-monomer';
+import { getMonomerSuitabilityInfo } from './uv-curable-ink-monomer';
 
 /** CSVフィールドをエスケープする（カンマ・引用符・改行を含む場合） */
 function escapeCsvField(value: string): string {
@@ -1436,6 +1446,86 @@ export function formatBiologicBufferCsv(results: BufferScreeningResult[]): strin
   return BOM + [headers.join(','), ...rows].join('\r\n') + '\r\n';
 }
 
+// ─── 温度・圧力補正群 CSV ───────────────────────────
+
+import type { SCCO2CosolventScreeningResult } from './supercritical-co2-cosolvent';
+
+/**
+ * 温度HSP補正結果をCSV文字列に変換する
+ */
+export function formatTemperatureHSPCorrectionCsv(result: {
+  original: { deltaD: number; deltaP: number; deltaH: number };
+  corrected: { deltaD: number; deltaP: number; deltaH: number };
+  temperature: number;
+  referenceTemp: number;
+  alpha: number;
+  solventName?: string;
+  associatingCorrectionApplied: boolean;
+}): string {
+  const BOM = '\uFEFF';
+  const headers = [
+    '溶媒名', '温度(°C)', '参照温度(°C)', '体積膨張係数(K⁻¹)',
+    '元 δD', '元 δP', '元 δH',
+    '補正後 δD', '補正後 δP', '補正後 δH',
+    '会合液体補正',
+  ];
+  const row = [
+    escapeCsvField(result.solventName ?? ''),
+    result.temperature.toFixed(1),
+    result.referenceTemp.toFixed(1),
+    result.alpha.toExponential(2),
+    round3(result.original.deltaD), round3(result.original.deltaP), round3(result.original.deltaH),
+    round3(result.corrected.deltaD), round3(result.corrected.deltaP), round3(result.corrected.deltaH),
+    result.associatingCorrectionApplied ? '適用' : '',
+  ].join(',');
+  return BOM + [headers.join(','), row].join('\r\n') + '\r\n';
+}
+
+/**
+ * 圧力HSP補正結果をCSV文字列に変換する
+ */
+export function formatPressureHSPCorrectionCsv(result: {
+  original: { deltaD: number; deltaP: number; deltaH: number };
+  corrected: { deltaD: number; deltaP: number; deltaH: number };
+  pressureRef: number;
+  pressureTarget: number;
+  temperature: number;
+  isothermalCompressibility: number;
+}): string {
+  const BOM = '\uFEFF';
+  const headers = [
+    '基準圧力(MPa)', '目標圧力(MPa)', '温度(K)', '等温圧縮率(1/MPa)',
+    '元 δD', '元 δP', '元 δH',
+    '補正後 δD', '補正後 δP', '補正後 δH',
+  ];
+  const row = [
+    result.pressureRef.toFixed(2), result.pressureTarget.toFixed(2),
+    result.temperature.toFixed(1), result.isothermalCompressibility.toExponential(2),
+    round3(result.original.deltaD), round3(result.original.deltaP), round3(result.original.deltaH),
+    round3(result.corrected.deltaD), round3(result.corrected.deltaP), round3(result.corrected.deltaH),
+  ].join(',');
+  return BOM + [headers.join(','), row].join('\r\n') + '\r\n';
+}
+
+/**
+ * 超臨界CO2共溶媒選定結果をCSV文字列に変換する
+ */
+export function formatSCCO2CosolventCsv(result: SCCO2CosolventScreeningResult): string {
+  const BOM = '\uFEFF';
+  const headers = [
+    '共溶媒名', '体積分率',
+    'ブレンド δD', 'ブレンド δP', 'ブレンド δH',
+    'Ra', 'RED',
+  ];
+  const rows = result.results.map((r) => [
+    escapeCsvField(r.cosolventName),
+    r.volumeFraction.toFixed(3),
+    round3(r.blendHSP.deltaD), round3(r.blendHSP.deltaP), round3(r.blendHSP.deltaH),
+    round3(r.ra), round3(r.red),
+  ].join(','));
+  return BOM + [headers.join(','), ...rows].join('\r\n') + '\r\n';
+}
+
 // ─── 抽出・洗浄群 CSV ───────────────────────────
 
 import type { CleaningScreeningResult } from './cleaning-product-formulation';
@@ -1536,6 +1626,77 @@ export function formatResidualSolventCsv(results: ResidualSolventResult[]): stri
       round3(r.solvent.hsp.deltaD), round3(r.solvent.hsp.deltaP), round3(r.solvent.hsp.deltaH),
       round3(r.ra), round3(r.red),
       r.residualLevel,
+      escapeCsvField(`${info.label}（${info.description}）`),
+    ].join(',');
+  });
+  return BOM + [headers.join(','), ...rows].join('\r\n') + '\r\n';
+}
+
+export function formatCoatingDefectCsv(result: CoatingDefectResult): string {
+  const BOM = '\uFEFF';
+  const info = getDefectRiskInfo(result.defectRisk);
+  const headers = ['Ra(塗膜-基材)', 'Ra(塗膜-溶媒)', '密着不良リスク', 'Marangoniリスク', '欠陥リスク', '欠陥リスク判定'];
+  const row = [
+    round3(result.raCoatingSubstrate), round3(result.raCoatingSolvent),
+    result.adhesionRisk ? 'あり' : 'なし', result.marangoniRisk ? 'あり' : 'なし',
+    result.defectRisk,
+    escapeCsvField(`${info.label}（${info.description}）`),
+  ].join(',');
+  return BOM + [headers.join(','), row].join('\r\n') + '\r\n';
+}
+
+export function formatPhotoresistDeveloperCsv(result: PhotoresistDeveloperResult): string {
+  const BOM = '\uFEFF';
+  const info = getContrastQualityInfo(result.quality);
+  const headers = ['コントラスト値', '品質', '品質判定'];
+  const row = [
+    Number.isFinite(result.contrast) ? result.contrast.toFixed(4) : String(result.contrast),
+    `Quality ${result.quality}`,
+    escapeCsvField(`${info.label}（${info.description}）`),
+  ].join(',');
+  return BOM + [headers.join(','), row].join('\r\n') + '\r\n';
+}
+
+export function formatPerovskiteSolventCsv(results: PerovskiteSolventResult[]): string {
+  const BOM = '\uFEFF';
+  const headers = ['溶媒名', '溶媒 δD', '溶媒 δP', '溶媒 δH', 'Ra', 'RED', '溶媒役割', '役割判定'];
+  const rows = results.map((r) => {
+    const info = getSolventRoleInfo(r.role);
+    return [
+      escapeCsvField(r.solvent.name),
+      round3(r.solvent.hsp.deltaD), round3(r.solvent.hsp.deltaP), round3(r.solvent.hsp.deltaH),
+      round3(r.ra), round3(r.red), r.role,
+      escapeCsvField(`${info.label}（${info.description}）`),
+    ].join(',');
+  });
+  return BOM + [headers.join(','), ...rows].join('\r\n') + '\r\n';
+}
+
+export function formatOSCSolventCsv(results: OSCSolventResult[]): string {
+  const BOM = '\uFEFF';
+  const headers = ['溶媒名', '溶媒 δD', '溶媒 δP', '溶媒 δH', '沸点(°C)', 'Ra', 'RED', '薄膜形成レベル', '薄膜形成判定'];
+  const rows = results.map((r) => {
+    const info = getFilmFormationLevelInfo(r.filmFormation);
+    return [
+      escapeCsvField(r.solvent.name),
+      round3(r.solvent.hsp.deltaD), round3(r.solvent.hsp.deltaP), round3(r.solvent.hsp.deltaH),
+      r.solvent.boilingPoint?.toFixed(1) ?? '',
+      round3(r.ra), round3(r.red), r.filmFormation,
+      escapeCsvField(`${info.label}（${info.description}）`),
+    ].join(',');
+  });
+  return BOM + [headers.join(','), ...rows].join('\r\n') + '\r\n';
+}
+
+export function formatUVInkMonomerCsv(results: UVInkMonomerResult[]): string {
+  const BOM = '\uFEFF';
+  const headers = ['モノマー名', 'モノマー δD', 'モノマー δP', 'モノマー δH', 'Ra', 'RED', '適合性レベル', '適合性判定'];
+  const rows = results.map((r) => {
+    const info = getMonomerSuitabilityInfo(r.suitability);
+    return [
+      escapeCsvField(r.monomer.name),
+      round3(r.monomer.hsp.deltaD), round3(r.monomer.hsp.deltaP), round3(r.monomer.hsp.deltaH),
+      round3(r.ra), round3(r.red), r.suitability,
       escapeCsvField(`${info.label}（${info.description}）`),
     ].join(',');
   });

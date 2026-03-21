@@ -432,6 +432,60 @@ export const api = {
   screenBiologicBuffers: (proteinHSP: { deltaD: number; deltaP: number; deltaH: number }, r0: number, bufferIds: number[], temperature?: number) =>
     ipcRenderer.invoke('biologicBuffer:screen', proteinHSP, r0, bufferIds, temperature),
 
+  // 温度HSP補正
+  evaluateTemperatureHSPCorrection: (params: {
+    hsp: { deltaD: number; deltaP: number; deltaH: number };
+    temperature: number;
+    referenceTemp?: number;
+    alpha: number;
+    solventName?: string;
+  }) => ipcRenderer.invoke('temperatureHspCorrection:evaluate', params),
+
+  // 圧力HSP補正
+  evaluatePressureHSPCorrection: (params: {
+    hsp: { deltaD: number; deltaP: number; deltaH: number };
+    pressureRef?: number;
+    pressureTarget: number;
+    temperature: number;
+    isothermalCompressibility?: number;
+  }) => ipcRenderer.invoke('pressureHspCorrection:evaluate', params),
+
+  // 超臨界CO2共溶媒選定
+  screenSupercriticalCO2Cosolvents: (params: {
+    targetHSP: { deltaD: number; deltaP: number; deltaH: number };
+    targetR0: number;
+    pressure: number;
+    temperature: number;
+    cosolvents: Array<{ name: string; hsp: { deltaD: number; deltaP: number; deltaH: number } }>;
+    fractions?: number[];
+  }) => ipcRenderer.invoke('supercriticalCO2:screen', params),
+
+  // コーティング欠陥予測
+  predictCoatingDefects: (params: {
+    coatingHSP: { deltaD: number; deltaP: number; deltaH: number };
+    substrateHSP: { deltaD: number; deltaP: number; deltaH: number };
+    solventHSP: { deltaD: number; deltaP: number; deltaH: number };
+  }) => ipcRenderer.invoke('coatingDefect:predict', params),
+
+  // フォトレジスト現像液適合性
+  evaluatePhotoresistDeveloper: (params: {
+    unexposedHSP: { deltaD: number; deltaP: number; deltaH: number };
+    exposedHSP: { deltaD: number; deltaP: number; deltaH: number };
+    developerHSP: { deltaD: number; deltaP: number; deltaH: number };
+  }) => ipcRenderer.invoke('photoresistDeveloper:evaluate', params),
+
+  // ペロブスカイト溶媒設計
+  screenPerovskiteSolvents: (precursorHSP: { deltaD: number; deltaP: number; deltaH: number }, r0: number, solventIds: number[]) =>
+    ipcRenderer.invoke('perovskiteSolvent:screen', precursorHSP, r0, solventIds),
+
+  // 有機半導体薄膜形成
+  screenOrganicSemiconductorFilm: (oscHSP: { deltaD: number; deltaP: number; deltaH: number }, r0: number, solventIds: number[]) =>
+    ipcRenderer.invoke('organicSemiconductorFilm:screen', oscHSP, r0, solventIds),
+
+  // UV硬化インクモノマー選定
+  screenUVCurableInkMonomers: (oligomerHSP: { deltaD: number; deltaP: number; deltaH: number }, r0: number, monomerIds: number[]) =>
+    ipcRenderer.invoke('uvCurableInk:screen', oligomerHSP, r0, monomerIds),
+
   // 汎用 IPC invoke — 許可チャネルのみ通過
   invoke: (channel: string, ...args: unknown[]) => {
     const ALLOWED_CHANNELS = [
