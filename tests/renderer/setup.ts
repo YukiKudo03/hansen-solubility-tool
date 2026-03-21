@@ -162,6 +162,97 @@ export function createMockApi(): { [K in keyof ElectronAPI]: ReturnType<typeof v
     getDispersantThresholds: vi.fn().mockResolvedValue({ excellentMax: 0.5, goodMax: 0.8, fairMax: 1.0, poorMax: 1.5 }),
     setDispersantThresholds: vi.fn().mockResolvedValue(undefined),
 
+    // インク-基材密着
+    evaluateInkSubstrateAdhesion: vi.fn().mockResolvedValue(null),
+
+    // 多層コーティング密着
+    evaluateMultilayerCoatingAdhesion: vi.fn().mockResolvedValue(null),
+
+    // PSA剥離強度
+    evaluatePSAPeelStrength: vi.fn().mockResolvedValue(null),
+
+    // 構造接着設計
+    evaluateStructuralAdhesiveJoint: vi.fn().mockResolvedValue(null),
+
+    // 表面処理効果
+    evaluateSurfaceTreatmentQuantification: vi.fn().mockResolvedValue(null),
+
+    // 密着強度閾値
+    getAdhesionStrengthThresholds: vi.fn().mockResolvedValue({ excellentMin: 80, goodMin: 60, fairMin: 40 }),
+    setAdhesionStrengthThresholds: vi.fn().mockResolvedValue(undefined),
+
+    // 顔料分散安定性
+    screenPigmentDispersion: vi.fn().mockResolvedValue([]),
+
+    // CNT/グラフェン分散
+    screenCNTGrapheneDispersion: vi.fn().mockResolvedValue([]),
+
+    // MXene分散
+    screenMXeneDispersion: vi.fn().mockResolvedValue([]),
+
+    // ナノ粒子薬物ローディング
+    screenNanoparticleDrugLoading: vi.fn().mockResolvedValue([]),
+
+    // ガス透過性
+    screenGasPermeability: vi.fn().mockResolvedValue(null),
+
+    // 膜分離選択性
+    evaluateMembraneSeparation: vi.fn().mockResolvedValue(null),
+
+    // CO2吸収材選定
+    screenCO2Absorbents: vi.fn().mockResolvedValue(null),
+
+    // 水素貯蔵材料
+    screenHydrogenStorage: vi.fn().mockResolvedValue(null),
+
+    // UVフィルター適合性
+    screenSunscreenUVFilter: vi.fn().mockResolvedValue([]),
+
+    // 吸入薬プロペラント適合性
+    evaluateInhalationDrug: vi.fn().mockResolvedValue(null),
+
+    // タンパク質凝集リスク
+    evaluateProteinAggregation: vi.fn().mockResolvedValue(null),
+
+    // バイオ製剤バッファー選定
+    screenBiologicBuffers: vi.fn().mockResolvedValue([]),
+
+    // 洗浄剤配合設計
+    screenCleaningFormulation: vi.fn().mockResolvedValue([]),
+
+    // 天然色素抽出
+    screenNaturalDyeExtraction: vi.fn().mockResolvedValue([]),
+
+    // 精油抽出
+    screenEssentialOilExtraction: vi.fn().mockResolvedValue([]),
+
+    // 土壌汚染物質抽出
+    screenSoilRemediation: vi.fn().mockResolvedValue([]),
+
+    // 残留溶媒予測
+    screenResidualSolvent: vi.fn().mockResolvedValue([]),
+
+    // 温度HSP補正
+    evaluateTemperatureHSPCorrection: vi.fn().mockResolvedValue(null),
+
+    // 圧力HSP補正
+    evaluatePressureHSPCorrection: vi.fn().mockResolvedValue(null),
+
+    // 超臨界CO2共溶媒選定
+    screenSupercriticalCO2Cosolvents: vi.fn().mockResolvedValue(null),
+
+    // 多成分溶媒最適化
+    optimizeMultiComponent: vi.fn().mockResolvedValue(null),
+
+    // LiB電解液設計
+    screenLiBatteryElectrolyte: vi.fn().mockResolvedValue([]),
+
+    // 溶媒代替設計
+    screenSolventSubstitution: vi.fn().mockResolvedValue([]),
+
+    // 化粧品エマルション安定性
+    evaluateCosmeticEmulsion: vi.fn().mockResolvedValue(null),
+
     // 汎用 IPC invoke
     invoke: vi.fn().mockResolvedValue(null),
   };

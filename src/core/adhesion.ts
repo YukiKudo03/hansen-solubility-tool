@@ -4,22 +4,9 @@
  * ※ 接着性は相互作用半径の概念を使わず、Ra値を直接使用する
  */
 
-/** 接着性レベル (1=最良, 5=接着不可) — Ra小=接着性良好 */
-export enum AdhesionLevel {
-  Excellent = 1, // 優秀な接着性
-  Good = 2,      // 良好
-  Fair = 3,      // 可能
-  Poor = 4,      // 接着不良
-  Failed = 5,    // 接着不可
-}
-
-/** 接着性閾値設定 (Ra値ベース) */
-export interface AdhesionThresholds {
-  excellentMax: number; // default: 2.0
-  goodMax: number;      // default: 4.0
-  fairMax: number;      // default: 6.0
-  poorMax: number;      // default: 8.0
-}
+import { AdhesionLevel } from './types';
+import type { AdhesionThresholds } from './types';
+export { AdhesionLevel, type AdhesionThresholds };
 
 export const DEFAULT_ADHESION_THRESHOLDS: AdhesionThresholds = {
   excellentMax: 2.0,

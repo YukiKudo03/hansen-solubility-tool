@@ -23,6 +23,75 @@ import DispersantSelectionView from './components/DispersantSelectionView';
 import EvaluationHistoryView from './components/EvaluationHistoryView';
 import ComparisonView from './components/ComparisonView';
 import HSPVisualizationView from './components/HSPVisualizationView';
+import ESCPipelineView from './components/ESCPipelineView';
+import CocrystalScreeningView from './components/CocrystalScreeningView';
+import Printing3dSmoothingView from './components/Printing3dSmoothingView';
+import DielectricFilmView from './components/DielectricFilmView';
+import ExcipientCompatibilityView from './components/ExcipientCompatibilityView';
+import PolymerBlendMiscibilityView from './components/PolymerBlendMiscibilityView';
+import PolymerRecyclingCompatibilityView from './components/PolymerRecyclingCompatibilityView';
+import CompatibilizerSelectionView from './components/CompatibilizerSelectionView';
+import CopolymerHspEstimationView from './components/CopolymerHspEstimationView';
+import AdditiveMigrationView from './components/AdditiveMigrationView';
+import FlavorScalpingView from './components/FlavorScalpingView';
+import FoodPackagingMigrationView from './components/FoodPackagingMigrationView';
+import FragranceEncapsulationView from './components/FragranceEncapsulationView';
+import TransdermalEnhancerView from './components/TransdermalEnhancerView';
+import LiposomePermeabilityView from './components/LiposomePermeabilityView';
+import InkSubstrateAdhesionView from './components/InkSubstrateAdhesionView';
+import MultilayerCoatingAdhesionView from './components/MultilayerCoatingAdhesionView';
+import PSAPeelStrengthView from './components/PSAPeelStrengthView';
+import StructuralAdhesiveJointView from './components/StructuralAdhesiveJointView';
+import SurfaceTreatmentQuantificationView from './components/SurfaceTreatmentQuantificationView';
+import PigmentDispersionView from './components/PigmentDispersionView';
+import CNTGrapheneDispersionView from './components/CNTGrapheneDispersionView';
+import MXeneDispersionView from './components/MXeneDispersionView';
+import NanoparticleDrugLoadingView from './components/NanoparticleDrugLoadingView';
+import GasPermeabilityView from './components/GasPermeabilityView';
+import MembraneSeparationView from './components/MembraneSeparationView';
+import CO2AbsorbentView from './components/CO2AbsorbentView';
+import HydrogenStorageView from './components/HydrogenStorageView';
+import SunscreenUVFilterView from './components/SunscreenUVFilterView';
+import InhalationDrugView from './components/InhalationDrugView';
+import ProteinAggregationView from './components/ProteinAggregationView';
+import BiologicBufferView from './components/BiologicBufferView';
+import CleaningFormulationView from './components/CleaningFormulationView';
+import NaturalDyeExtractionView from './components/NaturalDyeExtractionView';
+import EssentialOilExtractionView from './components/EssentialOilExtractionView';
+import SoilRemediationView from './components/SoilRemediationView';
+import ResidualSolventView from './components/ResidualSolventView';
+import TemperatureHSPCorrectionView from './components/TemperatureHSPCorrectionView';
+import PressureHSPCorrectionView from './components/PressureHSPCorrectionView';
+import SupercriticalCO2View from './components/SupercriticalCO2View';
+import CoatingDefectView from './components/CoatingDefectView';
+import PhotoresistDeveloperView from './components/PhotoresistDeveloperView';
+import PerovskiteSolventView from './components/PerovskiteSolventView';
+import OrganicSemiconductorFilmView from './components/OrganicSemiconductorFilmView';
+import UVCurableInkView from './components/UVCurableInkView';
+import CrystallineDissolutionView from './components/CrystallineDissolutionView';
+import HydrogelSwellingView from './components/HydrogelSwellingView';
+import RubberCompoundingView from './components/RubberCompoundingView';
+import ThermosetCuringView from './components/ThermosetCuringView';
+import FiberDyeabilityView from './components/FiberDyeabilityView';
+import MulticomponentOptimizationView from './components/MulticomponentOptimizationView';
+import LiBatteryElectrolyteView from './components/LiBatteryElectrolyteView';
+import SolventSubstitutionView from './components/SolventSubstitutionView';
+import CosmeticEmulsionView from './components/CosmeticEmulsionView';
+import MLHSPPredictionView from './components/MLHSPPredictionView';
+import MDHSPImportView from './components/MDHSPImportView';
+import GroupContributionUpdatesView from './components/GroupContributionUpdatesView';
+import PolymorphRiskView from './components/PolymorphRiskView';
+import AntiGraffitiCoatingView from './components/AntiGraffitiCoatingView';
+import PrimerlessAdhesionView from './components/PrimerlessAdhesionView';
+import PrintedElectronicsView from './components/PrintedElectronicsView';
+import QuantumDotLigandView from './components/QuantumDotLigandView';
+import UnderfillEncapsulantView from './components/UnderfillEncapsulantView';
+import BiofuelCompatibilityView from './components/BiofuelCompatibilityView';
+import PCMEncapsulationView from './components/PCMEncapsulationView';
+import InverseHspEstimationView from './components/InverseHspEstimationView';
+import HSPUncertaintyView from './components/HSPUncertaintyView';
+import SurfaceHSPDeterminationView from './components/SurfaceHSPDeterminationView';
+import IonicLiquidHSPView from './components/IonicLiquidHSPView';
 
 const VIEW_MAP: Record<Tab, React.ComponentType> = {
   report: ReportView,
@@ -40,6 +109,75 @@ const VIEW_MAP: Record<Tab, React.ComponentType> = {
   history: EvaluationHistoryView,
   comparison: ComparisonView,
   hspVisualization: HSPVisualizationView,
+  escPipeline: ESCPipelineView,
+  cocrystalScreening: CocrystalScreeningView,
+  printing3dSmoothing: Printing3dSmoothingView,
+  dielectricFilm: DielectricFilmView,
+  excipientCompatibility: ExcipientCompatibilityView,
+  polymerBlendMiscibility: PolymerBlendMiscibilityView,
+  polymerRecyclingCompatibility: PolymerRecyclingCompatibilityView,
+  compatibilizerSelection: CompatibilizerSelectionView,
+  copolymerHspEstimation: CopolymerHspEstimationView,
+  additiveMigration: AdditiveMigrationView,
+  flavorScalping: FlavorScalpingView,
+  foodPackagingMigration: FoodPackagingMigrationView,
+  fragranceEncapsulation: FragranceEncapsulationView,
+  transdermalEnhancer: TransdermalEnhancerView,
+  liposomePermeability: LiposomePermeabilityView,
+  inkSubstrateAdhesion: InkSubstrateAdhesionView,
+  multilayerCoatingAdhesion: MultilayerCoatingAdhesionView,
+  psaPeelStrength: PSAPeelStrengthView,
+  structuralAdhesiveJoint: StructuralAdhesiveJointView,
+  surfaceTreatmentQuantification: SurfaceTreatmentQuantificationView,
+  pigmentDispersion: PigmentDispersionView,
+  cntGrapheneDispersion: CNTGrapheneDispersionView,
+  mxeneDispersion: MXeneDispersionView,
+  nanoparticleDrugLoading: NanoparticleDrugLoadingView,
+  gasPermeability: GasPermeabilityView,
+  membraneSeparation: MembraneSeparationView,
+  co2Absorbent: CO2AbsorbentView,
+  hydrogenStorage: HydrogenStorageView,
+  sunscreenUVFilter: SunscreenUVFilterView,
+  inhalationDrug: InhalationDrugView,
+  proteinAggregation: ProteinAggregationView,
+  biologicBuffer: BiologicBufferView,
+  cleaningFormulation: CleaningFormulationView,
+  naturalDyeExtraction: NaturalDyeExtractionView,
+  essentialOilExtraction: EssentialOilExtractionView,
+  soilRemediation: SoilRemediationView,
+  residualSolvent: ResidualSolventView,
+  temperatureHspCorrection: TemperatureHSPCorrectionView,
+  pressureHspCorrection: PressureHSPCorrectionView,
+  supercriticalCO2: SupercriticalCO2View,
+  coatingDefect: CoatingDefectView,
+  photoresistDeveloper: PhotoresistDeveloperView,
+  perovskiteSolvent: PerovskiteSolventView,
+  organicSemiconductorFilm: OrganicSemiconductorFilmView,
+  uvCurableInk: UVCurableInkView,
+  crystallineDissolution: CrystallineDissolutionView,
+  hydrogelSwelling: HydrogelSwellingView,
+  rubberCompounding: RubberCompoundingView,
+  thermosetCuring: ThermosetCuringView,
+  fiberDyeability: FiberDyeabilityView,
+  multicomponentOptimization: MulticomponentOptimizationView,
+  liBatteryElectrolyte: LiBatteryElectrolyteView,
+  solventSubstitution: SolventSubstitutionView,
+  cosmeticEmulsion: CosmeticEmulsionView,
+  mlHspPrediction: MLHSPPredictionView,
+  mdHspImport: MDHSPImportView,
+  groupContributionUpdates: GroupContributionUpdatesView,
+  polymorphRisk: PolymorphRiskView,
+  antiGraffitiCoating: AntiGraffitiCoatingView,
+  primerlessAdhesion: PrimerlessAdhesionView,
+  printedElectronics: PrintedElectronicsView,
+  quantumDotLigand: QuantumDotLigandView,
+  underfillEncapsulant: UnderfillEncapsulantView,
+  biofuelCompatibility: BiofuelCompatibilityView,
+  pcmEncapsulation: PCMEncapsulationView,
+  inverseHspEstimation: InverseHspEstimationView,
+  hspUncertainty: HSPUncertaintyView,
+  surfaceHspDetermination: SurfaceHSPDeterminationView,
+  ionicLiquidHsp: IonicLiquidHSPView,
   settings: SettingsView,
 };
 

@@ -1,4 +1,4 @@
-<!-- Generated: 2026-03-21 | Files scanned: 65 renderer | Token estimate: ~980 -->
+<!-- Generated: 2026-03-21 | Files scanned: 214 renderer | Token estimate: ~1200 -->
 
 # Frontend Component Architecture
 
@@ -13,16 +13,16 @@ Screen Width    Navigation Pattern       Component
 
 **Breakpoint detection:** `useMediaQuery()` hook → returns `'desktop' | 'tablet' | 'mobile'`
 
-## 6 Category Navigation (23 items grouped)
+## 6 Category Navigation (92 feature items)
 
 | Category | Icon | Items |
 |----------|------|-------|
-| 評価 | 📊 | 溶解性評価, 接触角推定, 膨潤度予測, 耐薬品性予測, **接着性予測** |
-| 選定 | 🔍 | ナノ粒子分散, **分散剤選定**, 可塑剤選定, キャリア選定 |
-| 最適化 | ⚡ | ブレンド最適化, 薬物溶解性, 比較レポート, **HSP球算出, グリーン溶媒, 多目的選定** |
-| データ | 💾 | データベース編集, 混合溶媒, 履歴 |
-| **分析** | **📈** | **3D可視化, Teasプロット, Bagleyプロット, 2D射影, 族寄与法** |
-| 設定 | ⚙️ | 設定 |
+| 評価 | 📊 | 31 items: 溶解性評価, 接触角推定, 膨潤度予測, 耐薬品性予測, 接着性予測, ESC, ブレンド相溶性, リサイクル相溶性, 添加剤移行, ガス透過性, 膜分離, etc. |
+| 選定 | 🔍 | 24 items: ナノ粒子分散, 分散剤選定, 可塑剤選定, キャリア選定, 共結晶, 顔料分散, CNT/グラフェン, MXene, CO2吸収材, etc. |
+| 最適化 | ⚡ | 17 items: ブレンド最適化, 薬物溶解性, 比較レポート, HSP球算出, グリーン溶媒, 多目的選定, ペロブスカイト, LiB電解液, etc. |
+| データ | 💾 | 3 items: データベース編集, 混合溶媒, 履歴 |
+| 分析 | 📈 | 16 items: 3D可視化, Teasプロット, Bagleyプロット, 2D射影, 族寄与法, コポリマーHSP, 温度/圧力補正, 逆HSP, ML予測, etc. |
+| 設定 | ⚙️ | 1 item: 設定 |
 
 Defined in: `src/renderer/navigation.ts` (Tab type, NavCategory, NAV_CATEGORIES)
 
@@ -33,32 +33,50 @@ App.tsx (MD3 responsive + useTheme() dark mode)
 ├── header (bg-md3-surface-container-low)
 ├── NavigationDrawer / NavigationRail (desktop/tablet)
 │   └── 6 categories → expandable sub-items → onSelect(tab)
-├── main (flex-1 overflow-y-auto)
-│   ├─ 評価Views:
-│   │  ├── ReportView (A) → PartsGroupSelector + SolventSelector → ResultsTable + RiskBadge
-│   │  ├── ContactAngleView (C) → 2 modes (group/screening) → WettabilityBadge + warnings
-│   │  ├── SwellingView (E) → Group + Solvent + elastomer warning → SwellingBadge
-│   │  ├── ChemicalResistanceView (G) → Group + Solvent → ChemicalResistanceBadge
-│   │  └── AdhesionView (J) → 接着強度評価
-│   ├─ 選定Views:
-│   │  ├── NanoDispersionView (B) → Category + Particle → DispersibilityBadge
-│   │  ├── DispersantSelectionView (J) → Particle + Solvent → DispersantBadge (dual-HSP)
-│   │  ├── PlasticizerView (H) → Group + Part → PlasticizerBadge
-│   │  └── CarrierSelectionView (I) → Drug + CarrierGroup → CarrierBadge
-│   ├─ 最適化Views:
-│   │  ├── BlendOptimizerView (D) → Target HSP (+ 材料参照) + checkboxes → Ranking
-│   │  ├── DrugSolubilityView (F) → Drug + Solvent/screening → DrugSolubilityBadge
-│   │  ├── ComparisonView → 複数材料 × 複数溶媒 → ヒートマップテーブル
-│   │  ├── SphereFittingView (N) → HSP最適球当てはめ
-│   │  ├── GreenSolventView (O) → グリーン溶媒スコア
-│   │  └── MultiObjectiveView (P) → Pareto最適複合選定
-│   ├─ 分析Views:
-│   │  ├── HSPVisualizationView (K) → Plotly.js 3D scatter + HSP球
-│   │  ├── TeasPlotView (L) → TEAS分析プロット
-│   │  ├── BagleyPlotView (M) → 膜形成能プロット
-│   │  ├── Projection2DView (M) → δD-δP平面射影
-│   │  └── GroupContributionView (Q) → 官能基HSP推定
-│   ├─ データViews:
+├── main (flex-1 overflow-y-auto) — 91 Feature Views total
+│   ├─ 評価Views (31):
+│   │  ├── ReportView → PartsGroupSelector + SolventSelector → ResultsTable + RiskBadge
+│   │  ├── ContactAngleView → 2 modes (group/screening) → WettabilityBadge + warnings
+│   │  ├── SwellingView → Group + Solvent + elastomer warning → SwellingBadge
+│   │  ├── ChemicalResistanceView → Group + Solvent → ChemicalResistanceBadge
+│   │  ├── AdhesionView → 接着強度評価
+│   │  └── 26 extended: EscPipelineView, PolymerBlendView, RecyclingView,
+│   │       AdditiveMigrationView, FlavorScalpingView, FoodPackagingView,
+│   │       LiposomeView, InkSubstrateView, MultilayerCoatingView,
+│   │       PsaPeelView, StructuralAdhesiveView, GasPermeabilityView,
+│   │       MembraneSeparationView, InhalationDrugView, ProteinAggregationView,
+│   │       ResidualSolventView, CoatingDefectView, PhotoresistView,
+│   │       CrystallineDissolutionView, HydrogelSwellingView, RubberCompoundingView,
+│   │       FiberDyeabilityView, PolymorphRiskView, PrintedElectronicsView,
+│   │       UnderfillEncapsulantView, BiofuelCompatibilityView
+│   ├─ 選定Views (24):
+│   │  ├── NanoDispersionView → Category + Particle → DispersibilityBadge
+│   │  ├── DispersantSelectionView → Particle + Solvent → DispersantBadge (dual-HSP)
+│   │  ├── PlasticizerView → Group + Part → PlasticizerBadge
+│   │  ├── CarrierSelectionView → Drug + CarrierGroup → CarrierBadge
+│   │  └── 20 extended: CocrystalView, Printing3dView, DielectricFilmView,
+│   │       ExcipientView, CompatibilizerView, FragranceView, TransdermalView,
+│   │       PigmentDispersionView, CntGrapheneView, MxeneView, NpDrugLoadingView,
+│   │       Co2AbsorbentView, HydrogenStorageView, SunscreenUvView, BiologicBufferView,
+│   │       NaturalDyeView, EssentialOilView, SoilRemediationView, ThermosetView,
+│   │       QuantumDotView, PcmEncapsulationView
+│   ├─ 最適化Views (17):
+│   │  ├── BlendOptimizerView → Target HSP + checkboxes → Ranking
+│   │  ├── DrugSolubilityView → Drug + Solvent/screening → DrugSolubilityBadge
+│   │  ├── ComparisonView → 複数材料 × 複数溶媒 → ヒートマップ
+│   │  ├── SphereFittingView, GreenSolventView, MultiObjectiveView
+│   │  └── 11 extended: SupercriticalCo2View, CleaningFormulationView,
+│   │       PerovskiteView, OrganicSemiconductorView, UvCurableInkView,
+│   │       MulticomponentView, LiBatteryView, SolventSubstitutionView,
+│   │       CosmeticEmulsionView, AntiGraffitiView, PrimerlessAdhesionView
+│   ├─ 分析Views (16):
+│   │  ├── HSPVisualizationView → Plotly.js 3D scatter + HSP球
+│   │  ├── TeasPlotView, BagleyPlotView, Projection2DView, GroupContributionView
+│   │  └── 11 extended: CopolymerHspView, SurfaceTreatmentView,
+│   │       TemperatureHspView, PressureHspView, InverseHspView,
+│   │       HspUncertaintyView, SurfaceHspView, IonicLiquidView,
+│   │       MlHspPredictionView, MdHspImportView, GroupContributionUpdatesView
+│   ├─ データViews (3):
 │   │  ├── DatabaseEditor → CRUD UI
 │   │  ├── MixtureLab → 溶媒混合計算
 │   │  └── EvaluationHistoryView → 自動保存履歴 + フィルタ + 削除
@@ -79,7 +97,7 @@ App.tsx (MD3 responsive + useTheme() dark mode)
 | `ResultsTable` | 汎用結果テーブル |
 | `ErrorBoundary` | React エラーバウンダリ |
 
-## Badges (9 components, MD3 Tonal style)
+## Badges (40 components, MD3 Tonal style)
 
 All badges use `rounded-md3-sm text-md3-label-md`.
 
@@ -95,7 +113,7 @@ All badges use `rounded-md3-sm text-md3-label-md`.
 | CarrierBadge | 1-5 | L1=best | green | red |
 | DispersantBadge | 1-5 | L1=best | green | red |
 
-## Hooks (20)
+## Hooks (69)
 
 | Hook | Purpose |
 |------|---------|
@@ -133,13 +151,13 @@ All badges use `rounded-md3-sm text-md3-label-md`.
 - 60+翻訳キー (ja/en)
 - localStorage で言語設定永続化
 
-## IPC Interface (window.api) — 110+ Methods
+## IPC Interface (window.api) — 167 Methods
 
 ```
 Parts CRUD (8), Solvents CRUD+Plasticizers (8), NanoParticles CRUD (7), Drugs CRUD (7), Dispersants CRUD (5)
-Pipeline A-R evaluation/screening (30), Settings get/set (18)
-Bookmarks (3), History (5), CSV Import (3), Export saveCsv (1)
-Advanced analytics handlers (8)
+Core pipeline evaluation/screening (30), Extended pipeline handlers (60+)
+Settings get/set (18), Bookmarks (3), History (5), CSV Import (3), Export saveCsv (1)
+Advanced analytics handlers (8+)
 ```
 
 ---

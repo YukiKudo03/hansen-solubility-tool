@@ -10,6 +10,25 @@ export type Tab =
   | 'sphereFitting' | 'greenSolvent' | 'multiObjective' | 'groupContribution'
   | 'database' | 'mixture'
   | 'history' | 'comparison' | 'hspVisualization'
+  | 'escPipeline' | 'cocrystalScreening' | 'printing3dSmoothing' | 'dielectricFilm' | 'excipientCompatibility'
+  | 'polymerBlendMiscibility' | 'polymerRecyclingCompatibility' | 'compatibilizerSelection' | 'copolymerHspEstimation'
+  | 'additiveMigration' | 'flavorScalping' | 'foodPackagingMigration'
+  | 'fragranceEncapsulation' | 'transdermalEnhancer' | 'liposomePermeability'
+  | 'inkSubstrateAdhesion' | 'multilayerCoatingAdhesion' | 'psaPeelStrength'
+  | 'structuralAdhesiveJoint' | 'surfaceTreatmentQuantification'
+  | 'pigmentDispersion' | 'cntGrapheneDispersion' | 'mxeneDispersion' | 'nanoparticleDrugLoading'
+  | 'gasPermeability' | 'membraneSeparation' | 'co2Absorbent' | 'hydrogenStorage'
+  | 'sunscreenUVFilter' | 'inhalationDrug' | 'proteinAggregation' | 'biologicBuffer'
+  | 'cleaningFormulation' | 'naturalDyeExtraction' | 'essentialOilExtraction'
+  | 'soilRemediation' | 'residualSolvent'
+  | 'temperatureHspCorrection' | 'pressureHspCorrection' | 'supercriticalCO2'
+  | 'coatingDefect' | 'photoresistDeveloper' | 'perovskiteSolvent' | 'organicSemiconductorFilm' | 'uvCurableInk'
+  | 'crystallineDissolution' | 'hydrogelSwelling' | 'rubberCompounding' | 'thermosetCuring' | 'fiberDyeability'
+  | 'multicomponentOptimization' | 'liBatteryElectrolyte' | 'solventSubstitution' | 'cosmeticEmulsion'
+  | 'mlHspPrediction' | 'mdHspImport' | 'groupContributionUpdates'
+  | 'polymorphRisk' | 'antiGraffitiCoating' | 'primerlessAdhesion'
+  | 'printedElectronics' | 'quantumDotLigand' | 'underfillEncapsulant' | 'biofuelCompatibility' | 'pcmEncapsulation'
+  | 'inverseHspEstimation' | 'hspUncertainty' | 'surfaceHspDetermination' | 'ionicLiquidHsp'
   | 'settings';
 
 export interface NavItem {
@@ -35,6 +54,32 @@ export const NAV_CATEGORIES: NavCategory[] = [
       { id: 'swelling', label: '膨潤度予測' },
       { id: 'chemicalResistance', label: '耐薬品性予測' },
       { id: 'adhesion', label: '接着性予測' },
+      { id: 'escPipeline', label: '環境応力亀裂(ESC)' },
+      { id: 'polymerBlendMiscibility', label: 'ブレンド相溶性' },
+      { id: 'polymerRecyclingCompatibility', label: 'リサイクル相溶性' },
+      { id: 'additiveMigration', label: '添加剤移行' },
+      { id: 'flavorScalping', label: 'フレーバースカルピング' },
+      { id: 'foodPackagingMigration', label: '包装材溶出' },
+      { id: 'liposomePermeability', label: 'リポソーム透過性' },
+      { id: 'inkSubstrateAdhesion', label: 'インク-基材密着' },
+      { id: 'multilayerCoatingAdhesion', label: '多層コーティング密着' },
+      { id: 'psaPeelStrength', label: '粘着テープ剥離強度' },
+      { id: 'structuralAdhesiveJoint', label: '構造接着設計' },
+      { id: 'gasPermeability', label: 'ガス透過性' },
+      { id: 'membraneSeparation', label: '膜分離選択性' },
+      { id: 'inhalationDrug', label: '吸入薬適合性' },
+      { id: 'proteinAggregation', label: 'タンパク質凝集' },
+      { id: 'residualSolvent', label: '残留溶媒' },
+      { id: 'coatingDefect', label: 'コーティング欠陥' },
+      { id: 'photoresistDeveloper', label: 'レジスト現像' },
+      { id: 'crystallineDissolution', label: '結晶溶解温度' },
+      { id: 'hydrogelSwelling', label: 'ハイドロゲル膨潤' },
+      { id: 'rubberCompounding', label: 'ゴム配合' },
+      { id: 'fiberDyeability', label: '繊維染色性' },
+      { id: 'polymorphRisk', label: '多形リスク' },
+      { id: 'printedElectronics', label: '印刷電子濡れ性' },
+      { id: 'underfillEncapsulant', label: '封止材適合' },
+      { id: 'biofuelCompatibility', label: 'バイオ燃料適合' },
     ],
   },
   {
@@ -46,6 +91,27 @@ export const NAV_CATEGORIES: NavCategory[] = [
       { id: 'dispersantSelection', label: '分散剤選定' },
       { id: 'plasticizer', label: '可塑剤選定' },
       { id: 'carrierSelection', label: 'キャリア選定' },
+      { id: 'cocrystalScreening', label: '共結晶スクリーニング' },
+      { id: 'printing3dSmoothing', label: '3D印刷平滑化' },
+      { id: 'dielectricFilm', label: '誘電体膜品質' },
+      { id: 'excipientCompatibility', label: '賦形剤適合性' },
+      { id: 'compatibilizerSelection', label: '相溶化剤選定' },
+      { id: 'fragranceEncapsulation', label: '香料カプセル化' },
+      { id: 'transdermalEnhancer', label: '経皮吸収促進剤' },
+      { id: 'pigmentDispersion', label: '顔料分散' },
+      { id: 'cntGrapheneDispersion', label: 'CNT/グラフェン分散' },
+      { id: 'mxeneDispersion', label: 'MXene分散' },
+      { id: 'nanoparticleDrugLoading', label: 'NP薬物ローディング' },
+      { id: 'co2Absorbent', label: 'CO2吸収材' },
+      { id: 'hydrogenStorage', label: '水素貯蔵材料' },
+      { id: 'sunscreenUVFilter', label: 'UVフィルター適合' },
+      { id: 'biologicBuffer', label: 'バイオ製剤バッファー' },
+      { id: 'naturalDyeExtraction', label: '天然色素抽出' },
+      { id: 'essentialOilExtraction', label: '精油抽出' },
+      { id: 'soilRemediation', label: '土壌汚染抽出' },
+      { id: 'thermosetCuring', label: '硬化剤選定' },
+      { id: 'quantumDotLigand', label: 'QDリガンド交換' },
+      { id: 'pcmEncapsulation', label: 'PCMカプセル化' },
     ],
   },
   {
@@ -54,11 +120,22 @@ export const NAV_CATEGORIES: NavCategory[] = [
     icon: '⚡',
     items: [
       { id: 'blendOptimizer', label: 'ブレンド最適化' },
+      { id: 'supercriticalCO2', label: '超臨界CO2' },
+      { id: 'cleaningFormulation', label: '洗浄剤配合' },
       { id: 'drugSolubility', label: '薬物溶解性' },
       { id: 'comparison', label: '比較レポート' },
       { id: 'sphereFitting', label: 'HSP球算出' },
       { id: 'greenSolvent', label: 'グリーン溶媒' },
       { id: 'multiObjective', label: '多目的選定' },
+      { id: 'perovskiteSolvent', label: 'ペロブスカイト溶媒' },
+      { id: 'organicSemiconductorFilm', label: '有機半導体膜' },
+      { id: 'uvCurableInk', label: 'UV硬化インク' },
+      { id: 'multicomponentOptimization', label: '多成分最適化' },
+      { id: 'liBatteryElectrolyte', label: 'LiB電解液' },
+      { id: 'solventSubstitution', label: '溶媒代替' },
+      { id: 'cosmeticEmulsion', label: 'エマルション安定性' },
+      { id: 'antiGraffitiCoating', label: '防落書き' },
+      { id: 'primerlessAdhesion', label: 'プライマーレス接着' },
     ],
   },
   {
@@ -81,6 +158,17 @@ export const NAV_CATEGORIES: NavCategory[] = [
       { id: 'bagleyPlot', label: 'Bagleyプロット' },
       { id: 'projection2d', label: '2D射影' },
       { id: 'groupContribution', label: '族寄与法' },
+      { id: 'copolymerHspEstimation', label: 'コポリマーHSP推定' },
+      { id: 'surfaceTreatmentQuantification', label: '表面処理効果' },
+      { id: 'temperatureHspCorrection', label: '温度HSP補正' },
+      { id: 'pressureHspCorrection', label: '圧力HSP補正' },
+      { id: 'inverseHspEstimation', label: '逆HSP推定' },
+      { id: 'hspUncertainty', label: 'HSP不確かさ' },
+      { id: 'surfaceHspDetermination', label: '表面HSP決定' },
+      { id: 'ionicLiquidHsp', label: 'IL/DES HSP' },
+      { id: 'mlHspPrediction', label: 'HSP推算(QSPR)' },
+      { id: 'mdHspImport', label: 'MD結果インポート' },
+      { id: 'groupContributionUpdates', label: '族寄与法(拡張)' },
     ],
   },
   {

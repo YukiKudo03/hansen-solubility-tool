@@ -1,4 +1,4 @@
-<!-- Generated: 2026-03-21 | Files scanned: 131 src | Token estimate: ~980 -->
+<!-- Generated: 2026-03-21 | Files scanned: 349 src | Token estimate: ~980 -->
 
 # Hansen Solubility System Architecture
 
@@ -11,17 +11,17 @@
 │  ┌──────────────────────┐          ┌────────────────────────┐   │
 │  │  MAIN PROCESS        │  IPC     │  RENDERER PROCESS      │   │
 │  │  (main.ts)           │◄────────►│  (React 19 App.tsx)    │   │
-│  │  + electron-updater  │ 80+ API  │  MD3 responsive        │   │
+│  │  + electron-updater  │ 167 API  │  MD3 responsive        │   │
 │  │                      │          │  Dark mode (class)     │   │
 │  │ ┌──────────────────┐ │          │ ┌──────────────────┐   │   │
-│  │ │ IPC Handlers     │ │          │ │ 20 Feature Views │   │   │
-│  │ │ 100+ handlers    │ │          │ │ + DB/Mix/History │   │   │
+│  │ │ IPC Handlers     │ │          │ │ 91 Feature Views │   │   │
+│  │ │ 167 handlers     │ │          │ │ + DB/Mix/History │   │   │
 │  │ │ + CSV import     │ │          │ │ + Settings       │   │   │
 │  │ └──────────────────┘ │          │ └──────────────────┘   │   │
 │  │         ▼            │          │        ▲               │   │
-│  │ ┌──────────────────┐ │          │   20 Hooks             │   │
-│  │ │ Core (39 modules)│ │          │   9 Badges             │   │
-│  │ │ 18 evaluators    │ │          │   i18n (ja/en)         │   │
+│  │ ┌──────────────────┐ │          │   69 Hooks             │   │
+│  │ │Core (117 modules)│ │          │   40 Badges            │   │
+│  │ │ 70+ evaluators   │ │          │   i18n (ja/en)         │   │
 │  │ │ Pure functions   │ │          │   i18n (ja/en)         │   │
 │  │ └──────────────────┘ │          └────────────────────────┘   │
 │  │         ▼            │                                       │
@@ -38,40 +38,77 @@
 └─────────────────────────────────────────────────────────────────┘
 ```
 
-## Evaluation Pipelines (18 total)
+## Evaluation Pipelines (70+ total across 8 categories)
 
-### Group A: Core Classifiers (10)
+### Category 1: 評価 (31 pipelines)
 ```
-A) Polymer Risk:        ReportView → evaluate() → Ra/RED → classifyRisk(RED小=危険)
-B) Nano Dispersion:     NanoDispersionView → screenAll() → classifyDispersibility(RED小=良好)
-C) Contact Angle:       ContactAngleView → estimateContactAngle() → Young's eq → θ → classifyWettability
-D) Blend Optimization:  BlendOptimizerView → optimizeBlend() → grid search → Ra最小化
-E) Swelling:            SwellingView → evaluateSwelling() → classifySwelling(RED小=膨潤大)
-F) Drug Solubility:     DrugSolubilityView → screenDrugSolvents() → classifyDrugSolubility
-G) Chemical Resistance: ChemResistanceView → evaluate() → classifyChemResistance(RED大=耐性良 ※逆)
-H) Plasticizer:         PlasticizerView → screenPlasticizers() → classifyCompatibility
-I) Carrier Selection:   CarrierSelectionView → screenCarriers() → classifyCompatibility
-J) Dispersant Selection: DispersantSelectionView → screenDispersants() → dual-HSP anchor+solvation → classifyAffinity
-```
+Core evaluators:
+  溶解性評価         ReportView → evaluate() → Ra/RED → classifyRisk
+  接触角推定         ContactAngleView → estimateContactAngle() → θ → classifyWettability
+  膨潤度予測         SwellingView → evaluateSwelling() → classifySwelling
+  耐薬品性予測       ChemResistanceView → classifyChemResistance (RED大=耐性良 ※逆)
+  接着性予測         AdhesionView → evaluateAdhesion() → 接着強度スコア
 
-### Group B: Advanced Evaluators (8)
-```
-K) Adhesion:            AdhesionView → evaluateAdhesion() → 接着強度スコア
-L) TEAS Plot:           TeasPlotView → computeTeasMetrics() → 毒性/爆発/美観/安全分析
-M) Bagley Plot:         BagleyPlotView → computeBagley() → 膜形成能評価
-N) 2D Projection:       Projection2DView → project2D() → δD-δP平面上の散布図
-O) Sphere Fitting:      SphereFittingView → fitOptimalSphere() → 最適HSP球算出
-P) Green Solvent:       GreenSolventView → scoreGreenSolvent() → 環境友好性スコア
-Q) Multi-Objective:     MultiObjectiveView → paretoOptimization() → Pareto最適複合選定
-R) Group Contribution:  GroupContributionView → estimateHSPbyGroups() → 官能基HSP推定
+Extended evaluators (26):
+  環境応力亀裂(ESC), ブレンド相溶性, リサイクル相溶性, 添加剤移行,
+  フレーバースカルピング, 包装材溶出, リポソーム透過性,
+  インク-基材密着, 多層コーティング密着, 粘着テープ剥離強度, 構造接着設計,
+  ガス透過性, 膜分離選択性, 吸入薬適合性, タンパク質凝集, 残留溶媒,
+  コーティング欠陥, レジスト現像, 結晶溶解温度, ハイドロゲル膨潤,
+  ゴム配合, 繊維染色性, 多形リスク, 印刷電子濡れ性, 封止材適合, バイオ燃料適合
 ```
 
-### Group C: Analytics & Utilities (3)
+### Category 2: 選定 (24 pipelines)
 ```
-Comparison Report:      ComparisonView → buildComparisonMatrix() → 材料×溶媒のRED一括比較
-HSP 3D Visualization:   HSPVisualizationView → Plotly.js → δD-δP-δH散布+HSP球
-Evaluation History:     EvaluationHistoryView → 自動保存された過去の結果を参照
-Bookmarks:              BookmarkButton → 評価条件のプリセット保存・復元
+Core selectors:
+  ナノ粒子分散       NanoDispersionView → screenAll() → classifyDispersibility
+  分散剤選定         DispersantSelectionView → dual-HSP anchor+solvation → classifyAffinity
+  可塑剤選定         PlasticizerView → screenPlasticizers() → classifyCompatibility
+  キャリア選定       CarrierSelectionView → screenCarriers() → classifyCompatibility
+
+Extended selectors (20):
+  共結晶スクリーニング, 3D印刷平滑化, 誘電体膜品質, 賦形剤適合性,
+  相溶化剤選定, 香料カプセル化, 経皮吸収促進剤, 顔料分散,
+  CNT/グラフェン分散, MXene分散, NP薬物ローディング, CO2吸収材,
+  水素貯蔵材料, UVフィルター適合, バイオ製剤バッファー, 天然色素抽出,
+  精油抽出, 土壌汚染抽出, 硬化剤選定, QDリガンド交換, PCMカプセル化
+```
+
+### Category 3: 最適化 (17 pipelines)
+```
+Core optimizers:
+  ブレンド最適化     BlendOptimizerView → optimizeBlend() → grid search → Ra最小化
+  薬物溶解性         DrugSolubilityView → screenDrugSolvents() → classifyDrugSolubility
+  比較レポート       ComparisonView → buildComparisonMatrix() → RED一括比較
+  HSP球算出          SphereFittingView → fitOptimalSphere() → 最適HSP球
+  グリーン溶媒       GreenSolventView → scoreGreenSolvent() → 環境スコア
+  多目的選定         MultiObjectiveView → paretoOptimization() → Pareto最適
+
+Extended optimizers (11):
+  超臨界CO2, 洗浄剤配合, ペロブスカイト溶媒, 有機半導体膜, UV硬化インク,
+  多成分最適化, LiB電解液, 溶媒代替, エマルション安定性, 防落書き, プライマーレス接着
+```
+
+### Category 4: 分析 (16 pipelines)
+```
+Core analytics:
+  3D可視化           HSPVisualizationView → Plotly.js → δD-δP-δH散布+HSP球
+  Teasプロット       TeasPlotView → computeTeasMetrics() → 毒性/爆発/美観/安全
+  Bagleyプロット     BagleyPlotView → computeBagley() → 膜形成能評価
+  2D射影             Projection2DView → project2D() → δD-δP平面散布図
+  族寄与法           GroupContributionView → estimateHSPbyGroups() → 官能基HSP推定
+
+Extended analytics (11):
+  コポリマーHSP推定, 表面処理効果, 温度HSP補正, 圧力HSP補正,
+  逆HSP推定, HSP不確かさ, 表面HSP決定, IL/DES HSP,
+  HSP推算(QSPR), MD結果インポート, 族寄与法(拡張)
+```
+
+### Category 5-6: データ & 設定
+```
+データ (3):          データベース編集, 混合溶媒, 履歴
+設定 (1):            設定
+共通機能:            BookmarkButton → 評価条件のプリセット保存・復元
 ```
 
 ### Shared Core
@@ -113,11 +150,11 @@ Utilities:
 
 | Layer | Location | Files | Lines | Purpose |
 |-------|----------|-------|-------|---------|
-| **Domain** | `src/core/` | 39 | 4,900 | 18 evaluators, 10 classifiers, utilities |
-| **Data** | `src/db/` | 12 | 1,780 | Schema(9 tables), 8 repos, 7 seed files |
-| **Main** | `src/main/` | 3 | 1,100 | Electron, 110+ IPC, auto-updater |
-| **UI** | `src/renderer/` | 65 | 7,000 | 42 components, 20 hooks, i18n |
-| **Tests** | `tests/` | 133 | — | 1100+ unit/renderer + 25 E2E specs |
+| **Domain** | `src/core/` | 117 | 15,400 | 70+ evaluators, 10 classifiers, utilities |
+| **Data** | `src/db/` | 12 | 2,100 | Schema(9 tables), 8 repos, 7 seed files |
+| **Main** | `src/main/` | 3 | 2,700 | Electron, 167 IPC, auto-updater |
+| **UI** | `src/renderer/` | 214 | 17,700 | 142 components, 69 hooks, i18n |
+| **Tests** | `tests/` | 221 | — | 1717+ unit/renderer + 25 E2E specs |
 
 ---
 
