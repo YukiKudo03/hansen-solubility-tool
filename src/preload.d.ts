@@ -241,6 +241,28 @@ export interface ElectronAPI {
     evaluatedAt: Date;
   }>;
 
+  // 添加剤移行予測
+  screenAdditiveMigration(partId: number, groupId: number): Promise<import('./core/additive-migration').AdditiveMigrationEvaluationResult>;
+
+  // フレーバースカルピング
+  screenFlavorScalping(partId: number, groupId: number): Promise<import('./core/flavor-scalping').FlavorScalpingEvaluationResult>;
+
+  // 包装材溶出
+  screenFoodPackagingMigration(packagingHSP: import('./core/types').HSPValues, r0: number, substanceIds: number[]): Promise<import('./core/food-packaging-migration').PackagingMigrationResult[]>;
+
+  // 香料カプセル化
+  screenFragranceEncapsulation(wallHSP: import('./core/types').HSPValues, r0: number, fragranceIds: number[]): Promise<import('./core/fragrance-encapsulation').EncapsulationResult[]>;
+
+  // 経皮吸収促進剤
+  screenTransdermalEnhancers(params: {
+    drugId: number; skinHSP: import('./core/types').HSPValues;
+  }): Promise<import('./core/transdermal-enhancer').TransdermalResult[]>;
+
+  // リポソーム透過性
+  screenLiposomePermeability(params: {
+    drugId: number; lipidHSP: import('./core/types').HSPValues; lipidR0: number;
+  }): Promise<import('./core/liposome-permeability').DrugPermeabilityResult[]>;
+
   // 汎用 IPC invoke (可視化パイプライン等)
   invoke(channel: string, ...args: unknown[]): Promise<any>;
 }

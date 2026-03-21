@@ -286,6 +286,32 @@ export const api = {
     monomers: Array<{ name: string; deltaD: number; deltaP: number; deltaH: number; fraction: number }>;
   }) => ipcRenderer.invoke('copolymerHsp:estimate', params),
 
+  // 添加剤移行予測
+  screenAdditiveMigration: (partId: number, groupId: number) =>
+    ipcRenderer.invoke('additiveMigration:screen', partId, groupId),
+
+  // フレーバースカルピング
+  screenFlavorScalping: (partId: number, groupId: number) =>
+    ipcRenderer.invoke('flavorScalping:screen', partId, groupId),
+
+  // 包装材溶出
+  screenFoodPackagingMigration: (packagingHSP: { deltaD: number; deltaP: number; deltaH: number }, r0: number, substanceIds: number[]) =>
+    ipcRenderer.invoke('foodPackagingMigration:screen', packagingHSP, r0, substanceIds),
+
+  // 香料カプセル化
+  screenFragranceEncapsulation: (wallHSP: { deltaD: number; deltaP: number; deltaH: number }, r0: number, fragranceIds: number[]) =>
+    ipcRenderer.invoke('fragranceEncapsulation:screen', wallHSP, r0, fragranceIds),
+
+  // 経皮吸収促進剤
+  screenTransdermalEnhancers: (params: {
+    drugId: number; skinHSP: { deltaD: number; deltaP: number; deltaH: number };
+  }) => ipcRenderer.invoke('transdermalEnhancer:screen', params),
+
+  // リポソーム透過性
+  screenLiposomePermeability: (params: {
+    drugId: number; lipidHSP: { deltaD: number; deltaP: number; deltaH: number }; lipidR0: number;
+  }) => ipcRenderer.invoke('liposomePermeability:screen', params),
+
   // 汎用 IPC invoke — 許可チャネルのみ通過
   invoke: (channel: string, ...args: unknown[]) => {
     const ALLOWED_CHANNELS = [

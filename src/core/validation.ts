@@ -572,3 +572,84 @@ export function validateCopolymerInput(params: unknown): string | null {
   }
   return null;
 }
+
+// ============================================================================
+// Partition-Coefficient群パイプライン用の入力バリデーション
+// ============================================================================
+
+/** 添加剤移行入力バリデーション */
+export function validateAdditiveMigrationInput(params: unknown): string | null {
+  if (params == null || typeof params !== 'object') return 'パラメータオブジェクトが必要です';
+  const p = params as Record<string, unknown>;
+  if (typeof p.partId !== 'number' || !Number.isInteger(p.partId) || p.partId <= 0) {
+    return 'partId は正の整数でなければなりません';
+  }
+  if (typeof p.groupId !== 'number' || !Number.isInteger(p.groupId) || p.groupId <= 0) {
+    return 'groupId は正の整数でなければなりません';
+  }
+  return null;
+}
+
+/** フレーバースカルピング入力バリデーション */
+export function validateFlavorScalpingInput(params: unknown): string | null {
+  if (params == null || typeof params !== 'object') return 'パラメータオブジェクトが必要です';
+  const p = params as Record<string, unknown>;
+  if (typeof p.partId !== 'number' || !Number.isInteger(p.partId) || p.partId <= 0) {
+    return 'partId は正の整数でなければなりません';
+  }
+  if (typeof p.groupId !== 'number' || !Number.isInteger(p.groupId) || p.groupId <= 0) {
+    return 'groupId は正の整数でなければなりません';
+  }
+  return null;
+}
+
+/** 包装材溶出入力バリデーション */
+export function validateFoodPackagingMigrationInput(
+  packagingHSP: { deltaD: number; deltaP: number; deltaH: number },
+  r0: number,
+  substances: unknown[],
+): string | null {
+  return validateHSPR0Array(packagingHSP, r0, substances, '溶出物質');
+}
+
+/** 香料カプセル化入力バリデーション */
+export function validateFragranceEncapsulationInput(
+  wallHSP: { deltaD: number; deltaP: number; deltaH: number },
+  r0: number,
+  fragrances: unknown[],
+): string | null {
+  return validateHSPR0Array(wallHSP, r0, fragrances, '香料');
+}
+
+/** 経皮吸収促進剤入力バリデーション */
+export function validateTransdermalEnhancerInput(params: unknown): string | null {
+  if (params == null || typeof params !== 'object') return 'パラメータオブジェクトが必要です';
+  const p = params as Record<string, unknown>;
+  if (typeof p.drugId !== 'number' || !Number.isInteger(p.drugId) || p.drugId <= 0) {
+    return '薬物IDは正の整数でなければなりません';
+  }
+  // skinHSP validation
+  if (p.skinHSP == null || typeof p.skinHSP !== 'object') return '皮膚HSPオブジェクトが必要です';
+  const skin = p.skinHSP as Record<string, unknown>;
+  const skinHSPErr = validateHSPRange(skin.deltaD as number, skin.deltaP as number, skin.deltaH as number);
+  if (skinHSPErr) return `皮膚HSP: ${skinHSPErr}`;
+  return null;
+}
+
+/** リポソーム透過性入力バリデーション */
+export function validateLiposomePermeabilityInput(params: unknown): string | null {
+  if (params == null || typeof params !== 'object') return 'パラメータオブジェクトが必要です';
+  const p = params as Record<string, unknown>;
+  if (typeof p.drugId !== 'number' || !Number.isInteger(p.drugId) || p.drugId <= 0) {
+    return '薬物IDは正の整数でなければなりません';
+  }
+  // lipidHSP validation
+  if (p.lipidHSP == null || typeof p.lipidHSP !== 'object') return '脂質膜HSPオブジェクトが必要です';
+  const lipid = p.lipidHSP as Record<string, unknown>;
+  const lipidHSPErr = validateHSPRange(lipid.deltaD as number, lipid.deltaP as number, lipid.deltaH as number);
+  if (lipidHSPErr) return `脂質膜HSP: ${lipidHSPErr}`;
+  if (typeof p.lipidR0 !== 'number' || !Number.isFinite(p.lipidR0) || p.lipidR0 <= 0) {
+    return '脂質膜R₀は正の数値を入力してください';
+  }
+  return null;
+}

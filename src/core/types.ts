@@ -589,7 +589,9 @@ export type BookmarkPipeline =
   | 'escPipeline' | 'cocrystalScreening' | 'printing3dSmoothing'
   | 'dielectricFilm' | 'excipientCompatibility'
   | 'polymerBlendMiscibility' | 'polymerRecyclingCompatibility'
-  | 'compatibilizerSelection' | 'copolymerHspEstimation';
+  | 'compatibilizerSelection' | 'copolymerHspEstimation'
+  | 'additiveMigration' | 'flavorScalping' | 'foodPackagingMigration'
+  | 'fragranceEncapsulation' | 'transdermalEnhancer' | 'liposomePermeability';
 
 /** ブックマークのパラメータ（パイプラインごとに異なるが共通型で扱う） */
 export type BookmarkParams = Record<string, unknown>;

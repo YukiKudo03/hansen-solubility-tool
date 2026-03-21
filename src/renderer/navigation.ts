@@ -12,6 +12,8 @@ export type Tab =
   | 'history' | 'comparison' | 'hspVisualization'
   | 'escPipeline' | 'cocrystalScreening' | 'printing3dSmoothing' | 'dielectricFilm' | 'excipientCompatibility'
   | 'polymerBlendMiscibility' | 'polymerRecyclingCompatibility' | 'compatibilizerSelection' | 'copolymerHspEstimation'
+  | 'additiveMigration' | 'flavorScalping' | 'foodPackagingMigration'
+  | 'fragranceEncapsulation' | 'transdermalEnhancer' | 'liposomePermeability'
   | 'settings';
 
 export interface NavItem {
@@ -40,6 +42,10 @@ export const NAV_CATEGORIES: NavCategory[] = [
       { id: 'escPipeline', label: '環境応力亀裂(ESC)' },
       { id: 'polymerBlendMiscibility', label: 'ブレンド相溶性' },
       { id: 'polymerRecyclingCompatibility', label: 'リサイクル相溶性' },
+      { id: 'additiveMigration', label: '添加剤移行' },
+      { id: 'flavorScalping', label: 'フレーバースカルピング' },
+      { id: 'foodPackagingMigration', label: '包装材溶出' },
+      { id: 'liposomePermeability', label: 'リポソーム透過性' },
     ],
   },
   {
@@ -56,6 +62,8 @@ export const NAV_CATEGORIES: NavCategory[] = [
       { id: 'dielectricFilm', label: '誘電体膜品質' },
       { id: 'excipientCompatibility', label: '賦形剤適合性' },
       { id: 'compatibilizerSelection', label: '相溶化剤選定' },
+      { id: 'fragranceEncapsulation', label: '香料カプセル化' },
+      { id: 'transdermalEnhancer', label: '経皮吸収促進剤' },
     ],
   },
   {

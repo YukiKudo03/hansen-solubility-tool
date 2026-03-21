@@ -32,6 +32,12 @@ import PolymerBlendMiscibilityView from './components/PolymerBlendMiscibilityVie
 import PolymerRecyclingCompatibilityView from './components/PolymerRecyclingCompatibilityView';
 import CompatibilizerSelectionView from './components/CompatibilizerSelectionView';
 import CopolymerHspEstimationView from './components/CopolymerHspEstimationView';
+import AdditiveMigrationView from './components/AdditiveMigrationView';
+import FlavorScalpingView from './components/FlavorScalpingView';
+import FoodPackagingMigrationView from './components/FoodPackagingMigrationView';
+import FragranceEncapsulationView from './components/FragranceEncapsulationView';
+import TransdermalEnhancerView from './components/TransdermalEnhancerView';
+import LiposomePermeabilityView from './components/LiposomePermeabilityView';
 
 const VIEW_MAP: Record<Tab, React.ComponentType> = {
   report: ReportView,
@@ -58,6 +64,12 @@ const VIEW_MAP: Record<Tab, React.ComponentType> = {
   polymerRecyclingCompatibility: PolymerRecyclingCompatibilityView,
   compatibilizerSelection: CompatibilizerSelectionView,
   copolymerHspEstimation: CopolymerHspEstimationView,
+  additiveMigration: AdditiveMigrationView,
+  flavorScalping: FlavorScalpingView,
+  foodPackagingMigration: FoodPackagingMigrationView,
+  fragranceEncapsulation: FragranceEncapsulationView,
+  transdermalEnhancer: TransdermalEnhancerView,
+  liposomePermeability: LiposomePermeabilityView,
   settings: SettingsView,
 };
 

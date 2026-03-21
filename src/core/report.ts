@@ -835,6 +835,179 @@ export function formatCopolymerHspCsv(result: {
   return BOM + [headers.join(','), ...rows].join('\r\n') + '\r\n';
 }
 
+// ─── 添加剤移行ラベル ───────────────────────────
+import type { AdditiveMigrationResult } from './additive-migration';
+import { MigrationLevel, getMigrationLevelInfo } from './additive-migration';
+import type { FlavorScalpingResult } from './flavor-scalping';
+import { ScalpingLevel, getScalpingLevelInfo } from './flavor-scalping';
+import type { PackagingMigrationResult } from './food-packaging-migration';
+import { PackagingMigrationLevel, getPackagingMigrationLevelInfo } from './food-packaging-migration';
+import type { EncapsulationResult } from './fragrance-encapsulation';
+import { EncapsulationLevel, getEncapsulationLevelInfo } from './fragrance-encapsulation';
+import type { TransdermalResult } from './transdermal-enhancer';
+import { TransdermalEnhancerLevel, getTransdermalLevelInfo } from './transdermal-enhancer';
+import type { DrugPermeabilityResult } from './liposome-permeability';
+import { PermeabilityLevel, getPermeabilityLevelInfo } from './liposome-permeability';
+
+/**
+ * 添加剤移行評価結果をCSV文字列に変換する
+ * @returns BOM付きUTF-8 CSV文字列
+ */
+export function formatAdditiveMigrationCsv(results: AdditiveMigrationResult[]): string {
+  const BOM = '\uFEFF';
+  const headers = [
+    '添加剤名', '添加剤 δD', '添加剤 δP', '添加剤 δH',
+    'ポリマー名', 'ポリマー δD', 'ポリマー δP', 'ポリマー δH', 'ポリマー R₀',
+    'Ra', 'RED', '移行リスクレベル', '移行リスク判定',
+  ];
+
+  const rows = results.map((r) => {
+    const info = getMigrationLevelInfo(r.migrationLevel);
+    return [
+      escapeCsvField(r.additive.name),
+      round3(r.additive.hsp.deltaD), round3(r.additive.hsp.deltaP), round3(r.additive.hsp.deltaH),
+      escapeCsvField(r.polymer.name),
+      round3(r.polymer.hsp.deltaD), round3(r.polymer.hsp.deltaP), round3(r.polymer.hsp.deltaH),
+      round3(r.polymer.r0),
+      round3(r.ra), round3(r.red),
+      r.migrationLevel,
+      escapeCsvField(`${info.label}（${info.description}）`),
+    ].join(',');
+  });
+
+  return BOM + [headers.join(','), ...rows].join('\r\n') + '\r\n';
+}
+
+/**
+ * フレーバースカルピング評価結果をCSV文字列に変換する
+ * @returns BOM付きUTF-8 CSV文字列
+ */
+export function formatFlavorScalpingCsv(results: FlavorScalpingResult[]): string {
+  const BOM = '\uFEFF';
+  const headers = [
+    'アロマ成分名', 'アロマ δD', 'アロマ δP', 'アロマ δH',
+    '包装材名', '包装材 δD', '包装材 δP', '包装材 δH', '包装材 R₀',
+    'Ra', 'RED', 'スカルピングレベル', 'スカルピング判定',
+  ];
+
+  const rows = results.map((r) => {
+    const info = getScalpingLevelInfo(r.scalpingLevel);
+    return [
+      escapeCsvField(r.aroma.name),
+      round3(r.aroma.hsp.deltaD), round3(r.aroma.hsp.deltaP), round3(r.aroma.hsp.deltaH),
+      escapeCsvField(r.packaging.name),
+      round3(r.packaging.hsp.deltaD), round3(r.packaging.hsp.deltaP), round3(r.packaging.hsp.deltaH),
+      round3(r.packaging.r0),
+      round3(r.ra), round3(r.red),
+      r.scalpingLevel,
+      escapeCsvField(`${info.label}（${info.description}）`),
+    ].join(',');
+  });
+
+  return BOM + [headers.join(','), ...rows].join('\r\n') + '\r\n';
+}
+
+/**
+ * 包装材溶出評価結果をCSV文字列に変換する
+ * @returns BOM付きUTF-8 CSV文字列
+ */
+export function formatFoodPackagingMigrationCsv(results: PackagingMigrationResult[]): string {
+  const BOM = '\uFEFF';
+  const headers = [
+    '溶出物質名', '溶出物質 δD', '溶出物質 δP', '溶出物質 δH',
+    'Ra', 'RED', '溶出リスクレベル', '溶出リスク判定',
+  ];
+
+  const rows = results.map((r) => {
+    const info = getPackagingMigrationLevelInfo(r.migrationLevel);
+    return [
+      escapeCsvField(r.migrantName),
+      round3(r.migrantHSP.deltaD), round3(r.migrantHSP.deltaP), round3(r.migrantHSP.deltaH),
+      round3(r.ra), round3(r.red),
+      `Level ${r.migrationLevel}`,
+      escapeCsvField(`${info.label}（${info.description}）`),
+    ].join(',');
+  });
+
+  return BOM + [headers.join(','), ...rows].join('\r\n') + '\r\n';
+}
+
+/**
+ * 香料カプセル化評価結果をCSV文字列に変換する
+ * @returns BOM付きUTF-8 CSV文字列
+ */
+export function formatFragranceEncapsulationCsv(results: EncapsulationResult[]): string {
+  const BOM = '\uFEFF';
+  const headers = [
+    '香料名', '香料 δD', '香料 δP', '香料 δH',
+    'Ra', 'RED', 'カプセル化適合性レベル', 'カプセル化適合性判定',
+  ];
+
+  const rows = results.map((r) => {
+    const info = getEncapsulationLevelInfo(r.encapsulationLevel);
+    return [
+      escapeCsvField(r.fragranceName),
+      round3(r.fragranceHSP.deltaD), round3(r.fragranceHSP.deltaP), round3(r.fragranceHSP.deltaH),
+      round3(r.ra), round3(r.red),
+      `Level ${r.encapsulationLevel}`,
+      escapeCsvField(`${info.label}（${info.description}）`),
+    ].join(',');
+  });
+
+  return BOM + [headers.join(','), ...rows].join('\r\n') + '\r\n';
+}
+
+/**
+ * 経皮吸収促進剤評価結果をCSV文字列に変換する
+ * @returns BOM付きUTF-8 CSV文字列
+ */
+export function formatTransdermalEnhancerCsv(results: TransdermalResult[]): string {
+  const BOM = '\uFEFF';
+  const headers = [
+    '促進剤名', '促進剤 δD', '促進剤 δP', '促進剤 δH',
+    'Ra(薬物-促進剤)', 'Ra(皮膚-促進剤)', '総合スコア',
+    '適合性レベル', '適合性判定',
+  ];
+
+  const rows = results.map((r) => {
+    const info = getTransdermalLevelInfo(r.level);
+    return [
+      escapeCsvField(r.enhancerName),
+      round3(r.enhancerHSP.deltaD), round3(r.enhancerHSP.deltaP), round3(r.enhancerHSP.deltaH),
+      round3(r.raDrugEnhancer), round3(r.raSkinEnhancer), round3(r.compositeScore),
+      `Level ${r.level}`,
+      escapeCsvField(`${info.label}（${info.description}）`),
+    ].join(',');
+  });
+
+  return BOM + [headers.join(','), ...rows].join('\r\n') + '\r\n';
+}
+
+/**
+ * リポソーム透過性評価結果をCSV文字列に変換する
+ * @returns BOM付きUTF-8 CSV文字列
+ */
+export function formatLiposomePermeabilityCsv(results: DrugPermeabilityResult[]): string {
+  const BOM = '\uFEFF';
+  const headers = [
+    '薬物名', '薬物 δD', '薬物 δP', '薬物 δH',
+    'Ra', 'RED', '透過性レベル', '透過性判定',
+  ];
+
+  const rows = results.map((r) => {
+    const info = getPermeabilityLevelInfo(r.permeabilityLevel);
+    return [
+      escapeCsvField(r.drugName),
+      round3(r.drugHSP.deltaD), round3(r.drugHSP.deltaP), round3(r.drugHSP.deltaH),
+      round3(r.ra), round3(r.red),
+      `Level ${r.permeabilityLevel}`,
+      escapeCsvField(`${info.label}（${info.description}）`),
+    ].join(',');
+  });
+
+  return BOM + [headers.join(','), ...rows].join('\r\n') + '\r\n';
+}
+
 export function formatExcipientCompatibilityCsv(results: ExcipientResult[]): string {
   const BOM = '\uFEFF';
   const headers = [

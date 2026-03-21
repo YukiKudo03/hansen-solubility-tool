@@ -8,7 +8,7 @@ import { calculateRa, calculateRed } from '../core/hsp';
 import { classifyRisk } from '../core/risk';
 import { classifyDispersibility, DEFAULT_DISPERSIBILITY_THRESHOLDS } from '../core/dispersibility';
 import { screenSolvents, filterByConstraints } from '../core/solvent-finder';
-import { validatePartInput, validateSolventInput, validateName, validateThresholds, validateMixtureInput, validateNanoParticleInput, validateDispersibilityThresholds, validateWettabilityThresholds, validateBlendOptimizationInput, validateSwellingThresholds, validateDrugInput, validateDrugSolubilityThresholds, validateChemicalResistanceThresholds, validatePlasticizerThresholds, validateCarrierThresholds, validateAdhesionThresholds, validateSolventClassifications, validateGreenSolventInput, validateMultiObjectiveInput, validateGroupContributionInput, validateDispersantInput, validateDispersantThresholds, validateESCInput, validateCocrystalInput, validatePrinting3dInput, validateDielectricInput, validateExcipientInput, validatePolymerBlendInput, validateRecyclingInput, validateCompatibilizerInput, validateCopolymerInput } from '../core/validation';
+import { validatePartInput, validateSolventInput, validateName, validateThresholds, validateMixtureInput, validateNanoParticleInput, validateDispersibilityThresholds, validateWettabilityThresholds, validateBlendOptimizationInput, validateSwellingThresholds, validateDrugInput, validateDrugSolubilityThresholds, validateChemicalResistanceThresholds, validatePlasticizerThresholds, validateCarrierThresholds, validateAdhesionThresholds, validateSolventClassifications, validateGreenSolventInput, validateMultiObjectiveInput, validateGroupContributionInput, validateDispersantInput, validateDispersantThresholds, validateESCInput, validateCocrystalInput, validatePrinting3dInput, validateDielectricInput, validateExcipientInput, validatePolymerBlendInput, validateRecyclingInput, validateCompatibilizerInput, validateCopolymerInput, validateAdditiveMigrationInput, validateFlavorScalpingInput, validateFoodPackagingMigrationInput, validateFragranceEncapsulationInput, validateTransdermalEnhancerInput, validateLiposomePermeabilityInput } from '../core/validation';
 import { classifyChemicalResistance, DEFAULT_CHEMICAL_RESISTANCE_THRESHOLDS } from '../core/chemical-resistance';
 import { classifyPlasticizerCompatibility, DEFAULT_PLASTICIZER_THRESHOLDS, screenPlasticizers } from '../core/plasticizer';
 import { classifyCarrierCompatibility, DEFAULT_CARRIER_THRESHOLDS, screenCarriers } from '../core/carrier-selection';
@@ -40,6 +40,18 @@ import { screenCocrystals } from '../core/cocrystal-screening';
 import { screen3DPrintingSolvents } from '../core/printing3d-smoothing';
 import { screenDielectricSolvents } from '../core/dielectric-film';
 import { evaluateExcipientCompatibility } from '../core/excipient-compatibility';
+import { screenAdditiveMigration, DEFAULT_MIGRATION_THRESHOLDS } from '../core/additive-migration';
+import type { MigrationThresholds } from '../core/additive-migration';
+import { screenFlavorScalping, DEFAULT_SCALPING_THRESHOLDS } from '../core/flavor-scalping';
+import type { ScalpingThresholds } from '../core/flavor-scalping';
+import { screenPackagingMigration, DEFAULT_PACKAGING_MIGRATION_THRESHOLDS } from '../core/food-packaging-migration';
+import type { PackagingMigrationThresholds } from '../core/food-packaging-migration';
+import { screenFragranceEncapsulation, DEFAULT_ENCAPSULATION_THRESHOLDS } from '../core/fragrance-encapsulation';
+import type { EncapsulationThresholds } from '../core/fragrance-encapsulation';
+import { screenTransdermalEnhancers, DEFAULT_TRANSDERMAL_THRESHOLDS } from '../core/transdermal-enhancer';
+import type { TransdermalThresholds } from '../core/transdermal-enhancer';
+import { screenDrugPermeability, DEFAULT_PERMEABILITY_THRESHOLDS } from '../core/liposome-permeability';
+import type { PermeabilityThresholds } from '../core/liposome-permeability';
 import type { HSPValues } from '../core/types';
 
 /** CSVインポートの最大サイズ (10MB) */
@@ -1060,5 +1072,121 @@ export function registerIpcHandlers(
       estimatedHSP: { deltaD, deltaP, deltaH },
       evaluatedAt: new Date(),
     };
+  });
+
+  // --- 添加剤移行予測 ---
+  ipcMain.handle('additiveMigration:screen', (_, partId: number, groupId: number) => {
+    const err = validateAdditiveMigrationInput({ partId, groupId });
+    if (err) throw new Error(err);
+
+    const group = partsRepo.getGroupById(groupId);
+    if (!group) throw new Error(`部品グループ (ID: ${groupId}) が見つかりません`);
+    const part = group.parts.find((p) => p.id === partId);
+    if (!part) throw new Error(`部品 (ID: ${partId}) が見つかりません`);
+
+    const additives = solventRepo.getAllSolvents();
+    const thresholdsJson = settingsRepo.getSetting('migration_thresholds');
+    const thresholds: MigrationThresholds = thresholdsJson
+      ? safeJsonParse(thresholdsJson, { ...DEFAULT_MIGRATION_THRESHOLDS })
+      : { ...DEFAULT_MIGRATION_THRESHOLDS };
+
+    return screenAdditiveMigration(part, additives, thresholds);
+  });
+
+  // --- フレーバースカルピング ---
+  ipcMain.handle('flavorScalping:screen', (_, partId: number, groupId: number) => {
+    const err = validateFlavorScalpingInput({ partId, groupId });
+    if (err) throw new Error(err);
+
+    const group = partsRepo.getGroupById(groupId);
+    if (!group) throw new Error(`部品グループ (ID: ${groupId}) が見つかりません`);
+    const part = group.parts.find((p) => p.id === partId);
+    if (!part) throw new Error(`部品 (ID: ${partId}) が見つかりません`);
+
+    const aromas = solventRepo.getAllSolvents();
+    const thresholdsJson = settingsRepo.getSetting('scalping_thresholds');
+    const thresholds: ScalpingThresholds = thresholdsJson
+      ? safeJsonParse(thresholdsJson, { ...DEFAULT_SCALPING_THRESHOLDS })
+      : { ...DEFAULT_SCALPING_THRESHOLDS };
+
+    return screenFlavorScalping(part, aromas, thresholds);
+  });
+
+  // --- 包装材溶出 ---
+  ipcMain.handle('foodPackagingMigration:screen', (_, packagingHSP: HSPValues, r0: number, substanceIds: number[]) => {
+    const substances = substanceIds.map((id) => {
+      const s = solventRepo.getSolventById(id);
+      if (!s) throw new Error(`溶出物質 (ID: ${id}) が見つかりません`);
+      return { name: s.name, hsp: s.hsp };
+    });
+    const err = validateFoodPackagingMigrationInput(packagingHSP, r0, substances);
+    if (err) throw new Error(err);
+
+    const thresholdsJson = settingsRepo.getSetting('packaging_migration_thresholds');
+    const thresholds: PackagingMigrationThresholds = thresholdsJson
+      ? safeJsonParse(thresholdsJson, { ...DEFAULT_PACKAGING_MIGRATION_THRESHOLDS })
+      : { ...DEFAULT_PACKAGING_MIGRATION_THRESHOLDS };
+
+    return screenPackagingMigration(packagingHSP, r0, substances, thresholds);
+  });
+
+  // --- 香料カプセル化 ---
+  ipcMain.handle('fragranceEncapsulation:screen', (_, wallHSP: HSPValues, r0: number, fragranceIds: number[]) => {
+    const fragrances = fragranceIds.map((id) => {
+      const s = solventRepo.getSolventById(id);
+      if (!s) throw new Error(`香料 (ID: ${id}) が見つかりません`);
+      return { name: s.name, hsp: s.hsp };
+    });
+    const err = validateFragranceEncapsulationInput(wallHSP, r0, fragrances);
+    if (err) throw new Error(err);
+
+    const thresholdsJson = settingsRepo.getSetting('encapsulation_thresholds');
+    const thresholds: EncapsulationThresholds = thresholdsJson
+      ? safeJsonParse(thresholdsJson, { ...DEFAULT_ENCAPSULATION_THRESHOLDS })
+      : { ...DEFAULT_ENCAPSULATION_THRESHOLDS };
+
+    return screenFragranceEncapsulation(wallHSP, r0, fragrances, thresholds);
+  });
+
+  // --- 経皮吸収促進剤 ---
+  ipcMain.handle('transdermalEnhancer:screen', (_, params: {
+    drugId: number; skinHSP: HSPValues;
+  }) => {
+    const err = validateTransdermalEnhancerInput(params);
+    if (err) throw new Error(err);
+
+    const drug = drugRepo.getById(params.drugId);
+    if (!drug) throw new Error(`薬物 (ID: ${params.drugId}) が見つかりません`);
+
+    const enhancers = solventRepo.getAllSolvents().map((s) => ({
+      name: s.name, hsp: s.hsp,
+    }));
+
+    const thresholdsJson = settingsRepo.getSetting('transdermal_thresholds');
+    const thresholds: TransdermalThresholds = thresholdsJson
+      ? safeJsonParse(thresholdsJson, { ...DEFAULT_TRANSDERMAL_THRESHOLDS })
+      : { ...DEFAULT_TRANSDERMAL_THRESHOLDS };
+
+    return screenTransdermalEnhancers(drug.hsp, params.skinHSP, enhancers, thresholds);
+  });
+
+  // --- リポソーム透過性 ---
+  ipcMain.handle('liposomePermeability:screen', (_, params: {
+    drugId: number; lipidHSP: HSPValues; lipidR0: number;
+  }) => {
+    const err = validateLiposomePermeabilityInput(params);
+    if (err) throw new Error(err);
+
+    const drug = drugRepo.getById(params.drugId);
+    if (!drug) throw new Error(`薬物 (ID: ${params.drugId}) が見つかりません`);
+
+    const drugs = [{ name: drug.name, hsp: drug.hsp }];
+
+    const thresholdsJson = settingsRepo.getSetting('permeability_thresholds');
+    const thresholds: PermeabilityThresholds = thresholdsJson
+      ? safeJsonParse(thresholdsJson, { ...DEFAULT_PERMEABILITY_THRESHOLDS })
+      : { ...DEFAULT_PERMEABILITY_THRESHOLDS };
+
+    return screenDrugPermeability(drugs, params.lipidHSP, params.lipidR0, thresholds);
   });
 }
