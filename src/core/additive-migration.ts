@@ -1,36 +1,20 @@
 /**
- * 添加剤移行予測 — ポリマーと添加剤間のRED値に基づく移行リスク評価
+ * 添加剤移行予測 — polymer-additive-migration のアダプタ
  *
- * RED値が小さい = 相溶性高い = 添加剤がポリマー内に留まりやすい = Stable
- * RED値が大きい = 相溶性低い = 添加剤が移行しやすい = High
+ * Part/Solvent ベースのインターフェースを提供し、内部で polymer-additive-migration に委譲する。
  */
-import { calculateRa, calculateRed } from './hsp';
-import type { Part, Solvent, HSPValues } from './types';
+import {
+  classifyMigration as _classifyMigration,
+  getMigrationLevelInfo as _getMigrationLevelInfo,
+  screenAdditiveMigration as _screenAdditiveMigration,
+  MigrationLevel,
+  DEFAULT_MIGRATION_THRESHOLDS,
+} from './polymer-additive-migration';
+import type { MigrationThresholds, MigrationLevelInfo } from './polymer-additive-migration';
+import type { Part, Solvent } from './types';
 
-/** 移行リスクレベル */
-export enum MigrationLevel {
-  Stable = 'Stable',     // 安定（移行しにくい）
-  Moderate = 'Moderate',  // 中程度の移行リスク
-  High = 'High',          // 高い移行リスク
-}
-
-/** 移行リスク閾値 (RED値ベース) */
-export interface MigrationThresholds {
-  stableMax: number;   // default: 0.8 — RED ≤ stableMax → Stable
-  moderateMax: number; // default: 1.2 — RED ≤ moderateMax → Moderate, else High
-}
-
-export const DEFAULT_MIGRATION_THRESHOLDS: MigrationThresholds = {
-  stableMax: 0.8,
-  moderateMax: 1.2,
-};
-
-/** 移行リスク分類 */
-export function classifyMigration(red: number, thresholds: MigrationThresholds): MigrationLevel {
-  if (red <= thresholds.stableMax) return MigrationLevel.Stable;
-  if (red <= thresholds.moderateMax) return MigrationLevel.Moderate;
-  return MigrationLevel.High;
-}
+export { MigrationLevel, DEFAULT_MIGRATION_THRESHOLDS };
+export type { MigrationThresholds };
 
 /** 個別スクリーニング結果 */
 export interface AdditiveMigrationResult {
@@ -49,21 +33,32 @@ export interface AdditiveMigrationEvaluationResult {
   thresholdsUsed: MigrationThresholds;
 }
 
-/** 全添加剤（溶媒テーブル利用）をスクリーニング */
+/** 移行リスク分類 (委譲) */
+export function classifyMigration(red: number, thresholds: MigrationThresholds): MigrationLevel {
+  return _classifyMigration(red, thresholds);
+}
+
+/** レベル情報取得 (委譲) */
+export function getMigrationLevelInfo(level: MigrationLevel): MigrationLevelInfo {
+  return _getMigrationLevelInfo(level);
+}
+
+/** 全添加剤（溶媒テーブル利用）をスクリーニング — Part/Solvent ラッパー */
 export function screenAdditiveMigration(
   polymer: Part,
   additives: Solvent[],
   thresholds: MigrationThresholds,
 ): AdditiveMigrationEvaluationResult {
-  const results: AdditiveMigrationResult[] = additives.map((additive) => {
-    const ra = calculateRa(polymer.hsp, additive.hsp);
-    const red = calculateRed(polymer.hsp, additive.hsp, polymer.r0);
-    const migrationLevel = classifyMigration(red, thresholds);
-    return { additive, polymer, ra, red, migrationLevel };
-  });
+  const inputs = additives.map((s) => ({ name: s.name, hsp: s.hsp }));
+  const coreResults = _screenAdditiveMigration(polymer.hsp, polymer.r0, inputs, thresholds);
 
-  // RED昇順（安定な順）
-  results.sort((a, b) => a.red - b.red);
+  const results: AdditiveMigrationResult[] = coreResults.map((cr, i) => ({
+    additive: additives.find((a) => a.name === cr.additiveName)!,
+    polymer,
+    ra: cr.ra,
+    red: cr.red,
+    migrationLevel: cr.migrationLevel,
+  }));
 
   return {
     polymer,
@@ -71,13 +66,4 @@ export function screenAdditiveMigration(
     evaluatedAt: new Date(),
     thresholdsUsed: thresholds,
   };
-}
-
-/** レベル情報取得 */
-export function getMigrationLevelInfo(level: MigrationLevel): { label: string; description: string } {
-  switch (level) {
-    case MigrationLevel.Stable: return { label: 'Stable', description: '安定（移行しにくい）' };
-    case MigrationLevel.Moderate: return { label: 'Moderate', description: '中程度の移行リスク' };
-    case MigrationLevel.High: return { label: 'High', description: '高い移行リスク' };
-  }
 }
