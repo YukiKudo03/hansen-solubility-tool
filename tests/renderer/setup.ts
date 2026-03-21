@@ -205,6 +205,33 @@ export function createMockApi(): { [K in keyof ElectronAPI]: ReturnType<typeof v
     // 水素貯蔵材料
     screenHydrogenStorage: vi.fn().mockResolvedValue(null),
 
+    // UVフィルター適合性
+    screenSunscreenUVFilter: vi.fn().mockResolvedValue([]),
+
+    // 吸入薬プロペラント適合性
+    evaluateInhalationDrug: vi.fn().mockResolvedValue(null),
+
+    // タンパク質凝集リスク
+    evaluateProteinAggregation: vi.fn().mockResolvedValue(null),
+
+    // バイオ製剤バッファー選定
+    screenBiologicBuffers: vi.fn().mockResolvedValue([]),
+
+    // 洗浄剤配合設計
+    screenCleaningFormulation: vi.fn().mockResolvedValue([]),
+
+    // 天然色素抽出
+    screenNaturalDyeExtraction: vi.fn().mockResolvedValue([]),
+
+    // 精油抽出
+    screenEssentialOilExtraction: vi.fn().mockResolvedValue([]),
+
+    // 土壌汚染物質抽出
+    screenSoilRemediation: vi.fn().mockResolvedValue([]),
+
+    // 残留溶媒予測
+    screenResidualSolvent: vi.fn().mockResolvedValue([]),
+
     // 汎用 IPC invoke
     invoke: vi.fn().mockResolvedValue(null),
   };

@@ -336,6 +336,41 @@ export interface ElectronAPI {
     r0: number; solventIds: number[];
   }): Promise<import('./core/hydrogen-storage-material').H2StorageScreeningResult>;
 
+  // 洗浄剤配合設計
+  screenCleaningFormulation(soilHSP: import('./core/types').HSPValues, r0: number, solventIds: number[]): Promise<import('./core/cleaning-product-formulation').CleaningScreeningResult[]>;
+
+  // 天然色素抽出
+  screenNaturalDyeExtraction(dyeHSP: import('./core/types').HSPValues, r0: number, solventIds: number[]): Promise<import('./core/natural-dye-extraction').DyeExtractionResult[]>;
+
+  // 精油抽出
+  screenEssentialOilExtraction(oilHSP: import('./core/types').HSPValues, r0: number, solventIds: number[]): Promise<import('./core/essential-oil-extraction').EssentialOilExtractionResult[]>;
+
+  // 土壌汚染物質抽出
+  screenSoilRemediation(contaminantHSP: import('./core/types').HSPValues, r0: number, solventIds: number[]): Promise<import('./core/soil-contaminant-extraction').RemediationScreeningResult[]>;
+
+  // 残留溶媒予測
+  screenResidualSolvent(filmHSP: import('./core/types').HSPValues, r0: number, solventIds: number[]): Promise<import('./core/residual-solvent-prediction').ResidualSolventResult[]>;
+
+  // UVフィルター適合性
+  screenSunscreenUVFilter(vehicleHSP: import('./core/types').HSPValues, r0: number, uvFilterIds: number[]): Promise<import('./core/sunscreen-uv-filter').UVFilterResult[]>;
+
+  // 吸入薬プロペラント適合性
+  evaluateInhalationDrug(params: {
+    drugHSP: import('./core/types').HSPValues;
+    propellantHSP: import('./core/types').HSPValues;
+    propellantR0: number;
+  }): Promise<import('./core/inhalation-drug-propellant').InhalationCompatibilityResult>;
+
+  // タンパク質凝集リスク
+  evaluateProteinAggregation(params: {
+    proteinSurfaceHSP: import('./core/types').HSPValues;
+    bufferHSP: import('./core/types').HSPValues;
+    bufferR0: number;
+  }): Promise<import('./core/protein-aggregation-risk').ProteinAggregationResult>;
+
+  // バイオ製剤バッファー選定
+  screenBiologicBuffers(proteinHSP: import('./core/types').HSPValues, r0: number, bufferIds: number[], temperature?: number): Promise<import('./core/biologic-formulation-buffer').BufferScreeningResult[]>;
+
   // 汎用 IPC invoke (可視化パイプライン等)
   invoke(channel: string, ...args: unknown[]): Promise<any>;
 }

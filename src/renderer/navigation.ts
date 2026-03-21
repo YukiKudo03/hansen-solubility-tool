@@ -18,6 +18,9 @@ export type Tab =
   | 'structuralAdhesiveJoint' | 'surfaceTreatmentQuantification'
   | 'pigmentDispersion' | 'cntGrapheneDispersion' | 'mxeneDispersion' | 'nanoparticleDrugLoading'
   | 'gasPermeability' | 'membraneSeparation' | 'co2Absorbent' | 'hydrogenStorage'
+  | 'sunscreenUVFilter' | 'inhalationDrug' | 'proteinAggregation' | 'biologicBuffer'
+  | 'cleaningFormulation' | 'naturalDyeExtraction' | 'essentialOilExtraction'
+  | 'soilRemediation' | 'residualSolvent'
   | 'settings';
 
 export interface NavItem {
@@ -56,6 +59,9 @@ export const NAV_CATEGORIES: NavCategory[] = [
       { id: 'structuralAdhesiveJoint', label: '構造接着設計' },
       { id: 'gasPermeability', label: 'ガス透過性' },
       { id: 'membraneSeparation', label: '膜分離選択性' },
+      { id: 'inhalationDrug', label: '吸入薬適合性' },
+      { id: 'proteinAggregation', label: 'タンパク質凝集' },
+      { id: 'residualSolvent', label: '残留溶媒' },
     ],
   },
   {
@@ -80,6 +86,11 @@ export const NAV_CATEGORIES: NavCategory[] = [
       { id: 'nanoparticleDrugLoading', label: 'NP薬物ローディング' },
       { id: 'co2Absorbent', label: 'CO2吸収材' },
       { id: 'hydrogenStorage', label: '水素貯蔵材料' },
+      { id: 'sunscreenUVFilter', label: 'UVフィルター適合' },
+      { id: 'biologicBuffer', label: 'バイオ製剤バッファー' },
+      { id: 'naturalDyeExtraction', label: '天然色素抽出' },
+      { id: 'essentialOilExtraction', label: '精油抽出' },
+      { id: 'soilRemediation', label: '土壌汚染抽出' },
     ],
   },
   {
@@ -88,6 +99,7 @@ export const NAV_CATEGORIES: NavCategory[] = [
     icon: '⚡',
     items: [
       { id: 'blendOptimizer', label: 'ブレンド最適化' },
+      { id: 'cleaningFormulation', label: '洗浄剤配合' },
       { id: 'drugSolubility', label: '薬物溶解性' },
       { id: 'comparison', label: '比較レポート' },
       { id: 'sphereFitting', label: 'HSP球算出' },

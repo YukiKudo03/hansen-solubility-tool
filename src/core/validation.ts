@@ -770,6 +770,55 @@ export function validateDrugLoadingInput(
   return validateHSPR0Array(carrierHSP, carrierR0, drugs, '薬物');
 }
 
+// ============================================================================
+// 抽出・洗浄群パイプライン用の入力バリデーション
+// ============================================================================
+
+/** 洗浄剤配合設計入力バリデーション */
+export function validateCleaningFormulationInput(
+  soilHSP: { deltaD: number; deltaP: number; deltaH: number },
+  r0: number,
+  solvents: unknown[],
+): string | null {
+  return validateHSPR0Array(soilHSP, r0, solvents, '洗浄溶媒');
+}
+
+/** 天然色素抽出入力バリデーション */
+export function validateNaturalDyeExtractionInput(
+  dyeHSP: { deltaD: number; deltaP: number; deltaH: number },
+  r0: number,
+  solvents: unknown[],
+): string | null {
+  return validateHSPR0Array(dyeHSP, r0, solvents, '溶媒');
+}
+
+/** 精油抽出入力バリデーション */
+export function validateEssentialOilExtractionInput(
+  oilHSP: { deltaD: number; deltaP: number; deltaH: number },
+  r0: number,
+  solvents: unknown[],
+): string | null {
+  return validateHSPR0Array(oilHSP, r0, solvents, '溶媒');
+}
+
+/** 土壌汚染物質抽出入力バリデーション */
+export function validateSoilRemediationInput(
+  contaminantHSP: { deltaD: number; deltaP: number; deltaH: number },
+  r0: number,
+  solvents: unknown[],
+): string | null {
+  return validateHSPR0Array(contaminantHSP, r0, solvents, '溶媒');
+}
+
+/** 残留溶媒予測入力バリデーション */
+export function validateResidualSolventInput(
+  filmHSP: { deltaD: number; deltaP: number; deltaH: number },
+  r0: number,
+  solvents: unknown[],
+): string | null {
+  return validateHSPR0Array(filmHSP, r0, solvents, '溶媒');
+}
+
 /** 密着強度閾値バリデーション */
 export function validateAdhesionStrengthThresholds(t: unknown): string | null {
   if (t == null || typeof t !== 'object') return '閾値オブジェクトが必要です';
@@ -788,6 +837,52 @@ export function validateAdhesionStrengthThresholds(t: unknown): string | null {
 // ============================================================================
 // Gas-Solubility群パイプライン用の入力バリデーション
 // ============================================================================
+
+/** UVフィルター適合性入力バリデーション */
+export function validateSunscreenUVFilterInput(
+  vehicleHSP: { deltaD: number; deltaP: number; deltaH: number },
+  r0: number,
+  uvFilters: unknown[],
+): string | null {
+  return validateHSPR0Array(vehicleHSP, r0, uvFilters, 'UVフィルター');
+}
+
+/** 吸入薬プロペラント適合性入力バリデーション */
+export function validateInhalationDrugInput(params: unknown): string | null {
+  if (params == null || typeof params !== 'object') return 'パラメータオブジェクトが必要です';
+  const p = params as Record<string, unknown>;
+  const drugErr = validateHSPObject(p.drugHSP, '薬物');
+  if (drugErr) return `薬物HSP: ${drugErr}`;
+  const propErr = validateHSPObject(p.propellantHSP, 'プロペラント');
+  if (propErr) return `プロペラントHSP: ${propErr}`;
+  if (typeof p.propellantR0 !== 'number' || !Number.isFinite(p.propellantR0) || p.propellantR0 <= 0) {
+    return 'プロペラントR₀は正の数値を入力してください';
+  }
+  return null;
+}
+
+/** タンパク質凝集リスク入力バリデーション */
+export function validateProteinAggregationInput(params: unknown): string | null {
+  if (params == null || typeof params !== 'object') return 'パラメータオブジェクトが必要です';
+  const p = params as Record<string, unknown>;
+  const proteinErr = validateHSPObject(p.proteinSurfaceHSP, 'タンパク質表面');
+  if (proteinErr) return `タンパク質表面HSP: ${proteinErr}`;
+  const bufferErr = validateHSPObject(p.bufferHSP, '緩衝液');
+  if (bufferErr) return `緩衝液HSP: ${bufferErr}`;
+  if (typeof p.bufferR0 !== 'number' || !Number.isFinite(p.bufferR0) || p.bufferR0 <= 0) {
+    return '緩衝液R₀は正の数値を入力してください';
+  }
+  return null;
+}
+
+/** バイオ製剤バッファー選定入力バリデーション */
+export function validateBiologicBufferInput(
+  proteinHSP: { deltaD: number; deltaP: number; deltaH: number },
+  r0: number,
+  buffers: unknown[],
+): string | null {
+  return validateHSPR0Array(proteinHSP, r0, buffers, 'バッファー');
+}
 
 /** ガス透過性入力バリデーション */
 export function validateGasPermeabilityInput(params: unknown): string | null {

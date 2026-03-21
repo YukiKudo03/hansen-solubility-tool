@@ -390,6 +390,48 @@ export const api = {
     r0: number; solventIds: number[];
   }) => ipcRenderer.invoke('hydrogenStorage:screen', params),
 
+  // 洗浄剤配合設計
+  screenCleaningFormulation: (soilHSP: { deltaD: number; deltaP: number; deltaH: number }, r0: number, solventIds: number[]) =>
+    ipcRenderer.invoke('cleaningFormulation:screen', soilHSP, r0, solventIds),
+
+  // 天然色素抽出
+  screenNaturalDyeExtraction: (dyeHSP: { deltaD: number; deltaP: number; deltaH: number }, r0: number, solventIds: number[]) =>
+    ipcRenderer.invoke('naturalDyeExtraction:screen', dyeHSP, r0, solventIds),
+
+  // 精油抽出
+  screenEssentialOilExtraction: (oilHSP: { deltaD: number; deltaP: number; deltaH: number }, r0: number, solventIds: number[]) =>
+    ipcRenderer.invoke('essentialOilExtraction:screen', oilHSP, r0, solventIds),
+
+  // 土壌汚染物質抽出
+  screenSoilRemediation: (contaminantHSP: { deltaD: number; deltaP: number; deltaH: number }, r0: number, solventIds: number[]) =>
+    ipcRenderer.invoke('soilRemediation:screen', contaminantHSP, r0, solventIds),
+
+  // 残留溶媒予測
+  screenResidualSolvent: (filmHSP: { deltaD: number; deltaP: number; deltaH: number }, r0: number, solventIds: number[]) =>
+    ipcRenderer.invoke('residualSolvent:screen', filmHSP, r0, solventIds),
+
+  // UVフィルター適合性
+  screenSunscreenUVFilter: (vehicleHSP: { deltaD: number; deltaP: number; deltaH: number }, r0: number, uvFilterIds: number[]) =>
+    ipcRenderer.invoke('sunscreenUVFilter:screen', vehicleHSP, r0, uvFilterIds),
+
+  // 吸入薬プロペラント適合性
+  evaluateInhalationDrug: (params: {
+    drugHSP: { deltaD: number; deltaP: number; deltaH: number };
+    propellantHSP: { deltaD: number; deltaP: number; deltaH: number };
+    propellantR0: number;
+  }) => ipcRenderer.invoke('inhalationDrug:evaluate', params),
+
+  // タンパク質凝集リスク
+  evaluateProteinAggregation: (params: {
+    proteinSurfaceHSP: { deltaD: number; deltaP: number; deltaH: number };
+    bufferHSP: { deltaD: number; deltaP: number; deltaH: number };
+    bufferR0: number;
+  }) => ipcRenderer.invoke('proteinAggregation:evaluate', params),
+
+  // バイオ製剤バッファー選定
+  screenBiologicBuffers: (proteinHSP: { deltaD: number; deltaP: number; deltaH: number }, r0: number, bufferIds: number[], temperature?: number) =>
+    ipcRenderer.invoke('biologicBuffer:screen', proteinHSP, r0, bufferIds, temperature),
+
   // 汎用 IPC invoke — 許可チャネルのみ通過
   invoke: (channel: string, ...args: unknown[]) => {
     const ALLOWED_CHANNELS = [

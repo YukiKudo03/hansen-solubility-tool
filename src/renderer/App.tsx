@@ -51,6 +51,15 @@ import GasPermeabilityView from './components/GasPermeabilityView';
 import MembraneSeparationView from './components/MembraneSeparationView';
 import CO2AbsorbentView from './components/CO2AbsorbentView';
 import HydrogenStorageView from './components/HydrogenStorageView';
+import SunscreenUVFilterView from './components/SunscreenUVFilterView';
+import InhalationDrugView from './components/InhalationDrugView';
+import ProteinAggregationView from './components/ProteinAggregationView';
+import BiologicBufferView from './components/BiologicBufferView';
+import CleaningFormulationView from './components/CleaningFormulationView';
+import NaturalDyeExtractionView from './components/NaturalDyeExtractionView';
+import EssentialOilExtractionView from './components/EssentialOilExtractionView';
+import SoilRemediationView from './components/SoilRemediationView';
+import ResidualSolventView from './components/ResidualSolventView';
 
 const VIEW_MAP: Record<Tab, React.ComponentType> = {
   report: ReportView,
@@ -96,6 +105,15 @@ const VIEW_MAP: Record<Tab, React.ComponentType> = {
   membraneSeparation: MembraneSeparationView,
   co2Absorbent: CO2AbsorbentView,
   hydrogenStorage: HydrogenStorageView,
+  sunscreenUVFilter: SunscreenUVFilterView,
+  inhalationDrug: InhalationDrugView,
+  proteinAggregation: ProteinAggregationView,
+  biologicBuffer: BiologicBufferView,
+  cleaningFormulation: CleaningFormulationView,
+  naturalDyeExtraction: NaturalDyeExtractionView,
+  essentialOilExtraction: EssentialOilExtractionView,
+  soilRemediation: SoilRemediationView,
+  residualSolvent: ResidualSolventView,
   settings: SettingsView,
 };
 

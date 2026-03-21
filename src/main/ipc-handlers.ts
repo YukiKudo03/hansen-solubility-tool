@@ -8,7 +8,7 @@ import { calculateRa, calculateRed } from '../core/hsp';
 import { classifyRisk } from '../core/risk';
 import { classifyDispersibility, DEFAULT_DISPERSIBILITY_THRESHOLDS } from '../core/dispersibility';
 import { screenSolvents, filterByConstraints } from '../core/solvent-finder';
-import { validatePartInput, validateSolventInput, validateName, validateThresholds, validateMixtureInput, validateNanoParticleInput, validateDispersibilityThresholds, validateWettabilityThresholds, validateBlendOptimizationInput, validateSwellingThresholds, validateDrugInput, validateDrugSolubilityThresholds, validateChemicalResistanceThresholds, validatePlasticizerThresholds, validateCarrierThresholds, validateAdhesionThresholds, validateSolventClassifications, validateGreenSolventInput, validateMultiObjectiveInput, validateGroupContributionInput, validateDispersantInput, validateDispersantThresholds, validateESCInput, validateCocrystalInput, validatePrinting3dInput, validateDielectricInput, validateExcipientInput, validatePolymerBlendInput, validateRecyclingInput, validateCompatibilizerInput, validateCopolymerInput, validateAdditiveMigrationInput, validateFlavorScalpingInput, validateFoodPackagingMigrationInput, validateFragranceEncapsulationInput, validateTransdermalEnhancerInput, validateLiposomePermeabilityInput, validateInkSubstrateAdhesionInput, validateMultilayerCoatingInput, validatePSAPeelStrengthInput, validateStructuralAdhesiveJointInput, validateSurfaceTreatmentInput, validateAdhesionStrengthThresholds, validatePigmentDispersionInput, validateCNTGrapheneInput, validateMXeneDispersionInput, validateDrugLoadingInput, validateGasPermeabilityInput, validateMembraneSeparationInput, validateCO2AbsorbentInput, validateHydrogenStorageInput } from '../core/validation';
+import { validatePartInput, validateSolventInput, validateName, validateThresholds, validateMixtureInput, validateNanoParticleInput, validateDispersibilityThresholds, validateWettabilityThresholds, validateBlendOptimizationInput, validateSwellingThresholds, validateDrugInput, validateDrugSolubilityThresholds, validateChemicalResistanceThresholds, validatePlasticizerThresholds, validateCarrierThresholds, validateAdhesionThresholds, validateSolventClassifications, validateGreenSolventInput, validateMultiObjectiveInput, validateGroupContributionInput, validateDispersantInput, validateDispersantThresholds, validateESCInput, validateCocrystalInput, validatePrinting3dInput, validateDielectricInput, validateExcipientInput, validatePolymerBlendInput, validateRecyclingInput, validateCompatibilizerInput, validateCopolymerInput, validateAdditiveMigrationInput, validateFlavorScalpingInput, validateFoodPackagingMigrationInput, validateFragranceEncapsulationInput, validateTransdermalEnhancerInput, validateLiposomePermeabilityInput, validateInkSubstrateAdhesionInput, validateMultilayerCoatingInput, validatePSAPeelStrengthInput, validateStructuralAdhesiveJointInput, validateSurfaceTreatmentInput, validateAdhesionStrengthThresholds, validatePigmentDispersionInput, validateCNTGrapheneInput, validateMXeneDispersionInput, validateDrugLoadingInput, validateGasPermeabilityInput, validateMembraneSeparationInput, validateCO2AbsorbentInput, validateHydrogenStorageInput, validateCleaningFormulationInput, validateNaturalDyeExtractionInput, validateEssentialOilExtractionInput, validateSoilRemediationInput, validateResidualSolventInput } from '../core/validation';
 import { classifyChemicalResistance, DEFAULT_CHEMICAL_RESISTANCE_THRESHOLDS } from '../core/chemical-resistance';
 import { classifyPlasticizerCompatibility, DEFAULT_PLASTICIZER_THRESHOLDS, screenPlasticizers } from '../core/plasticizer';
 import { classifyCarrierCompatibility, DEFAULT_CARRIER_THRESHOLDS, screenCarriers } from '../core/carrier-selection';
@@ -64,6 +64,16 @@ import { evaluateSeparationSelectivity } from '../core/membrane-separation-selec
 import { screenCO2Absorbents } from '../core/co2-absorbent-selection';
 import type { CO2Absorbent } from '../core/co2-absorbent-selection';
 import { screenHydrogenStorageMaterials } from '../core/hydrogen-storage-material';
+import { screenCleaningSolvents } from '../core/cleaning-product-formulation';
+import { screenDyeExtractionSolvents } from '../core/natural-dye-extraction';
+import { screenEssentialOilSolvents } from '../core/essential-oil-extraction';
+import { screenRemediationSolvents } from '../core/soil-contaminant-extraction';
+import { predictResidualSolvent } from '../core/residual-solvent-prediction';
+import { screenUVFilterCompatibility } from '../core/sunscreen-uv-filter';
+import { evaluateInhalationCompatibility } from '../core/inhalation-drug-propellant';
+import { evaluateProteinAggregationRisk } from '../core/protein-aggregation-risk';
+import { screenBiologicBuffers } from '../core/biologic-formulation-buffer';
+import { validateSunscreenUVFilterInput, validateInhalationDrugInput, validateProteinAggregationInput, validateBiologicBufferInput } from '../core/validation';
 
 /** CSVインポートの最大サイズ (10MB) */
 const MAX_CSV_SIZE = 10 * 1024 * 1024;
@@ -1464,5 +1474,111 @@ export function registerIpcHandlers(
       return { name: s.name, hsp: s.hsp };
     });
     return screenHydrogenStorageMaterials(params.carrierHSP, params.r0, solvents);
+  });
+
+  // ─── 抽出・洗浄群 ─────────────────────────────────
+
+  // --- 洗浄剤配合設計 ---
+  ipcMain.handle('cleaningFormulation:screen', (_, soilHSP: HSPValues, r0: number, solventIds: number[]) => {
+    const solvents = solventIds.map((id) => {
+      const s = solventRepo.getSolventById(id);
+      if (!s) throw new Error(`溶媒 (ID: ${id}) が見つかりません`);
+      return { name: s.name, hsp: s.hsp };
+    });
+    const err = validateCleaningFormulationInput(soilHSP, r0, solvents);
+    if (err) throw new Error(err);
+    return screenCleaningSolvents(soilHSP, r0, solvents);
+  });
+
+  // --- 天然色素抽出 ---
+  ipcMain.handle('naturalDyeExtraction:screen', (_, dyeHSP: HSPValues, r0: number, solventIds: number[]) => {
+    const solvents = solventIds.map((id) => {
+      const s = solventRepo.getSolventById(id);
+      if (!s) throw new Error(`溶媒 (ID: ${id}) が見つかりません`);
+      return { name: s.name, hsp: s.hsp };
+    });
+    const err = validateNaturalDyeExtractionInput(dyeHSP, r0, solvents);
+    if (err) throw new Error(err);
+    return screenDyeExtractionSolvents(dyeHSP, r0, solvents);
+  });
+
+  // --- 精油抽出 ---
+  ipcMain.handle('essentialOilExtraction:screen', (_, oilHSP: HSPValues, r0: number, solventIds: number[]) => {
+    const solvents = solventIds.map((id) => {
+      const s = solventRepo.getSolventById(id);
+      if (!s) throw new Error(`溶媒 (ID: ${id}) が見つかりません`);
+      return { name: s.name, hsp: s.hsp };
+    });
+    const err = validateEssentialOilExtractionInput(oilHSP, r0, solvents);
+    if (err) throw new Error(err);
+    return screenEssentialOilSolvents(oilHSP, r0, solvents);
+  });
+
+  // --- 土壌汚染物質抽出 ---
+  ipcMain.handle('soilRemediation:screen', (_, contaminantHSP: HSPValues, r0: number, solventIds: number[]) => {
+    const solvents = solventIds.map((id) => {
+      const s = solventRepo.getSolventById(id);
+      if (!s) throw new Error(`溶媒 (ID: ${id}) が見つかりません`);
+      return { name: s.name, hsp: s.hsp };
+    });
+    const err = validateSoilRemediationInput(contaminantHSP, r0, solvents);
+    if (err) throw new Error(err);
+    return screenRemediationSolvents(contaminantHSP, r0, solvents);
+  });
+
+  // --- 残留溶媒予測 ---
+  ipcMain.handle('residualSolvent:screen', (_, filmHSP: HSPValues, r0: number, solventIds: number[]) => {
+    const solvents = solventIds.map((id) => {
+      const s = solventRepo.getSolventById(id);
+      if (!s) throw new Error(`溶媒 (ID: ${id}) が見つかりません`);
+      return { name: s.name, hsp: s.hsp };
+    });
+    const err = validateResidualSolventInput(filmHSP, r0, solvents);
+    if (err) throw new Error(err);
+    return predictResidualSolvent(filmHSP, r0, solvents);
+  });
+
+  // ─── 医薬品・化粧品群 ─────────────────────────────────
+
+  // --- UVフィルター適合性 ---
+  ipcMain.handle('sunscreenUVFilter:screen', (_, vehicleHSP: HSPValues, r0: number, uvFilterIds: number[]) => {
+    const uvFilters = uvFilterIds.map((id) => {
+      const s = solventRepo.getSolventById(id);
+      if (!s) throw new Error(`UVフィルター (ID: ${id}) が見つかりません`);
+      return { name: s.name, hsp: s.hsp };
+    });
+    const err = validateSunscreenUVFilterInput(vehicleHSP, r0, uvFilters);
+    if (err) throw new Error(err);
+    return screenUVFilterCompatibility(vehicleHSP, r0, uvFilters);
+  });
+
+  // --- 吸入薬プロペラント適合性 ---
+  ipcMain.handle('inhalationDrug:evaluate', (_, params: {
+    drugHSP: HSPValues; propellantHSP: HSPValues; propellantR0: number;
+  }) => {
+    const err = validateInhalationDrugInput(params);
+    if (err) throw new Error(err);
+    return evaluateInhalationCompatibility(params.drugHSP, params.propellantHSP, params.propellantR0);
+  });
+
+  // --- タンパク質凝集リスク ---
+  ipcMain.handle('proteinAggregation:evaluate', (_, params: {
+    proteinSurfaceHSP: HSPValues; bufferHSP: HSPValues; bufferR0: number;
+  }) => {
+    const err = validateProteinAggregationInput(params);
+    if (err) throw new Error(err);
+    return evaluateProteinAggregationRisk(params.proteinSurfaceHSP, params.bufferHSP, params.bufferR0);
+  });
+
+  // --- バイオ製剤バッファー選定 ---
+  ipcMain.handle('biologicBuffer:screen', (_, proteinHSP: HSPValues, r0: number, bufferIds: number[], temperature?: number) => {
+    const buffers = bufferIds.map((id) => {
+      const s = solventRepo.getSolventById(id);
+      if (!s) throw new Error(`バッファー (ID: ${id}) が見つかりません`);
+      return { name: s.name, hsp: s.hsp };
+    });
+    const err = validateBiologicBufferInput(proteinHSP, r0, buffers);
+    if (err) throw new Error(err);
+    return screenBiologicBuffers(proteinHSP, r0, buffers, temperature);
   });
 }

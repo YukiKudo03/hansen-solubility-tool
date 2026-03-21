@@ -1331,3 +1331,213 @@ export function formatSurfaceTreatmentCsv(result: SurfaceTreatmentResult): strin
   ].join(',');
   return BOM + [headers.join(','), row].join('\r\n') + '\r\n';
 }
+
+// ─── 医薬品・化粧品群 CSV ───────────────────────────
+
+import type { UVFilterResult } from './sunscreen-uv-filter';
+import { getSolubilityLevelInfo } from './sunscreen-uv-filter';
+import type { InhalationCompatibilityResult } from './inhalation-drug-propellant';
+import { getFormulationLevelInfo } from './inhalation-drug-propellant';
+import type { ProteinAggregationResult } from './protein-aggregation-risk';
+import { getProteinStabilityLevelInfo } from './protein-aggregation-risk';
+import type { BufferScreeningResult } from './biologic-formulation-buffer';
+import { getBufferStabilityLevelInfo } from './biologic-formulation-buffer';
+
+/**
+ * UVフィルター適合性結果をCSV文字列に変換する
+ */
+export function formatSunscreenUVFilterCsv(results: UVFilterResult[]): string {
+  const BOM = '\uFEFF';
+  const headers = [
+    'UVフィルター名', 'UVフィルター δD', 'UVフィルター δP', 'UVフィルター δH',
+    'Ra', 'RED', '溶解性レベル', '溶解性判定',
+  ];
+
+  const rows = results.map((r) => {
+    const info = getSolubilityLevelInfo(r.solubility);
+    return [
+      escapeCsvField(r.uvFilter.name),
+      round3(r.uvFilter.hsp.deltaD), round3(r.uvFilter.hsp.deltaP), round3(r.uvFilter.hsp.deltaH),
+      round3(r.ra), round3(r.red),
+      r.solubility,
+      escapeCsvField(`${info.label}（${info.description}）`),
+    ].join(',');
+  });
+
+  return BOM + [headers.join(','), ...rows].join('\r\n') + '\r\n';
+}
+
+/**
+ * 吸入薬適合性結果をCSV文字列に変換する
+ */
+export function formatInhalationDrugCsv(result: InhalationCompatibilityResult): string {
+  const BOM = '\uFEFF';
+  const headers = [
+    '薬物 δD', '薬物 δP', '薬物 δH',
+    'プロペラント δD', 'プロペラント δP', 'プロペラント δH',
+    'Ra', 'RED', '製剤形態', '製剤形態判定', '評価日時',
+  ];
+  const info = getFormulationLevelInfo(result.formulation);
+  const row = [
+    round3(result.drugHSP.deltaD), round3(result.drugHSP.deltaP), round3(result.drugHSP.deltaH),
+    round3(result.propellantHSP.deltaD), round3(result.propellantHSP.deltaP), round3(result.propellantHSP.deltaH),
+    round3(result.ra), round3(result.red),
+    result.formulation,
+    escapeCsvField(`${info.label}（${info.description}）`),
+    result.evaluatedAt.toISOString(),
+  ].join(',');
+  return BOM + [headers.join(','), row].join('\r\n') + '\r\n';
+}
+
+/**
+ * タンパク質凝集リスク結果をCSV文字列に変換する
+ */
+export function formatProteinAggregationCsv(result: ProteinAggregationResult): string {
+  const BOM = '\uFEFF';
+  const headers = [
+    'タンパク質表面 δD', 'タンパク質表面 δP', 'タンパク質表面 δH',
+    '緩衝液 δD', '緩衝液 δP', '緩衝液 δH',
+    'Ra', 'RED', '安定性レベル', '安定性判定', '評価日時',
+  ];
+  const info = getProteinStabilityLevelInfo(result.stability);
+  const row = [
+    round3(result.proteinSurfaceHSP.deltaD), round3(result.proteinSurfaceHSP.deltaP), round3(result.proteinSurfaceHSP.deltaH),
+    round3(result.bufferHSP.deltaD), round3(result.bufferHSP.deltaP), round3(result.bufferHSP.deltaH),
+    round3(result.ra), round3(result.red),
+    result.stability,
+    escapeCsvField(`${info.label}（${info.description}）`),
+    result.evaluatedAt.toISOString(),
+  ].join(',');
+  return BOM + [headers.join(','), row].join('\r\n') + '\r\n';
+}
+
+/**
+ * バイオ製剤バッファー選定結果をCSV文字列に変換する
+ */
+export function formatBiologicBufferCsv(results: BufferScreeningResult[]): string {
+  const BOM = '\uFEFF';
+  const headers = [
+    'バッファー名', 'バッファー δD', 'バッファー δP', 'バッファー δH',
+    'Ra', 'RED', '安定性レベル', '安定性判定', '会合液体補正',
+  ];
+
+  const rows = results.map((r) => {
+    const info = getBufferStabilityLevelInfo(r.stability);
+    return [
+      escapeCsvField(r.buffer.name),
+      round3(r.buffer.hsp.deltaD), round3(r.buffer.hsp.deltaP), round3(r.buffer.hsp.deltaH),
+      round3(r.ra), round3(r.red),
+      r.stability,
+      escapeCsvField(`${info.label}（${info.description}）`),
+      r.associatingCorrectionApplied ? '適用' : '',
+    ].join(',');
+  });
+
+  return BOM + [headers.join(','), ...rows].join('\r\n') + '\r\n';
+}
+
+// ─── 抽出・洗浄群 CSV ───────────────────────────
+
+import type { CleaningScreeningResult } from './cleaning-product-formulation';
+import { getCleaningLevelInfo } from './cleaning-product-formulation';
+import type { DyeExtractionResult } from './natural-dye-extraction';
+import { getExtractionLevelInfo } from './natural-dye-extraction';
+import type { EssentialOilExtractionResult } from './essential-oil-extraction';
+import type { RemediationScreeningResult } from './soil-contaminant-extraction';
+import type { ResidualSolventResult } from './residual-solvent-prediction';
+import { getResidualLevelInfo } from './residual-solvent-prediction';
+
+export function formatCleaningFormulationCsv(results: CleaningScreeningResult[]): string {
+  const BOM = '\uFEFF';
+  const headers = [
+    '溶媒名', '溶媒 δD', '溶媒 δP', '溶媒 δH',
+    'Ra', 'RED', '洗浄効果レベル', '洗浄効果判定',
+  ];
+  const rows = results.map((r) => {
+    const info = getCleaningLevelInfo(r.cleaningLevel);
+    return [
+      escapeCsvField(r.solvent.name),
+      round3(r.solvent.hsp.deltaD), round3(r.solvent.hsp.deltaP), round3(r.solvent.hsp.deltaH),
+      round3(r.ra), round3(r.red),
+      r.cleaningLevel,
+      escapeCsvField(`${info.label}（${info.description}）`),
+    ].join(',');
+  });
+  return BOM + [headers.join(','), ...rows].join('\r\n') + '\r\n';
+}
+
+export function formatNaturalDyeExtractionCsv(results: DyeExtractionResult[]): string {
+  const BOM = '\uFEFF';
+  const headers = [
+    '溶媒名', '溶媒 δD', '溶媒 δP', '溶媒 δH',
+    'Ra', 'RED', '抽出効率レベル', '抽出効率判定',
+  ];
+  const rows = results.map((r) => {
+    const info = getExtractionLevelInfo(r.extractionLevel);
+    return [
+      escapeCsvField(r.solvent.name),
+      round3(r.solvent.hsp.deltaD), round3(r.solvent.hsp.deltaP), round3(r.solvent.hsp.deltaH),
+      round3(r.ra), round3(r.red),
+      r.extractionLevel,
+      escapeCsvField(`${info.label}（${info.description}）`),
+    ].join(',');
+  });
+  return BOM + [headers.join(','), ...rows].join('\r\n') + '\r\n';
+}
+
+export function formatEssentialOilExtractionCsv(results: EssentialOilExtractionResult[]): string {
+  const BOM = '\uFEFF';
+  const headers = [
+    '溶媒名', '溶媒 δD', '溶媒 δP', '溶媒 δH',
+    'Ra', 'RED', '抽出効率レベル', '抽出効率判定',
+  ];
+  const rows = results.map((r) => {
+    const info = getExtractionLevelInfo(r.extractionLevel);
+    return [
+      escapeCsvField(r.solvent.name),
+      round3(r.solvent.hsp.deltaD), round3(r.solvent.hsp.deltaP), round3(r.solvent.hsp.deltaH),
+      round3(r.ra), round3(r.red),
+      r.extractionLevel,
+      escapeCsvField(`${info.label}（${info.description}）`),
+    ].join(',');
+  });
+  return BOM + [headers.join(','), ...rows].join('\r\n') + '\r\n';
+}
+
+export function formatSoilRemediationCsv(results: RemediationScreeningResult[]): string {
+  const BOM = '\uFEFF';
+  const headers = [
+    '溶媒名', '溶媒 δD', '溶媒 δP', '溶媒 δH',
+    'Ra', 'RED', '抽出効率レベル', '抽出効率判定',
+  ];
+  const rows = results.map((r) => {
+    const info = getExtractionLevelInfo(r.extractionLevel);
+    return [
+      escapeCsvField(r.solvent.name),
+      round3(r.solvent.hsp.deltaD), round3(r.solvent.hsp.deltaP), round3(r.solvent.hsp.deltaH),
+      round3(r.ra), round3(r.red),
+      r.extractionLevel,
+      escapeCsvField(`${info.label}（${info.description}）`),
+    ].join(',');
+  });
+  return BOM + [headers.join(','), ...rows].join('\r\n') + '\r\n';
+}
+
+export function formatResidualSolventCsv(results: ResidualSolventResult[]): string {
+  const BOM = '\uFEFF';
+  const headers = [
+    '溶媒名', '溶媒 δD', '溶媒 δP', '溶媒 δH',
+    'Ra', 'RED', '残留リスクレベル', '残留リスク判定',
+  ];
+  const rows = results.map((r) => {
+    const info = getResidualLevelInfo(r.residualLevel);
+    return [
+      escapeCsvField(r.solvent.name),
+      round3(r.solvent.hsp.deltaD), round3(r.solvent.hsp.deltaP), round3(r.solvent.hsp.deltaH),
+      round3(r.ra), round3(r.red),
+      r.residualLevel,
+      escapeCsvField(`${info.label}（${info.description}）`),
+    ].join(',');
+  });
+  return BOM + [headers.join(','), ...rows].join('\r\n') + '\r\n';
+}
