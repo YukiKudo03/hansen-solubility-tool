@@ -8,7 +8,7 @@ import { calculateRa, calculateRed } from '../core/hsp';
 import { classifyRisk } from '../core/risk';
 import { classifyDispersibility, DEFAULT_DISPERSIBILITY_THRESHOLDS } from '../core/dispersibility';
 import { screenSolvents, filterByConstraints } from '../core/solvent-finder';
-import { validatePartInput, validateSolventInput, validateName, validateThresholds, validateMixtureInput, validateNanoParticleInput, validateDispersibilityThresholds, validateWettabilityThresholds, validateBlendOptimizationInput, validateSwellingThresholds, validateDrugInput, validateDrugSolubilityThresholds, validateChemicalResistanceThresholds, validatePlasticizerThresholds, validateCarrierThresholds, validateAdhesionThresholds, validateSolventClassifications, validateGreenSolventInput, validateMultiObjectiveInput, validateGroupContributionInput, validateDispersantInput, validateDispersantThresholds } from '../core/validation';
+import { validatePartInput, validateSolventInput, validateName, validateThresholds, validateMixtureInput, validateNanoParticleInput, validateDispersibilityThresholds, validateWettabilityThresholds, validateBlendOptimizationInput, validateSwellingThresholds, validateDrugInput, validateDrugSolubilityThresholds, validateChemicalResistanceThresholds, validatePlasticizerThresholds, validateCarrierThresholds, validateAdhesionThresholds, validateSolventClassifications, validateGreenSolventInput, validateMultiObjectiveInput, validateGroupContributionInput, validateDispersantInput, validateDispersantThresholds, validateESCInput, validateCocrystalInput, validatePrinting3dInput, validateDielectricInput, validateExcipientInput } from '../core/validation';
 import { classifyChemicalResistance, DEFAULT_CHEMICAL_RESISTANCE_THRESHOLDS } from '../core/chemical-resistance';
 import { classifyPlasticizerCompatibility, DEFAULT_PLASTICIZER_THRESHOLDS, screenPlasticizers } from '../core/plasticizer';
 import { classifyCarrierCompatibility, DEFAULT_CARRIER_THRESHOLDS, screenCarriers } from '../core/carrier-selection';
@@ -35,6 +35,12 @@ import { buildTeasPlotData } from '../core/teas-plot';
 import { buildBagleyPlotData } from '../core/bagley-plot';
 import { buildProjection2DData } from '../core/projection-2d';
 import { estimateHSPStefanisPanayiotou, getAvailableFirstOrderGroups, getAvailableSecondOrderGroups } from '../core/group-contribution';
+import { screenESCRisk } from '../core/esc-pipeline';
+import { screenCocrystals } from '../core/cocrystal-screening';
+import { screen3DPrintingSolvents } from '../core/printing3d-smoothing';
+import { screenDielectricSolvents } from '../core/dielectric-film';
+import { evaluateExcipientCompatibility } from '../core/excipient-compatibility';
+import type { HSPValues } from '../core/types';
 
 /** CSVインポートの最大サイズ (10MB) */
 const MAX_CSV_SIZE = 10 * 1024 * 1024;
@@ -844,5 +850,65 @@ export function registerIpcHandlers(
     if (err) throw new Error(err);
     settingsRepo.setSetting('dispersant_thresholds', JSON.stringify(thresholds));
     return thresholds;
+  });
+
+  // --- ESCパイプライン ---
+  ipcMain.handle('esc:screen', (_, polymerHSP: HSPValues, r0: number, solventIds: number[]) => {
+    const solvents = solventIds.map((id) => {
+      const s = solventRepo.getSolventById(id);
+      if (!s) throw new Error(`溶媒 (ID: ${id}) が見つかりません`);
+      return { name: s.name, hsp: s.hsp };
+    });
+    const err = validateESCInput(polymerHSP, r0, solvents);
+    if (err) throw new Error(err);
+    return screenESCRisk(polymerHSP, r0, solvents);
+  });
+
+  // --- 共結晶スクリーニング ---
+  ipcMain.handle('cocrystal:screen', (_, apiHSP: HSPValues, r0: number, coformerIds: number[]) => {
+    const coformers = coformerIds.map((id) => {
+      const s = solventRepo.getSolventById(id);
+      if (!s) throw new Error(`コフォーマー (ID: ${id}) が見つかりません`);
+      return { name: s.name, hsp: s.hsp };
+    });
+    const err = validateCocrystalInput(apiHSP, r0, coformers);
+    if (err) throw new Error(err);
+    return screenCocrystals(apiHSP, r0, coformers);
+  });
+
+  // --- 3Dプリント溶剤平滑化 ---
+  ipcMain.handle('printing3d:screen', (_, filamentHSP: HSPValues, r0: number, solventIds: number[]) => {
+    const solvents = solventIds.map((id) => {
+      const s = solventRepo.getSolventById(id);
+      if (!s) throw new Error(`溶媒 (ID: ${id}) が見つかりません`);
+      return { name: s.name, hsp: s.hsp };
+    });
+    const err = validatePrinting3dInput(filamentHSP, r0, solvents);
+    if (err) throw new Error(err);
+    return screen3DPrintingSolvents(filamentHSP, r0, solvents);
+  });
+
+  // --- 誘電体薄膜品質 ---
+  ipcMain.handle('dielectric:screen', (_, polymerHSP: HSPValues, r0: number, solventIds: number[]) => {
+    const solvents = solventIds.map((id) => {
+      const s = solventRepo.getSolventById(id);
+      if (!s) throw new Error(`溶媒 (ID: ${id}) が見つかりません`);
+      return { name: s.name, hsp: s.hsp, boilingPoint: s.boilingPoint ?? undefined };
+    });
+    const err = validateDielectricInput(polymerHSP, r0, solvents);
+    if (err) throw new Error(err);
+    return screenDielectricSolvents(polymerHSP, r0, solvents);
+  });
+
+  // --- 賦形剤適合性 ---
+  ipcMain.handle('excipient:evaluate', (_, apiHSP: HSPValues, r0: number, excipientIds: number[]) => {
+    const excipients = excipientIds.map((id) => {
+      const s = solventRepo.getSolventById(id);
+      if (!s) throw new Error(`賦形剤 (ID: ${id}) が見つかりません`);
+      return { name: s.name, hsp: s.hsp };
+    });
+    const err = validateExcipientInput(apiHSP, r0, excipients);
+    if (err) throw new Error(err);
+    return evaluateExcipientCompatibility(apiHSP, r0, excipients);
   });
 }

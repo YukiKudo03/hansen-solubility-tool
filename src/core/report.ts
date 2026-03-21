@@ -12,6 +12,16 @@ import { getChemicalResistanceLevelInfo } from './chemical-resistance';
 import { getPlasticizerCompatibilityLevelInfo } from './plasticizer';
 import { getCarrierCompatibilityLevelInfo } from './carrier-selection';
 import { getDispersantAffinityLevelInfo } from './dispersant-selection';
+import type { ESCScreeningResult } from './esc-pipeline';
+import { ESCRiskLevel, getESCRiskLevelInfo } from './esc-classification';
+import type { CocrystalScreeningResult } from './cocrystal-screening';
+import { CocrystalLikelihood } from './cocrystal-screening';
+import type { SmoothingScreeningResult } from './printing3d-smoothing';
+import { SmoothingEffectLevel } from './printing3d-smoothing';
+import type { DielectricScreeningResult } from './dielectric-film';
+import { FilmQualityLevel } from './dielectric-film';
+import type { ExcipientResult } from './excipient-compatibility';
+import { CompatibilityLevel } from './excipient-compatibility';
 
 /** CSVフィールドをエスケープする（カンマ・引用符・改行を含む場合） */
 function escapeCsvField(value: string): string {
@@ -535,6 +545,207 @@ export function formatDispersantSelectionCsv(result: DispersantEvaluationResult)
       `Level ${r.overallLevel}`,
       escapeCsvField(`${overallInfo.label}（${overallInfo.description}）`),
       result.evaluatedAt.toISOString(),
+    ].join(',');
+  });
+
+  return BOM + [headers.join(','), ...rows].join('\r\n') + '\r\n';
+}
+
+// ─── 共結晶形成可能性ラベル ───────────────────────────
+const COCRYSTAL_LABELS: Record<CocrystalLikelihood, { label: string; description: string }> = {
+  [CocrystalLikelihood.Likely]: { label: 'Likely', description: '形成しやすい' },
+  [CocrystalLikelihood.Possible]: { label: 'Possible', description: '可能性あり' },
+  [CocrystalLikelihood.Unlikely]: { label: 'Unlikely', description: '形成しにくい' },
+};
+
+// ─── 平滑化効果ラベル ───────────────────────────
+const SMOOTHING_LABELS: Record<SmoothingEffectLevel, { label: string; description: string }> = {
+  [SmoothingEffectLevel.Dissolves]: { label: 'Dissolves', description: '溶解（過剰）' },
+  [SmoothingEffectLevel.GoodSmoothing]: { label: 'Good Smoothing', description: '良好な平滑化' },
+  [SmoothingEffectLevel.MildSmoothing]: { label: 'Mild Smoothing', description: '軽度の平滑化' },
+  [SmoothingEffectLevel.NoEffect]: { label: 'No Effect', description: '効果なし' },
+};
+
+// ─── 薄膜品質ラベル ───────────────────────────
+const FILM_QUALITY_LABELS: Record<FilmQualityLevel, { label: string; description: string }> = {
+  [FilmQualityLevel.Good]: { label: 'Good', description: '良好な膜品質' },
+  [FilmQualityLevel.Moderate]: { label: 'Moderate', description: '中程度の膜品質' },
+  [FilmQualityLevel.Poor]: { label: 'Poor', description: '不良な膜品質' },
+};
+
+// ─── 賦形剤適合性ラベル ───────────────────────────
+const COMPATIBILITY_LABELS: Record<CompatibilityLevel, { label: string; description: string }> = {
+  [CompatibilityLevel.Compatible]: { label: 'Compatible', description: '適合' },
+  [CompatibilityLevel.Caution]: { label: 'Caution', description: '要注意' },
+  [CompatibilityLevel.Incompatible]: { label: 'Incompatible', description: '不適合' },
+};
+
+/**
+ * ESCスクリーニング結果をCSV文字列に変換する
+ * @returns BOM付きUTF-8 CSV文字列
+ */
+export function formatESCScreeningCsv(results: ESCScreeningResult[]): string {
+  const BOM = '\uFEFF';
+  const headers = [
+    '溶媒名',
+    '溶媒 δD',
+    '溶媒 δP',
+    '溶媒 δH',
+    'Ra',
+    'RED',
+    'ESCリスクレベル',
+    'ESCリスク判定',
+  ];
+
+  const rows = results.map((r) => {
+    const info = getESCRiskLevelInfo(r.risk);
+    return [
+      escapeCsvField(r.solvent.name),
+      round3(r.solvent.hsp.deltaD),
+      round3(r.solvent.hsp.deltaP),
+      round3(r.solvent.hsp.deltaH),
+      round3(r.ra),
+      round3(r.red),
+      `Level ${r.risk}`,
+      escapeCsvField(`${info.labelJa}（${info.description}）`),
+    ].join(',');
+  });
+
+  return BOM + [headers.join(','), ...rows].join('\r\n') + '\r\n';
+}
+
+/**
+ * 共結晶スクリーニング結果をCSV文字列に変換する
+ * @returns BOM付きUTF-8 CSV文字列
+ */
+export function formatCocrystalScreeningCsv(results: CocrystalScreeningResult[]): string {
+  const BOM = '\uFEFF';
+  const headers = [
+    'コフォーマー名',
+    'コフォーマー δD',
+    'コフォーマー δP',
+    'コフォーマー δH',
+    'Ra',
+    'RED',
+    '形成可能性レベル',
+    '形成可能性判定',
+  ];
+
+  const rows = results.map((r) => {
+    const info = COCRYSTAL_LABELS[r.likelihood];
+    return [
+      escapeCsvField(r.coformer.name),
+      round3(r.coformer.hsp.deltaD),
+      round3(r.coformer.hsp.deltaP),
+      round3(r.coformer.hsp.deltaH),
+      round3(r.ra),
+      round3(r.red),
+      `Level ${r.likelihood}`,
+      escapeCsvField(`${info.label}（${info.description}）`),
+    ].join(',');
+  });
+
+  return BOM + [headers.join(','), ...rows].join('\r\n') + '\r\n';
+}
+
+/**
+ * 3Dプリント溶剤平滑化スクリーニング結果をCSV文字列に変換する
+ * @returns BOM付きUTF-8 CSV文字列
+ */
+export function formatPrinting3dSmoothingCsv(results: SmoothingScreeningResult[]): string {
+  const BOM = '\uFEFF';
+  const headers = [
+    '溶媒名',
+    '溶媒 δD',
+    '溶媒 δP',
+    '溶媒 δH',
+    'Ra',
+    'RED',
+    '平滑化効果レベル',
+    '平滑化効果判定',
+  ];
+
+  const rows = results.map((r) => {
+    const info = SMOOTHING_LABELS[r.effect];
+    return [
+      escapeCsvField(r.solvent.name),
+      round3(r.solvent.hsp.deltaD),
+      round3(r.solvent.hsp.deltaP),
+      round3(r.solvent.hsp.deltaH),
+      round3(r.ra),
+      round3(r.red),
+      `Level ${r.effect}`,
+      escapeCsvField(`${info.label}（${info.description}）`),
+    ].join(',');
+  });
+
+  return BOM + [headers.join(','), ...rows].join('\r\n') + '\r\n';
+}
+
+/**
+ * 誘電体薄膜品質スクリーニング結果をCSV文字列に変換する
+ * @returns BOM付きUTF-8 CSV文字列
+ */
+export function formatDielectricFilmCsv(results: DielectricScreeningResult[]): string {
+  const BOM = '\uFEFF';
+  const headers = [
+    '溶媒名',
+    '溶媒 δD',
+    '溶媒 δP',
+    '溶媒 δH',
+    '沸点(°C)',
+    'Ra',
+    'RED',
+    '薄膜品質レベル',
+    '薄膜品質判定',
+  ];
+
+  const rows = results.map((r) => {
+    const info = FILM_QUALITY_LABELS[r.filmQuality];
+    return [
+      escapeCsvField(r.solvent.name),
+      round3(r.solvent.hsp.deltaD),
+      round3(r.solvent.hsp.deltaP),
+      round3(r.solvent.hsp.deltaH),
+      r.solvent.boilingPoint?.toFixed(1) ?? '',
+      round3(r.ra),
+      round3(r.red),
+      `Level ${r.filmQuality}`,
+      escapeCsvField(`${info.label}（${info.description}）`),
+    ].join(',');
+  });
+
+  return BOM + [headers.join(','), ...rows].join('\r\n') + '\r\n';
+}
+
+/**
+ * 賦形剤適合性評価結果をCSV文字列に変換する
+ * @returns BOM付きUTF-8 CSV文字列
+ */
+export function formatExcipientCompatibilityCsv(results: ExcipientResult[]): string {
+  const BOM = '\uFEFF';
+  const headers = [
+    '賦形剤名',
+    '賦形剤 δD',
+    '賦形剤 δP',
+    '賦形剤 δH',
+    'Ra',
+    'RED',
+    '適合性レベル',
+    '適合性判定',
+  ];
+
+  const rows = results.map((r) => {
+    const info = COMPATIBILITY_LABELS[r.compatibility];
+    return [
+      escapeCsvField(r.excipient.name),
+      round3(r.excipient.hsp.deltaD),
+      round3(r.excipient.hsp.deltaP),
+      round3(r.excipient.hsp.deltaH),
+      round3(r.ra),
+      round3(r.red),
+      `Level ${r.compatibility}`,
+      escapeCsvField(`${info.label}（${info.description}）`),
     ].join(',');
   });
 

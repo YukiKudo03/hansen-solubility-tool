@@ -10,6 +10,7 @@ export type Tab =
   | 'sphereFitting' | 'greenSolvent' | 'multiObjective' | 'groupContribution'
   | 'database' | 'mixture'
   | 'history' | 'comparison' | 'hspVisualization'
+  | 'escPipeline' | 'cocrystalScreening' | 'printing3dSmoothing' | 'dielectricFilm' | 'excipientCompatibility'
   | 'settings';
 
 export interface NavItem {
@@ -35,6 +36,7 @@ export const NAV_CATEGORIES: NavCategory[] = [
       { id: 'swelling', label: '膨潤度予測' },
       { id: 'chemicalResistance', label: '耐薬品性予測' },
       { id: 'adhesion', label: '接着性予測' },
+      { id: 'escPipeline', label: '環境応力亀裂(ESC)' },
     ],
   },
   {
@@ -46,6 +48,10 @@ export const NAV_CATEGORIES: NavCategory[] = [
       { id: 'dispersantSelection', label: '分散剤選定' },
       { id: 'plasticizer', label: '可塑剤選定' },
       { id: 'carrierSelection', label: 'キャリア選定' },
+      { id: 'cocrystalScreening', label: '共結晶スクリーニング' },
+      { id: 'printing3dSmoothing', label: '3D印刷平滑化' },
+      { id: 'dielectricFilm', label: '誘電体膜品質' },
+      { id: 'excipientCompatibility', label: '賦形剤適合性' },
     ],
   },
   {

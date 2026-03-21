@@ -244,6 +244,26 @@ export const api = {
   setDispersantThresholds: (thresholds: { excellentMax: number; goodMax: number; fairMax: number; poorMax: number }) =>
     ipcRenderer.invoke('settings:setDispersantThresholds', thresholds),
 
+  // ESCパイプライン
+  screenESCRisk: (polymerHSP: { deltaD: number; deltaP: number; deltaH: number }, r0: number, solventIds: number[]) =>
+    ipcRenderer.invoke('esc:screen', polymerHSP, r0, solventIds),
+
+  // 共結晶スクリーニング
+  screenCocrystals: (apiHSP: { deltaD: number; deltaP: number; deltaH: number }, r0: number, coformerIds: number[]) =>
+    ipcRenderer.invoke('cocrystal:screen', apiHSP, r0, coformerIds),
+
+  // 3Dプリント溶剤平滑化
+  screen3DPrintingSolvents: (filamentHSP: { deltaD: number; deltaP: number; deltaH: number }, r0: number, solventIds: number[]) =>
+    ipcRenderer.invoke('printing3d:screen', filamentHSP, r0, solventIds),
+
+  // 誘電体薄膜品質
+  screenDielectricSolvents: (polymerHSP: { deltaD: number; deltaP: number; deltaH: number }, r0: number, solventIds: number[]) =>
+    ipcRenderer.invoke('dielectric:screen', polymerHSP, r0, solventIds),
+
+  // 賦形剤適合性
+  evaluateExcipientCompatibility: (apiHSP: { deltaD: number; deltaP: number; deltaH: number }, r0: number, excipientIds: number[]) =>
+    ipcRenderer.invoke('excipient:evaluate', apiHSP, r0, excipientIds),
+
   // 汎用 IPC invoke — 許可チャネルのみ通過
   invoke: (channel: string, ...args: unknown[]) => {
     const ALLOWED_CHANNELS = [

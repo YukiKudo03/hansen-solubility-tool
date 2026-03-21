@@ -177,6 +177,21 @@ export interface ElectronAPI {
   getDispersantThresholds(): Promise<DispersantAffinityThresholds>;
   setDispersantThresholds(thresholds: DispersantAffinityThresholds): Promise<DispersantAffinityThresholds>;
 
+  // ESCパイプライン
+  screenESCRisk(polymerHSP: import('./core/types').HSPValues, r0: number, solventIds: number[]): Promise<import('./core/esc-pipeline').ESCScreeningResult[]>;
+
+  // 共結晶スクリーニング
+  screenCocrystals(apiHSP: import('./core/types').HSPValues, r0: number, coformerIds: number[]): Promise<import('./core/cocrystal-screening').CocrystalScreeningResult[]>;
+
+  // 3Dプリント溶剤平滑化
+  screen3DPrintingSolvents(filamentHSP: import('./core/types').HSPValues, r0: number, solventIds: number[]): Promise<import('./core/printing3d-smoothing').SmoothingScreeningResult[]>;
+
+  // 誘電体薄膜品質
+  screenDielectricSolvents(polymerHSP: import('./core/types').HSPValues, r0: number, solventIds: number[]): Promise<import('./core/dielectric-film').DielectricScreeningResult[]>;
+
+  // 賦形剤適合性
+  evaluateExcipientCompatibility(apiHSP: import('./core/types').HSPValues, r0: number, excipientIds: number[]): Promise<import('./core/excipient-compatibility').ExcipientResult[]>;
+
   // 汎用 IPC invoke (可視化パイプライン等)
   invoke(channel: string, ...args: unknown[]): Promise<any>;
 }

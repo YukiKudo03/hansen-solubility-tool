@@ -418,3 +418,74 @@ export function validateDispersantThresholds(t: {
   }
   return null;
 }
+
+// ============================================================================
+// 新規5パイプライン用の入力バリデーション
+// ============================================================================
+
+/** HSP値が有効範囲(0-50)であることを検証 */
+function validateHSPRange(deltaD: number, deltaP: number, deltaH: number): string | null {
+  if (!Number.isFinite(deltaD) || deltaD < 0 || deltaD > 50) return 'δDは0以上50以下の数値を入力してください';
+  if (!Number.isFinite(deltaP) || deltaP < 0 || deltaP > 50) return 'δPは0以上50以下の数値を入力してください';
+  if (!Number.isFinite(deltaH) || deltaH < 0 || deltaH > 50) return 'δHは0以上50以下の数値を入力してください';
+  return null;
+}
+
+/** HSP + R0 + 配列の共通バリデーション */
+function validateHSPR0Array(
+  hsp: { deltaD: number; deltaP: number; deltaH: number },
+  r0: number,
+  items: unknown[],
+  itemLabel: string,
+): string | null {
+  const hspErr = validateHSPRange(hsp.deltaD, hsp.deltaP, hsp.deltaH);
+  if (hspErr) return hspErr;
+  if (!Number.isFinite(r0) || r0 <= 0) return 'R₀は正の数値を入力してください';
+  if (!Array.isArray(items) || items.length === 0) return `${itemLabel}を1つ以上指定してください`;
+  return null;
+}
+
+/** ESCパイプライン入力バリデーション */
+export function validateESCInput(
+  polymerHSP: { deltaD: number; deltaP: number; deltaH: number },
+  r0: number,
+  solvents: unknown[],
+): string | null {
+  return validateHSPR0Array(polymerHSP, r0, solvents, '溶媒');
+}
+
+/** 共結晶スクリーニング入力バリデーション */
+export function validateCocrystalInput(
+  apiHSP: { deltaD: number; deltaP: number; deltaH: number },
+  r0: number,
+  coformers: unknown[],
+): string | null {
+  return validateHSPR0Array(apiHSP, r0, coformers, 'コフォーマー');
+}
+
+/** 3Dプリント溶剤平滑化入力バリデーション */
+export function validatePrinting3dInput(
+  filamentHSP: { deltaD: number; deltaP: number; deltaH: number },
+  r0: number,
+  solvents: unknown[],
+): string | null {
+  return validateHSPR0Array(filamentHSP, r0, solvents, '溶媒');
+}
+
+/** 誘電体薄膜品質入力バリデーション */
+export function validateDielectricInput(
+  polymerHSP: { deltaD: number; deltaP: number; deltaH: number },
+  r0: number,
+  solvents: unknown[],
+): string | null {
+  return validateHSPR0Array(polymerHSP, r0, solvents, '溶媒');
+}
+
+/** 賦形剤適合性入力バリデーション */
+export function validateExcipientInput(
+  apiHSP: { deltaD: number; deltaP: number; deltaH: number },
+  r0: number,
+  excipients: unknown[],
+): string | null {
+  return validateHSPR0Array(apiHSP, r0, excipients, '賦形剤');
+}

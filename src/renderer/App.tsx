@@ -23,6 +23,11 @@ import DispersantSelectionView from './components/DispersantSelectionView';
 import EvaluationHistoryView from './components/EvaluationHistoryView';
 import ComparisonView from './components/ComparisonView';
 import HSPVisualizationView from './components/HSPVisualizationView';
+import ESCPipelineView from './components/ESCPipelineView';
+import CocrystalScreeningView from './components/CocrystalScreeningView';
+import Printing3dSmoothingView from './components/Printing3dSmoothingView';
+import DielectricFilmView from './components/DielectricFilmView';
+import ExcipientCompatibilityView from './components/ExcipientCompatibilityView';
 
 const VIEW_MAP: Record<Tab, React.ComponentType> = {
   report: ReportView,
@@ -40,6 +45,11 @@ const VIEW_MAP: Record<Tab, React.ComponentType> = {
   history: EvaluationHistoryView,
   comparison: ComparisonView,
   hspVisualization: HSPVisualizationView,
+  escPipeline: ESCPipelineView,
+  cocrystalScreening: CocrystalScreeningView,
+  printing3dSmoothing: Printing3dSmoothingView,
+  dielectricFilm: DielectricFilmView,
+  excipientCompatibility: ExcipientCompatibilityView,
   settings: SettingsView,
 };
 

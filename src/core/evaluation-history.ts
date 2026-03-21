@@ -6,6 +6,8 @@ export const VALID_HISTORY_PIPELINES = [
   'risk', 'contactAngle', 'swelling', 'chemicalResistance',
   'nanoDispersion', 'plasticizer', 'carrierSelection',
   'blendOptimizer', 'drugSolubility', 'dispersantSelection',
+  'escPipeline', 'cocrystalScreening', 'printing3dSmoothing',
+  'dielectricFilm', 'excipientCompatibility',
 ] as const;
 
 export type HistoryPipeline = typeof VALID_HISTORY_PIPELINES[number];
