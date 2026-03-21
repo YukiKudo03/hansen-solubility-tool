@@ -22,6 +22,10 @@ export const VALID_HISTORY_PIPELINES = [
   'temperatureHspCorrection', 'pressureHspCorrection', 'supercriticalCO2',
   'coatingDefect', 'photoresistDeveloper', 'perovskiteSolvent', 'organicSemiconductorFilm', 'uvCurableInk',
   'multicomponentOptimization', 'liBatteryElectrolyte', 'solventSubstitution', 'cosmeticEmulsion',
+  'mlHspPrediction', 'mdHspImport', 'groupContributionUpdates',
+  'polymorphRisk', 'antiGraffitiCoating', 'primerlessAdhesion',
+  'printedElectronics', 'quantumDotLigand', 'underfillEncapsulant', 'biofuelCompatibility', 'pcmEncapsulation',
+  'inverseHspEstimation', 'hspUncertainty', 'surfaceHspDetermination', 'ionicLiquidHsp',
 ] as const;
 
 export type HistoryPipeline = typeof VALID_HISTORY_PIPELINES[number];

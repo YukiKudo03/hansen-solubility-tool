@@ -1086,3 +1086,193 @@ export function validateCosmeticEmulsionInput(params: unknown): string | null {
   if (waterErr) return `水相HSP: ${waterErr}`;
   return null;
 }
+
+// ============================================================================
+// Phase 13+14: 先端デバイス群 + HSP逆問題群パイプライン用の入力バリデーション
+// ============================================================================
+
+/** 印刷電子濡れ性入力バリデーション */
+export function validatePrintedElectronicsWettingInput(params: unknown): string | null {
+  if (params == null || typeof params !== 'object') return 'パラメータオブジェクトが必要です';
+  const p = params as Record<string, unknown>;
+  const inkErr = validateHSPObject(p.inkHSP, 'インク');
+  if (inkErr) return `インクHSP: ${inkErr}`;
+  const subErr = validateHSPObject(p.substrateHSP, '基材');
+  if (subErr) return `基材HSP: ${subErr}`;
+  return null;
+}
+
+/** QDリガンド交換溶媒入力バリデーション */
+export function validateQDLigandExchangeInput(
+  qdHSP: { deltaD: number; deltaP: number; deltaH: number },
+  r0: number,
+  solvents: unknown[],
+): string | null {
+  return validateHSPR0Array(qdHSP, r0, solvents, '溶媒');
+}
+
+/** アンダーフィル/封止材入力バリデーション */
+export function validateUnderfillEncapsulantInput(params: unknown): string | null {
+  if (params == null || typeof params !== 'object') return 'パラメータオブジェクトが必要です';
+  const p = params as Record<string, unknown>;
+  const encErr = validateHSPObject(p.encapsulantHSP, '封止材');
+  if (encErr) return `封止材HSP: ${encErr}`;
+  const chipErr = validateHSPObject(p.chipSurfaceHSP, 'チップ表面');
+  if (chipErr) return `チップ表面HSP: ${chipErr}`;
+  const subErr = validateHSPObject(p.substrateHSP, '基板');
+  if (subErr) return `基板HSP: ${subErr}`;
+  return null;
+}
+
+/** バイオ燃料材料適合性入力バリデーション */
+export function validateBiofuelCompatibilityInput(
+  fuelHSP: { deltaD: number; deltaP: number; deltaH: number },
+  r0: number,
+  materials: unknown[],
+): string | null {
+  return validateHSPR0Array(fuelHSP, r0, materials, '材料');
+}
+
+/** PCMカプセル化入力バリデーション */
+export function validatePCMEncapsulationInput(
+  pcmHSP: { deltaD: number; deltaP: number; deltaH: number },
+  r0: number,
+  shellMaterials: unknown[],
+): string | null {
+  return validateHSPR0Array(pcmHSP, r0, shellMaterials, 'シェル材');
+}
+
+/** HSP不確かさ定量化入力バリデーション */
+export function validateHSPUncertaintyInput(params: unknown): string | null {
+  if (params == null || typeof params !== 'object') return 'パラメータオブジェクトが必要です';
+  const p = params as Record<string, unknown>;
+  const classErr = validateSolventClassifications(p.classifications);
+  if (classErr) return classErr;
+  if (p.numSamples !== undefined) {
+    if (typeof p.numSamples !== 'number' || !Number.isInteger(p.numSamples) || p.numSamples <= 0) {
+      return 'サンプル数は正の整数でなければなりません';
+    }
+  }
+  return null;
+}
+
+/** 表面HSP決定入力バリデーション */
+export function validateSurfaceHSPDeterminationInput(params: unknown): string | null {
+  if (params == null || typeof params !== 'object') return 'パラメータオブジェクトが必要です';
+  const p = params as Record<string, unknown>;
+  if (!Array.isArray(p.testData)) return '試験データは配列でなければなりません';
+  if (p.testData.length < 2) return '試験液体を2つ以上指定してください';
+  for (let i = 0; i < p.testData.length; i++) {
+    const t: unknown = (p.testData as unknown[])[i];
+    if (t == null || typeof t !== 'object') return `testData[${i}]: オブジェクトでなければなりません`;
+    const entry = t as Record<string, unknown>;
+    if (typeof entry.liquidName !== 'string' || entry.liquidName.trim().length === 0) return `testData[${i}]: 液体名を入力してください`;
+    const hspErr = validateHSPObject(entry.liquidHSP, `testData[${i}]`);
+    if (hspErr) return `testData[${i}]: ${hspErr}`;
+    if (typeof entry.contactAngleDeg !== 'number' || !Number.isFinite(entry.contactAngleDeg) || entry.contactAngleDeg < 0 || entry.contactAngleDeg > 180) {
+      return `testData[${i}]: 接触角は0以上180以下の数値を入力してください`;
+    }
+  }
+  return null;
+}
+
+/** IL/DES HSP推定入力バリデーション */
+export function validateIonicLiquidHSPInput(params: unknown): string | null {
+  if (params == null || typeof params !== 'object') return 'パラメータオブジェクトが必要です';
+  const p = params as Record<string, unknown>;
+  const catErr = validateHSPObject(p.cationHSP, 'カチオン');
+  if (catErr) return `カチオンHSP: ${catErr}`;
+  const anErr = validateHSPObject(p.anionHSP, 'アニオン');
+  if (anErr) return `アニオンHSP: ${anErr}`;
+  if (p.ratio !== undefined) {
+    if (!Array.isArray(p.ratio) || p.ratio.length !== 2) return '比率は[cation, anion]の2要素配列でなければなりません';
+    for (let i = 0; i < 2; i++) {
+      if (typeof (p.ratio as unknown[])[i] !== 'number' || ((p.ratio as number[])[i]) <= 0) {
+        return '比率は正の数値でなければなりません';
+      }
+    }
+  }
+  if (p.temperature !== undefined) {
+    if (typeof p.temperature !== 'number' || !Number.isFinite(p.temperature) || p.temperature <= 0) {
+      return '温度は正の数値でなければなりません';
+    }
+  }
+  return null;
+}
+
+// ============================================================================
+// Phase 15: ML・計算科学+残り機能パイプライン用の入力バリデーション
+// ============================================================================
+
+/** ML HSP予測(QSPR)入力バリデーション */
+export function validateMLHSPPredictionInput(params: unknown): string | null {
+  if (params == null || typeof params !== 'object') return 'パラメータオブジェクトが必要です';
+  const p = params as Record<string, unknown>;
+  if (typeof p.molarVolume !== 'number' || !Number.isFinite(p.molarVolume) || p.molarVolume <= 0) {
+    return 'モル体積は正の数値を入力してください';
+  }
+  if (typeof p.logP !== 'number' || !Number.isFinite(p.logP)) {
+    return 'logPは有限数値を入力してください';
+  }
+  if (typeof p.numHBDonors !== 'number' || !Number.isInteger(p.numHBDonors) || p.numHBDonors < 0) {
+    return '水素結合ドナー数は0以上の整数を入力してください';
+  }
+  if (typeof p.numHBAcceptors !== 'number' || !Number.isInteger(p.numHBAcceptors) || p.numHBAcceptors < 0) {
+    return '水素結合アクセプター数は0以上の整数を入力してください';
+  }
+  if (typeof p.aromaticRings !== 'number' || !Number.isInteger(p.aromaticRings) || p.aromaticRings < 0) {
+    return '芳香環数は0以上の整数を入力してください';
+  }
+  return null;
+}
+
+/** MD HSPインポート入力バリデーション */
+export function validateMDHSPImportInput(params: unknown): string | null {
+  if (params == null || typeof params !== 'object') return 'パラメータオブジェクトが必要です';
+  const p = params as Record<string, unknown>;
+  if (typeof p.totalCED !== 'number' || !Number.isFinite(p.totalCED) || p.totalCED < 0) {
+    return '全CED値は0以上の数値を入力してください';
+  }
+  if (typeof p.dispersionCED !== 'number' || !Number.isFinite(p.dispersionCED) || p.dispersionCED < 0) {
+    return '分散力CED値は0以上の数値を入力してください';
+  }
+  if (typeof p.polarCED !== 'number' || !Number.isFinite(p.polarCED) || p.polarCED < 0) {
+    return '極性CED値は0以上の数値を入力してください';
+  }
+  if (typeof p.hbondCED !== 'number' || !Number.isFinite(p.hbondCED) || p.hbondCED < 0) {
+    return '水素結合CED値は0以上の数値を入力してください';
+  }
+  if (typeof p.molarVolume !== 'number' || !Number.isFinite(p.molarVolume) || p.molarVolume <= 0) {
+    return 'モル体積は正の数値を入力してください';
+  }
+  return null;
+}
+
+/** 多形リスク評価入力バリデーション */
+export function validatePolymorphRiskInput(
+  apiHSP: { deltaD: number; deltaP: number; deltaH: number },
+  r0: number,
+  solvents: unknown[],
+): string | null {
+  return validateHSPR0Array(apiHSP, r0, solvents, '溶媒');
+}
+
+/** 防落書きコーティング入力バリデーション */
+export function validateAntiGraffitiInput(
+  coatingHSP: { deltaD: number; deltaP: number; deltaH: number },
+  r0: number,
+  materials: unknown[],
+): string | null {
+  return validateHSPR0Array(coatingHSP, r0, materials, '落書き材料');
+}
+
+/** プライマーレス接着入力バリデーション */
+export function validatePrimerlessAdhesionInput(params: unknown): string | null {
+  if (params == null || typeof params !== 'object') return 'パラメータオブジェクトが必要です';
+  const p = params as Record<string, unknown>;
+  const adhErr = validateHSPObject(p.adhesiveHSP, '接着剤');
+  if (adhErr) return `接着剤HSP: ${adhErr}`;
+  const subErr = validateHSPObject(p.substrateHSP, '基材');
+  if (subErr) return `基材HSP: ${subErr}`;
+  return null;
+}

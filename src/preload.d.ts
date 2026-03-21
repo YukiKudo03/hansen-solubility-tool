@@ -466,6 +466,66 @@ export interface ElectronAPI {
   // 化粧品エマルション安定性
   evaluateCosmeticEmulsion(params: { oilHSP: import('./core/types').HSPValues; emulsifierHSP: import('./core/types').HSPValues; waterHSP: import('./core/types').HSPValues }): Promise<import('./core/cosmetic-emulsion-stability').EmulsionStabilityResult>;
 
+  // ML HSP予測(QSPR)
+  estimateHSPFromDescriptors(descriptors: import('./core/ml-hsp-prediction').MolecularDescriptors): Promise<import('./core/ml-hsp-prediction').QSPRPredictionResult>;
+
+  // MD HSPインポート
+  importMDResults(ced: import('./core/md-hsp-import').CEDComponents, molarVolume: number): Promise<import('./core/md-hsp-import').MDHSPImportResult>;
+
+  // 族寄与法(拡張)
+  getExtendedFirstOrderGroups(): Promise<import('./core/group-contribution-updates').ExtendedGroupDefinition[]>;
+  getExtendedSecondOrderGroups(): Promise<import('./core/group-contribution-updates').ExtendedGroupDefinition[]>;
+  estimateHSPExtended(input: import('./core/group-contribution').GroupContributionInput): Promise<import('./core/group-contribution-updates').ExtendedGroupContributionResult>;
+
+  // 多形/溶媒和物リスク評価
+  evaluatePolymorphRisk(apiHSP: import('./core/types').HSPValues, r0: number, solventIds: number[]): Promise<import('./core/polymorph-solvate-risk').PolymorphRiskResult[]>;
+
+  // 防落書きコーティング設計
+  screenAntiGraffitiCoatings(coatingHSP: import('./core/types').HSPValues, r0: number, materials: Array<{ name: string; hsp: import('./core/types').HSPValues }>): Promise<import('./core/anti-graffiti-coating').AntiGraffitiResult[]>;
+
+  // プライマーレス接着設計
+  optimizePrimerlessAdhesion(params: { adhesiveHSP: import('./core/types').HSPValues; substrateHSP: import('./core/types').HSPValues }): Promise<import('./core/primerless-adhesion').PrimerlessAdhesionResult>;
+
+  // 印刷電子濡れ性
+  evaluatePrintedElectronicsWetting(params: {
+    inkHSP: import('./core/types').HSPValues;
+    substrateHSP: import('./core/types').HSPValues;
+  }): Promise<import('./core/printed-electronics-wetting').PrintedElectronicsWettingResult>;
+
+  // QDリガンド交換
+  screenQDLigandExchange(qdHSP: import('./core/types').HSPValues, qdR0: number, solventIds: number[]): Promise<import('./core/quantum-dot-ligand-exchange').LigandExchangeResult[]>;
+
+  // アンダーフィル/封止材
+  evaluateUnderfillEncapsulant(params: {
+    encapsulantHSP: import('./core/types').HSPValues;
+    chipSurfaceHSP: import('./core/types').HSPValues;
+    substrateHSP: import('./core/types').HSPValues;
+  }): Promise<import('./core/underfill-encapsulant').UnderfillCompatibilityResult>;
+
+  // バイオ燃料適合性
+  screenBiofuelCompatibility(fuelHSP: import('./core/types').HSPValues, fuelR0: number, materialIds: number[]): Promise<import('./core/biofuel-material-compatibility').BiofuelCompatibilityResult[]>;
+
+  // PCMカプセル化
+  screenPCMEncapsulation(pcmHSP: import('./core/types').HSPValues, pcmR0: number, shellMaterialIds: number[]): Promise<import('./core/pcm-encapsulation').PCMEncapsulationResult[]>;
+
+  // HSP不確かさ定量化
+  bootstrapHSPUncertainty(params: {
+    classifications: Array<{ solventId: number; isGood: boolean }>;
+    numSamples?: number;
+  }): Promise<import('./core/hsp-uncertainty-quantification').HSPUncertaintyResult>;
+
+  // 表面HSP決定
+  estimateSurfaceHSP(params: {
+    testData: Array<{ liquidName: string; liquidHSP: import('./core/types').HSPValues; contactAngleDeg: number }>;
+  }): Promise<import('./core/surface-hsp-determination').SurfaceHSPDeterminationResult>;
+
+  // IL/DES HSP推定
+  estimateIonicLiquidHSP(params: {
+    cationHSP: import('./core/types').HSPValues;
+    anionHSP: import('./core/types').HSPValues;
+    ratio?: [number, number]; temperature?: number; referenceTemp?: number;
+  }): Promise<import('./core/ionic-liquid-des-hsp').ILHSPEstimationResult>;
+
   // 汎用 IPC invoke (可視化パイプライン等)
   invoke(channel: string, ...args: unknown[]): Promise<any>;
 }

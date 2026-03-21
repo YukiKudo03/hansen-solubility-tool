@@ -77,6 +77,21 @@ import MulticomponentOptimizationView from './components/MulticomponentOptimizat
 import LiBatteryElectrolyteView from './components/LiBatteryElectrolyteView';
 import SolventSubstitutionView from './components/SolventSubstitutionView';
 import CosmeticEmulsionView from './components/CosmeticEmulsionView';
+import MLHSPPredictionView from './components/MLHSPPredictionView';
+import MDHSPImportView from './components/MDHSPImportView';
+import GroupContributionUpdatesView from './components/GroupContributionUpdatesView';
+import PolymorphRiskView from './components/PolymorphRiskView';
+import AntiGraffitiCoatingView from './components/AntiGraffitiCoatingView';
+import PrimerlessAdhesionView from './components/PrimerlessAdhesionView';
+import PrintedElectronicsView from './components/PrintedElectronicsView';
+import QuantumDotLigandView from './components/QuantumDotLigandView';
+import UnderfillEncapsulantView from './components/UnderfillEncapsulantView';
+import BiofuelCompatibilityView from './components/BiofuelCompatibilityView';
+import PCMEncapsulationView from './components/PCMEncapsulationView';
+import InverseHspEstimationView from './components/InverseHspEstimationView';
+import HSPUncertaintyView from './components/HSPUncertaintyView';
+import SurfaceHSPDeterminationView from './components/SurfaceHSPDeterminationView';
+import IonicLiquidHSPView from './components/IonicLiquidHSPView';
 
 const VIEW_MAP: Record<Tab, React.ComponentType> = {
   report: ReportView,
@@ -148,6 +163,21 @@ const VIEW_MAP: Record<Tab, React.ComponentType> = {
   liBatteryElectrolyte: LiBatteryElectrolyteView,
   solventSubstitution: SolventSubstitutionView,
   cosmeticEmulsion: CosmeticEmulsionView,
+  mlHspPrediction: MLHSPPredictionView,
+  mdHspImport: MDHSPImportView,
+  groupContributionUpdates: GroupContributionUpdatesView,
+  polymorphRisk: PolymorphRiskView,
+  antiGraffitiCoating: AntiGraffitiCoatingView,
+  primerlessAdhesion: PrimerlessAdhesionView,
+  printedElectronics: PrintedElectronicsView,
+  quantumDotLigand: QuantumDotLigandView,
+  underfillEncapsulant: UnderfillEncapsulantView,
+  biofuelCompatibility: BiofuelCompatibilityView,
+  pcmEncapsulation: PCMEncapsulationView,
+  inverseHspEstimation: InverseHspEstimationView,
+  hspUncertainty: HSPUncertaintyView,
+  surfaceHspDetermination: SurfaceHSPDeterminationView,
+  ionicLiquidHsp: IonicLiquidHSPView,
   settings: SettingsView,
 };
 

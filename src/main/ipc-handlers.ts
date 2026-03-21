@@ -98,6 +98,24 @@ import { optimizeMultiComponentBlend, type SolventCandidate } from '../core/mult
 import { screenElectrolyteSolvents } from '../core/li-ion-battery-electrolyte';
 import { findSolventSubstitutes } from '../core/solvent-substitution-design';
 import { evaluateEmulsionStability } from '../core/cosmetic-emulsion-stability';
+import { estimateHSPFromDescriptors } from '../core/ml-hsp-prediction';
+import type { MolecularDescriptors } from '../core/ml-hsp-prediction';
+import { importMDResults } from '../core/md-hsp-import';
+import type { CEDComponents } from '../core/md-hsp-import';
+import { estimateHSPExtended, getAvailableFirstOrderGroupsExtended, getAvailableSecondOrderGroupsExtended } from '../core/group-contribution-updates';
+import { evaluatePolymorphRisk } from '../core/polymorph-solvate-risk';
+import { screenAntiGraffitiCoatings } from '../core/anti-graffiti-coating';
+import { optimizePrimerlessAdhesion } from '../core/primerless-adhesion';
+import { validateMLHSPPredictionInput, validateMDHSPImportInput, validatePolymorphRiskInput, validateAntiGraffitiInput, validatePrimerlessAdhesionInput, validatePrintedElectronicsWettingInput, validateQDLigandExchangeInput, validateUnderfillEncapsulantInput, validateBiofuelCompatibilityInput, validatePCMEncapsulationInput, validateHSPUncertaintyInput, validateSurfaceHSPDeterminationInput, validateIonicLiquidHSPInput } from '../core/validation';
+import { evaluatePrintedElectronicsWetting } from '../core/printed-electronics-wetting';
+import { screenQDLigandExchangeSolvents } from '../core/quantum-dot-ligand-exchange';
+import { evaluateUnderfillCompatibility } from '../core/underfill-encapsulant';
+import { screenBiofuelCompatibility } from '../core/biofuel-material-compatibility';
+import { screenPCMEncapsulation } from '../core/pcm-encapsulation';
+import { bootstrapHSPUncertainty } from '../core/hsp-uncertainty-quantification';
+import { estimateSurfaceHSPFromContactAngles } from '../core/surface-hsp-determination';
+import type { ContactAngleTestInput } from '../core/surface-hsp-determination';
+import { estimateILHSP } from '../core/ionic-liquid-des-hsp';
 
 /** CSVインポートの最大サイズ (10MB) */
 const MAX_CSV_SIZE = 10 * 1024 * 1024;
@@ -1813,5 +1831,143 @@ export function registerIpcHandlers(
     const err = validateCosmeticEmulsionInput(params);
     if (err) throw new Error(err);
     return evaluateEmulsionStability(params.oilHSP, params.emulsifierHSP, params.waterHSP);
+  });
+
+  // ─── Phase 15: ML・計算科学+残り機能群 ─────────────────────────────────
+
+  // --- ML HSP予測(QSPR) ---
+  ipcMain.handle('mlHspPrediction:estimate', (_, descriptors: MolecularDescriptors) => {
+    const err = validateMLHSPPredictionInput(descriptors);
+    if (err) throw new Error(err);
+    return estimateHSPFromDescriptors(descriptors);
+  });
+
+  // --- MD HSPインポート ---
+  ipcMain.handle('mdHspImport:import', (_, ced: CEDComponents, molarVolume: number) => {
+    const err = validateMDHSPImportInput({ ...ced, molarVolume });
+    if (err) throw new Error(err);
+    return importMDResults(ced, molarVolume);
+  });
+
+  // --- 族寄与法(拡張) ---
+  ipcMain.handle('groupContributionUpdates:getFirstOrderGroups', () => {
+    return getAvailableFirstOrderGroupsExtended();
+  });
+
+  ipcMain.handle('groupContributionUpdates:getSecondOrderGroups', () => {
+    return getAvailableSecondOrderGroupsExtended();
+  });
+
+  ipcMain.handle('groupContributionUpdates:estimate', (_, input: { firstOrderGroups: { groupId: string; count: number }[]; secondOrderGroups?: { groupId: string; count: number }[] }) => {
+    const err = validateGroupContributionInput(input);
+    if (err) throw new Error(err);
+    return estimateHSPExtended(input);
+  });
+
+  // --- 多形/溶媒和物リスク評価 ---
+  ipcMain.handle('polymorphRisk:evaluate', (_, apiHSP: HSPValues, r0: number, solventIds: number[]) => {
+    const solvents = solventIds.map((id) => {
+      const s = solventRepo.getSolventById(id);
+      if (!s) throw new Error(`溶媒 (ID: ${id}) が見つかりません`);
+      return { name: s.name, hsp: s.hsp };
+    });
+    const err = validatePolymorphRiskInput(apiHSP, r0, solvents);
+    if (err) throw new Error(err);
+    return evaluatePolymorphRisk(apiHSP, r0, solvents);
+  });
+
+  // --- 防落書きコーティング設計 ---
+  ipcMain.handle('antiGraffitiCoating:screen', (_, coatingHSP: HSPValues, r0: number, materials: Array<{ name: string; hsp: HSPValues }>) => {
+    const err = validateAntiGraffitiInput(coatingHSP, r0, materials);
+    if (err) throw new Error(err);
+    return screenAntiGraffitiCoatings(coatingHSP, r0, materials);
+  });
+
+  // --- プライマーレス接着設計 ---
+  ipcMain.handle('primerlessAdhesion:optimize', (_, params: { adhesiveHSP: HSPValues; substrateHSP: HSPValues }) => {
+    const err = validatePrimerlessAdhesionInput(params);
+    if (err) throw new Error(err);
+    return optimizePrimerlessAdhesion(params.adhesiveHSP, params.substrateHSP);
+  });
+
+  // ─── Phase 13+14: 先端デバイス群 + HSP逆問題群 ─────────────────────────────────
+
+  // --- 印刷電子濡れ性 ---
+  ipcMain.handle('printedElectronics:evaluate', (_, params: { inkHSP: HSPValues; substrateHSP: HSPValues }) => {
+    const err = validatePrintedElectronicsWettingInput(params);
+    if (err) throw new Error(err);
+    return evaluatePrintedElectronicsWetting(params.inkHSP, params.substrateHSP);
+  });
+
+  // --- QDリガンド交換溶媒スクリーニング ---
+  ipcMain.handle('quantumDotLigand:screen', (_, qdHSP: HSPValues, qdR0: number, solventIds: number[]) => {
+    const solvents = solventIds.map((id) => {
+      const s = solventRepo.getSolventById(id);
+      if (!s) throw new Error(`溶媒 (ID: ${id}) が見つかりません`);
+      return { name: s.name, hsp: s.hsp };
+    });
+    const err = validateQDLigandExchangeInput(qdHSP, qdR0, solvents);
+    if (err) throw new Error(err);
+    return screenQDLigandExchangeSolvents(qdHSP, qdR0, solvents);
+  });
+
+  // --- アンダーフィル/封止材適合性 ---
+  ipcMain.handle('underfillEncapsulant:evaluate', (_, params: { encapsulantHSP: HSPValues; chipSurfaceHSP: HSPValues; substrateHSP: HSPValues }) => {
+    const err = validateUnderfillEncapsulantInput(params);
+    if (err) throw new Error(err);
+    return evaluateUnderfillCompatibility(params.encapsulantHSP, params.chipSurfaceHSP, params.substrateHSP);
+  });
+
+  // --- バイオ燃料材料適合性 ---
+  ipcMain.handle('biofuelCompatibility:screen', (_, fuelHSP: HSPValues, fuelR0: number, materialIds: number[]) => {
+    const materials = materialIds.map((id) => {
+      const s = solventRepo.getSolventById(id);
+      if (!s) throw new Error(`材料 (ID: ${id}) が見つかりません`);
+      return { name: s.name, hsp: s.hsp };
+    });
+    const err = validateBiofuelCompatibilityInput(fuelHSP, fuelR0, materials);
+    if (err) throw new Error(err);
+    return screenBiofuelCompatibility(fuelHSP, fuelR0, materials);
+  });
+
+  // --- PCMカプセル化 ---
+  ipcMain.handle('pcmEncapsulation:screen', (_, pcmHSP: HSPValues, pcmR0: number, shellMaterialIds: number[]) => {
+    const shellMaterials = shellMaterialIds.map((id) => {
+      const s = solventRepo.getSolventById(id);
+      if (!s) throw new Error(`シェル材 (ID: ${id}) が見つかりません`);
+      return { name: s.name, hsp: s.hsp };
+    });
+    const err = validatePCMEncapsulationInput(pcmHSP, pcmR0, shellMaterials);
+    if (err) throw new Error(err);
+    return screenPCMEncapsulation(pcmHSP, pcmR0, shellMaterials);
+  });
+
+  // --- HSP不確かさ定量化 ---
+  ipcMain.handle('hspUncertainty:bootstrap', (_, params: { classifications: Array<{ solventId: number; isGood: boolean }>; numSamples?: number }) => {
+    const err = validateHSPUncertaintyInput(params);
+    if (err) throw new Error(err);
+    const classifications = params.classifications.map((c) => {
+      const s = solventRepo.getSolventById(c.solventId);
+      if (!s) throw new Error(`溶媒 (ID: ${c.solventId}) が見つかりません`);
+      return { solvent: { hsp: s.hsp, name: s.name }, isGood: c.isGood };
+    });
+    return bootstrapHSPUncertainty(classifications, params.numSamples ?? 100);
+  });
+
+  // --- 表面HSP決定 ---
+  ipcMain.handle('surfaceHspDetermination:estimate', (_, params: { testData: ContactAngleTestInput[] }) => {
+    const err = validateSurfaceHSPDeterminationInput(params);
+    if (err) throw new Error(err);
+    return estimateSurfaceHSPFromContactAngles(params.testData);
+  });
+
+  // --- IL/DES HSP推定 ---
+  ipcMain.handle('ionicLiquidHsp:estimate', (_, params: {
+    cationHSP: HSPValues; anionHSP: HSPValues;
+    ratio?: [number, number]; temperature?: number; referenceTemp?: number;
+  }) => {
+    const err = validateIonicLiquidHSPInput(params);
+    if (err) throw new Error(err);
+    return estimateILHSP(params.cationHSP, params.anionHSP, params.ratio, params.temperature, params.referenceTemp);
   });
 }

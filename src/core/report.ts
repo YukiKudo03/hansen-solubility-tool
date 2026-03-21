@@ -1702,3 +1702,255 @@ export function formatUVInkMonomerCsv(results: UVInkMonomerResult[]): string {
   });
   return BOM + [headers.join(','), ...rows].join('\r\n') + '\r\n';
 }
+
+// ─── Phase 13+14: 先端デバイス群 + HSP逆問題群 CSV ───────────────────────────
+
+import type { PrintedElectronicsWettingResult } from './printed-electronics-wetting';
+import { getWettingLevelInfo } from './printed-electronics-wetting';
+import type { LigandExchangeResult } from './quantum-dot-ligand-exchange';
+import { getLigandExchangeLevelInfo } from './quantum-dot-ligand-exchange';
+import type { UnderfillCompatibilityResult } from './underfill-encapsulant';
+import { getUnderfillLevelInfo } from './underfill-encapsulant';
+import type { BiofuelCompatibilityResult } from './biofuel-material-compatibility';
+import { getBiofuelCompatibilityLevelInfo } from './biofuel-material-compatibility';
+import type { PCMEncapsulationResult } from './pcm-encapsulation';
+import { getPCMEncapsulationLevelInfo } from './pcm-encapsulation';
+import type { HSPUncertaintyResult } from './hsp-uncertainty-quantification';
+import type { SurfaceHSPDeterminationResult } from './surface-hsp-determination';
+import type { ILHSPEstimationResult } from './ionic-liquid-des-hsp';
+
+export function formatPrintedElectronicsWettingCsv(result: PrintedElectronicsWettingResult): string {
+  const BOM = '\uFEFF';
+  const info = getWettingLevelInfo(result.wettingLevel);
+  const headers = ['インク δD', 'インク δP', 'インク δH', '基材 δD', '基材 δP', '基材 δH', 'Wa(mJ/m²)', '接触角(°)', 'Ra', '濡れ性レベル', '判定', '評価日時'];
+  const row = [
+    round3(result.inkHSP.deltaD), round3(result.inkHSP.deltaP), round3(result.inkHSP.deltaH),
+    round3(result.substrateHSP.deltaD), round3(result.substrateHSP.deltaP), round3(result.substrateHSP.deltaH),
+    round3(result.wa), result.contactAngle.toFixed(1), round3(result.ra),
+    result.wettingLevel, escapeCsvField(`${info.label}（${info.description}）`),
+    result.evaluatedAt.toISOString(),
+  ].join(',');
+  return BOM + [headers.join(','), row].join('\r\n') + '\r\n';
+}
+
+export function formatQDLigandExchangeCsv(results: LigandExchangeResult[]): string {
+  const BOM = '\uFEFF';
+  const headers = ['溶媒名', '溶媒 δD', '溶媒 δP', '溶媒 δH', 'Ra', 'RED', '適合性レベル', '適合性判定'];
+  const rows = results.map((r) => {
+    const info = getLigandExchangeLevelInfo(r.level);
+    return [
+      escapeCsvField(r.solventName),
+      round3(r.solventHSP.deltaD), round3(r.solventHSP.deltaP), round3(r.solventHSP.deltaH),
+      round3(r.ra), round3(r.red),
+      `Level ${r.level}`, escapeCsvField(`${info.label}（${info.description}）`),
+    ].join(',');
+  });
+  return BOM + [headers.join(','), ...rows].join('\r\n') + '\r\n';
+}
+
+export function formatUnderfillEncapsulantCsv(result: UnderfillCompatibilityResult): string {
+  const BOM = '\uFEFF';
+  const info = getUnderfillLevelInfo(result.level);
+  const headers = ['封止材 δD', '封止材 δP', '封止材 δH', 'チップ δD', 'チップ δP', 'チップ δH', '基板 δD', '基板 δP', '基板 δH', 'Wa(チップ)', 'Wa(基板)', 'Ra(チップ)', 'Ra(基板)', 'ボトルネック', 'レベル', '判定', '評価日時'];
+  const row = [
+    round3(result.encapsulantHSP.deltaD), round3(result.encapsulantHSP.deltaP), round3(result.encapsulantHSP.deltaH),
+    round3(result.chipSurfaceHSP.deltaD), round3(result.chipSurfaceHSP.deltaP), round3(result.chipSurfaceHSP.deltaH),
+    round3(result.substrateHSP.deltaD), round3(result.substrateHSP.deltaP), round3(result.substrateHSP.deltaH),
+    round3(result.waChip), round3(result.waSubstrate), round3(result.raChip), round3(result.raSubstrate),
+    result.bottleneck === 'chip' ? 'チップ側' : '基板側',
+    result.level, escapeCsvField(`${info.label}（${info.description}）`),
+    result.evaluatedAt.toISOString(),
+  ].join(',');
+  return BOM + [headers.join(','), row].join('\r\n') + '\r\n';
+}
+
+export function formatBiofuelCompatibilityCsv(results: BiofuelCompatibilityResult[]): string {
+  const BOM = '\uFEFF';
+  const headers = ['材料名', '材料 δD', '材料 δP', '材料 δH', 'Ra', 'RED', '適合性レベル', '適合性判定'];
+  const rows = results.map((r) => {
+    const info = getBiofuelCompatibilityLevelInfo(r.level);
+    return [
+      escapeCsvField(r.materialName),
+      round3(r.materialHSP.deltaD), round3(r.materialHSP.deltaP), round3(r.materialHSP.deltaH),
+      round3(r.ra), round3(r.red),
+      `Level ${r.level}`, escapeCsvField(`${info.label}（${info.description}）`),
+    ].join(',');
+  });
+  return BOM + [headers.join(','), ...rows].join('\r\n') + '\r\n';
+}
+
+export function formatPCMEncapsulationCsv(results: PCMEncapsulationResult[]): string {
+  const BOM = '\uFEFF';
+  const headers = ['シェル材名', 'シェル材 δD', 'シェル材 δP', 'シェル材 δH', 'Ra', 'RED', '安定性レベル', '安定性判定'];
+  const rows = results.map((r) => {
+    const info = getPCMEncapsulationLevelInfo(r.level);
+    return [
+      escapeCsvField(r.shellMaterialName),
+      round3(r.shellMaterialHSP.deltaD), round3(r.shellMaterialHSP.deltaP), round3(r.shellMaterialHSP.deltaH),
+      round3(r.ra), round3(r.red),
+      `Level ${r.level}`, escapeCsvField(`${info.label}（${info.description}）`),
+    ].join(',');
+  });
+  return BOM + [headers.join(','), ...rows].join('\r\n') + '\r\n';
+}
+
+export function formatHSPUncertaintyCsv(result: HSPUncertaintyResult): string {
+  const BOM = '\uFEFF';
+  const headers = ['パラメータ', '中心値', '95%CI下限', '95%CI上限'];
+  const rows = [
+    ['δD', round3(result.center.deltaD), round3(result.confidence95.deltaD.low), round3(result.confidence95.deltaD.high)].join(','),
+    ['δP', round3(result.center.deltaP), round3(result.confidence95.deltaP.low), round3(result.confidence95.deltaP.high)].join(','),
+    ['δH', round3(result.center.deltaH), round3(result.confidence95.deltaH.low), round3(result.confidence95.deltaH.high)].join(','),
+    ['R₀', round3(result.r0), round3(result.confidence95.r0.low), round3(result.confidence95.r0.high)].join(','),
+  ];
+  return BOM + [headers.join(','), ...rows].join('\r\n') + '\r\n';
+}
+
+export function formatSurfaceHSPDeterminationCsv(result: SurfaceHSPDeterminationResult): string {
+  const BOM = '\uFEFF';
+  const headers = ['推定 δD', '推定 δP', '推定 δH', 'γD(mJ/m²)', 'γP(mJ/m²)', 'γH(mJ/m²)', 'γ合計(mJ/m²)', 'データ点数', '残差'];
+  const row = [
+    round3(result.surfaceHSP.deltaD), round3(result.surfaceHSP.deltaP), round3(result.surfaceHSP.deltaH),
+    round3(result.surfaceEnergy.gammaD), round3(result.surfaceEnergy.gammaP), round3(result.surfaceEnergy.gammaH), round3(result.surfaceEnergy.gammaTotal),
+    String(result.numDataPoints), round3(result.residualError),
+  ].join(',');
+  return BOM + [headers.join(','), row].join('\r\n') + '\r\n';
+}
+
+export function formatIonicLiquidHSPCsv(result: ILHSPEstimationResult): string {
+  const BOM = '\uFEFF';
+  const headers = ['カチオン δD', 'カチオン δP', 'カチオン δH', 'アニオン δD', 'アニオン δP', 'アニオン δH', 'カチオン比', 'アニオン比', 'ブレンド δD', 'ブレンド δP', 'ブレンド δH', '温度補正'];
+  const row = [
+    round3(result.cationHSP.deltaD), round3(result.cationHSP.deltaP), round3(result.cationHSP.deltaH),
+    round3(result.anionHSP.deltaD), round3(result.anionHSP.deltaP), round3(result.anionHSP.deltaH),
+    result.cationRatio.toFixed(2), result.anionRatio.toFixed(2),
+    round3(result.blendHSP.deltaD), round3(result.blendHSP.deltaP), round3(result.blendHSP.deltaH),
+    result.temperatureCorrected ? '適用' : '',
+  ].join(',');
+  return BOM + [headers.join(','), row].join('\r\n') + '\r\n';
+}
+
+// ─── Phase 15: ML・計算科学+残り機能群 CSV ───────────────────────────
+
+import type { QSPRPredictionResult } from './ml-hsp-prediction';
+import type { MDHSPImportResult } from './md-hsp-import';
+import type { ExtendedGroupContributionResult } from './group-contribution-updates';
+import type { PolymorphRiskResult } from './polymorph-solvate-risk';
+import { getPolymorphRiskInfo } from './polymorph-solvate-risk';
+import type { AntiGraffitiResult } from './anti-graffiti-coating';
+import { getAntiGraffitiLevelInfo } from './anti-graffiti-coating';
+import type { PrimerlessAdhesionResult } from './primerless-adhesion';
+import { getPrimerlessAdhesionLevelInfo } from './primerless-adhesion';
+
+export function formatMLHSPPredictionCsv(result: QSPRPredictionResult): string {
+  const BOM = '\uFEFF';
+  const headers = [
+    'モル体積', 'logP', 'HBドナー数', 'HBアクセプター数', '芳香環数',
+    '推定 δD', '推定 δP', '推定 δH', '信頼度', '評価日時',
+  ];
+  const row = [
+    result.descriptors.molarVolume.toFixed(1),
+    result.descriptors.logP.toFixed(2),
+    String(result.descriptors.numHBDonors),
+    String(result.descriptors.numHBAcceptors),
+    String(result.descriptors.aromaticRings),
+    round3(result.hsp.deltaD), round3(result.hsp.deltaP), round3(result.hsp.deltaH),
+    result.confidence,
+    result.evaluatedAt.toISOString(),
+  ].join(',');
+  return BOM + [headers.join(','), row].join('\r\n') + '\r\n';
+}
+
+export function formatMDHSPImportCsv(result: MDHSPImportResult): string {
+  const BOM = '\uFEFF';
+  const headers = [
+    '全CED', '分散CED', '極性CED', '水素結合CED', 'モル体積',
+    'δD', 'δP', 'δH', 'δ_total', '整合性(%)', '評価日時',
+  ];
+  const row = [
+    result.ced.totalCED.toFixed(2), result.ced.dispersionCED.toFixed(2),
+    result.ced.polarCED.toFixed(2), result.ced.hbondCED.toFixed(2),
+    result.molarVolume.toFixed(1),
+    round3(result.hsp.deltaD), round3(result.hsp.deltaP), round3(result.hsp.deltaH),
+    round3(result.totalSolubilityParameter),
+    result.consistency.toFixed(1),
+    result.evaluatedAt.toISOString(),
+  ].join(',');
+  return BOM + [headers.join(','), row].join('\r\n') + '\r\n';
+}
+
+export function formatExtendedGroupContributionCsv(result: ExtendedGroupContributionResult): string {
+  const BOM = '\uFEFF';
+  const headers = ['基グループID', '基グループ名', '個数', '推定 δD', '推定 δP', '推定 δH', '手法', '信頼度', '評価日時'];
+  const rows = result.inputGroups.map((g) => [
+    escapeCsvField(g.groupId), escapeCsvField(g.name), String(g.count),
+    '', '', '', '', '', '',
+  ].join(','));
+  rows.push([
+    escapeCsvField('【推定HSP】'), '', '',
+    round3(result.hsp.deltaD), round3(result.hsp.deltaP), round3(result.hsp.deltaH),
+    result.method, result.confidence,
+    result.evaluatedAt.toISOString(),
+  ].join(','));
+  return BOM + [headers.join(','), ...rows].join('\r\n') + '\r\n';
+}
+
+export function formatPolymorphRiskCsv(results: PolymorphRiskResult[]): string {
+  const BOM = '\uFEFF';
+  const headers = [
+    '溶媒名', '溶媒 δD', '溶媒 δP', '溶媒 δH',
+    'Ra', 'RED', 'リスクレベル', 'リスク判定',
+  ];
+  const rows = results.map((r) => {
+    const info = getPolymorphRiskInfo(r.riskLevel);
+    return [
+      escapeCsvField(r.solvent.name),
+      round3(r.solvent.hsp.deltaD), round3(r.solvent.hsp.deltaP), round3(r.solvent.hsp.deltaH),
+      round3(r.ra), round3(r.red),
+      `Level ${r.riskLevel}`,
+      escapeCsvField(`${info.label}（${info.description}）`),
+    ].join(',');
+  });
+  return BOM + [headers.join(','), ...rows].join('\r\n') + '\r\n';
+}
+
+export function formatAntiGraffitiCsv(results: AntiGraffitiResult[]): string {
+  const BOM = '\uFEFF';
+  const headers = [
+    '落書き材料名', '材料 δD', '材料 δP', '材料 δH',
+    'Ra', 'RED', '防落書き効果レベル', '防落書き効果判定',
+  ];
+  const rows = results.map((r) => {
+    const info = getAntiGraffitiLevelInfo(r.level);
+    return [
+      escapeCsvField(r.graffitiMaterial.name),
+      round3(r.graffitiMaterial.hsp.deltaD), round3(r.graffitiMaterial.hsp.deltaP), round3(r.graffitiMaterial.hsp.deltaH),
+      round3(r.ra), round3(r.red),
+      `Level ${r.level}`,
+      escapeCsvField(`${info.label}（${info.description}）`),
+    ].join(',');
+  });
+  return BOM + [headers.join(','), ...rows].join('\r\n') + '\r\n';
+}
+
+export function formatPrimerlessAdhesionCsv(result: PrimerlessAdhesionResult): string {
+  const BOM = '\uFEFF';
+  const info = getPrimerlessAdhesionLevelInfo(result.level);
+  const headers = [
+    '接着剤 δD', '接着剤 δP', '接着剤 δH',
+    '基材 δD', '基材 δP', '基材 δH',
+    'Wa(mJ/m²)', 'Ra', '接着レベル', '判定',
+    '最適 δD', '最適 δP', '最適 δH',
+    '最適Wa', '改善余地(%)', '評価日時',
+  ];
+  const row = [
+    round3(result.adhesiveHSP.deltaD), round3(result.adhesiveHSP.deltaP), round3(result.adhesiveHSP.deltaH),
+    round3(result.substrateHSP.deltaD), round3(result.substrateHSP.deltaP), round3(result.substrateHSP.deltaH),
+    round3(result.wa), round3(result.ra),
+    `Level ${result.level}`, escapeCsvField(`${info.label}（${info.description}）`),
+    round3(result.optimalAdhesiveHSP.deltaD), round3(result.optimalAdhesiveHSP.deltaP), round3(result.optimalAdhesiveHSP.deltaH),
+    round3(result.optimalWa), result.improvementPotential.toFixed(1),
+    result.evaluatedAt.toISOString(),
+  ].join(',');
+  return BOM + [headers.join(','), row].join('\r\n') + '\r\n';
+}

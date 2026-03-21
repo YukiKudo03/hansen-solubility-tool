@@ -25,6 +25,10 @@ export type Tab =
   | 'coatingDefect' | 'photoresistDeveloper' | 'perovskiteSolvent' | 'organicSemiconductorFilm' | 'uvCurableInk'
   | 'crystallineDissolution' | 'hydrogelSwelling' | 'rubberCompounding' | 'thermosetCuring' | 'fiberDyeability'
   | 'multicomponentOptimization' | 'liBatteryElectrolyte' | 'solventSubstitution' | 'cosmeticEmulsion'
+  | 'mlHspPrediction' | 'mdHspImport' | 'groupContributionUpdates'
+  | 'polymorphRisk' | 'antiGraffitiCoating' | 'primerlessAdhesion'
+  | 'printedElectronics' | 'quantumDotLigand' | 'underfillEncapsulant' | 'biofuelCompatibility' | 'pcmEncapsulation'
+  | 'inverseHspEstimation' | 'hspUncertainty' | 'surfaceHspDetermination' | 'ionicLiquidHsp'
   | 'settings';
 
 export interface NavItem {
@@ -72,6 +76,10 @@ export const NAV_CATEGORIES: NavCategory[] = [
       { id: 'hydrogelSwelling', label: 'ハイドロゲル膨潤' },
       { id: 'rubberCompounding', label: 'ゴム配合' },
       { id: 'fiberDyeability', label: '繊維染色性' },
+      { id: 'polymorphRisk', label: '多形リスク' },
+      { id: 'printedElectronics', label: '印刷電子濡れ性' },
+      { id: 'underfillEncapsulant', label: '封止材適合' },
+      { id: 'biofuelCompatibility', label: 'バイオ燃料適合' },
     ],
   },
   {
@@ -102,6 +110,8 @@ export const NAV_CATEGORIES: NavCategory[] = [
       { id: 'essentialOilExtraction', label: '精油抽出' },
       { id: 'soilRemediation', label: '土壌汚染抽出' },
       { id: 'thermosetCuring', label: '硬化剤選定' },
+      { id: 'quantumDotLigand', label: 'QDリガンド交換' },
+      { id: 'pcmEncapsulation', label: 'PCMカプセル化' },
     ],
   },
   {
@@ -124,6 +134,8 @@ export const NAV_CATEGORIES: NavCategory[] = [
       { id: 'liBatteryElectrolyte', label: 'LiB電解液' },
       { id: 'solventSubstitution', label: '溶媒代替' },
       { id: 'cosmeticEmulsion', label: 'エマルション安定性' },
+      { id: 'antiGraffitiCoating', label: '防落書き' },
+      { id: 'primerlessAdhesion', label: 'プライマーレス接着' },
     ],
   },
   {
@@ -150,6 +162,13 @@ export const NAV_CATEGORIES: NavCategory[] = [
       { id: 'surfaceTreatmentQuantification', label: '表面処理効果' },
       { id: 'temperatureHspCorrection', label: '温度HSP補正' },
       { id: 'pressureHspCorrection', label: '圧力HSP補正' },
+      { id: 'inverseHspEstimation', label: '逆HSP推定' },
+      { id: 'hspUncertainty', label: 'HSP不確かさ' },
+      { id: 'surfaceHspDetermination', label: '表面HSP決定' },
+      { id: 'ionicLiquidHsp', label: 'IL/DES HSP' },
+      { id: 'mlHspPrediction', label: 'HSP推算(QSPR)' },
+      { id: 'mdHspImport', label: 'MD結果インポート' },
+      { id: 'groupContributionUpdates', label: '族寄与法(拡張)' },
     ],
   },
   {

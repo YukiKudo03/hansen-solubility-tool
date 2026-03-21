@@ -522,6 +522,75 @@ export const api = {
   evaluateCosmeticEmulsion: (params: { oilHSP: { deltaD: number; deltaP: number; deltaH: number }; emulsifierHSP: { deltaD: number; deltaP: number; deltaH: number }; waterHSP: { deltaD: number; deltaP: number; deltaH: number } }) =>
     ipcRenderer.invoke('cosmeticEmulsion:evaluate', params),
 
+  // ML HSP予測(QSPR)
+  estimateHSPFromDescriptors: (descriptors: { molarVolume: number; logP: number; numHBDonors: number; numHBAcceptors: number; aromaticRings: number }) =>
+    ipcRenderer.invoke('mlHspPrediction:estimate', descriptors),
+
+  // MD HSPインポート
+  importMDResults: (ced: { totalCED: number; dispersionCED: number; polarCED: number; hbondCED: number }, molarVolume: number) =>
+    ipcRenderer.invoke('mdHspImport:import', ced, molarVolume),
+
+  // 族寄与法(拡張)
+  getExtendedFirstOrderGroups: () => ipcRenderer.invoke('groupContributionUpdates:getFirstOrderGroups'),
+  getExtendedSecondOrderGroups: () => ipcRenderer.invoke('groupContributionUpdates:getSecondOrderGroups'),
+  estimateHSPExtended: (input: { firstOrderGroups: { groupId: string; count: number }[]; secondOrderGroups?: { groupId: string; count: number }[] }) =>
+    ipcRenderer.invoke('groupContributionUpdates:estimate', input),
+
+  // 多形/溶媒和物リスク評価
+  evaluatePolymorphRisk: (apiHSP: { deltaD: number; deltaP: number; deltaH: number }, r0: number, solventIds: number[]) =>
+    ipcRenderer.invoke('polymorphRisk:evaluate', apiHSP, r0, solventIds),
+
+  // 防落書きコーティング設計
+  screenAntiGraffitiCoatings: (coatingHSP: { deltaD: number; deltaP: number; deltaH: number }, r0: number, materials: Array<{ name: string; hsp: { deltaD: number; deltaP: number; deltaH: number } }>) =>
+    ipcRenderer.invoke('antiGraffitiCoating:screen', coatingHSP, r0, materials),
+
+  // プライマーレス接着設計
+  optimizePrimerlessAdhesion: (params: { adhesiveHSP: { deltaD: number; deltaP: number; deltaH: number }; substrateHSP: { deltaD: number; deltaP: number; deltaH: number } }) =>
+    ipcRenderer.invoke('primerlessAdhesion:optimize', params),
+
+  // 印刷電子濡れ性
+  evaluatePrintedElectronicsWetting: (params: {
+    inkHSP: { deltaD: number; deltaP: number; deltaH: number };
+    substrateHSP: { deltaD: number; deltaP: number; deltaH: number };
+  }) => ipcRenderer.invoke('printedElectronics:evaluate', params),
+
+  // QDリガンド交換
+  screenQDLigandExchange: (qdHSP: { deltaD: number; deltaP: number; deltaH: number }, qdR0: number, solventIds: number[]) =>
+    ipcRenderer.invoke('quantumDotLigand:screen', qdHSP, qdR0, solventIds),
+
+  // アンダーフィル/封止材
+  evaluateUnderfillEncapsulant: (params: {
+    encapsulantHSP: { deltaD: number; deltaP: number; deltaH: number };
+    chipSurfaceHSP: { deltaD: number; deltaP: number; deltaH: number };
+    substrateHSP: { deltaD: number; deltaP: number; deltaH: number };
+  }) => ipcRenderer.invoke('underfillEncapsulant:evaluate', params),
+
+  // バイオ燃料適合性
+  screenBiofuelCompatibility: (fuelHSP: { deltaD: number; deltaP: number; deltaH: number }, fuelR0: number, materialIds: number[]) =>
+    ipcRenderer.invoke('biofuelCompatibility:screen', fuelHSP, fuelR0, materialIds),
+
+  // PCMカプセル化
+  screenPCMEncapsulation: (pcmHSP: { deltaD: number; deltaP: number; deltaH: number }, pcmR0: number, shellMaterialIds: number[]) =>
+    ipcRenderer.invoke('pcmEncapsulation:screen', pcmHSP, pcmR0, shellMaterialIds),
+
+  // HSP不確かさ定量化
+  bootstrapHSPUncertainty: (params: {
+    classifications: Array<{ solventId: number; isGood: boolean }>;
+    numSamples?: number;
+  }) => ipcRenderer.invoke('hspUncertainty:bootstrap', params),
+
+  // 表面HSP決定
+  estimateSurfaceHSP: (params: {
+    testData: Array<{ liquidName: string; liquidHSP: { deltaD: number; deltaP: number; deltaH: number }; contactAngleDeg: number }>;
+  }) => ipcRenderer.invoke('surfaceHspDetermination:estimate', params),
+
+  // IL/DES HSP推定
+  estimateIonicLiquidHSP: (params: {
+    cationHSP: { deltaD: number; deltaP: number; deltaH: number };
+    anionHSP: { deltaD: number; deltaP: number; deltaH: number };
+    ratio?: [number, number]; temperature?: number; referenceTemp?: number;
+  }) => ipcRenderer.invoke('ionicLiquidHsp:estimate', params),
+
   // 汎用 IPC invoke — 許可チャネルのみ通過
   invoke: (channel: string, ...args: unknown[]) => {
     const ALLOWED_CHANNELS = [

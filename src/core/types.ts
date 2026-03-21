@@ -703,7 +703,11 @@ export type BookmarkPipeline =
   | 'temperatureHspCorrection' | 'pressureHspCorrection' | 'supercriticalCO2'
   | 'coatingDefect' | 'photoresistDeveloper' | 'perovskiteSolvent' | 'organicSemiconductorFilm' | 'uvCurableInk'
   | 'crystallineDissolution' | 'hydrogelSwelling' | 'rubberCompounding' | 'thermosetCuring' | 'fiberDyeability'
-  | 'multicomponentOptimization' | 'liBatteryElectrolyte' | 'solventSubstitution' | 'cosmeticEmulsion';
+  | 'multicomponentOptimization' | 'liBatteryElectrolyte' | 'solventSubstitution' | 'cosmeticEmulsion'
+  | 'mlHspPrediction' | 'mdHspImport' | 'groupContributionUpdates'
+  | 'polymorphRisk' | 'antiGraffitiCoating' | 'primerlessAdhesion'
+  | 'printedElectronics' | 'quantumDotLigand' | 'underfillEncapsulant' | 'biofuelCompatibility' | 'pcmEncapsulation'
+  | 'inverseHspEstimation' | 'hspUncertainty' | 'surfaceHspDetermination' | 'ionicLiquidHsp';
 
 /** ブックマークのパラメータ（パイプラインごとに異なるが共通型で扱う） */
 export type BookmarkParams = Record<string, unknown>;
