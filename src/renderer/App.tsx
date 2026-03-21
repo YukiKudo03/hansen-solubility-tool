@@ -68,6 +68,15 @@ import PhotoresistDeveloperView from './components/PhotoresistDeveloperView';
 import PerovskiteSolventView from './components/PerovskiteSolventView';
 import OrganicSemiconductorFilmView from './components/OrganicSemiconductorFilmView';
 import UVCurableInkView from './components/UVCurableInkView';
+import CrystallineDissolutionView from './components/CrystallineDissolutionView';
+import HydrogelSwellingView from './components/HydrogelSwellingView';
+import RubberCompoundingView from './components/RubberCompoundingView';
+import ThermosetCuringView from './components/ThermosetCuringView';
+import FiberDyeabilityView from './components/FiberDyeabilityView';
+import MulticomponentOptimizationView from './components/MulticomponentOptimizationView';
+import LiBatteryElectrolyteView from './components/LiBatteryElectrolyteView';
+import SolventSubstitutionView from './components/SolventSubstitutionView';
+import CosmeticEmulsionView from './components/CosmeticEmulsionView';
 
 const VIEW_MAP: Record<Tab, React.ComponentType> = {
   report: ReportView,
@@ -130,6 +139,15 @@ const VIEW_MAP: Record<Tab, React.ComponentType> = {
   perovskiteSolvent: PerovskiteSolventView,
   organicSemiconductorFilm: OrganicSemiconductorFilmView,
   uvCurableInk: UVCurableInkView,
+  crystallineDissolution: CrystallineDissolutionView,
+  hydrogelSwelling: HydrogelSwellingView,
+  rubberCompounding: RubberCompoundingView,
+  thermosetCuring: ThermosetCuringView,
+  fiberDyeability: FiberDyeabilityView,
+  multicomponentOptimization: MulticomponentOptimizationView,
+  liBatteryElectrolyte: LiBatteryElectrolyteView,
+  solventSubstitution: SolventSubstitutionView,
+  cosmeticEmulsion: CosmeticEmulsionView,
   settings: SettingsView,
 };
 

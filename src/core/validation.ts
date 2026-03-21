@@ -1036,3 +1036,53 @@ export function validateUVCurableInkMonomerInput(
 ): string | null {
   return validateHSPR0Array(oligomerHSP, r0, monomers, 'モノマー');
 }
+
+// ============================================================================
+// Phase 11: 高度最適化群パイプライン用の入力バリデーション
+// ============================================================================
+
+/** 多成分溶媒最適化入力バリデーション */
+export function validateMultiComponentOptimizationInput(
+  targetHSP: { deltaD: number; deltaP: number; deltaH: number },
+  solventIds: unknown[],
+  numComponents: number,
+): string | null {
+  const hspErr = validateHSPRange(targetHSP.deltaD, targetHSP.deltaP, targetHSP.deltaH);
+  if (hspErr) return hspErr;
+  if (!Array.isArray(solventIds) || solventIds.length === 0) return '溶媒を1つ以上指定してください';
+  if (!Number.isFinite(numComponents) || numComponents < 2 || numComponents > 10) return '成分数は2以上10以下を指定してください';
+  return null;
+}
+
+/** LiB電解液設計入力バリデーション */
+export function validateLiBatteryElectrolyteInput(
+  saltHSP: { deltaD: number; deltaP: number; deltaH: number },
+  r0: number,
+  solvents: unknown[],
+): string | null {
+  return validateHSPR0Array(saltHSP, r0, solvents, '溶媒');
+}
+
+/** 溶媒代替設計入力バリデーション */
+export function validateSolventSubstitutionInput(
+  bannedHSP: { deltaD: number; deltaP: number; deltaH: number },
+  candidates: unknown[],
+): string | null {
+  const hspErr = validateHSPRange(bannedHSP.deltaD, bannedHSP.deltaP, bannedHSP.deltaH);
+  if (hspErr) return hspErr;
+  if (!Array.isArray(candidates) || candidates.length === 0) return '候補溶媒を1つ以上指定してください';
+  return null;
+}
+
+/** 化粧品エマルション安定性入力バリデーション */
+export function validateCosmeticEmulsionInput(params: unknown): string | null {
+  if (params == null || typeof params !== 'object') return 'パラメータオブジェクトが必要です';
+  const p = params as Record<string, unknown>;
+  const oilErr = validateHSPObject(p.oilHSP, '油相');
+  if (oilErr) return `油相HSP: ${oilErr}`;
+  const emulsifierErr = validateHSPObject(p.emulsifierHSP, '乳化剤');
+  if (emulsifierErr) return `乳化剤HSP: ${emulsifierErr}`;
+  const waterErr = validateHSPObject(p.waterHSP, '水相');
+  if (waterErr) return `水相HSP: ${waterErr}`;
+  return null;
+}

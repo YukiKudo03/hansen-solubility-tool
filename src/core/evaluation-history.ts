@@ -21,6 +21,7 @@ export const VALID_HISTORY_PIPELINES = [
   'soilRemediation', 'residualSolvent',
   'temperatureHspCorrection', 'pressureHspCorrection', 'supercriticalCO2',
   'coatingDefect', 'photoresistDeveloper', 'perovskiteSolvent', 'organicSemiconductorFilm', 'uvCurableInk',
+  'multicomponentOptimization', 'liBatteryElectrolyte', 'solventSubstitution', 'cosmeticEmulsion',
 ] as const;
 
 export type HistoryPipeline = typeof VALID_HISTORY_PIPELINES[number];

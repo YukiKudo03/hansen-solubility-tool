@@ -701,7 +701,9 @@ export type BookmarkPipeline =
   | 'cleaningFormulation' | 'naturalDyeExtraction' | 'essentialOilExtraction'
   | 'soilRemediation' | 'residualSolvent'
   | 'temperatureHspCorrection' | 'pressureHspCorrection' | 'supercriticalCO2'
-  | 'coatingDefect' | 'photoresistDeveloper' | 'perovskiteSolvent' | 'organicSemiconductorFilm' | 'uvCurableInk';
+  | 'coatingDefect' | 'photoresistDeveloper' | 'perovskiteSolvent' | 'organicSemiconductorFilm' | 'uvCurableInk'
+  | 'crystallineDissolution' | 'hydrogelSwelling' | 'rubberCompounding' | 'thermosetCuring' | 'fiberDyeability'
+  | 'multicomponentOptimization' | 'liBatteryElectrolyte' | 'solventSubstitution' | 'cosmeticEmulsion';
 
 /** ブックマークのパラメータ（パイプラインごとに異なるが共通型で扱う） */
 export type BookmarkParams = Record<string, unknown>;

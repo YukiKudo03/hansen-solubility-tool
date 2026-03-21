@@ -439,6 +439,33 @@ export interface ElectronAPI {
   // UV硬化インクモノマー選定
   screenUVCurableInkMonomers(oligomerHSP: import('./core/types').HSPValues, r0: number, monomerIds: number[]): Promise<import('./core/uv-curable-ink-monomer').UVInkMonomerResult[]>;
 
+  // 結晶性ポリマー溶解温度
+  evaluateCrystallineDissolution(polymerHSP: import('./core/types').HSPValues, solventHSP: import('./core/types').HSPValues, params: import('./core/crystalline-polymer-dissolution').CrystallinePolymerParams): Promise<import('./core/crystalline-polymer-dissolution').CrystallinePolymerDissolutionResult>;
+
+  // ハイドロゲル膨潤平衡
+  evaluateHydrogelSwelling(gelHSP: import('./core/types').HSPValues, solventHSP: import('./core/types').HSPValues, crosslinkDensity: number, vs: number): Promise<import('./core/hydrogel-swelling-equilibrium').HydrogelSwellingResult>;
+
+  // ゴム配合設計
+  evaluateRubberCompounding(rubberHSP: import('./core/types').HSPValues, filler: import('./core/rubber-compounding-design').FillerInfo, crosslinkDensity: number, solventIds?: number[]): Promise<import('./core/rubber-compounding-design').RubberCompoundResult>;
+
+  // 熱硬化性樹脂硬化剤選定
+  evaluateThermosetCuring(resinHSP: import('./core/types').HSPValues, resinR0: number, agents?: import('./core/thermoset-curing-agent').CuringAgent[]): Promise<import('./core/thermoset-curing-agent').CuringAgentResult[]>;
+
+  // 繊維染色性予測
+  evaluateFiberDyeability(fiberHSP: import('./core/types').HSPValues, fiberR0: number, dyes?: import('./core/fiber-dyeability').Dye[]): Promise<import('./core/fiber-dyeability').DyeabilityResult[]>;
+
+  // 多成分溶媒最適化
+  optimizeMultiComponent(targetHSP: import('./core/types').HSPValues, solventIds: number[], numComponents: number): Promise<import('./core/multicomponent-optimizer').MultiComponentOptimizationResult>;
+
+  // LiB電解液設計
+  screenLiBatteryElectrolyte(saltHSP: import('./core/types').HSPValues, r0: number, solventIds: number[]): Promise<import('./core/li-ion-battery-electrolyte').ElectrolyteScreeningResult[]>;
+
+  // 溶媒代替設計
+  screenSolventSubstitution(bannedHSP: import('./core/types').HSPValues, solventIds: number[]): Promise<import('./core/solvent-substitution-design').SubstitutionDesignResult[]>;
+
+  // 化粧品エマルション安定性
+  evaluateCosmeticEmulsion(params: { oilHSP: import('./core/types').HSPValues; emulsifierHSP: import('./core/types').HSPValues; waterHSP: import('./core/types').HSPValues }): Promise<import('./core/cosmetic-emulsion-stability').EmulsionStabilityResult>;
+
   // 汎用 IPC invoke (可視化パイプライン等)
   invoke(channel: string, ...args: unknown[]): Promise<any>;
 }

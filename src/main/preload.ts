@@ -486,6 +486,42 @@ export const api = {
   screenUVCurableInkMonomers: (oligomerHSP: { deltaD: number; deltaP: number; deltaH: number }, r0: number, monomerIds: number[]) =>
     ipcRenderer.invoke('uvCurableInk:screen', oligomerHSP, r0, monomerIds),
 
+  // 結晶性ポリマー溶解温度
+  evaluateCrystallineDissolution: (polymerHSP: { deltaD: number; deltaP: number; deltaH: number }, solventHSP: { deltaD: number; deltaP: number; deltaH: number }, params: { tm0: number; deltaHu: number; vu: number; v1: number; phi1: number; temperature?: number }) =>
+    ipcRenderer.invoke('crystallineDissolution:evaluate', polymerHSP, solventHSP, params),
+
+  // ハイドロゲル膨潤平衡
+  evaluateHydrogelSwelling: (gelHSP: { deltaD: number; deltaP: number; deltaH: number }, solventHSP: { deltaD: number; deltaP: number; deltaH: number }, crosslinkDensity: number, vs: number) =>
+    ipcRenderer.invoke('hydrogelSwelling:evaluate', gelHSP, solventHSP, crosslinkDensity, vs),
+
+  // ゴム配合設計
+  evaluateRubberCompounding: (rubberHSP: { deltaD: number; deltaP: number; deltaH: number }, filler: { name: string; hsp: { deltaD: number; deltaP: number; deltaH: number } }, crosslinkDensity: number, solventIds?: number[]) =>
+    ipcRenderer.invoke('rubberCompounding:evaluate', rubberHSP, filler, crosslinkDensity, solventIds ?? []),
+
+  // 熱硬化性樹脂硬化剤選定
+  evaluateThermosetCuring: (resinHSP: { deltaD: number; deltaP: number; deltaH: number }, resinR0: number, agents?: { name: string; hsp: { deltaD: number; deltaP: number; deltaH: number } }[]) =>
+    ipcRenderer.invoke('thermosetCuring:screen', resinHSP, resinR0, agents ?? []),
+
+  // 繊維染色性予測
+  evaluateFiberDyeability: (fiberHSP: { deltaD: number; deltaP: number; deltaH: number }, fiberR0: number, dyes?: { name: string; hsp: { deltaD: number; deltaP: number; deltaH: number } }[]) =>
+    ipcRenderer.invoke('fiberDyeability:screen', fiberHSP, fiberR0, dyes ?? []),
+
+  // 多成分溶媒最適化
+  optimizeMultiComponent: (targetHSP: { deltaD: number; deltaP: number; deltaH: number }, solventIds: number[], numComponents: number) =>
+    ipcRenderer.invoke('multicomponentOptimization:optimize', targetHSP, solventIds, numComponents),
+
+  // LiB電解液設計
+  screenLiBatteryElectrolyte: (saltHSP: { deltaD: number; deltaP: number; deltaH: number }, r0: number, solventIds: number[]) =>
+    ipcRenderer.invoke('liBatteryElectrolyte:screen', saltHSP, r0, solventIds),
+
+  // 溶媒代替設計
+  screenSolventSubstitution: (bannedHSP: { deltaD: number; deltaP: number; deltaH: number }, solventIds: number[]) =>
+    ipcRenderer.invoke('solventSubstitution:screen', bannedHSP, solventIds),
+
+  // 化粧品エマルション安定性
+  evaluateCosmeticEmulsion: (params: { oilHSP: { deltaD: number; deltaP: number; deltaH: number }; emulsifierHSP: { deltaD: number; deltaP: number; deltaH: number }; waterHSP: { deltaD: number; deltaP: number; deltaH: number } }) =>
+    ipcRenderer.invoke('cosmeticEmulsion:evaluate', params),
+
   // 汎用 IPC invoke — 許可チャネルのみ通過
   invoke: (channel: string, ...args: unknown[]) => {
     const ALLOWED_CHANNELS = [

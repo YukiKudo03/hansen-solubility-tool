@@ -23,6 +23,8 @@ export type Tab =
   | 'soilRemediation' | 'residualSolvent'
   | 'temperatureHspCorrection' | 'pressureHspCorrection' | 'supercriticalCO2'
   | 'coatingDefect' | 'photoresistDeveloper' | 'perovskiteSolvent' | 'organicSemiconductorFilm' | 'uvCurableInk'
+  | 'crystallineDissolution' | 'hydrogelSwelling' | 'rubberCompounding' | 'thermosetCuring' | 'fiberDyeability'
+  | 'multicomponentOptimization' | 'liBatteryElectrolyte' | 'solventSubstitution' | 'cosmeticEmulsion'
   | 'settings';
 
 export interface NavItem {
@@ -66,6 +68,10 @@ export const NAV_CATEGORIES: NavCategory[] = [
       { id: 'residualSolvent', label: '残留溶媒' },
       { id: 'coatingDefect', label: 'コーティング欠陥' },
       { id: 'photoresistDeveloper', label: 'レジスト現像' },
+      { id: 'crystallineDissolution', label: '結晶溶解温度' },
+      { id: 'hydrogelSwelling', label: 'ハイドロゲル膨潤' },
+      { id: 'rubberCompounding', label: 'ゴム配合' },
+      { id: 'fiberDyeability', label: '繊維染色性' },
     ],
   },
   {
@@ -95,6 +101,7 @@ export const NAV_CATEGORIES: NavCategory[] = [
       { id: 'naturalDyeExtraction', label: '天然色素抽出' },
       { id: 'essentialOilExtraction', label: '精油抽出' },
       { id: 'soilRemediation', label: '土壌汚染抽出' },
+      { id: 'thermosetCuring', label: '硬化剤選定' },
     ],
   },
   {
@@ -113,6 +120,10 @@ export const NAV_CATEGORIES: NavCategory[] = [
       { id: 'perovskiteSolvent', label: 'ペロブスカイト溶媒' },
       { id: 'organicSemiconductorFilm', label: '有機半導体膜' },
       { id: 'uvCurableInk', label: 'UV硬化インク' },
+      { id: 'multicomponentOptimization', label: '多成分最適化' },
+      { id: 'liBatteryElectrolyte', label: 'LiB電解液' },
+      { id: 'solventSubstitution', label: '溶媒代替' },
+      { id: 'cosmeticEmulsion', label: 'エマルション安定性' },
     ],
   },
   {
