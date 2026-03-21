@@ -1037,3 +1037,90 @@ export function formatExcipientCompatibilityCsv(results: ExcipientResult[]): str
 
   return BOM + [headers.join(','), ...rows].join('\r\n') + '\r\n';
 }
+
+// ─── Work-of-Adhesion群 CSV ───────────────────────────
+
+import type { InkSubstrateAdhesionResult, MultilayerCoatingResult, PSAPeelStrengthResult, StructuralAdhesiveJointResult, SurfaceTreatmentResult } from './types';
+
+const ADHESION_STRENGTH_LABELS: Record<number, { label: string; description: string }> = {
+  1: { label: 'Excellent', description: '優秀な密着性' },
+  2: { label: 'Good', description: '良好な密着性' },
+  3: { label: 'Fair', description: '可能（境界付近）' },
+  4: { label: 'Poor', description: '不良' },
+};
+
+const PEEL_STRENGTH_LABELS: Record<number, { label: string; description: string }> = {
+  1: { label: 'Strong', description: '高剥離強度' },
+  2: { label: 'Medium', description: '中程度' },
+  3: { label: 'Weak', description: '低剥離強度' },
+  4: { label: 'Very Weak', description: '非常に低い' },
+};
+
+export function formatInkSubstrateAdhesionCsv(result: InkSubstrateAdhesionResult): string {
+  const BOM = '\uFEFF';
+  const headers = ['インク δD', 'インク δP', 'インク δH', '基材 δD', '基材 δP', '基材 δH', 'Wa(mJ/m²)', 'Ra', '密着レベル', '判定', '評価日時'];
+  const info = ADHESION_STRENGTH_LABELS[result.level];
+  const row = [
+    round3(result.inkHSP.deltaD), round3(result.inkHSP.deltaP), round3(result.inkHSP.deltaH),
+    round3(result.substrateHSP.deltaD), round3(result.substrateHSP.deltaP), round3(result.substrateHSP.deltaH),
+    round3(result.wa), round3(result.ra),
+    `Level ${result.level}`, escapeCsvField(`${info.label}（${info.description}）`),
+    result.evaluatedAt.toISOString(),
+  ].join(',');
+  return BOM + [headers.join(','), row].join('\r\n') + '\r\n';
+}
+
+export function formatMultilayerCoatingCsv(result: MultilayerCoatingResult): string {
+  const BOM = '\uFEFF';
+  const headers = ['層1', '層2', 'Wa(mJ/m²)', 'Ra', '密着レベル', '判定', '最弱界面'];
+  const rows = result.interfaces.map((r, i) => {
+    const info = ADHESION_STRENGTH_LABELS[r.level];
+    return [
+      escapeCsvField(r.layer1Name), escapeCsvField(r.layer2Name),
+      round3(r.wa), round3(r.ra),
+      `Level ${r.level}`, escapeCsvField(`${info.label}（${info.description}）`),
+      i === result.weakestIndex ? 'Yes' : '',
+    ].join(',');
+  });
+  return BOM + [headers.join(','), ...rows].join('\r\n') + '\r\n';
+}
+
+export function formatPSAPeelStrengthCsv(result: PSAPeelStrengthResult): string {
+  const BOM = '\uFEFF';
+  const headers = ['PSA δD', 'PSA δP', 'PSA δH', '被着体 δD', '被着体 δP', '被着体 δH', 'Wa(mJ/m²)', 'Ra', '推定剥離力(N/25mm)', '剥離レベル', '判定', '評価日時'];
+  const info = PEEL_STRENGTH_LABELS[result.peelLevel];
+  const row = [
+    round3(result.psaHSP.deltaD), round3(result.psaHSP.deltaP), round3(result.psaHSP.deltaH),
+    round3(result.adherendHSP.deltaD), round3(result.adherendHSP.deltaP), round3(result.adherendHSP.deltaH),
+    round3(result.wa), round3(result.ra), round3(result.estimatedPeelForce),
+    `Level ${result.peelLevel}`, escapeCsvField(`${info.label}（${info.description}）`),
+    result.evaluatedAt.toISOString(),
+  ].join(',');
+  return BOM + [headers.join(','), row].join('\r\n') + '\r\n';
+}
+
+export function formatStructuralAdhesiveJointCsv(result: StructuralAdhesiveJointResult): string {
+  const BOM = '\uFEFF';
+  const headers = ['接着剤 δD', '接着剤 δP', '接着剤 δH', '被着体1 δD', '被着体1 δP', '被着体1 δH', '被着体2 δD', '被着体2 δP', '被着体2 δH', 'Wa1(mJ/m²)', 'Wa2(mJ/m²)', 'Ra1', 'Ra2', 'ボトルネック', '評価日時'];
+  const row = [
+    round3(result.adhesiveHSP.deltaD), round3(result.adhesiveHSP.deltaP), round3(result.adhesiveHSP.deltaH),
+    round3(result.adherend1HSP.deltaD), round3(result.adherend1HSP.deltaP), round3(result.adherend1HSP.deltaH),
+    round3(result.adherend2HSP.deltaD), round3(result.adherend2HSP.deltaP), round3(result.adherend2HSP.deltaH),
+    round3(result.wa1), round3(result.wa2), round3(result.ra1), round3(result.ra2),
+    `被着体${result.bottleneckSide}`, result.evaluatedAt.toISOString(),
+  ].join(',');
+  return BOM + [headers.join(','), row].join('\r\n') + '\r\n';
+}
+
+export function formatSurfaceTreatmentCsv(result: SurfaceTreatmentResult): string {
+  const BOM = '\uFEFF';
+  const headers = ['処理前 δD', '処理前 δP', '処理前 δH', '処理後 δD', '処理後 δP', '処理後 δH', 'ターゲット δD', 'ターゲット δP', 'ターゲット δH', 'Wa(処理前)', 'Wa(処理後)', 'Ra(処理前)', 'Ra(処理後)', '改善率(%)', '評価日時'];
+  const row = [
+    round3(result.beforeHSP.deltaD), round3(result.beforeHSP.deltaP), round3(result.beforeHSP.deltaH),
+    round3(result.afterHSP.deltaD), round3(result.afterHSP.deltaP), round3(result.afterHSP.deltaH),
+    round3(result.targetHSP.deltaD), round3(result.targetHSP.deltaP), round3(result.targetHSP.deltaH),
+    round3(result.waBefore), round3(result.waAfter), round3(result.raBefore), round3(result.raAfter),
+    result.improvementRate.toFixed(1), result.evaluatedAt.toISOString(),
+  ].join(',');
+  return BOM + [headers.join(','), row].join('\r\n') + '\r\n';
+}

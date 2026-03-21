@@ -653,3 +653,94 @@ export function validateLiposomePermeabilityInput(params: unknown): string | nul
   }
   return null;
 }
+
+// ============================================================================
+// Work-of-Adhesion群パイプライン用の入力バリデーション
+// ============================================================================
+
+/** HSPオブジェクト型バリデーション（汎用） */
+function validateHSPObject(obj: unknown, label: string): string | null {
+  if (obj == null || typeof obj !== 'object') return `${label}HSPオブジェクトが必要です`;
+  const h = obj as Record<string, unknown>;
+  return validateHSPRange(h.deltaD as number, h.deltaP as number, h.deltaH as number);
+}
+
+/** インク-基材密着入力バリデーション */
+export function validateInkSubstrateAdhesionInput(params: unknown): string | null {
+  if (params == null || typeof params !== 'object') return 'パラメータオブジェクトが必要です';
+  const p = params as Record<string, unknown>;
+  const inkErr = validateHSPObject(p.inkHSP, 'インク');
+  if (inkErr) return `インクHSP: ${inkErr}`;
+  const subErr = validateHSPObject(p.substrateHSP, '基材');
+  if (subErr) return `基材HSP: ${subErr}`;
+  return null;
+}
+
+/** 多層コーティング密着入力バリデーション */
+export function validateMultilayerCoatingInput(params: unknown): string | null {
+  if (params == null || typeof params !== 'object') return 'パラメータオブジェクトが必要です';
+  const p = params as Record<string, unknown>;
+  if (!Array.isArray(p.layers)) return '層データは配列でなければなりません';
+  if (p.layers.length < 2) return '層を2つ以上追加してください';
+  for (let i = 0; i < p.layers.length; i++) {
+    const layer: unknown = (p.layers as unknown[])[i];
+    if (layer == null || typeof layer !== 'object') return `layers[${i}]: オブジェクトでなければなりません`;
+    const l = layer as Record<string, unknown>;
+    if (typeof l.name !== 'string' || l.name.trim().length === 0) return `layers[${i}]: 名前は非空文字列でなければなりません`;
+    const hspErr = validateHSPObject(l.hsp, `layers[${i}]`);
+    if (hspErr) return `layers[${i}]: ${hspErr}`;
+  }
+  return null;
+}
+
+/** PSA剥離強度入力バリデーション */
+export function validatePSAPeelStrengthInput(params: unknown): string | null {
+  if (params == null || typeof params !== 'object') return 'パラメータオブジェクトが必要です';
+  const p = params as Record<string, unknown>;
+  const psaErr = validateHSPObject(p.psaHSP, 'PSA');
+  if (psaErr) return `PSA HSP: ${psaErr}`;
+  const adhErr = validateHSPObject(p.adherendHSP, '被着体');
+  if (adhErr) return `被着体HSP: ${adhErr}`;
+  return null;
+}
+
+/** 構造接着設計入力バリデーション */
+export function validateStructuralAdhesiveJointInput(params: unknown): string | null {
+  if (params == null || typeof params !== 'object') return 'パラメータオブジェクトが必要です';
+  const p = params as Record<string, unknown>;
+  const glueErr = validateHSPObject(p.adhesiveHSP, '接着剤');
+  if (glueErr) return `接着剤HSP: ${glueErr}`;
+  const adh1Err = validateHSPObject(p.adherend1HSP, '被着体1');
+  if (adh1Err) return `被着体1 HSP: ${adh1Err}`;
+  const adh2Err = validateHSPObject(p.adherend2HSP, '被着体2');
+  if (adh2Err) return `被着体2 HSP: ${adh2Err}`;
+  return null;
+}
+
+/** 表面処理効果入力バリデーション */
+export function validateSurfaceTreatmentInput(params: unknown): string | null {
+  if (params == null || typeof params !== 'object') return 'パラメータオブジェクトが必要です';
+  const p = params as Record<string, unknown>;
+  const beforeErr = validateHSPObject(p.beforeHSP, '処理前');
+  if (beforeErr) return `処理前HSP: ${beforeErr}`;
+  const afterErr = validateHSPObject(p.afterHSP, '処理後');
+  if (afterErr) return `処理後HSP: ${afterErr}`;
+  const targetErr = validateHSPObject(p.targetHSP, 'ターゲット');
+  if (targetErr) return `ターゲットHSP: ${targetErr}`;
+  return null;
+}
+
+/** 密着強度閾値バリデーション */
+export function validateAdhesionStrengthThresholds(t: unknown): string | null {
+  if (t == null || typeof t !== 'object') return '閾値オブジェクトが必要です';
+  const obj = t as Record<string, unknown>;
+  for (const k of ['excellentMin', 'goodMin', 'fairMin'] as const) {
+    if (typeof obj[k] !== 'number' || !isFinite(obj[k] as number)) return `${k} は有限数値でなければなりません`;
+    if ((obj[k] as number) < 0) return `${k} は非負でなければなりません`;
+  }
+  const { excellentMin, goodMin, fairMin } = obj as unknown as { excellentMin: number; goodMin: number; fairMin: number };
+  if (!(excellentMin > goodMin && goodMin > fairMin)) {
+    return '閾値は excellentMin > goodMin > fairMin の順でなければなりません';
+  }
+  return null;
+}

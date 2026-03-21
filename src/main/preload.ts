@@ -312,6 +312,42 @@ export const api = {
     drugId: number; lipidHSP: { deltaD: number; deltaP: number; deltaH: number }; lipidR0: number;
   }) => ipcRenderer.invoke('liposomePermeability:screen', params),
 
+  // インク-基材密着
+  evaluateInkSubstrateAdhesion: (params: {
+    inkHSP: { deltaD: number; deltaP: number; deltaH: number };
+    substrateHSP: { deltaD: number; deltaP: number; deltaH: number };
+  }) => ipcRenderer.invoke('inkSubstrateAdhesion:evaluate', params),
+
+  // 多層コーティング密着
+  evaluateMultilayerCoatingAdhesion: (params: {
+    layers: Array<{ name: string; hsp: { deltaD: number; deltaP: number; deltaH: number } }>;
+  }) => ipcRenderer.invoke('multilayerCoatingAdhesion:evaluate', params),
+
+  // PSA剥離強度
+  evaluatePSAPeelStrength: (params: {
+    psaHSP: { deltaD: number; deltaP: number; deltaH: number };
+    adherendHSP: { deltaD: number; deltaP: number; deltaH: number };
+  }) => ipcRenderer.invoke('psaPeelStrength:evaluate', params),
+
+  // 構造接着設計
+  evaluateStructuralAdhesiveJoint: (params: {
+    adhesiveHSP: { deltaD: number; deltaP: number; deltaH: number };
+    adherend1HSP: { deltaD: number; deltaP: number; deltaH: number };
+    adherend2HSP: { deltaD: number; deltaP: number; deltaH: number };
+  }) => ipcRenderer.invoke('structuralAdhesiveJoint:evaluate', params),
+
+  // 表面処理効果
+  evaluateSurfaceTreatmentQuantification: (params: {
+    beforeHSP: { deltaD: number; deltaP: number; deltaH: number };
+    afterHSP: { deltaD: number; deltaP: number; deltaH: number };
+    targetHSP: { deltaD: number; deltaP: number; deltaH: number };
+  }) => ipcRenderer.invoke('surfaceTreatmentQuantification:evaluate', params),
+
+  // 密着強度閾値
+  getAdhesionStrengthThresholds: () => ipcRenderer.invoke('settings:getAdhesionStrengthThresholds'),
+  setAdhesionStrengthThresholds: (thresholds: { excellentMin: number; goodMin: number; fairMin: number }) =>
+    ipcRenderer.invoke('settings:setAdhesionStrengthThresholds', thresholds),
+
   // 汎用 IPC invoke — 許可チャネルのみ通過
   invoke: (channel: string, ...args: unknown[]) => {
     const ALLOWED_CHANNELS = [

@@ -38,6 +38,11 @@ import FoodPackagingMigrationView from './components/FoodPackagingMigrationView'
 import FragranceEncapsulationView from './components/FragranceEncapsulationView';
 import TransdermalEnhancerView from './components/TransdermalEnhancerView';
 import LiposomePermeabilityView from './components/LiposomePermeabilityView';
+import InkSubstrateAdhesionView from './components/InkSubstrateAdhesionView';
+import MultilayerCoatingAdhesionView from './components/MultilayerCoatingAdhesionView';
+import PSAPeelStrengthView from './components/PSAPeelStrengthView';
+import StructuralAdhesiveJointView from './components/StructuralAdhesiveJointView';
+import SurfaceTreatmentQuantificationView from './components/SurfaceTreatmentQuantificationView';
 
 const VIEW_MAP: Record<Tab, React.ComponentType> = {
   report: ReportView,
@@ -70,6 +75,11 @@ const VIEW_MAP: Record<Tab, React.ComponentType> = {
   fragranceEncapsulation: FragranceEncapsulationView,
   transdermalEnhancer: TransdermalEnhancerView,
   liposomePermeability: LiposomePermeabilityView,
+  inkSubstrateAdhesion: InkSubstrateAdhesionView,
+  multilayerCoatingAdhesion: MultilayerCoatingAdhesionView,
+  psaPeelStrength: PSAPeelStrengthView,
+  structuralAdhesiveJoint: StructuralAdhesiveJointView,
+  surfaceTreatmentQuantification: SurfaceTreatmentQuantificationView,
   settings: SettingsView,
 };
 

@@ -263,6 +263,41 @@ export interface ElectronAPI {
     drugId: number; lipidHSP: import('./core/types').HSPValues; lipidR0: number;
   }): Promise<import('./core/liposome-permeability').DrugPermeabilityResult[]>;
 
+  // インク-基材密着
+  evaluateInkSubstrateAdhesion(params: {
+    inkHSP: import('./core/types').HSPValues;
+    substrateHSP: import('./core/types').HSPValues;
+  }): Promise<import('./core/types').InkSubstrateAdhesionResult>;
+
+  // 多層コーティング密着
+  evaluateMultilayerCoatingAdhesion(params: {
+    layers: Array<{ name: string; hsp: import('./core/types').HSPValues }>;
+  }): Promise<import('./core/types').MultilayerCoatingResult>;
+
+  // PSA剥離強度
+  evaluatePSAPeelStrength(params: {
+    psaHSP: import('./core/types').HSPValues;
+    adherendHSP: import('./core/types').HSPValues;
+  }): Promise<import('./core/types').PSAPeelStrengthResult>;
+
+  // 構造接着設計
+  evaluateStructuralAdhesiveJoint(params: {
+    adhesiveHSP: import('./core/types').HSPValues;
+    adherend1HSP: import('./core/types').HSPValues;
+    adherend2HSP: import('./core/types').HSPValues;
+  }): Promise<import('./core/types').StructuralAdhesiveJointResult>;
+
+  // 表面処理効果
+  evaluateSurfaceTreatmentQuantification(params: {
+    beforeHSP: import('./core/types').HSPValues;
+    afterHSP: import('./core/types').HSPValues;
+    targetHSP: import('./core/types').HSPValues;
+  }): Promise<import('./core/types').SurfaceTreatmentResult>;
+
+  // 密着強度閾値
+  getAdhesionStrengthThresholds(): Promise<import('./core/types').AdhesionStrengthThresholds>;
+  setAdhesionStrengthThresholds(thresholds: import('./core/types').AdhesionStrengthThresholds): Promise<void>;
+
   // 汎用 IPC invoke (可視化パイプライン等)
   invoke(channel: string, ...args: unknown[]): Promise<any>;
 }

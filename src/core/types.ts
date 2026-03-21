@@ -578,6 +578,107 @@ export interface SolventForDispersantEvaluationResult {
   thresholdsUsed: DispersantAffinityThresholds;
 }
 
+// ─── 接着仕事(Work of Adhesion)群 ───────────────────────────
+
+/** 密着強度レベル (1=最良, 4=不良) — Wa大=密着良好 */
+export enum AdhesionStrengthLevel {
+  Excellent = 1, // 優秀な密着性
+  Good = 2,      // 良好
+  Fair = 3,      // 可能（境界付近）
+  Poor = 4,      // 不良
+}
+
+/** 密着強度閾値設定 (Wa値ベース mJ/m²) — Wa大=良好 */
+export interface AdhesionStrengthThresholds {
+  excellentMin: number; // default: 80  — Wa >= 80 で Excellent
+  goodMin: number;      // default: 60  — Wa >= 60 で Good
+  fairMin: number;      // default: 40  — Wa >= 40 で Fair
+  // Wa < fairMin → Poor
+}
+
+/** インク-基材密着結果 */
+export interface InkSubstrateAdhesionResult {
+  inkHSP: HSPValues;
+  substrateHSP: HSPValues;
+  wa: number;          // 接着仕事 [mJ/m²]
+  ra: number;          // HSP距離
+  level: AdhesionStrengthLevel;
+  evaluatedAt: Date;
+}
+
+/** 多層コーティング層 */
+export interface CoatingLayer {
+  name: string;
+  hsp: HSPValues;
+}
+
+/** 多層コーティング界面結果 */
+export interface InterfaceAdhesionResult {
+  layer1Name: string;
+  layer2Name: string;
+  layer1HSP: HSPValues;
+  layer2HSP: HSPValues;
+  wa: number;
+  ra: number;
+  level: AdhesionStrengthLevel;
+}
+
+/** 多層コーティング密着評価結果 */
+export interface MultilayerCoatingResult {
+  interfaces: InterfaceAdhesionResult[];
+  weakestIndex: number;     // 最弱界面のindex
+  evaluatedAt: Date;
+}
+
+/** PSA剥離強度レベル */
+export enum PeelStrengthLevel {
+  Strong = 1,   // 高剥離強度
+  Medium = 2,   // 中程度
+  Weak = 3,     // 低剥離強度
+  VeryWeak = 4, // 非常に低い
+}
+
+/** PSA剥離強度結果 */
+export interface PSAPeelStrengthResult {
+  psaHSP: HSPValues;
+  adherendHSP: HSPValues;
+  wa: number;
+  ra: number;
+  estimatedPeelForce: number; // 推定剥離力 [N/25mm]
+  peelLevel: PeelStrengthLevel;
+  evaluatedAt: Date;
+}
+
+/** 構造接着設計結果 */
+export interface StructuralAdhesiveJointResult {
+  adhesiveHSP: HSPValues;
+  adherend1HSP: HSPValues;
+  adherend2HSP: HSPValues;
+  wa1: number;  // 接着剤-被着体1間 Wa
+  wa2: number;  // 接着剤-被着体2間 Wa
+  ra1: number;
+  ra2: number;
+  level1: AdhesionStrengthLevel;
+  level2: AdhesionStrengthLevel;
+  bottleneckSide: 1 | 2; // Waが小さい側
+  evaluatedAt: Date;
+}
+
+/** 表面処理効果定量結果 */
+export interface SurfaceTreatmentResult {
+  beforeHSP: HSPValues;
+  afterHSP: HSPValues;
+  targetHSP: HSPValues;
+  waBefore: number;
+  waAfter: number;
+  raBefore: number;
+  raAfter: number;
+  improvementRate: number;  // (waAfter - waBefore) / waBefore * 100 [%]
+  levelBefore: AdhesionStrengthLevel;
+  levelAfter: AdhesionStrengthLevel;
+  evaluatedAt: Date;
+}
+
 // ─── ブックマーク系 ─────────────────────────────────
 
 /** ブックマーク対象パイプライン */
@@ -591,7 +692,9 @@ export type BookmarkPipeline =
   | 'polymerBlendMiscibility' | 'polymerRecyclingCompatibility'
   | 'compatibilizerSelection' | 'copolymerHspEstimation'
   | 'additiveMigration' | 'flavorScalping' | 'foodPackagingMigration'
-  | 'fragranceEncapsulation' | 'transdermalEnhancer' | 'liposomePermeability';
+  | 'fragranceEncapsulation' | 'transdermalEnhancer' | 'liposomePermeability'
+  | 'inkSubstrateAdhesion' | 'multilayerCoatingAdhesion' | 'psaPeelStrength'
+  | 'structuralAdhesiveJoint' | 'surfaceTreatmentQuantification';
 
 /** ブックマークのパラメータ（パイプラインごとに異なるが共通型で扱う） */
 export type BookmarkParams = Record<string, unknown>;

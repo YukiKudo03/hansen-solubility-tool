@@ -14,6 +14,8 @@ export type Tab =
   | 'polymerBlendMiscibility' | 'polymerRecyclingCompatibility' | 'compatibilizerSelection' | 'copolymerHspEstimation'
   | 'additiveMigration' | 'flavorScalping' | 'foodPackagingMigration'
   | 'fragranceEncapsulation' | 'transdermalEnhancer' | 'liposomePermeability'
+  | 'inkSubstrateAdhesion' | 'multilayerCoatingAdhesion' | 'psaPeelStrength'
+  | 'structuralAdhesiveJoint' | 'surfaceTreatmentQuantification'
   | 'settings';
 
 export interface NavItem {
@@ -46,6 +48,10 @@ export const NAV_CATEGORIES: NavCategory[] = [
       { id: 'flavorScalping', label: 'フレーバースカルピング' },
       { id: 'foodPackagingMigration', label: '包装材溶出' },
       { id: 'liposomePermeability', label: 'リポソーム透過性' },
+      { id: 'inkSubstrateAdhesion', label: 'インク-基材密着' },
+      { id: 'multilayerCoatingAdhesion', label: '多層コーティング密着' },
+      { id: 'psaPeelStrength', label: '粘着テープ剥離強度' },
+      { id: 'structuralAdhesiveJoint', label: '構造接着設計' },
     ],
   },
   {
@@ -100,6 +106,7 @@ export const NAV_CATEGORIES: NavCategory[] = [
       { id: 'projection2d', label: '2D射影' },
       { id: 'groupContribution', label: '族寄与法' },
       { id: 'copolymerHspEstimation', label: 'コポリマーHSP推定' },
+      { id: 'surfaceTreatmentQuantification', label: '表面処理効果' },
     ],
   },
   {

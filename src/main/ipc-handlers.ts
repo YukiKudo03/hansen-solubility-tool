@@ -8,7 +8,7 @@ import { calculateRa, calculateRed } from '../core/hsp';
 import { classifyRisk } from '../core/risk';
 import { classifyDispersibility, DEFAULT_DISPERSIBILITY_THRESHOLDS } from '../core/dispersibility';
 import { screenSolvents, filterByConstraints } from '../core/solvent-finder';
-import { validatePartInput, validateSolventInput, validateName, validateThresholds, validateMixtureInput, validateNanoParticleInput, validateDispersibilityThresholds, validateWettabilityThresholds, validateBlendOptimizationInput, validateSwellingThresholds, validateDrugInput, validateDrugSolubilityThresholds, validateChemicalResistanceThresholds, validatePlasticizerThresholds, validateCarrierThresholds, validateAdhesionThresholds, validateSolventClassifications, validateGreenSolventInput, validateMultiObjectiveInput, validateGroupContributionInput, validateDispersantInput, validateDispersantThresholds, validateESCInput, validateCocrystalInput, validatePrinting3dInput, validateDielectricInput, validateExcipientInput, validatePolymerBlendInput, validateRecyclingInput, validateCompatibilizerInput, validateCopolymerInput, validateAdditiveMigrationInput, validateFlavorScalpingInput, validateFoodPackagingMigrationInput, validateFragranceEncapsulationInput, validateTransdermalEnhancerInput, validateLiposomePermeabilityInput } from '../core/validation';
+import { validatePartInput, validateSolventInput, validateName, validateThresholds, validateMixtureInput, validateNanoParticleInput, validateDispersibilityThresholds, validateWettabilityThresholds, validateBlendOptimizationInput, validateSwellingThresholds, validateDrugInput, validateDrugSolubilityThresholds, validateChemicalResistanceThresholds, validatePlasticizerThresholds, validateCarrierThresholds, validateAdhesionThresholds, validateSolventClassifications, validateGreenSolventInput, validateMultiObjectiveInput, validateGroupContributionInput, validateDispersantInput, validateDispersantThresholds, validateESCInput, validateCocrystalInput, validatePrinting3dInput, validateDielectricInput, validateExcipientInput, validatePolymerBlendInput, validateRecyclingInput, validateCompatibilizerInput, validateCopolymerInput, validateAdditiveMigrationInput, validateFlavorScalpingInput, validateFoodPackagingMigrationInput, validateFragranceEncapsulationInput, validateTransdermalEnhancerInput, validateLiposomePermeabilityInput, validateInkSubstrateAdhesionInput, validateMultilayerCoatingInput, validatePSAPeelStrengthInput, validateStructuralAdhesiveJointInput, validateSurfaceTreatmentInput, validateAdhesionStrengthThresholds } from '../core/validation';
 import { classifyChemicalResistance, DEFAULT_CHEMICAL_RESISTANCE_THRESHOLDS } from '../core/chemical-resistance';
 import { classifyPlasticizerCompatibility, DEFAULT_PLASTICIZER_THRESHOLDS, screenPlasticizers } from '../core/plasticizer';
 import { classifyCarrierCompatibility, DEFAULT_CARRIER_THRESHOLDS, screenCarriers } from '../core/carrier-selection';
@@ -52,7 +52,9 @@ import { screenTransdermalEnhancers, DEFAULT_TRANSDERMAL_THRESHOLDS } from '../c
 import type { TransdermalThresholds } from '../core/transdermal-enhancer';
 import { screenDrugPermeability, DEFAULT_PERMEABILITY_THRESHOLDS } from '../core/liposome-permeability';
 import type { PermeabilityThresholds } from '../core/liposome-permeability';
-import type { HSPValues } from '../core/types';
+import type { HSPValues, AdhesionStrengthLevel, AdhesionStrengthThresholds, PeelStrengthLevel } from '../core/types';
+import { AdhesionStrengthLevel as ASL, PeelStrengthLevel as PSL } from '../core/types';
+import { calculateWorkOfAdhesionFromHSP } from '../core/work-of-adhesion';
 
 /** CSVインポートの最大サイズ (10MB) */
 const MAX_CSV_SIZE = 10 * 1024 * 1024;
@@ -1188,5 +1190,173 @@ export function registerIpcHandlers(
       : { ...DEFAULT_PERMEABILITY_THRESHOLDS };
 
     return screenDrugPermeability(drugs, params.lipidHSP, params.lipidR0, thresholds);
+  });
+
+  // ─── Work-of-Adhesion群 ─────────────────────────────────
+
+  /** 密着強度閾値のデフォルト値 */
+  const DEFAULT_ADHESION_STRENGTH_THRESHOLDS: AdhesionStrengthThresholds = {
+    excellentMin: 80,
+    goodMin: 60,
+    fairMin: 40,
+  };
+
+  /** Wa値から密着強度レベルを分類 */
+  function classifyAdhesionStrength(wa: number, t: AdhesionStrengthThresholds): AdhesionStrengthLevel {
+    if (wa >= t.excellentMin) return ASL.Excellent;
+    if (wa >= t.goodMin) return ASL.Good;
+    if (wa >= t.fairMin) return ASL.Fair;
+    return ASL.Poor;
+  }
+
+  /** Wa値から剥離強度レベルを分類 */
+  function classifyPeelStrength(wa: number): PeelStrengthLevel {
+    // PSA特有: Wa→推定剥離力変換後にレベル分類
+    const peelForce = wa * 0.15; // 簡易変換: N/25mm ≈ Wa * 0.15
+    if (peelForce >= 15) return PSL.Strong;
+    if (peelForce >= 8) return PSL.Medium;
+    if (peelForce >= 3) return PSL.Weak;
+    return PSL.VeryWeak;
+  }
+
+  /** 閾値取得ヘルパー */
+  function getAdhesionStrengthThresholds(): AdhesionStrengthThresholds {
+    const json = settingsRepo.getSetting('adhesion_strength_thresholds');
+    return json
+      ? safeJsonParse(json, { ...DEFAULT_ADHESION_STRENGTH_THRESHOLDS })
+      : { ...DEFAULT_ADHESION_STRENGTH_THRESHOLDS };
+  }
+
+  // --- 密着強度閾値設定 ---
+  ipcMain.handle('settings:getAdhesionStrengthThresholds', () => getAdhesionStrengthThresholds());
+  ipcMain.handle('settings:setAdhesionStrengthThresholds', (_, thresholds) => {
+    const err = validateAdhesionStrengthThresholds(thresholds);
+    if (err) throw new Error(err);
+    settingsRepo.setSetting('adhesion_strength_thresholds', JSON.stringify(thresholds));
+  });
+
+  // --- インク-基材密着 ---
+  ipcMain.handle('inkSubstrateAdhesion:evaluate', (_, params: {
+    inkHSP: HSPValues; substrateHSP: HSPValues;
+  }) => {
+    const err = validateInkSubstrateAdhesionInput(params);
+    if (err) throw new Error(err);
+
+    const wa = calculateWorkOfAdhesionFromHSP(params.inkHSP, params.substrateHSP);
+    const ra = calculateRa(params.inkHSP, params.substrateHSP);
+    const thresholds = getAdhesionStrengthThresholds();
+    const level = classifyAdhesionStrength(wa, thresholds);
+
+    return {
+      inkHSP: params.inkHSP,
+      substrateHSP: params.substrateHSP,
+      wa, ra, level,
+      evaluatedAt: new Date(),
+    };
+  });
+
+  // --- 多層コーティング密着 ---
+  ipcMain.handle('multilayerCoatingAdhesion:evaluate', (_, params: {
+    layers: Array<{ name: string; hsp: HSPValues }>;
+  }) => {
+    const err = validateMultilayerCoatingInput(params);
+    if (err) throw new Error(err);
+
+    const thresholds = getAdhesionStrengthThresholds();
+    const interfaces: Array<{
+      layer1Name: string; layer2Name: string;
+      layer1HSP: HSPValues; layer2HSP: HSPValues;
+      wa: number; ra: number; level: AdhesionStrengthLevel;
+    }> = [];
+
+    let weakestIndex = 0;
+    let minWa = Infinity;
+
+    for (let i = 0; i < params.layers.length - 1; i++) {
+      const l1 = params.layers[i];
+      const l2 = params.layers[i + 1];
+      const wa = calculateWorkOfAdhesionFromHSP(l1.hsp, l2.hsp);
+      const ra = calculateRa(l1.hsp, l2.hsp);
+      const level = classifyAdhesionStrength(wa, thresholds);
+      interfaces.push({
+        layer1Name: l1.name, layer2Name: l2.name,
+        layer1HSP: l1.hsp, layer2HSP: l2.hsp,
+        wa, ra, level,
+      });
+      if (wa < minWa) {
+        minWa = wa;
+        weakestIndex = i;
+      }
+    }
+
+    return { interfaces, weakestIndex, evaluatedAt: new Date() };
+  });
+
+  // --- PSA剥離強度 ---
+  ipcMain.handle('psaPeelStrength:evaluate', (_, params: {
+    psaHSP: HSPValues; adherendHSP: HSPValues;
+  }) => {
+    const err = validatePSAPeelStrengthInput(params);
+    if (err) throw new Error(err);
+
+    const wa = calculateWorkOfAdhesionFromHSP(params.psaHSP, params.adherendHSP);
+    const ra = calculateRa(params.psaHSP, params.adherendHSP);
+    const estimatedPeelForce = wa * 0.15; // N/25mm
+    const peelLevel = classifyPeelStrength(wa);
+
+    return {
+      psaHSP: params.psaHSP, adherendHSP: params.adherendHSP,
+      wa, ra, estimatedPeelForce, peelLevel,
+      evaluatedAt: new Date(),
+    };
+  });
+
+  // --- 構造接着設計 ---
+  ipcMain.handle('structuralAdhesiveJoint:evaluate', (_, params: {
+    adhesiveHSP: HSPValues; adherend1HSP: HSPValues; adherend2HSP: HSPValues;
+  }) => {
+    const err = validateStructuralAdhesiveJointInput(params);
+    if (err) throw new Error(err);
+
+    const thresholds = getAdhesionStrengthThresholds();
+    const wa1 = calculateWorkOfAdhesionFromHSP(params.adhesiveHSP, params.adherend1HSP);
+    const wa2 = calculateWorkOfAdhesionFromHSP(params.adhesiveHSP, params.adherend2HSP);
+    const ra1 = calculateRa(params.adhesiveHSP, params.adherend1HSP);
+    const ra2 = calculateRa(params.adhesiveHSP, params.adherend2HSP);
+    const level1 = classifyAdhesionStrength(wa1, thresholds);
+    const level2 = classifyAdhesionStrength(wa2, thresholds);
+    const bottleneckSide: 1 | 2 = wa1 <= wa2 ? 1 : 2;
+
+    return {
+      adhesiveHSP: params.adhesiveHSP,
+      adherend1HSP: params.adherend1HSP,
+      adherend2HSP: params.adherend2HSP,
+      wa1, wa2, ra1, ra2, level1, level2, bottleneckSide,
+      evaluatedAt: new Date(),
+    };
+  });
+
+  // --- 表面処理効果 ---
+  ipcMain.handle('surfaceTreatmentQuantification:evaluate', (_, params: {
+    beforeHSP: HSPValues; afterHSP: HSPValues; targetHSP: HSPValues;
+  }) => {
+    const err = validateSurfaceTreatmentInput(params);
+    if (err) throw new Error(err);
+
+    const thresholds = getAdhesionStrengthThresholds();
+    const waBefore = calculateWorkOfAdhesionFromHSP(params.beforeHSP, params.targetHSP);
+    const waAfter = calculateWorkOfAdhesionFromHSP(params.afterHSP, params.targetHSP);
+    const raBefore = calculateRa(params.beforeHSP, params.targetHSP);
+    const raAfter = calculateRa(params.afterHSP, params.targetHSP);
+    const improvementRate = waBefore > 0 ? ((waAfter - waBefore) / waBefore) * 100 : 0;
+    const levelBefore = classifyAdhesionStrength(waBefore, thresholds);
+    const levelAfter = classifyAdhesionStrength(waAfter, thresholds);
+
+    return {
+      beforeHSP: params.beforeHSP, afterHSP: params.afterHSP, targetHSP: params.targetHSP,
+      waBefore, waAfter, raBefore, raAfter, improvementRate,
+      levelBefore, levelAfter,
+      evaluatedAt: new Date(),
+    };
   });
 }

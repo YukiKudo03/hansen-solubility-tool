@@ -12,6 +12,8 @@ export const VALID_HISTORY_PIPELINES = [
   'compatibilizerSelection', 'copolymerHspEstimation',
   'additiveMigration', 'flavorScalping', 'foodPackagingMigration',
   'fragranceEncapsulation', 'transdermalEnhancer', 'liposomePermeability',
+  'inkSubstrateAdhesion', 'multilayerCoatingAdhesion', 'psaPeelStrength',
+  'structuralAdhesiveJoint', 'surfaceTreatmentQuantification',
 ] as const;
 
 export type HistoryPipeline = typeof VALID_HISTORY_PIPELINES[number];

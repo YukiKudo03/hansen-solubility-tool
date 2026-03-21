@@ -162,6 +162,25 @@ export function createMockApi(): { [K in keyof ElectronAPI]: ReturnType<typeof v
     getDispersantThresholds: vi.fn().mockResolvedValue({ excellentMax: 0.5, goodMax: 0.8, fairMax: 1.0, poorMax: 1.5 }),
     setDispersantThresholds: vi.fn().mockResolvedValue(undefined),
 
+    // インク-基材密着
+    evaluateInkSubstrateAdhesion: vi.fn().mockResolvedValue(null),
+
+    // 多層コーティング密着
+    evaluateMultilayerCoatingAdhesion: vi.fn().mockResolvedValue(null),
+
+    // PSA剥離強度
+    evaluatePSAPeelStrength: vi.fn().mockResolvedValue(null),
+
+    // 構造接着設計
+    evaluateStructuralAdhesiveJoint: vi.fn().mockResolvedValue(null),
+
+    // 表面処理効果
+    evaluateSurfaceTreatmentQuantification: vi.fn().mockResolvedValue(null),
+
+    // 密着強度閾値
+    getAdhesionStrengthThresholds: vi.fn().mockResolvedValue({ excellentMin: 80, goodMin: 60, fairMin: 40 }),
+    setAdhesionStrengthThresholds: vi.fn().mockResolvedValue(undefined),
+
     // 汎用 IPC invoke
     invoke: vi.fn().mockResolvedValue(null),
   };
