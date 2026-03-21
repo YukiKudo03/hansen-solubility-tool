@@ -264,6 +264,28 @@ export const api = {
   evaluateExcipientCompatibility: (apiHSP: { deltaD: number; deltaP: number; deltaH: number }, r0: number, excipientIds: number[]) =>
     ipcRenderer.invoke('excipient:evaluate', apiHSP, r0, excipientIds),
 
+  // ポリマーブレンド相溶性
+  evaluatePolymerBlend: (params: {
+    groupId1: number; groupId2: number;
+    degreeOfPolymerization: number; referenceVolume: number;
+  }) => ipcRenderer.invoke('polymerBlend:evaluate', params),
+
+  // リサイクル相溶性
+  evaluatePolymerRecycling: (params: {
+    groupIds: number[];
+    degreeOfPolymerization: number; referenceVolume: number;
+  }) => ipcRenderer.invoke('polymerRecycling:evaluate', params),
+
+  // 相溶化剤選定
+  screenCompatibilizers: (params: {
+    groupId1: number; groupId2: number;
+  }) => ipcRenderer.invoke('compatibilizer:screen', params),
+
+  // コポリマーHSP推定
+  estimateCopolymerHsp: (params: {
+    monomers: Array<{ name: string; deltaD: number; deltaP: number; deltaH: number; fraction: number }>;
+  }) => ipcRenderer.invoke('copolymerHsp:estimate', params),
+
   // 汎用 IPC invoke — 許可チャネルのみ通過
   invoke: (channel: string, ...args: unknown[]) => {
     const ALLOWED_CHANNELS = [

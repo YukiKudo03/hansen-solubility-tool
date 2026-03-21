@@ -587,7 +587,9 @@ export type BookmarkPipeline =
   | 'blendOptimizer' | 'drugSolubility' | 'adhesion'
   | 'dispersantSelection'
   | 'escPipeline' | 'cocrystalScreening' | 'printing3dSmoothing'
-  | 'dielectricFilm' | 'excipientCompatibility';
+  | 'dielectricFilm' | 'excipientCompatibility'
+  | 'polymerBlendMiscibility' | 'polymerRecyclingCompatibility'
+  | 'compatibilizerSelection' | 'copolymerHspEstimation';
 
 /** ブックマークのパラメータ（パイプラインごとに異なるが共通型で扱う） */
 export type BookmarkParams = Record<string, unknown>;

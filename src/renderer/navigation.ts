@@ -11,6 +11,7 @@ export type Tab =
   | 'database' | 'mixture'
   | 'history' | 'comparison' | 'hspVisualization'
   | 'escPipeline' | 'cocrystalScreening' | 'printing3dSmoothing' | 'dielectricFilm' | 'excipientCompatibility'
+  | 'polymerBlendMiscibility' | 'polymerRecyclingCompatibility' | 'compatibilizerSelection' | 'copolymerHspEstimation'
   | 'settings';
 
 export interface NavItem {
@@ -37,6 +38,8 @@ export const NAV_CATEGORIES: NavCategory[] = [
       { id: 'chemicalResistance', label: '耐薬品性予測' },
       { id: 'adhesion', label: '接着性予測' },
       { id: 'escPipeline', label: '環境応力亀裂(ESC)' },
+      { id: 'polymerBlendMiscibility', label: 'ブレンド相溶性' },
+      { id: 'polymerRecyclingCompatibility', label: 'リサイクル相溶性' },
     ],
   },
   {
@@ -52,6 +55,7 @@ export const NAV_CATEGORIES: NavCategory[] = [
       { id: 'printing3dSmoothing', label: '3D印刷平滑化' },
       { id: 'dielectricFilm', label: '誘電体膜品質' },
       { id: 'excipientCompatibility', label: '賦形剤適合性' },
+      { id: 'compatibilizerSelection', label: '相溶化剤選定' },
     ],
   },
   {
@@ -87,6 +91,7 @@ export const NAV_CATEGORIES: NavCategory[] = [
       { id: 'bagleyPlot', label: 'Bagleyプロット' },
       { id: 'projection2d', label: '2D射影' },
       { id: 'groupContribution', label: '族寄与法' },
+      { id: 'copolymerHspEstimation', label: 'コポリマーHSP推定' },
     ],
   },
   {

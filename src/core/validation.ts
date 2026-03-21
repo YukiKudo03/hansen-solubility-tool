@@ -489,3 +489,86 @@ export function validateExcipientInput(
 ): string | null {
   return validateHSPR0Array(apiHSP, r0, excipients, '賦形剤');
 }
+
+// ============================================================================
+// Flory-Huggins群パイプライン用の入力バリデーション
+// ============================================================================
+
+/** ポリマーブレンド相溶性入力バリデーション */
+export function validatePolymerBlendInput(params: unknown): string | null {
+  if (params == null || typeof params !== 'object') return 'パラメータオブジェクトが必要です';
+  const p = params as Record<string, unknown>;
+  if (typeof p.groupId1 !== 'number' || !Number.isInteger(p.groupId1) || p.groupId1 <= 0) {
+    return 'ポリマー1のグループIDは正の整数でなければなりません';
+  }
+  if (typeof p.groupId2 !== 'number' || !Number.isInteger(p.groupId2) || p.groupId2 <= 0) {
+    return 'ポリマー2のグループIDは正の整数でなければなりません';
+  }
+  if (typeof p.degreeOfPolymerization !== 'number' || !Number.isFinite(p.degreeOfPolymerization) || p.degreeOfPolymerization <= 0) {
+    return '重合度は正の数値でなければなりません';
+  }
+  if (typeof p.referenceVolume !== 'number' || !Number.isFinite(p.referenceVolume) || p.referenceVolume <= 0) {
+    return '参照体積は正の数値でなければなりません';
+  }
+  return null;
+}
+
+/** リサイクル相溶性入力バリデーション */
+export function validateRecyclingInput(params: unknown): string | null {
+  if (params == null || typeof params !== 'object') return 'パラメータオブジェクトが必要です';
+  const p = params as Record<string, unknown>;
+  if (!Array.isArray(p.groupIds)) return 'groupIds は配列でなければなりません';
+  if (p.groupIds.length < 2) return 'ポリマーグループを2つ以上選択してください';
+  for (let i = 0; i < p.groupIds.length; i++) {
+    const id: unknown = (p.groupIds as unknown[])[i];
+    if (typeof id !== 'number' || !Number.isInteger(id) || id <= 0) {
+      return `groupIds[${i}] は正の整数でなければなりません`;
+    }
+  }
+  if (typeof p.degreeOfPolymerization !== 'number' || !Number.isFinite(p.degreeOfPolymerization) || p.degreeOfPolymerization <= 0) {
+    return '重合度は正の数値でなければなりません';
+  }
+  if (typeof p.referenceVolume !== 'number' || !Number.isFinite(p.referenceVolume) || p.referenceVolume <= 0) {
+    return '参照体積は正の数値でなければなりません';
+  }
+  return null;
+}
+
+/** 相溶化剤選定入力バリデーション */
+export function validateCompatibilizerInput(params: unknown): string | null {
+  if (params == null || typeof params !== 'object') return 'パラメータオブジェクトが必要です';
+  const p = params as Record<string, unknown>;
+  if (typeof p.groupId1 !== 'number' || !Number.isInteger(p.groupId1) || p.groupId1 <= 0) {
+    return 'ポリマー1のグループIDは正の整数でなければなりません';
+  }
+  if (typeof p.groupId2 !== 'number' || !Number.isInteger(p.groupId2) || p.groupId2 <= 0) {
+    return 'ポリマー2のグループIDは正の整数でなければなりません';
+  }
+  return null;
+}
+
+/** コポリマーHSP推定入力バリデーション */
+export function validateCopolymerInput(params: unknown): string | null {
+  if (params == null || typeof params !== 'object') return 'パラメータオブジェクトが必要です';
+  const p = params as Record<string, unknown>;
+  if (!Array.isArray(p.monomers)) return 'monomers は配列でなければなりません';
+  if (p.monomers.length < 2) return 'モノマーを2つ以上追加してください';
+  let totalFraction = 0;
+  for (let i = 0; i < p.monomers.length; i++) {
+    const m: unknown = (p.monomers as unknown[])[i];
+    if (m == null || typeof m !== 'object') return `monomers[${i}]: オブジェクトでなければなりません`;
+    const entry = m as Record<string, unknown>;
+    if (typeof entry.name !== 'string' || entry.name.trim().length === 0) return `monomers[${i}]: name は非空文字列でなければなりません`;
+    if (typeof entry.deltaD !== 'number' || !Number.isFinite(entry.deltaD) || entry.deltaD < 0) return `monomers[${i}]: δDは0以上の数値を入力してください`;
+    if (typeof entry.deltaP !== 'number' || !Number.isFinite(entry.deltaP) || entry.deltaP < 0) return `monomers[${i}]: δPは0以上の数値を入力してください`;
+    if (typeof entry.deltaH !== 'number' || !Number.isFinite(entry.deltaH) || entry.deltaH < 0) return `monomers[${i}]: δHは0以上の数値を入力してください`;
+    if (typeof entry.fraction !== 'number' || !Number.isFinite(entry.fraction) || entry.fraction <= 0 || entry.fraction > 1) {
+      return `monomers[${i}]: 分率は0より大きく1以下の数値でなければなりません`;
+    }
+    totalFraction += entry.fraction as number;
+  }
+  if (Math.abs(totalFraction - 1.0) > 0.01) {
+    return 'モノマー分率の合計は1.0でなければなりません（許容誤差: ±0.01）';
+  }
+  return null;
+}

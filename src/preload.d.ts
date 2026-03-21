@@ -192,6 +192,55 @@ export interface ElectronAPI {
   // 賦形剤適合性
   evaluateExcipientCompatibility(apiHSP: import('./core/types').HSPValues, r0: number, excipientIds: number[]): Promise<import('./core/excipient-compatibility').ExcipientResult[]>;
 
+  // ポリマーブレンド相溶性
+  evaluatePolymerBlend(params: {
+    groupId1: number; groupId2: number;
+    degreeOfPolymerization: number; referenceVolume: number;
+  }): Promise<{
+    group1Name: string; group2Name: string;
+    results: Array<{
+      polymer1Name: string; polymer2Name: string;
+      polymer1HSP: import('./core/types').HSPValues; polymer2HSP: import('./core/types').HSPValues;
+      ra: number; chiParameter: number; miscibility: string;
+    }>;
+    evaluatedAt: Date;
+  }>;
+
+  // リサイクル相溶性
+  evaluatePolymerRecycling(params: {
+    groupIds: number[];
+    degreeOfPolymerization: number; referenceVolume: number;
+  }): Promise<{
+    groupNames: string[];
+    matrix: Array<{
+      polymer1Name: string; polymer2Name: string;
+      ra: number; chiParameter: number; miscibility: string;
+    }>;
+    evaluatedAt: Date;
+  }>;
+
+  // 相溶化剤選定
+  screenCompatibilizers(params: {
+    groupId1: number; groupId2: number;
+  }): Promise<{
+    polymer1Name: string; polymer2Name: string;
+    results: Array<{
+      compatibilizerName: string; solventId: number;
+      raToPolymer1: number; raToPolymer2: number;
+      overallScore: number; compatibility: string;
+    }>;
+    evaluatedAt: Date;
+  }>;
+
+  // コポリマーHSP推定
+  estimateCopolymerHsp(params: {
+    monomers: Array<{ name: string; deltaD: number; deltaP: number; deltaH: number; fraction: number }>;
+  }): Promise<{
+    monomers: Array<{ name: string; deltaD: number; deltaP: number; deltaH: number; fraction: number }>;
+    estimatedHSP: import('./core/types').HSPValues;
+    evaluatedAt: Date;
+  }>;
+
   // 汎用 IPC invoke (可視化パイプライン等)
   invoke(channel: string, ...args: unknown[]): Promise<any>;
 }

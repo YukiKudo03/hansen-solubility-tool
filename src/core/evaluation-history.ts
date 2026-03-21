@@ -8,6 +8,8 @@ export const VALID_HISTORY_PIPELINES = [
   'blendOptimizer', 'drugSolubility', 'dispersantSelection',
   'escPipeline', 'cocrystalScreening', 'printing3dSmoothing',
   'dielectricFilm', 'excipientCompatibility',
+  'polymerBlendMiscibility', 'polymerRecyclingCompatibility',
+  'compatibilizerSelection', 'copolymerHspEstimation',
 ] as const;
 
 export type HistoryPipeline = typeof VALID_HISTORY_PIPELINES[number];

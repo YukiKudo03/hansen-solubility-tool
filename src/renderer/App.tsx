@@ -28,6 +28,10 @@ import CocrystalScreeningView from './components/CocrystalScreeningView';
 import Printing3dSmoothingView from './components/Printing3dSmoothingView';
 import DielectricFilmView from './components/DielectricFilmView';
 import ExcipientCompatibilityView from './components/ExcipientCompatibilityView';
+import PolymerBlendMiscibilityView from './components/PolymerBlendMiscibilityView';
+import PolymerRecyclingCompatibilityView from './components/PolymerRecyclingCompatibilityView';
+import CompatibilizerSelectionView from './components/CompatibilizerSelectionView';
+import CopolymerHspEstimationView from './components/CopolymerHspEstimationView';
 
 const VIEW_MAP: Record<Tab, React.ComponentType> = {
   report: ReportView,
@@ -50,6 +54,10 @@ const VIEW_MAP: Record<Tab, React.ComponentType> = {
   printing3dSmoothing: Printing3dSmoothingView,
   dielectricFilm: DielectricFilmView,
   excipientCompatibility: ExcipientCompatibilityView,
+  polymerBlendMiscibility: PolymerBlendMiscibilityView,
+  polymerRecyclingCompatibility: PolymerRecyclingCompatibilityView,
+  compatibilizerSelection: CompatibilizerSelectionView,
+  copolymerHspEstimation: CopolymerHspEstimationView,
   settings: SettingsView,
 };
 

@@ -8,7 +8,7 @@ import { calculateRa, calculateRed } from '../core/hsp';
 import { classifyRisk } from '../core/risk';
 import { classifyDispersibility, DEFAULT_DISPERSIBILITY_THRESHOLDS } from '../core/dispersibility';
 import { screenSolvents, filterByConstraints } from '../core/solvent-finder';
-import { validatePartInput, validateSolventInput, validateName, validateThresholds, validateMixtureInput, validateNanoParticleInput, validateDispersibilityThresholds, validateWettabilityThresholds, validateBlendOptimizationInput, validateSwellingThresholds, validateDrugInput, validateDrugSolubilityThresholds, validateChemicalResistanceThresholds, validatePlasticizerThresholds, validateCarrierThresholds, validateAdhesionThresholds, validateSolventClassifications, validateGreenSolventInput, validateMultiObjectiveInput, validateGroupContributionInput, validateDispersantInput, validateDispersantThresholds, validateESCInput, validateCocrystalInput, validatePrinting3dInput, validateDielectricInput, validateExcipientInput } from '../core/validation';
+import { validatePartInput, validateSolventInput, validateName, validateThresholds, validateMixtureInput, validateNanoParticleInput, validateDispersibilityThresholds, validateWettabilityThresholds, validateBlendOptimizationInput, validateSwellingThresholds, validateDrugInput, validateDrugSolubilityThresholds, validateChemicalResistanceThresholds, validatePlasticizerThresholds, validateCarrierThresholds, validateAdhesionThresholds, validateSolventClassifications, validateGreenSolventInput, validateMultiObjectiveInput, validateGroupContributionInput, validateDispersantInput, validateDispersantThresholds, validateESCInput, validateCocrystalInput, validatePrinting3dInput, validateDielectricInput, validateExcipientInput, validatePolymerBlendInput, validateRecyclingInput, validateCompatibilizerInput, validateCopolymerInput } from '../core/validation';
 import { classifyChemicalResistance, DEFAULT_CHEMICAL_RESISTANCE_THRESHOLDS } from '../core/chemical-resistance';
 import { classifyPlasticizerCompatibility, DEFAULT_PLASTICIZER_THRESHOLDS, screenPlasticizers } from '../core/plasticizer';
 import { classifyCarrierCompatibility, DEFAULT_CARRIER_THRESHOLDS, screenCarriers } from '../core/carrier-selection';
@@ -910,5 +910,155 @@ export function registerIpcHandlers(
     const err = validateExcipientInput(apiHSP, r0, excipients);
     if (err) throw new Error(err);
     return evaluateExcipientCompatibility(apiHSP, r0, excipients);
+  });
+
+  // --- ポリマーブレンド相溶性 ---
+  ipcMain.handle('polymerBlend:evaluate', (_, params: {
+    groupId1: number; groupId2: number;
+    degreeOfPolymerization: number; referenceVolume: number;
+  }) => {
+    const err = validatePolymerBlendInput(params);
+    if (err) throw new Error(err);
+
+    const group1 = partsRepo.getGroupById(params.groupId1);
+    if (!group1) throw new Error(`部品グループ (ID: ${params.groupId1}) が見つかりません`);
+    const group2 = partsRepo.getGroupById(params.groupId2);
+    if (!group2) throw new Error(`部品グループ (ID: ${params.groupId2}) が見つかりません`);
+
+    // Pairwise Flory-Huggins χ calculation using Ra
+    const results: Array<{
+      polymer1Name: string; polymer2Name: string;
+      polymer1HSP: HSPValues; polymer2HSP: HSPValues;
+      ra: number; chiParameter: number; miscibility: string;
+    }> = [];
+
+    for (const p1 of group1.parts) {
+      for (const p2 of group2.parts) {
+        const ra = calculateRa(p1.hsp, p2.hsp);
+        // χ = (Vref / RT) * (Ra / 2)^2 simplified: χ ∝ Vref * Ra^2 / (R * T)
+        // Using Vref in cm³/mol, R = 8.314 J/(mol·K), T = 298.15 K
+        const chiParameter = (params.referenceVolume * ra * ra) / (4 * 8.314 * 298.15);
+        const chiCritical = 0.5 * (1 / Math.sqrt(params.degreeOfPolymerization) + 1 / Math.sqrt(params.degreeOfPolymerization));
+        let miscibility: string;
+        if (chiParameter < chiCritical) miscibility = 'miscible';
+        else if (chiParameter < chiCritical * 2) miscibility = 'partial';
+        else miscibility = 'immiscible';
+        results.push({
+          polymer1Name: p1.name, polymer2Name: p2.name,
+          polymer1HSP: p1.hsp, polymer2HSP: p2.hsp,
+          ra, chiParameter, miscibility,
+        });
+      }
+    }
+
+    return { group1Name: group1.name, group2Name: group2.name, results, evaluatedAt: new Date() };
+  });
+
+  // --- リサイクル相溶性 ---
+  ipcMain.handle('polymerRecycling:evaluate', (_, params: {
+    groupIds: number[];
+    degreeOfPolymerization: number; referenceVolume: number;
+  }) => {
+    const err = validateRecyclingInput(params);
+    if (err) throw new Error(err);
+
+    const groups = params.groupIds.map((id) => {
+      const g = partsRepo.getGroupById(id);
+      if (!g) throw new Error(`部品グループ (ID: ${id}) が見つかりません`);
+      return g;
+    });
+
+    // N×N matrix (representative part per group = first part)
+    const matrix: Array<{
+      polymer1Name: string; polymer2Name: string;
+      ra: number; chiParameter: number; miscibility: string;
+    }> = [];
+
+    for (let i = 0; i < groups.length; i++) {
+      for (let j = i + 1; j < groups.length; j++) {
+        const p1 = groups[i].parts[0];
+        const p2 = groups[j].parts[0];
+        if (!p1 || !p2) continue;
+        const ra = calculateRa(p1.hsp, p2.hsp);
+        const chiParameter = (params.referenceVolume * ra * ra) / (4 * 8.314 * 298.15);
+        const chiCritical = 0.5 * (1 / Math.sqrt(params.degreeOfPolymerization) + 1 / Math.sqrt(params.degreeOfPolymerization));
+        let miscibility: string;
+        if (chiParameter < chiCritical) miscibility = 'miscible';
+        else if (chiParameter < chiCritical * 2) miscibility = 'partial';
+        else miscibility = 'immiscible';
+        matrix.push({
+          polymer1Name: groups[i].name, polymer2Name: groups[j].name,
+          ra, chiParameter, miscibility,
+        });
+      }
+    }
+
+    return { groupNames: groups.map((g) => g.name), matrix, evaluatedAt: new Date() };
+  });
+
+  // --- 相溶化剤選定 ---
+  ipcMain.handle('compatibilizer:screen', (_, params: {
+    groupId1: number; groupId2: number;
+  }) => {
+    const err = validateCompatibilizerInput(params);
+    if (err) throw new Error(err);
+
+    const group1 = partsRepo.getGroupById(params.groupId1);
+    if (!group1) throw new Error(`部品グループ (ID: ${params.groupId1}) が見つかりません`);
+    const group2 = partsRepo.getGroupById(params.groupId2);
+    if (!group2) throw new Error(`部品グループ (ID: ${params.groupId2}) が見つかりません`);
+
+    // Representative parts
+    const p1 = group1.parts[0];
+    const p2 = group2.parts[0];
+    if (!p1) throw new Error(`グループ ${group1.name} に部品がありません`);
+    if (!p2) throw new Error(`グループ ${group2.name} に部品がありません`);
+
+    // Screen all solvents as potential compatibilizers
+    const solvents = solventRepo.getAllSolvents();
+    const results = solvents.map((s) => {
+      const raToP1 = calculateRa(s.hsp, p1.hsp);
+      const raToP2 = calculateRa(s.hsp, p2.hsp);
+      const overallScore = Math.sqrt(raToP1 * raToP2); // geometric mean
+      let compatibility: string;
+      if (overallScore < 3) compatibility = 'Excellent';
+      else if (overallScore < 5) compatibility = 'Good';
+      else if (overallScore < 8) compatibility = 'Fair';
+      else compatibility = 'Poor';
+      return {
+        compatibilizerName: s.name, solventId: s.id,
+        raToPolymer1: raToP1, raToPolymer2: raToP2,
+        overallScore, compatibility,
+      };
+    });
+
+    results.sort((a, b) => a.overallScore - b.overallScore);
+
+    return {
+      polymer1Name: group1.name, polymer2Name: group2.name,
+      results, evaluatedAt: new Date(),
+    };
+  });
+
+  // --- コポリマーHSP推定 ---
+  ipcMain.handle('copolymerHsp:estimate', (_, params: {
+    monomers: Array<{ name: string; deltaD: number; deltaP: number; deltaH: number; fraction: number }>;
+  }) => {
+    const err = validateCopolymerInput(params);
+    if (err) throw new Error(err);
+
+    // Linear mixing rule: δ_copolymer = Σ(φ_i × δ_i)
+    let deltaD = 0, deltaP = 0, deltaH = 0;
+    for (const m of params.monomers) {
+      deltaD += m.fraction * m.deltaD;
+      deltaP += m.fraction * m.deltaP;
+      deltaH += m.fraction * m.deltaH;
+    }
+
+    return {
+      monomers: params.monomers,
+      estimatedHSP: { deltaD, deltaP, deltaH },
+      evaluatedAt: new Date(),
+    };
   });
 }

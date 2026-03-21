@@ -722,6 +722,119 @@ export function formatDielectricFilmCsv(results: DielectricScreeningResult[]): s
  * 賦形剤適合性評価結果をCSV文字列に変換する
  * @returns BOM付きUTF-8 CSV文字列
  */
+// ─── ブレンド相溶性ラベル ───────────────────────────
+const MISCIBILITY_LABELS: Record<string, { label: string; description: string }> = {
+  miscible: { label: 'Miscible', description: '相溶' },
+  partial: { label: 'Partial', description: '部分相溶' },
+  immiscible: { label: 'Immiscible', description: '非相溶' },
+};
+
+/**
+ * ポリマーブレンド相溶性評価結果をCSV文字列に変換する
+ * @returns BOM付きUTF-8 CSV文字列
+ */
+export function formatPolymerBlendCsv(results: Array<{
+  polymer1Name: string; polymer2Name: string;
+  polymer1HSP: { deltaD: number; deltaP: number; deltaH: number };
+  polymer2HSP: { deltaD: number; deltaP: number; deltaH: number };
+  ra: number; chiParameter: number; miscibility: string;
+}>): string {
+  const BOM = '\uFEFF';
+  const headers = [
+    'ポリマー1', 'ポリマー1 δD', 'ポリマー1 δP', 'ポリマー1 δH',
+    'ポリマー2', 'ポリマー2 δD', 'ポリマー2 δP', 'ポリマー2 δH',
+    'Ra', 'χパラメータ', '相溶性判定',
+  ];
+
+  const rows = results.map((r) => {
+    const info = MISCIBILITY_LABELS[r.miscibility] ?? { label: r.miscibility, description: '' };
+    return [
+      escapeCsvField(r.polymer1Name),
+      round3(r.polymer1HSP.deltaD), round3(r.polymer1HSP.deltaP), round3(r.polymer1HSP.deltaH),
+      escapeCsvField(r.polymer2Name),
+      round3(r.polymer2HSP.deltaD), round3(r.polymer2HSP.deltaP), round3(r.polymer2HSP.deltaH),
+      round3(r.ra), r.chiParameter.toFixed(4),
+      escapeCsvField(`${info.label}（${info.description}）`),
+    ].join(',');
+  });
+
+  return BOM + [headers.join(','), ...rows].join('\r\n') + '\r\n';
+}
+
+/**
+ * リサイクル相溶性N×Nマトリクス結果をCSV文字列に変換する
+ * @returns BOM付きUTF-8 CSV文字列
+ */
+export function formatRecyclingCompatibilityCsv(matrix: Array<{
+  polymer1Name: string; polymer2Name: string;
+  ra: number; chiParameter: number; miscibility: string;
+}>): string {
+  const BOM = '\uFEFF';
+  const headers = ['ポリマー1', 'ポリマー2', 'Ra', 'χパラメータ', '相溶性判定'];
+
+  const rows = matrix.map((r) => {
+    const info = MISCIBILITY_LABELS[r.miscibility] ?? { label: r.miscibility, description: '' };
+    return [
+      escapeCsvField(r.polymer1Name),
+      escapeCsvField(r.polymer2Name),
+      round3(r.ra), r.chiParameter.toFixed(4),
+      escapeCsvField(`${info.label}（${info.description}）`),
+    ].join(',');
+  });
+
+  return BOM + [headers.join(','), ...rows].join('\r\n') + '\r\n';
+}
+
+/**
+ * 相溶化剤選定結果をCSV文字列に変換する
+ * @returns BOM付きUTF-8 CSV文字列
+ */
+export function formatCompatibilizerCsv(results: Array<{
+  compatibilizerName: string;
+  raToPolymer1: number; raToPolymer2: number;
+  overallScore: number; compatibility: string;
+}>): string {
+  const BOM = '\uFEFF';
+  const headers = ['相溶化剤名', 'ポリマー1とのRa', 'ポリマー2とのRa', '総合スコア', '適合性判定'];
+
+  const rows = results.map((r) => [
+    escapeCsvField(r.compatibilizerName),
+    round3(r.raToPolymer1), round3(r.raToPolymer2),
+    round3(r.overallScore), escapeCsvField(r.compatibility),
+  ].join(','));
+
+  return BOM + [headers.join(','), ...rows].join('\r\n') + '\r\n';
+}
+
+/**
+ * コポリマーHSP推定結果をCSV文字列に変換する
+ * @returns BOM付きUTF-8 CSV文字列
+ */
+export function formatCopolymerHspCsv(result: {
+  monomers: Array<{ name: string; deltaD: number; deltaP: number; deltaH: number; fraction: number }>;
+  estimatedHSP: { deltaD: number; deltaP: number; deltaH: number };
+}): string {
+  const BOM = '\uFEFF';
+  const headers = ['モノマー名', 'δD', 'δP', 'δH', '分率'];
+
+  const rows = result.monomers.map((m) => [
+    escapeCsvField(m.name),
+    round3(m.deltaD), round3(m.deltaP), round3(m.deltaH),
+    m.fraction.toFixed(3),
+  ].join(','));
+
+  // 推定結果行
+  rows.push([
+    escapeCsvField('【推定HSP】'),
+    round3(result.estimatedHSP.deltaD),
+    round3(result.estimatedHSP.deltaP),
+    round3(result.estimatedHSP.deltaH),
+    '1.000',
+  ].join(','));
+
+  return BOM + [headers.join(','), ...rows].join('\r\n') + '\r\n';
+}
+
 export function formatExcipientCompatibilityCsv(results: ExcipientResult[]): string {
   const BOM = '\uFEFF';
   const headers = [
