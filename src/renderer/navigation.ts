@@ -16,6 +16,8 @@ export type Tab =
   | 'fragranceEncapsulation' | 'transdermalEnhancer' | 'liposomePermeability'
   | 'inkSubstrateAdhesion' | 'multilayerCoatingAdhesion' | 'psaPeelStrength'
   | 'structuralAdhesiveJoint' | 'surfaceTreatmentQuantification'
+  | 'pigmentDispersion' | 'cntGrapheneDispersion' | 'mxeneDispersion' | 'nanoparticleDrugLoading'
+  | 'gasPermeability' | 'membraneSeparation' | 'co2Absorbent' | 'hydrogenStorage'
   | 'settings';
 
 export interface NavItem {
@@ -52,6 +54,8 @@ export const NAV_CATEGORIES: NavCategory[] = [
       { id: 'multilayerCoatingAdhesion', label: '多層コーティング密着' },
       { id: 'psaPeelStrength', label: '粘着テープ剥離強度' },
       { id: 'structuralAdhesiveJoint', label: '構造接着設計' },
+      { id: 'gasPermeability', label: 'ガス透過性' },
+      { id: 'membraneSeparation', label: '膜分離選択性' },
     ],
   },
   {
@@ -70,6 +74,12 @@ export const NAV_CATEGORIES: NavCategory[] = [
       { id: 'compatibilizerSelection', label: '相溶化剤選定' },
       { id: 'fragranceEncapsulation', label: '香料カプセル化' },
       { id: 'transdermalEnhancer', label: '経皮吸収促進剤' },
+      { id: 'pigmentDispersion', label: '顔料分散' },
+      { id: 'cntGrapheneDispersion', label: 'CNT/グラフェン分散' },
+      { id: 'mxeneDispersion', label: 'MXene分散' },
+      { id: 'nanoparticleDrugLoading', label: 'NP薬物ローディング' },
+      { id: 'co2Absorbent', label: 'CO2吸収材' },
+      { id: 'hydrogenStorage', label: '水素貯蔵材料' },
     ],
   },
   {

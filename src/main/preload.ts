@@ -348,6 +348,48 @@ export const api = {
   setAdhesionStrengthThresholds: (thresholds: { excellentMin: number; goodMin: number; fairMin: number }) =>
     ipcRenderer.invoke('settings:setAdhesionStrengthThresholds', thresholds),
 
+  // 顔料分散安定性
+  screenPigmentDispersion: (pigmentHSP: { deltaD: number; deltaP: number; deltaH: number }, r0: number, vehicleIds: number[]) =>
+    ipcRenderer.invoke('pigmentDispersion:screen', pigmentHSP, r0, vehicleIds),
+
+  // CNT/グラフェン分散
+  screenCNTGrapheneDispersion: (nanomaterialHSP: { deltaD: number; deltaP: number; deltaH: number }, r0: number, solventIds: number[]) =>
+    ipcRenderer.invoke('cntGrapheneDispersion:screen', nanomaterialHSP, r0, solventIds),
+
+  // MXene分散
+  screenMXeneDispersion: (mxeneHSP: { deltaD: number; deltaP: number; deltaH: number }, r0: number, solventIds: number[]) =>
+    ipcRenderer.invoke('mxeneDispersion:screen', mxeneHSP, r0, solventIds),
+
+  // ナノ粒子薬物ローディング
+  screenNanoparticleDrugLoading: (carrierHSP: { deltaD: number; deltaP: number; deltaH: number }, carrierR0: number, drugIds: number[]) =>
+    ipcRenderer.invoke('nanoparticleDrugLoading:screen', carrierHSP, carrierR0, drugIds),
+
+  // ガス透過性
+  screenGasPermeability: (params: {
+    polymerHSP: { deltaD: number; deltaP: number; deltaH: number };
+    gasNames: string[]; referenceGas?: string;
+  }) => ipcRenderer.invoke('gasPermeability:screen', params),
+
+  // 膜分離選択性
+  evaluateMembraneSeparation: (params: {
+    membraneHSP: { deltaD: number; deltaP: number; deltaH: number };
+    targetHSP: { deltaD: number; deltaP: number; deltaH: number };
+    targetName: string;
+    impurityHSP: { deltaD: number; deltaP: number; deltaH: number };
+    impurityName: string;
+  }) => ipcRenderer.invoke('membraneSeparation:evaluate', params),
+
+  // CO2吸収材選定
+  screenCO2Absorbents: (params: {
+    absorbents: Array<{ name: string; hsp: { deltaD: number; deltaP: number; deltaH: number }; r0: number }>;
+  }) => ipcRenderer.invoke('co2Absorbent:screen', params),
+
+  // 水素貯蔵材料
+  screenHydrogenStorage: (params: {
+    carrierHSP: { deltaD: number; deltaP: number; deltaH: number };
+    r0: number; solventIds: number[];
+  }) => ipcRenderer.invoke('hydrogenStorage:screen', params),
+
   // 汎用 IPC invoke — 許可チャネルのみ通過
   invoke: (channel: string, ...args: unknown[]) => {
     const ALLOWED_CHANNELS = [

@@ -298,6 +298,44 @@ export interface ElectronAPI {
   getAdhesionStrengthThresholds(): Promise<import('./core/types').AdhesionStrengthThresholds>;
   setAdhesionStrengthThresholds(thresholds: import('./core/types').AdhesionStrengthThresholds): Promise<void>;
 
+  // 顔料分散安定性
+  screenPigmentDispersion(pigmentHSP: import('./core/types').HSPValues, r0: number, vehicleIds: number[]): Promise<import('./core/pigment-dispersion-stability').PigmentDispersionResult[]>;
+
+  // CNT/グラフェン分散
+  screenCNTGrapheneDispersion(nanomaterialHSP: import('./core/types').HSPValues, r0: number, solventIds: number[]): Promise<import('./core/cnt-graphene-dispersion').CNTGrapheneDispersionResult[]>;
+
+  // MXene分散
+  screenMXeneDispersion(mxeneHSP: import('./core/types').HSPValues, r0: number, solventIds: number[]): Promise<import('./core/mxene-dispersion').MXeneDispersionResult[]>;
+
+  // ナノ粒子薬物ローディング
+  screenNanoparticleDrugLoading(carrierHSP: import('./core/types').HSPValues, carrierR0: number, drugIds: number[]): Promise<import('./core/nanoparticle-drug-loading').DrugLoadingResult[]>;
+
+  // ガス透過性
+  screenGasPermeability(params: {
+    polymerHSP: import('./core/types').HSPValues;
+    gasNames: string[]; referenceGas?: string;
+  }): Promise<import('./core/polymer-membrane-gas-permeability').MembranePermeabilityScreeningResult>;
+
+  // 膜分離選択性
+  evaluateMembraneSeparation(params: {
+    membraneHSP: import('./core/types').HSPValues;
+    targetHSP: import('./core/types').HSPValues;
+    targetName: string;
+    impurityHSP: import('./core/types').HSPValues;
+    impurityName: string;
+  }): Promise<import('./core/membrane-separation-selectivity').SeparationSelectivityResult>;
+
+  // CO2吸収材選定
+  screenCO2Absorbents(params: {
+    absorbents: Array<{ name: string; hsp: import('./core/types').HSPValues; r0: number }>;
+  }): Promise<import('./core/co2-absorbent-selection').CO2AbsorbentScreeningResult>;
+
+  // 水素貯蔵材料
+  screenHydrogenStorage(params: {
+    carrierHSP: import('./core/types').HSPValues;
+    r0: number; solventIds: number[];
+  }): Promise<import('./core/hydrogen-storage-material').H2StorageScreeningResult>;
+
   // 汎用 IPC invoke (可視化パイプライン等)
   invoke(channel: string, ...args: unknown[]): Promise<any>;
 }

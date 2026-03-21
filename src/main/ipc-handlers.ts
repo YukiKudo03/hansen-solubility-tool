@@ -8,7 +8,7 @@ import { calculateRa, calculateRed } from '../core/hsp';
 import { classifyRisk } from '../core/risk';
 import { classifyDispersibility, DEFAULT_DISPERSIBILITY_THRESHOLDS } from '../core/dispersibility';
 import { screenSolvents, filterByConstraints } from '../core/solvent-finder';
-import { validatePartInput, validateSolventInput, validateName, validateThresholds, validateMixtureInput, validateNanoParticleInput, validateDispersibilityThresholds, validateWettabilityThresholds, validateBlendOptimizationInput, validateSwellingThresholds, validateDrugInput, validateDrugSolubilityThresholds, validateChemicalResistanceThresholds, validatePlasticizerThresholds, validateCarrierThresholds, validateAdhesionThresholds, validateSolventClassifications, validateGreenSolventInput, validateMultiObjectiveInput, validateGroupContributionInput, validateDispersantInput, validateDispersantThresholds, validateESCInput, validateCocrystalInput, validatePrinting3dInput, validateDielectricInput, validateExcipientInput, validatePolymerBlendInput, validateRecyclingInput, validateCompatibilizerInput, validateCopolymerInput, validateAdditiveMigrationInput, validateFlavorScalpingInput, validateFoodPackagingMigrationInput, validateFragranceEncapsulationInput, validateTransdermalEnhancerInput, validateLiposomePermeabilityInput, validateInkSubstrateAdhesionInput, validateMultilayerCoatingInput, validatePSAPeelStrengthInput, validateStructuralAdhesiveJointInput, validateSurfaceTreatmentInput, validateAdhesionStrengthThresholds } from '../core/validation';
+import { validatePartInput, validateSolventInput, validateName, validateThresholds, validateMixtureInput, validateNanoParticleInput, validateDispersibilityThresholds, validateWettabilityThresholds, validateBlendOptimizationInput, validateSwellingThresholds, validateDrugInput, validateDrugSolubilityThresholds, validateChemicalResistanceThresholds, validatePlasticizerThresholds, validateCarrierThresholds, validateAdhesionThresholds, validateSolventClassifications, validateGreenSolventInput, validateMultiObjectiveInput, validateGroupContributionInput, validateDispersantInput, validateDispersantThresholds, validateESCInput, validateCocrystalInput, validatePrinting3dInput, validateDielectricInput, validateExcipientInput, validatePolymerBlendInput, validateRecyclingInput, validateCompatibilizerInput, validateCopolymerInput, validateAdditiveMigrationInput, validateFlavorScalpingInput, validateFoodPackagingMigrationInput, validateFragranceEncapsulationInput, validateTransdermalEnhancerInput, validateLiposomePermeabilityInput, validateInkSubstrateAdhesionInput, validateMultilayerCoatingInput, validatePSAPeelStrengthInput, validateStructuralAdhesiveJointInput, validateSurfaceTreatmentInput, validateAdhesionStrengthThresholds, validatePigmentDispersionInput, validateCNTGrapheneInput, validateMXeneDispersionInput, validateDrugLoadingInput, validateGasPermeabilityInput, validateMembraneSeparationInput, validateCO2AbsorbentInput, validateHydrogenStorageInput } from '../core/validation';
 import { classifyChemicalResistance, DEFAULT_CHEMICAL_RESISTANCE_THRESHOLDS } from '../core/chemical-resistance';
 import { classifyPlasticizerCompatibility, DEFAULT_PLASTICIZER_THRESHOLDS, screenPlasticizers } from '../core/plasticizer';
 import { classifyCarrierCompatibility, DEFAULT_CARRIER_THRESHOLDS, screenCarriers } from '../core/carrier-selection';
@@ -55,6 +55,15 @@ import type { PermeabilityThresholds } from '../core/liposome-permeability';
 import type { HSPValues, AdhesionStrengthLevel, AdhesionStrengthThresholds, PeelStrengthLevel } from '../core/types';
 import { AdhesionStrengthLevel as ASL, PeelStrengthLevel as PSL } from '../core/types';
 import { calculateWorkOfAdhesionFromHSP } from '../core/work-of-adhesion';
+import { screenPigmentDispersion } from '../core/pigment-dispersion-stability';
+import { screenCNTGrapheneDispersion } from '../core/cnt-graphene-dispersion';
+import { screenMXeneDispersion } from '../core/mxene-dispersion';
+import { screenDrugLoading } from '../core/nanoparticle-drug-loading';
+import { screenMembranePermeability } from '../core/polymer-membrane-gas-permeability';
+import { evaluateSeparationSelectivity } from '../core/membrane-separation-selectivity';
+import { screenCO2Absorbents } from '../core/co2-absorbent-selection';
+import type { CO2Absorbent } from '../core/co2-absorbent-selection';
+import { screenHydrogenStorageMaterials } from '../core/hydrogen-storage-material';
 
 /** CSVインポートの最大サイズ (10MB) */
 const MAX_CSV_SIZE = 10 * 1024 * 1024;
@@ -1358,5 +1367,102 @@ export function registerIpcHandlers(
       levelBefore, levelAfter,
       evaluatedAt: new Date(),
     };
+  });
+
+  // ─── ナノ材料分散群 ─────────────────────────────────
+
+  // --- 顔料分散安定性 ---
+  ipcMain.handle('pigmentDispersion:screen', (_, pigmentHSP: HSPValues, r0: number, vehicleIds: number[]) => {
+    const vehicles = vehicleIds.map((id) => {
+      const s = solventRepo.getSolventById(id);
+      if (!s) throw new Error(`ビヒクル (ID: ${id}) が見つかりません`);
+      return { name: s.name, hsp: s.hsp };
+    });
+    const err = validatePigmentDispersionInput(pigmentHSP, r0, vehicles);
+    if (err) throw new Error(err);
+    return screenPigmentDispersion(pigmentHSP, r0, vehicles);
+  });
+
+  // --- CNT/グラフェン分散 ---
+  ipcMain.handle('cntGrapheneDispersion:screen', (_, nanomaterialHSP: HSPValues, r0: number, solventIds: number[]) => {
+    const solvents = solventIds.map((id) => {
+      const s = solventRepo.getSolventById(id);
+      if (!s) throw new Error(`溶媒 (ID: ${id}) が見つかりません`);
+      return { name: s.name, hsp: s.hsp };
+    });
+    const err = validateCNTGrapheneInput(nanomaterialHSP, r0, solvents);
+    if (err) throw new Error(err);
+    return screenCNTGrapheneDispersion(nanomaterialHSP, r0, solvents);
+  });
+
+  // --- MXene分散 ---
+  ipcMain.handle('mxeneDispersion:screen', (_, mxeneHSP: HSPValues, r0: number, solventIds: number[]) => {
+    const solvents = solventIds.map((id) => {
+      const s = solventRepo.getSolventById(id);
+      if (!s) throw new Error(`溶媒 (ID: ${id}) が見つかりません`);
+      return { name: s.name, hsp: s.hsp };
+    });
+    const err = validateMXeneDispersionInput(mxeneHSP, r0, solvents);
+    if (err) throw new Error(err);
+    return screenMXeneDispersion(mxeneHSP, r0, solvents);
+  });
+
+  // --- ナノ粒子薬物ローディング ---
+  ipcMain.handle('nanoparticleDrugLoading:screen', (_, carrierHSP: HSPValues, carrierR0: number, drugIds: number[]) => {
+    const drugs = drugIds.map((id) => {
+      const s = solventRepo.getSolventById(id);
+      if (!s) throw new Error(`薬物 (ID: ${id}) が見つかりません`);
+      return { name: s.name, hsp: s.hsp };
+    });
+    const err = validateDrugLoadingInput(carrierHSP, carrierR0, drugs);
+    if (err) throw new Error(err);
+    return screenDrugLoading(carrierHSP, carrierR0, drugs);
+  });
+
+  // ─── Gas-Solubility群 ─────────────────────────────────
+
+  // --- ガス透過性 ---
+  ipcMain.handle('gasPermeability:screen', (_, params: {
+    polymerHSP: HSPValues; gasNames: string[]; referenceGas?: string;
+  }) => {
+    const err = validateGasPermeabilityInput(params);
+    if (err) throw new Error(err);
+    return screenMembranePermeability(params.polymerHSP, params.gasNames, params.referenceGas);
+  });
+
+  // --- 膜分離選択性 ---
+  ipcMain.handle('membraneSeparation:evaluate', (_, params: {
+    membraneHSP: HSPValues; targetHSP: HSPValues; targetName: string;
+    impurityHSP: HSPValues; impurityName: string;
+  }) => {
+    const err = validateMembraneSeparationInput(params);
+    if (err) throw new Error(err);
+    return evaluateSeparationSelectivity(
+      params.membraneHSP, params.targetHSP, params.targetName,
+      params.impurityHSP, params.impurityName,
+    );
+  });
+
+  // --- CO2吸収材選定 ---
+  ipcMain.handle('co2Absorbent:screen', (_, params: {
+    absorbents: Array<{ name: string; hsp: HSPValues; r0: number }>;
+  }) => {
+    const err = validateCO2AbsorbentInput(params);
+    if (err) throw new Error(err);
+    return screenCO2Absorbents(params.absorbents);
+  });
+
+  // --- 水素貯蔵材料 ---
+  ipcMain.handle('hydrogenStorage:screen', (_, params: {
+    carrierHSP: HSPValues; r0: number; solventIds: number[];
+  }) => {
+    const err = validateHydrogenStorageInput(params);
+    if (err) throw new Error(err);
+    const solvents = params.solventIds.map((id) => {
+      const s = solventRepo.getSolventById(id);
+      if (!s) throw new Error(`溶媒 (ID: ${id}) が見つかりません`);
+      return { name: s.name, hsp: s.hsp };
+    });
+    return screenHydrogenStorageMaterials(params.carrierHSP, params.r0, solvents);
   });
 }

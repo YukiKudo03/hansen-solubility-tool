@@ -1038,6 +1038,213 @@ export function formatExcipientCompatibilityCsv(results: ExcipientResult[]): str
   return BOM + [headers.join(','), ...rows].join('\r\n') + '\r\n';
 }
 
+// ─── ナノ材料分散群 CSV ───────────────────────────
+
+import type { PigmentDispersionResult } from './pigment-dispersion-stability';
+import { StabilityLevel, getStabilityLevelInfo } from './pigment-dispersion-stability';
+import type { CNTGrapheneDispersionResult } from './cnt-graphene-dispersion';
+import type { MXeneDispersionResult } from './mxene-dispersion';
+import type { DrugLoadingResult } from './nanoparticle-drug-loading';
+import { LoadingLevel, getLoadingLevelInfo } from './nanoparticle-drug-loading';
+
+/**
+ * 顔料分散安定性結果をCSV文字列に変換する
+ * @returns BOM付きUTF-8 CSV文字列
+ */
+export function formatPigmentDispersionCsv(results: PigmentDispersionResult[]): string {
+  const BOM = '\uFEFF';
+  const headers = [
+    'ビヒクル名', 'ビヒクル δD', 'ビヒクル δP', 'ビヒクル δH',
+    'Ra', 'RED', '安定性レベル', '安定性判定',
+  ];
+
+  const rows = results.map((r) => {
+    const info = getStabilityLevelInfo(r.stability);
+    return [
+      escapeCsvField(r.vehicle.name),
+      round3(r.vehicle.hsp.deltaD), round3(r.vehicle.hsp.deltaP), round3(r.vehicle.hsp.deltaH),
+      round3(r.ra), round3(r.red),
+      r.stability,
+      escapeCsvField(`${info.label}（${info.description}）`),
+    ].join(',');
+  });
+
+  return BOM + [headers.join(','), ...rows].join('\r\n') + '\r\n';
+}
+
+/**
+ * CNT/グラフェン分散結果をCSV文字列に変換する
+ * @returns BOM付きUTF-8 CSV文字列
+ */
+export function formatCNTGrapheneDispersionCsv(results: CNTGrapheneDispersionResult[]): string {
+  const BOM = '\uFEFF';
+  const headers = [
+    '溶媒名', '溶媒 δD', '溶媒 δP', '溶媒 δH',
+    'Ra', 'RED', '分散性レベル', '分散性判定',
+  ];
+
+  const rows = results.map((r) => {
+    const info = getDispersibilityLevelInfo(r.dispersibility);
+    return [
+      escapeCsvField(r.solvent.name),
+      round3(r.solvent.hsp.deltaD), round3(r.solvent.hsp.deltaP), round3(r.solvent.hsp.deltaH),
+      round3(r.ra), round3(r.red),
+      `Level ${r.dispersibility}`,
+      escapeCsvField(`${info.label}（${info.description}）`),
+    ].join(',');
+  });
+
+  return BOM + [headers.join(','), ...rows].join('\r\n') + '\r\n';
+}
+
+/**
+ * MXene分散結果をCSV文字列に変換する
+ * @returns BOM付きUTF-8 CSV文字列
+ */
+export function formatMXeneDispersionCsv(results: MXeneDispersionResult[]): string {
+  const BOM = '\uFEFF';
+  const headers = [
+    '溶媒名', '溶媒 δD', '溶媒 δP', '溶媒 δH',
+    'Ra', 'RED', '分散性レベル', '分散性判定',
+  ];
+
+  const rows = results.map((r) => {
+    const info = getDispersibilityLevelInfo(r.dispersibility);
+    return [
+      escapeCsvField(r.solvent.name),
+      round3(r.solvent.hsp.deltaD), round3(r.solvent.hsp.deltaP), round3(r.solvent.hsp.deltaH),
+      round3(r.ra), round3(r.red),
+      `Level ${r.dispersibility}`,
+      escapeCsvField(`${info.label}（${info.description}）`),
+    ].join(',');
+  });
+
+  return BOM + [headers.join(','), ...rows].join('\r\n') + '\r\n';
+}
+
+/**
+ * ナノ粒子薬物ローディング結果をCSV文字列に変換する
+ * @returns BOM付きUTF-8 CSV文字列
+ */
+export function formatDrugLoadingCsv(results: DrugLoadingResult[]): string {
+  const BOM = '\uFEFF';
+  const headers = [
+    '薬物名', '薬物 δD', '薬物 δP', '薬物 δH',
+    'Ra', 'RED', 'ローディングレベル', 'ローディング判定',
+  ];
+
+  const rows = results.map((r) => {
+    const info = getLoadingLevelInfo(r.loadingLevel);
+    return [
+      escapeCsvField(r.drug.name),
+      round3(r.drug.hsp.deltaD), round3(r.drug.hsp.deltaP), round3(r.drug.hsp.deltaH),
+      round3(r.ra), round3(r.red),
+      r.loadingLevel,
+      escapeCsvField(`${info.label}（${info.description}）`),
+    ].join(',');
+  });
+
+  return BOM + [headers.join(','), ...rows].join('\r\n') + '\r\n';
+}
+
+// ─── Gas-Solubility群 CSV ───────────────────────────
+
+import type { MembranePermeabilityScreeningResult } from './polymer-membrane-gas-permeability';
+import { classifyGasPermeability, getGasPermeabilityLevelInfo } from './polymer-membrane-gas-permeability';
+import type { SeparationSelectivityResult } from './membrane-separation-selectivity';
+import { getSelectivityLevelInfo } from './membrane-separation-selectivity';
+import type { CO2AbsorbentScreeningResult } from './co2-absorbent-selection';
+import { getCO2AbsorptionLevelInfo } from './co2-absorbent-selection';
+import type { H2StorageScreeningResult } from './hydrogen-storage-material';
+import { getH2StorageCompatibilityLevelInfo } from './hydrogen-storage-material';
+
+export function formatGasPermeabilityCsv(result: MembranePermeabilityScreeningResult): string {
+  const BOM = '\uFEFF';
+  const headers = [
+    'ガス名', 'Ra²', '相対透過性', '選択性(vs基準ガス)', '透過性レベル', '透過性判定',
+  ];
+
+  const rows = result.results.map((r) => {
+    const level = classifyGasPermeability(r.ra2);
+    const info = getGasPermeabilityLevelInfo(level);
+    return [
+      escapeCsvField(r.gasName),
+      r.ra2.toFixed(3),
+      r.relativePermeability === Infinity ? 'Inf' : r.relativePermeability.toFixed(3),
+      r.selectivity === Infinity ? 'Inf' : r.selectivity.toFixed(3),
+      `Level ${level}`,
+      escapeCsvField(`${info.label}（${info.description}）`),
+    ].join(',');
+  });
+
+  return BOM + [headers.join(','), ...rows].join('\r\n') + '\r\n';
+}
+
+export function formatMembraneSeparationCsv(result: SeparationSelectivityResult): string {
+  const BOM = '\uFEFF';
+  const headers = [
+    'ターゲット名', 'ターゲット Ra', 'ターゲット Ra²',
+    '不純物名', '不純物 Ra', '不純物 Ra²',
+    '選択性比', '選択性レベル', '選択性判定', '評価日時',
+  ];
+
+  const info = getSelectivityLevelInfo(result.selectivityLevel);
+  const row = [
+    escapeCsvField(result.targetName),
+    round3(result.targetRa), result.targetRa2.toFixed(3),
+    escapeCsvField(result.impurityName),
+    round3(result.impurityRa), result.impurityRa2.toFixed(3),
+    result.selectivityRatio === Infinity ? 'Inf' : result.selectivityRatio.toFixed(3),
+    `Level ${result.selectivityLevel}`,
+    escapeCsvField(`${info.label}（${info.description}）`),
+    result.evaluatedAt.toISOString(),
+  ].join(',');
+
+  return BOM + [headers.join(','), row].join('\r\n') + '\r\n';
+}
+
+export function formatCO2AbsorbentCsv(result: CO2AbsorbentScreeningResult): string {
+  const BOM = '\uFEFF';
+  const headers = [
+    '吸収材名', '吸収材 δD', '吸収材 δP', '吸収材 δH',
+    'Ra', 'RED', '吸収性レベル', '吸収性判定',
+  ];
+
+  const rows = result.results.map((r) => {
+    const info = getCO2AbsorptionLevelInfo(r.absorptionLevel);
+    return [
+      escapeCsvField(r.absorbent),
+      round3(r.absorbentHSP.deltaD), round3(r.absorbentHSP.deltaP), round3(r.absorbentHSP.deltaH),
+      round3(r.ra), round3(r.red),
+      `Level ${r.absorptionLevel}`,
+      escapeCsvField(`${info.label}（${info.description}）`),
+    ].join(',');
+  });
+
+  return BOM + [headers.join(','), ...rows].join('\r\n') + '\r\n';
+}
+
+export function formatHydrogenStorageCsv(result: H2StorageScreeningResult): string {
+  const BOM = '\uFEFF';
+  const headers = [
+    '溶媒名', '溶媒 δD', '溶媒 δP', '溶媒 δH',
+    'Ra', 'RED', '適合性レベル', '適合性判定',
+  ];
+
+  const rows = result.results.map((r) => {
+    const info = getH2StorageCompatibilityLevelInfo(r.compatibilityLevel);
+    return [
+      escapeCsvField(r.solventName),
+      round3(r.solventHSP.deltaD), round3(r.solventHSP.deltaP), round3(r.solventHSP.deltaH),
+      round3(r.ra), round3(r.red),
+      `Level ${r.compatibilityLevel}`,
+      escapeCsvField(`${info.label}（${info.description}）`),
+    ].join(',');
+  });
+
+  return BOM + [headers.join(','), ...rows].join('\r\n') + '\r\n';
+}
+
 // ─── Work-of-Adhesion群 CSV ───────────────────────────
 
 import type { InkSubstrateAdhesionResult, MultilayerCoatingResult, PSAPeelStrengthResult, StructuralAdhesiveJointResult, SurfaceTreatmentResult } from './types';

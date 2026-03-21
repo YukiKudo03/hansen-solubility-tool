@@ -181,6 +181,30 @@ export function createMockApi(): { [K in keyof ElectronAPI]: ReturnType<typeof v
     getAdhesionStrengthThresholds: vi.fn().mockResolvedValue({ excellentMin: 80, goodMin: 60, fairMin: 40 }),
     setAdhesionStrengthThresholds: vi.fn().mockResolvedValue(undefined),
 
+    // 顔料分散安定性
+    screenPigmentDispersion: vi.fn().mockResolvedValue([]),
+
+    // CNT/グラフェン分散
+    screenCNTGrapheneDispersion: vi.fn().mockResolvedValue([]),
+
+    // MXene分散
+    screenMXeneDispersion: vi.fn().mockResolvedValue([]),
+
+    // ナノ粒子薬物ローディング
+    screenNanoparticleDrugLoading: vi.fn().mockResolvedValue([]),
+
+    // ガス透過性
+    screenGasPermeability: vi.fn().mockResolvedValue(null),
+
+    // 膜分離選択性
+    evaluateMembraneSeparation: vi.fn().mockResolvedValue(null),
+
+    // CO2吸収材選定
+    screenCO2Absorbents: vi.fn().mockResolvedValue(null),
+
+    // 水素貯蔵材料
+    screenHydrogenStorage: vi.fn().mockResolvedValue(null),
+
     // 汎用 IPC invoke
     invoke: vi.fn().mockResolvedValue(null),
   };

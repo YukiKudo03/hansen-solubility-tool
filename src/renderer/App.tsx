@@ -43,6 +43,14 @@ import MultilayerCoatingAdhesionView from './components/MultilayerCoatingAdhesio
 import PSAPeelStrengthView from './components/PSAPeelStrengthView';
 import StructuralAdhesiveJointView from './components/StructuralAdhesiveJointView';
 import SurfaceTreatmentQuantificationView from './components/SurfaceTreatmentQuantificationView';
+import PigmentDispersionView from './components/PigmentDispersionView';
+import CNTGrapheneDispersionView from './components/CNTGrapheneDispersionView';
+import MXeneDispersionView from './components/MXeneDispersionView';
+import NanoparticleDrugLoadingView from './components/NanoparticleDrugLoadingView';
+import GasPermeabilityView from './components/GasPermeabilityView';
+import MembraneSeparationView from './components/MembraneSeparationView';
+import CO2AbsorbentView from './components/CO2AbsorbentView';
+import HydrogenStorageView from './components/HydrogenStorageView';
 
 const VIEW_MAP: Record<Tab, React.ComponentType> = {
   report: ReportView,
@@ -80,6 +88,14 @@ const VIEW_MAP: Record<Tab, React.ComponentType> = {
   psaPeelStrength: PSAPeelStrengthView,
   structuralAdhesiveJoint: StructuralAdhesiveJointView,
   surfaceTreatmentQuantification: SurfaceTreatmentQuantificationView,
+  pigmentDispersion: PigmentDispersionView,
+  cntGrapheneDispersion: CNTGrapheneDispersionView,
+  mxeneDispersion: MXeneDispersionView,
+  nanoparticleDrugLoading: NanoparticleDrugLoadingView,
+  gasPermeability: GasPermeabilityView,
+  membraneSeparation: MembraneSeparationView,
+  co2Absorbent: CO2AbsorbentView,
+  hydrogenStorage: HydrogenStorageView,
   settings: SettingsView,
 };
 

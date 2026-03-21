@@ -730,6 +730,46 @@ export function validateSurfaceTreatmentInput(params: unknown): string | null {
   return null;
 }
 
+// ============================================================================
+// ナノ材料分散群パイプライン用の入力バリデーション
+// ============================================================================
+
+/** 顔料分散安定性入力バリデーション */
+export function validatePigmentDispersionInput(
+  pigmentHSP: { deltaD: number; deltaP: number; deltaH: number },
+  r0: number,
+  vehicles: unknown[],
+): string | null {
+  return validateHSPR0Array(pigmentHSP, r0, vehicles, 'ビヒクル');
+}
+
+/** CNT/グラフェン分散入力バリデーション */
+export function validateCNTGrapheneInput(
+  nanomaterialHSP: { deltaD: number; deltaP: number; deltaH: number },
+  r0: number,
+  solvents: unknown[],
+): string | null {
+  return validateHSPR0Array(nanomaterialHSP, r0, solvents, '溶媒');
+}
+
+/** MXene分散入力バリデーション */
+export function validateMXeneDispersionInput(
+  mxeneHSP: { deltaD: number; deltaP: number; deltaH: number },
+  r0: number,
+  solvents: unknown[],
+): string | null {
+  return validateHSPR0Array(mxeneHSP, r0, solvents, '溶媒');
+}
+
+/** ナノ粒子薬物ローディング入力バリデーション */
+export function validateDrugLoadingInput(
+  carrierHSP: { deltaD: number; deltaP: number; deltaH: number },
+  carrierR0: number,
+  drugs: unknown[],
+): string | null {
+  return validateHSPR0Array(carrierHSP, carrierR0, drugs, '薬物');
+}
+
 /** 密着強度閾値バリデーション */
 export function validateAdhesionStrengthThresholds(t: unknown): string | null {
   if (t == null || typeof t !== 'object') return '閾値オブジェクトが必要です';
@@ -742,5 +782,62 @@ export function validateAdhesionStrengthThresholds(t: unknown): string | null {
   if (!(excellentMin > goodMin && goodMin > fairMin)) {
     return '閾値は excellentMin > goodMin > fairMin の順でなければなりません';
   }
+  return null;
+}
+
+// ============================================================================
+// Gas-Solubility群パイプライン用の入力バリデーション
+// ============================================================================
+
+/** ガス透過性入力バリデーション */
+export function validateGasPermeabilityInput(params: unknown): string | null {
+  if (params == null || typeof params !== 'object') return 'パラメータオブジェクトが必要です';
+  const p = params as Record<string, unknown>;
+  const hspErr = validateHSPObject(p.polymerHSP, 'ポリマー');
+  if (hspErr) return `ポリマーHSP: ${hspErr}`;
+  if (!Array.isArray(p.gasNames) || p.gasNames.length === 0) return 'ガスを1つ以上指定してください';
+  return null;
+}
+
+/** 膜分離選択性入力バリデーション */
+export function validateMembraneSeparationInput(params: unknown): string | null {
+  if (params == null || typeof params !== 'object') return 'パラメータオブジェクトが必要です';
+  const p = params as Record<string, unknown>;
+  const memErr = validateHSPObject(p.membraneHSP, '膜');
+  if (memErr) return `膜HSP: ${memErr}`;
+  const tgtErr = validateHSPObject(p.targetHSP, 'ターゲット');
+  if (tgtErr) return `ターゲットHSP: ${tgtErr}`;
+  const impErr = validateHSPObject(p.impurityHSP, '不純物');
+  if (impErr) return `不純物HSP: ${impErr}`;
+  if (typeof p.targetName !== 'string' || p.targetName.trim().length === 0) return 'ターゲット名を入力してください';
+  if (typeof p.impurityName !== 'string' || p.impurityName.trim().length === 0) return '不純物名を入力してください';
+  return null;
+}
+
+/** CO2吸収材入力バリデーション */
+export function validateCO2AbsorbentInput(params: unknown): string | null {
+  if (params == null || typeof params !== 'object') return 'パラメータオブジェクトが必要です';
+  const p = params as Record<string, unknown>;
+  if (!Array.isArray(p.absorbents) || p.absorbents.length === 0) return '吸収材候補を1つ以上指定してください';
+  for (let i = 0; i < p.absorbents.length; i++) {
+    const a: unknown = (p.absorbents as unknown[])[i];
+    if (a == null || typeof a !== 'object') return `absorbents[${i}]: オブジェクトでなければなりません`;
+    const entry = a as Record<string, unknown>;
+    if (typeof entry.name !== 'string' || entry.name.trim().length === 0) return `absorbents[${i}]: 名前を入力してください`;
+    const hspErr = validateHSPObject(entry.hsp, `absorbents[${i}]`);
+    if (hspErr) return `absorbents[${i}]: ${hspErr}`;
+    if (typeof entry.r0 !== 'number' || !Number.isFinite(entry.r0) || entry.r0 <= 0) return `absorbents[${i}]: R₀は正の数値を入力してください`;
+  }
+  return null;
+}
+
+/** 水素貯蔵材料入力バリデーション */
+export function validateHydrogenStorageInput(params: unknown): string | null {
+  if (params == null || typeof params !== 'object') return 'パラメータオブジェクトが必要です';
+  const p = params as Record<string, unknown>;
+  const carrierErr = validateHSPObject(p.carrierHSP, 'キャリア');
+  if (carrierErr) return `キャリアHSP: ${carrierErr}`;
+  if (typeof p.r0 !== 'number' || !Number.isFinite(p.r0) || p.r0 <= 0) return 'R₀は正の数値を入力してください';
+  if (!Array.isArray(p.solventIds) || p.solventIds.length === 0) return '溶媒を1つ以上指定してください';
   return null;
 }
