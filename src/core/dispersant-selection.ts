@@ -254,7 +254,7 @@ export function evaluateDispersantFallback(
   return {
     dispersant,
     particle,
-    solvent: null as unknown as Solvent, // フォールバックでは溶媒不要
+    solvent: null, // フォールバックでは溶媒不要
     raOverall,
     redOverall,
     affinity,

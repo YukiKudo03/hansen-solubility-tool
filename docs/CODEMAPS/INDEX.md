@@ -1,8 +1,8 @@
-<!-- Generated: 2026-03-21 | Files scanned: 237 | Token estimate: ~980 -->
+<!-- Generated: 2026-03-21 | Files scanned: 349 src + 221 tests | Token estimate: ~980 -->
 
 # Hansen Solubility Project — Codemap Index
 
-A production-grade Electron desktop application for HSP-based material compatibility evaluation. **18 evaluation pipelines** + comparison report + 3D visualization + advanced analytics + bookmarks + evaluation history.
+A production-grade Electron desktop application for HSP-based material compatibility evaluation. **70+ evaluation pipelines** across 8 categories + comparison report + 3D visualization + advanced analytics + bookmarks + evaluation history.
 
 ## Quick Navigation
 
@@ -10,8 +10,8 @@ A production-grade Electron desktop application for HSP-based material compatibi
 - **[architecture.md](./architecture.md)** — System diagram, pipelines, module boundaries
 
 ### Implementation Details
-- **[backend.md](./backend.md)** — IPC handlers (110+), repository pattern, validation
-- **[frontend.md](./frontend.md)** — MD3 responsive layout, 24 tabs, 20 hooks, dark mode
+- **[backend.md](./backend.md)** — IPC handlers (167), repository pattern, validation
+- **[frontend.md](./frontend.md)** — MD3 responsive layout, 92 tabs, 69 hooks, dark mode
 - **[data.md](./data.md)** — SQLite schema (9 tables), repositories (8), seed data
 - **[dependencies.md](./dependencies.md)** — External packages, build tools
 
@@ -19,41 +19,49 @@ A production-grade Electron desktop application for HSP-based material compatibi
 
 ### Architecture
 - **Electron Multi-Process:** Main (business logic + IPC) ↔ Renderer (React UI)
-- **Pure Core:** `src/core/` contains no I/O — 32 modules
+- **Pure Core:** `src/core/` contains no I/O — 117 modules
 - **Repository Pattern:** `src/db/` — 8 repos (Parts, Solvent, NanoParticle, Drug, Dispersant, Settings, Bookmark, History)
 - **i18n:** i18next (ja/en), **Dark Mode:** Tailwind `darkMode: 'class'`
 - **Auto-Update:** electron-updater via GitHub Releases
 - **Cross-Platform:** Win (NSIS) / macOS (dmg) / Linux (AppImage)
 
-### Evaluation Pipelines
+### Evaluation Pipelines (70+ across 8 categories)
 
 ```
-Core (10):
-  A: Polymer-Solvent Risk         → RED小=危険
-  B: Nanoparticle Dispersion      → RED小=良好
-  C: Contact Angle                → θ小=親水
-  D: Solvent Blend Optimization   → Ra最小化
-  E: Swelling Prediction          → RED小=膨潤大
-  F: Drug Solubility              → RED小=溶解性良好
-  G: Chemical Resistance          → RED大=耐性良好（逆向き）
-  H: Plasticizer Selection        → RED小=相溶性良好
-  I: DDS Carrier Selection        → RED小=適合性良好
-  J: Dispersant Selection         → dual-HSP anchor+solvation → 複合RED
+評価 (31 pipelines):
+  溶解性評価, 接触角推定, 膨潤度予測, 耐薬品性予測, 接着性予測,
+  環境応力亀裂(ESC), ブレンド相溶性, リサイクル相溶性,
+  添加剤移行, フレーバースカルピング, 包装材溶出,
+  リポソーム透過性, インク-基材密着, 多層コーティング密着,
+  粘着テープ剥離強度, 構造接着設計, ガス透過性, 膜分離選択性,
+  吸入薬適合性, タンパク質凝集, 残留溶媒, コーティング欠陥,
+  レジスト現像, 結晶溶解温度, ハイドロゲル膨潤, ゴム配合,
+  繊維染色性, 多形リスク, 印刷電子濡れ性, 封止材適合, バイオ燃料適合
 
-Advanced (8):
-  K: Adhesion Prediction          → 接着強度評価
-  L: TEAS Plot                    → Toxic, Explosive, Aesthetic, Safe分析
-  M: Bagley Plot                  → 膜形成能評価
-  N: 2D Projection                → δD-δP平面射影
-  O: Sphere Fitting               → HSP最適球当てはめ
-  P: Green Solvent Selection      → 環境友好的溶媒評価
-  Q: Multi-Objective Selection    → Pareto最適複合選定
-  R: Group Contribution HSP       → 官能基からのHSP推定
+選定 (24 pipelines):
+  ナノ粒子分散, 分散剤選定, 可塑剤選定, キャリア選定,
+  共結晶スクリーニング, 3D印刷平滑化, 誘電体膜品質, 賦形剤適合性,
+  相溶化剤選定, 香料カプセル化, 経皮吸収促進剤,
+  顔料分散, CNT/グラフェン分散, MXene分散, NP薬物ローディング,
+  CO2吸収材, 水素貯蔵材料, UVフィルター適合, バイオ製剤バッファー,
+  天然色素抽出, 精油抽出, 土壌汚染抽出, 硬化剤選定,
+  QDリガンド交換, PCMカプセル化
 
-Analytics (3):
-  + Comparison Report             → 複数材料×溶媒の横断RED比較
-  + HSP 3D Visualization          → Plotly.js δD-δP-δH空間プロット
-  + Evaluation History            → 自動保存結果参照
+最適化 (17 pipelines):
+  ブレンド最適化, 超臨界CO2, 洗浄剤配合, 薬物溶解性,
+  比較レポート, HSP球算出, グリーン溶媒, 多目的選定,
+  ペロブスカイト溶媒, 有機半導体膜, UV硬化インク,
+  多成分最適化, LiB電解液, 溶媒代替, エマルション安定性,
+  防落書き, プライマーレス接着
+
+分析 (16 pipelines):
+  3D可視化, Teasプロット, Bagleyプロット, 2D射影, 族寄与法,
+  コポリマーHSP推定, 表面処理効果, 温度HSP補正, 圧力HSP補正,
+  逆HSP推定, HSP不確かさ, 表面HSP決定, IL/DES HSP,
+  HSP推算(QSPR), MD結果インポート, 族寄与法(拡張)
+
+データ (3): データベース編集, 混合溶媒, 履歴
+設定 (1): 設定
 ```
 
 ### Tech Stack
@@ -63,14 +71,14 @@ Analytics (3):
 - **Styling:** Tailwind CSS 3.4, MD3 design tokens, dark mode
 - **3D Plot:** Plotly.js (plotly.js-basic-dist-min)
 - **i18n:** i18next + react-i18next
-- **Testing:** Vitest 2.1 (1000+ unit) + Playwright 1.58 (98+ E2E)
+- **Testing:** Vitest 2.1 (1717+ unit) + Playwright 1.58 (98+ E2E)
 
 ## Module Tour
 
-### src/core/ (39 files, ~4900 lines)
+### src/core/ (117 files, ~15,400 lines)
 Pure domain logic (testable, no side effects)
 
-**計算エンジン 基本:**
+**計算エンジン 基本 (10):**
 - `hsp.ts` — `calculateRa()`, `calculateRed()` (全パイプライン共通)
 - `contact-angle.ts` — Nakamoto-Yamamoto式
 - `contact-angle-methods.ts` — Owens-Wendt法（代替手法）
@@ -82,9 +90,9 @@ Pure domain logic (testable, no side effects)
 - `comparison.ts` — バッチ評価マトリクス
 - `hsp-visualization.ts` — 3Dプロットデータ生成
 
-**新規計算エンジン (拡張分析):**
+**拡張分析エンジン (10):**
 - `dispersant-selection.ts` — Dual-HSP分散剤スクリーニング（anchor+solvation評価）
-- `group-contribution.ts` — Van Krevelen-Hoftyzer法HSP推定 (+201行)
+- `group-contribution.ts` — Van Krevelen-Hoftyzer法HSP推定
 - `solubility-estimation.ts` — Greenhalgh-Williams式溶解度推定
 - `adhesion.ts` — 接着強度評価エンジン
 - `teas-plot.ts` — TEAS分析（毒性・爆発・美観・安全）
@@ -94,6 +102,12 @@ Pure domain logic (testable, no side effects)
 - `green-solvent.ts` — グリーン溶媒スコアリング
 - `multi-objective.ts` — Pareto最適化フロント計算
 
+**70+パイプライン計算モジュール:**
+- 評価系31種 (ESC, ブレンド相溶性, 添加剤移行, ガス透過性, 膜分離, etc.)
+- 選定系24種 (共結晶, 顔料分散, CNT/グラフェン, MXene, QDリガンド, etc.)
+- 最適化系17種 (超臨界CO2, ペロブスカイト, LiB電解液, etc.)
+- 分析系16種 (コポリマーHSP, 圧力補正, 逆HSP推定, IL/DES, ML予測, etc.)
+
 **分類器 (9種):**
 - `risk.ts`, `dispersibility.ts`, `wettability.ts`, `swelling.ts`
 - `drug-solubility.ts`, `chemical-resistance.ts`, `plasticizer.ts`, `carrier-selection.ts`
@@ -101,7 +115,7 @@ Pure domain logic (testable, no side effects)
 
 **その他:**
 - `types.ts` — 全型定義 (500+ lines)
-- `validation.ts`, `report.ts` (9 CSV formatters), `accuracy-warnings.ts`
+- `validation.ts`, `report.ts` (CSV formatters), `accuracy-warnings.ts`
 - `bookmark.ts`, `evaluation-history.ts`, `csv-import.ts`
 - `ghs-safety.ts`, `theme.ts`, `pdf-report.ts`
 
@@ -112,22 +126,22 @@ Pure domain logic (testable, no side effects)
 - `bookmark-repository.ts`, `history-repository.ts` — 新機能用repos
 - 7 seed files: solvents(135), nano-particles(18), drugs(16), coatings(12), plasticizers(10), carriers(11), dispersants(~10)
 
-### src/main/ (3 files, ~1075 lines)
+### src/main/ (3 files, ~2,700 lines)
 - `main.ts` — App startup, DB init, auto-updater
-- `ipc-handlers.ts` — **110+ IPC handlers** (CRUD + 18評価 + ブックマーク + 履歴 + インポート)
+- `ipc-handlers.ts` — **167 IPC handlers** (CRUD + 70+評価 + ブックマーク + 履歴 + インポート)
 - `preload.ts` — Context-isolated bridge
 
-### src/renderer/ (65 files, ~7000 lines)
+### src/renderer/ (214 files, ~17,700 lines)
 - `App.tsx` — MD3 responsive layout + `useTheme()`
-- `navigation.ts` — 6カテゴリ・24タブ (新: 分散剤選定タブ追加)
-- `components/` — 42 components (22 Views, 9 Badges, 3 Nav, SortTableHeader, BookmarkButton, etc.)
-- `hooks/` — 20 hooks (useCsvExport, useSortableTable, useBookmarks, useTheme, useDispersantSelection, etc.)
+- `navigation.ts` — 6カテゴリ・92タブ (70+評価パイプライン)
+- `components/` — 142 components (91 Views, 40 Badges, 3 Nav, SortTableHeader, BookmarkButton, etc.)
+- `hooks/` — 69 hooks (useCsvExport, useSortableTable, useBookmarks, useTheme, useDispersantSelection, etc.)
 
 ### src/i18n/ (2 files)
 - `translations.ts` — ja/en 60+キー
 - `index.ts` — i18next初期化
 
-### tests/ (133 files, 1100+ unit/renderer + 25 E2E specs)
+### tests/ (221 files, 1717+ unit/renderer + 25 E2E specs)
 
 ## Database Schema (8 tables)
 
@@ -147,13 +161,13 @@ Pure domain logic (testable, no side effects)
 
 | Category | Files | Lines | Key Contents |
 |----------|-------|-------|-------------|
-| **Core** | 39 | 4,900 | 18評価エンジン, 10分類器, ユーティリティ |
-| **Database** | 12 | 1,780 | Schema, 8 repos, 7 seed files |
-| **Main** | 3 | 1,100 | Electron, IPC (110+), preload |
-| **Renderer** | 65 | 7,000 | 42 components, 20 hooks, i18n |
-| **Tests** | 133 | — | 1100+ unit/renderer + 25 E2E |
-| **Total** | 254 | 14,880+ | — |
+| **Core** | 117 | 15,400 | 70+評価エンジン, 10分類器, ユーティリティ |
+| **Database** | 12 | 2,100 | Schema, 8 repos, 7 seed files |
+| **Main** | 3 | 2,700 | Electron, IPC (167), preload |
+| **Renderer** | 214 | 17,700 | 142 components, 69 hooks, i18n |
+| **Tests** | 221 | — | 1717+ unit/renderer + 25 E2E |
+| **Total** | 570 | 38,600+ | — |
 
 ---
 
-**Last Updated:** 2026-03-21 | **Status:** 18 evaluation pipelines complete, test coverage 91%
+**Last Updated:** 2026-03-21 | **Status:** 70+ evaluation pipelines complete, test coverage 91%

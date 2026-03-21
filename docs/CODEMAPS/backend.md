@@ -1,4 +1,4 @@
-<!-- Generated: 2026-03-21 | Files scanned: 15 main/db | Token estimate: ~980 -->
+<!-- Generated: 2026-03-21 | Files scanned: 15 main/db | Token estimate: ~1200 -->
 
 # Backend — Main Process & IPC Handlers
 
@@ -8,7 +8,7 @@
 electron app
   ↓
 main.ts → initDb() → Database initialization
-         → registerIpcHandlers() → 100+ IPC method registration
+         → registerIpcHandlers() → 167 IPC method registration
          → createWindow() → preload.js bridge
          → autoUpdater → electron-updater GitHub Releases
 ```
@@ -19,11 +19,11 @@ main.ts → initDb() → Database initialization
 1. Parse `VITE_DEV_SERVER_URL` env var
 2. Initialize SQLite: `initDb()` → schema + migrations + 6 seed functions
 3. Create window with preload context isolation
-4. Register IPC handlers (all 100+ routes)
+4. Register IPC handlers (all 167 routes)
 5. Configure auto-updater (electron-updater)
 6. Load dev server or production HTML
 
-## IPC Handlers (src/main/ipc-handlers.ts — 820 lines)
+## IPC Handlers (src/main/ipc-handlers.ts — 1973 lines)
 
 ### Pattern
 
@@ -40,7 +40,7 @@ All handlers:
 - No async (synchronous DB)
 - Return serializable objects
 
-### Handler Categories (110+)
+### Handler Categories (167)
 
 #### Parts Management (8)
 ```
@@ -154,6 +154,31 @@ bagleyPlot:buildData(solventIds) → film-formation ability
 projection2D:projectTo2D(solventIds) → δD-δP scatter
 groupContribution:estimateHSP(groups) → Van Krevelen-Hoftyzer HSP
 comparison:buildMatrix(groupIds, solventIds) → RED heatmap
+```
+
+#### Extended Pipelines (60+ additional handlers)
+```
+評価系 (31 pipelines): ESC, ブレンド相溶性, リサイクル相溶性, 添加剤移行,
+  フレーバースカルピング, 包装材溶出, リポソーム透過性, インク-基材密着,
+  多層コーティング密着, 粘着テープ剥離強度, 構造接着設計, ガス透過性,
+  膜分離選択性, 吸入薬適合性, タンパク質凝集, 残留溶媒, コーティング欠陥,
+  レジスト現像, 結晶溶解温度, ハイドロゲル膨潤, ゴム配合, 繊維染色性,
+  多形リスク, 印刷電子濡れ性, 封止材適合, バイオ燃料適合, etc.
+
+選定系 (24 pipelines): 共結晶, 3D印刷平滑化, 誘電体膜, 賦形剤,
+  相溶化剤, 香料カプセル化, 経皮吸収促進剤, 顔料分散, CNT/グラフェン,
+  MXene, NP薬物ローディング, CO2吸収材, 水素貯蔵, UVフィルター, etc.
+
+最適化系 (17 pipelines): 超臨界CO2, 洗浄剤配合, ペロブスカイト溶媒,
+  有機半導体膜, UV硬化インク, 多成分最適化, LiB電解液, 溶媒代替, etc.
+
+分析系 (16 pipelines): コポリマーHSP, 表面処理効果, 温度/圧力HSP補正,
+  逆HSP推定, HSP不確かさ, 表面HSP決定, IL/DES, ML予測, MD連携, etc.
+
+Each pipeline handler follows the same pattern:
+  ipcMain.handle('pipeline:evaluate', (_, args) => {
+    validate(args) → compute(args) → return result
+  })
 ```
 
 #### Settings (7)
@@ -348,7 +373,7 @@ window.api = {
   parts: { getAllGroups, getGroupById, ... },
   solvents: { getAll, getById, ... },
   evaluate: async (...) => ipcRenderer.invoke('evaluate', ...)
-  // All 100+ methods mapped
+  // All 167 methods mapped
 }
 ```
 

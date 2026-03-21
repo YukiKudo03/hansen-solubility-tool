@@ -15,8 +15,8 @@ This directory contains token-lean architectural documentation for the Hansen So
 | Codemap | Size | Purpose |
 |---------|------|---------|
 | [INDEX.md](./INDEX.md) | 8.2K | Navigation guide, module tour, critical paths |
-| [architecture.md](./architecture.md) | 9.5K | System diagram, 18 evaluators, data flow |
-| [frontend.md](./frontend.md) | 7.1K | 42 components, 6 nav categories, 24 tabs |
+| [architecture.md](./architecture.md) | 9.5K | System diagram, 70+ evaluators, data flow |
+| [frontend.md](./frontend.md) | 7.1K | 142 components, 6 nav categories, 92 tabs |
 | [data.md](./data.md) | 5.8K | SQLite schema, repositories, seed data |
 | [dependencies.md](./dependencies.md) | 5.6K | Packages, build tools, Docker |
 
@@ -31,10 +31,10 @@ This directory contains token-lean architectural documentation for the Hansen So
 - Context-isolated IPC communication
 
 ### Core Modules
-- **src/core/** — 18 evaluation engines + 10 classifiers (39 files, 4,900 lines)
+- **src/core/** — 70+ evaluation engines + 10 classifiers (117 files, 15,400 lines)
 - **src/db/** — SQLite layer (9 tables, ~145 seed solvents + ~10 dispersants)
-- **src/main/** — Electron lifecycle + 110+ IPC handlers
-- **src/renderer/** — 42 React components, 20 hooks, 6 nav categories
+- **src/main/** — Electron lifecycle + 167 IPC handlers
+- **src/renderer/** — 142 React components, 69 hooks, 6 nav categories
 
 ### Evaluation Pipeline
 ```
@@ -79,6 +79,6 @@ These codemaps are the **single source of truth** for architecture. Reference in
 
 ---
 
-**Generated:** 2026-03-21 | **Version:** 1.6.0 | **Status:** Current (18 evaluators, 133 test files, 91% coverage)
+**Generated:** 2026-03-21 | **Version:** 1.6.0 | **Status:** Current (70+ evaluators, 221 test files, 91% coverage)
 
 See [../.reports/codemap-diff.txt](../../.reports/codemap-diff.txt) for generation report.

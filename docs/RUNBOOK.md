@@ -186,7 +186,7 @@ npm run docker:test:integration  # Integration tests only
 
 ```bash
 npm run typecheck         # TypeScript type checking
-npm test                  # All test suites (1100+ tests across 100+ files)
+npm test                  # All test suites (1717+ tests across 221 files)
 npm run test:coverage     # Coverage report (target: 90%+)
 npm run test:e2e          # E2E tests (98+ tests)
 npm run test:literature   # Literature validation (147 cases)
@@ -195,7 +195,7 @@ npm run test:literature   # Literature validation (147 cases)
 ### Pre-release Checklist
 
 - [ ] `npm run typecheck` passes
-- [ ] `npm test` — all tests green (1100+ unit/integration/component tests, coverage 90%+)
+- [ ] `npm test` — all tests green (1717+ unit/integration/component tests, coverage 90%+)
 - [ ] `npm run test:e2e` — 98+ E2E tests pass
 - [ ] `npm run package` — installer builds successfully
 - [ ] Install and run the packaged app
@@ -227,3 +227,24 @@ npm run test:literature   # Literature validation (147 cases)
 - [ ] Verify dark mode toggle (Light / Dark / System)
 - [ ] Verify accuracy warnings display in applicable views
 - [ ] Verify settings (all threshold configurations persist + theme persist)
+- [ ] **Extended evaluation pipelines (spot check):**
+- [ ] Verify ESC pipeline (環境応力亀裂)
+- [ ] Verify polymer blend miscibility (ブレンド相溶性)
+- [ ] Verify gas permeability evaluation (ガス透過性)
+- [ ] Verify membrane separation evaluation (膜分離選択性)
+- [ ] Verify coating defect evaluation (コーティング欠陥)
+- [ ] **Extended selection pipelines (spot check):**
+- [ ] Verify co-crystal screening (共結晶スクリーニング)
+- [ ] Verify pigment dispersion (顔料分散)
+- [ ] Verify CNT/graphene dispersion (CNT/グラフェン分散)
+- [ ] Verify compatibilizer selection (相溶化剤選定)
+- [ ] **Extended optimization pipelines (spot check):**
+- [ ] Verify supercritical CO2 optimization (超臨界CO2)
+- [ ] Verify perovskite solvent selection (ペロブスカイト溶媒)
+- [ ] Verify Li battery electrolyte optimization (LiB電解液)
+- [ ] Verify solvent substitution (溶媒代替)
+- [ ] **Extended analysis pipelines (spot check):**
+- [ ] Verify copolymer HSP estimation (コポリマーHSP推定)
+- [ ] Verify temperature/pressure HSP correction (温度/圧力HSP補正)
+- [ ] Verify inverse HSP estimation (逆HSP推定)
+- [ ] Verify ML HSP prediction (HSP推算 QSPR)

@@ -429,10 +429,22 @@ export interface CarrierEvaluationResult {
 
 // ─── 接着性予測系 ───────────────────────────
 
-// AdhesionLevel, AdhesionThresholds は src/core/adhesion.ts で定義
-import { AdhesionLevel } from './adhesion';
-import type { AdhesionThresholds } from './adhesion';
-export { AdhesionLevel, type AdhesionThresholds };
+/** 接着性レベル (1=最良, 5=接着不可) — Ra小=接着性良好 */
+export enum AdhesionLevel {
+  Excellent = 1, // 優秀な接着性
+  Good = 2,      // 良好
+  Fair = 3,      // 可能
+  Poor = 4,      // 接着不良
+  Failed = 5,    // 接着不可
+}
+
+/** 接着性閾値設定 (Ra値ベース) */
+export interface AdhesionThresholds {
+  excellentMax: number; // default: 2.0
+  goodMax: number;      // default: 4.0
+  fairMax: number;      // default: 6.0
+  poorMax: number;      // default: 8.0
+}
 
 /** 接着性予測結果 */
 export interface AdhesionResult {
@@ -539,7 +551,7 @@ export interface DispersantScreeningResult {
 export interface DispersantFallbackResult {
   dispersant: Dispersant;
   particle: NanoParticle;
-  solvent: Solvent;
+  solvent?: Solvent | null;
   raOverall: number;
   redOverall: number;
   affinity: DispersantAffinityLevel;
@@ -673,7 +685,7 @@ export interface SurfaceTreatmentResult {
   waAfter: number;
   raBefore: number;
   raAfter: number;
-  improvementRate: number;  // (waAfter - waBefore) / waBefore * 100 [%]
+  improvementRatio: number;  // (waAfter - waBefore) / waBefore * 100 [%]
   levelBefore: AdhesionStrengthLevel;
   levelAfter: AdhesionStrengthLevel;
   evaluatedAt: Date;

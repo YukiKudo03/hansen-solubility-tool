@@ -1337,7 +1337,7 @@ export function formatSurfaceTreatmentCsv(result: SurfaceTreatmentResult): strin
     round3(result.afterHSP.deltaD), round3(result.afterHSP.deltaP), round3(result.afterHSP.deltaH),
     round3(result.targetHSP.deltaD), round3(result.targetHSP.deltaP), round3(result.targetHSP.deltaH),
     round3(result.waBefore), round3(result.waAfter), round3(result.raBefore), round3(result.raAfter),
-    result.improvementRate.toFixed(1), result.evaluatedAt.toISOString(),
+    result.improvementRatio.toFixed(1), result.evaluatedAt.toISOString(),
   ].join(',');
   return BOM + [headers.join(','), row].join('\r\n') + '\r\n';
 }

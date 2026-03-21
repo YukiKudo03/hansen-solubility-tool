@@ -116,6 +116,10 @@ import { bootstrapHSPUncertainty } from '../core/hsp-uncertainty-quantification'
 import { estimateSurfaceHSPFromContactAngles } from '../core/surface-hsp-determination';
 import type { ContactAngleTestInput } from '../core/surface-hsp-determination';
 import { estimateILHSP } from '../core/ionic-liquid-des-hsp';
+import { evaluatePolymerBlendMiscibility } from '../core/polymer-blend-miscibility';
+import { evaluateRecyclingCompatibilityMatrix } from '../core/polymer-recycling-compatibility';
+import { screenCompatibilizers } from '../core/compatibilizer-selection';
+import { estimateCopolymerHSP } from '../core/copolymer-hsp-estimation';
 
 /** CSVインポートの最大サイズ (10MB) */
 const MAX_CSV_SIZE = 10 * 1024 * 1024;
@@ -397,6 +401,7 @@ export function registerIpcHandlers(
     if (!part) throw new Error(`部品 (ID: ${partId}) が見つかりません`);
 
     const solvents = solventRepo.getAllSolvents();
+    if (solvents.length === 0) throw new Error('溶媒が登録されていません');
     const thresholdsJson = settingsRepo.getSetting('wettability_thresholds');
     const thresholds: WettabilityThresholds = thresholdsJson
       ? safeJsonParse(thresholdsJson, { ...DEFAULT_WETTABILITY_THRESHOLDS })
@@ -410,8 +415,6 @@ export function registerIpcHandlers(
 
     // 接触角昇順でソート
     results.sort((a, b) => a.contactAngle - b.contactAngle);
-
-    if (solvents.length === 0) throw new Error('溶媒が登録されていません');
     const result: GroupContactAngleResult = {
       partsGroup: group,
       solvent: results[0]?.solvent ?? solvents[0],
@@ -1000,7 +1003,7 @@ export function registerIpcHandlers(
     const group2 = partsRepo.getGroupById(params.groupId2);
     if (!group2) throw new Error(`部品グループ (ID: ${params.groupId2}) が見つかりません`);
 
-    // Pairwise Flory-Huggins χ calculation using Ra
+    // Pairwise Flory-Huggins χ calculation using core module
     const results: Array<{
       polymer1Name: string; polymer2Name: string;
       polymer1HSP: HSPValues; polymer2HSP: HSPValues;
@@ -1009,19 +1012,15 @@ export function registerIpcHandlers(
 
     for (const p1 of group1.parts) {
       for (const p2 of group2.parts) {
-        const ra = calculateRa(p1.hsp, p2.hsp);
-        // χ = (Vref / RT) * (Ra / 2)^2 simplified: χ ∝ Vref * Ra^2 / (R * T)
-        // Using Vref in cm³/mol, R = 8.314 J/(mol·K), T = 298.15 K
-        const chiParameter = (params.referenceVolume * ra * ra) / (4 * 8.314 * 298.15);
-        const chiCritical = 0.5 * (1 / Math.sqrt(params.degreeOfPolymerization) + 1 / Math.sqrt(params.degreeOfPolymerization));
-        let miscibility: string;
-        if (chiParameter < chiCritical) miscibility = 'miscible';
-        else if (chiParameter < chiCritical * 2) miscibility = 'partial';
-        else miscibility = 'immiscible';
+        const blend = evaluatePolymerBlendMiscibility(
+          { name: p1.name, hsp: p1.hsp, degreeOfPolymerization: params.degreeOfPolymerization },
+          { name: p2.name, hsp: p2.hsp, degreeOfPolymerization: params.degreeOfPolymerization },
+          params.referenceVolume
+        );
         results.push({
           polymer1Name: p1.name, polymer2Name: p2.name,
           polymer1HSP: p1.hsp, polymer2HSP: p2.hsp,
-          ra, chiParameter, miscibility,
+          ra: blend.ra, chiParameter: blend.chi, miscibility: blend.miscibility,
         });
       }
     }
@@ -1043,30 +1042,21 @@ export function registerIpcHandlers(
       return g;
     });
 
-    // N×N matrix (representative part per group = first part)
-    const matrix: Array<{
-      polymer1Name: string; polymer2Name: string;
-      ra: number; chiParameter: number; miscibility: string;
-    }> = [];
+    // N×N matrix using core module (representative part per group = first part)
+    const polymers = groups
+      .filter((g) => g.parts[0] !== undefined)
+      .map((g) => ({
+        name: g.name,
+        hsp: g.parts[0]!.hsp,
+        degreeOfPolymerization: params.degreeOfPolymerization,
+      }));
 
-    for (let i = 0; i < groups.length; i++) {
-      for (let j = i + 1; j < groups.length; j++) {
-        const p1 = groups[i].parts[0];
-        const p2 = groups[j].parts[0];
-        if (!p1 || !p2) continue;
-        const ra = calculateRa(p1.hsp, p2.hsp);
-        const chiParameter = (params.referenceVolume * ra * ra) / (4 * 8.314 * 298.15);
-        const chiCritical = 0.5 * (1 / Math.sqrt(params.degreeOfPolymerization) + 1 / Math.sqrt(params.degreeOfPolymerization));
-        let miscibility: string;
-        if (chiParameter < chiCritical) miscibility = 'miscible';
-        else if (chiParameter < chiCritical * 2) miscibility = 'partial';
-        else miscibility = 'immiscible';
-        matrix.push({
-          polymer1Name: groups[i].name, polymer2Name: groups[j].name,
-          ra, chiParameter, miscibility,
-        });
-      }
-    }
+    const coreMatrix = evaluateRecyclingCompatibilityMatrix(polymers, params.referenceVolume);
+
+    const matrix = coreMatrix.map((r) => ({
+      polymer1Name: r.polymer1Name, polymer2Name: r.polymer2Name,
+      ra: r.ra, chiParameter: r.chi, miscibility: r.miscibility,
+    }));
 
     return { groupNames: groups.map((g) => g.name), matrix, evaluatedAt: new Date() };
   });
@@ -1089,25 +1079,32 @@ export function registerIpcHandlers(
     if (!p1) throw new Error(`グループ ${group1.name} に部品がありません`);
     if (!p2) throw new Error(`グループ ${group2.name} に部品がありません`);
 
-    // Screen all solvents as potential compatibilizers
+    // Screen all solvents as potential compatibilizers using core module
     const solvents = solventRepo.getAllSolvents();
-    const results = solvents.map((s) => {
-      const raToP1 = calculateRa(s.hsp, p1.hsp);
-      const raToP2 = calculateRa(s.hsp, p2.hsp);
-      const overallScore = Math.sqrt(raToP1 * raToP2); // geometric mean
+    const candidates = solvents.map((s) => ({
+      name: s.name,
+      blockA_hsp: s.hsp,
+      blockB_hsp: s.hsp,
+      _solventId: s.id,
+    }));
+    const coreResults = screenCompatibilizers(
+      { hsp: p1.hsp, r0: p1.r0 },
+      { hsp: p2.hsp, r0: p2.r0 },
+      candidates
+    );
+    const results = coreResults.map((r) => {
+      const solventId = candidates.find((c) => c.name === r.compatibilizer.name)?._solventId ?? 0;
       let compatibility: string;
-      if (overallScore < 3) compatibility = 'Excellent';
-      else if (overallScore < 5) compatibility = 'Good';
-      else if (overallScore < 8) compatibility = 'Fair';
+      if (r.effectivenessScore < 3) compatibility = 'Excellent';
+      else if (r.effectivenessScore < 5) compatibility = 'Good';
+      else if (r.effectivenessScore < 8) compatibility = 'Fair';
       else compatibility = 'Poor';
       return {
-        compatibilizerName: s.name, solventId: s.id,
-        raToPolymer1: raToP1, raToPolymer2: raToP2,
-        overallScore, compatibility,
+        compatibilizerName: r.compatibilizer.name, solventId,
+        raToPolymer1: r.raBlockA_Polymer1, raToPolymer2: r.raBlockB_Polymer2,
+        overallScore: r.effectivenessScore, compatibility,
       };
     });
-
-    results.sort((a, b) => a.overallScore - b.overallScore);
 
     return {
       polymer1Name: group1.name, polymer2Name: group2.name,
@@ -1122,17 +1119,17 @@ export function registerIpcHandlers(
     const err = validateCopolymerInput(params);
     if (err) throw new Error(err);
 
-    // Linear mixing rule: δ_copolymer = Σ(φ_i × δ_i)
-    let deltaD = 0, deltaP = 0, deltaH = 0;
-    for (const m of params.monomers) {
-      deltaD += m.fraction * m.deltaD;
-      deltaP += m.fraction * m.deltaP;
-      deltaH += m.fraction * m.deltaH;
-    }
+    // Linear mixing rule via core module
+    const mappedMonomers = params.monomers.map((m) => ({
+      name: m.name,
+      hsp: { deltaD: m.deltaD, deltaP: m.deltaP, deltaH: m.deltaH },
+      fraction: m.fraction,
+    }));
+    const copolymerResult = estimateCopolymerHSP(mappedMonomers);
 
     return {
       monomers: params.monomers,
-      estimatedHSP: { deltaD, deltaP, deltaH },
+      estimatedHSP: copolymerResult.blendHSP,
       evaluatedAt: new Date(),
     };
   });
@@ -1409,13 +1406,13 @@ export function registerIpcHandlers(
     const waAfter = calculateWorkOfAdhesionFromHSP(params.afterHSP, params.targetHSP);
     const raBefore = calculateRa(params.beforeHSP, params.targetHSP);
     const raAfter = calculateRa(params.afterHSP, params.targetHSP);
-    const improvementRate = waBefore > 0 ? ((waAfter - waBefore) / waBefore) * 100 : 0;
+    const improvementRatio = waBefore > 0 ? ((waAfter - waBefore) / waBefore) * 100 : 0;
     const levelBefore = classifyAdhesionStrength(waBefore, thresholds);
     const levelAfter = classifyAdhesionStrength(waAfter, thresholds);
 
     return {
       beforeHSP: params.beforeHSP, afterHSP: params.afterHSP, targetHSP: params.targetHSP,
-      waBefore, waAfter, raBefore, raAfter, improvementRate,
+      waBefore, waAfter, raBefore, raAfter, improvementRatio,
       levelBefore, levelAfter,
       evaluatedAt: new Date(),
     };

@@ -132,8 +132,8 @@ export default function SurfaceTreatmentQuantificationView() {
           <div className="p-4 rounded-lg bg-blue-50 border border-blue-200">
             <p className="text-sm text-blue-800">
               <span className="font-bold">改善率:</span>{' '}
-              <span className={`text-lg font-bold ${result.improvementRate >= 0 ? 'text-green-700' : 'text-red-700'}`}>
-                {result.improvementRate >= 0 ? '+' : ''}{result.improvementRate?.toFixed(1)}%
+              <span className={`text-lg font-bold ${result.improvementRatio >= 0 ? 'text-green-700' : 'text-red-700'}`}>
+                {result.improvementRatio >= 0 ? '+' : ''}{result.improvementRatio?.toFixed(1)}%
               </span>
             </p>
           </div>
