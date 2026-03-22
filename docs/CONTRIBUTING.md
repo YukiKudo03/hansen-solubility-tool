@@ -69,10 +69,10 @@ This runs two processes concurrently:
 ### Run Tests
 
 ```bash
-npm test                  # All tests (1717+ tests, 221 files)
+npm test                  # All tests (2170+ tests, 222+ files)
 npm run test:unit        # Core logic (117 modules)
 npm run test:integration # Database operations
-npm run test:coverage    # With coverage report (target: 90%+)
+npm run test:coverage    # With coverage report (target: 98%+)
 npm run test:e2e         # Playwright E2E (requires built app)
 npm run test:literature  # Literature value validation (147 cases)
 ```
@@ -112,7 +112,7 @@ src/
 ├── main/       Electron main process (lifecycle, IPC, 167 handlers)
 │               auto-updater (electron-updater)
 └── renderer/   MD3 responsive UI (960×680)
-                navigation.ts — 6カテゴリ・92タブ定義
+                navigation.ts — 6カテゴリ・93タブ定義
                 142 components (91 Views, 40 Badges, 3 Nav, etc.)
                 69 hooks (incl. useTheme, useCsvExport, useSortableTable, useBookmarks, etc.)
 ```
@@ -130,7 +130,7 @@ See `docs/CODEMAPS/INDEX.md` for detailed architecture.
 
 ## PR Checklist
 
-- [ ] All tests pass (`npm test` — 1717+ tests, 221 test files)
+- [ ] All tests pass (`npm test` — 2170+ tests, 222+ test files)
 - [ ] Type check passes (`npm run typecheck`)
 - [ ] New features have unit tests (TDD recommended)
 - [ ] UI changes have component tests
