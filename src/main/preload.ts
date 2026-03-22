@@ -245,24 +245,24 @@ export const api = {
     ipcRenderer.invoke('settings:setDispersantThresholds', thresholds),
 
   // ESCパイプライン
-  screenESCRisk: (polymerHSP: { deltaD: number; deltaP: number; deltaH: number }, r0: number, solventIds: number[]) =>
-    ipcRenderer.invoke('esc:screen', polymerHSP, r0, solventIds),
+  screenESCRisk: (groupId: number) =>
+    ipcRenderer.invoke('esc:screen', groupId),
 
   // 共結晶スクリーニング
-  screenCocrystals: (apiHSP: { deltaD: number; deltaP: number; deltaH: number }, r0: number, coformerIds: number[]) =>
-    ipcRenderer.invoke('cocrystal:screen', apiHSP, r0, coformerIds),
+  screenCocrystals: (drugId: number) =>
+    ipcRenderer.invoke('cocrystal:screen', drugId),
 
   // 3Dプリント溶剤平滑化
-  screen3DPrintingSolvents: (filamentHSP: { deltaD: number; deltaP: number; deltaH: number }, r0: number, solventIds: number[]) =>
-    ipcRenderer.invoke('printing3d:screen', filamentHSP, r0, solventIds),
+  screen3DPrintingSolvents: (groupId: number) =>
+    ipcRenderer.invoke('printing3d:screen', groupId),
 
   // 誘電体薄膜品質
-  screenDielectricSolvents: (polymerHSP: { deltaD: number; deltaP: number; deltaH: number }, r0: number, solventIds: number[]) =>
-    ipcRenderer.invoke('dielectric:screen', polymerHSP, r0, solventIds),
+  screenDielectricSolvents: (groupId: number) =>
+    ipcRenderer.invoke('dielectric:screen', groupId),
 
   // 賦形剤適合性
-  evaluateExcipientCompatibility: (apiHSP: { deltaD: number; deltaP: number; deltaH: number }, r0: number, excipientIds: number[]) =>
-    ipcRenderer.invoke('excipient:evaluate', apiHSP, r0, excipientIds),
+  evaluateExcipientCompatibility: (drugId: number) =>
+    ipcRenderer.invoke('excipient:evaluate', drugId),
 
   // ポリマーブレンド相溶性
   evaluatePolymerBlend: (params: {

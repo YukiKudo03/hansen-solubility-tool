@@ -23,6 +23,14 @@ import DispersantSelectionView from './components/DispersantSelectionView';
 import EvaluationHistoryView from './components/EvaluationHistoryView';
 import ComparisonView from './components/ComparisonView';
 import HSPVisualizationView from './components/HSPVisualizationView';
+import AdhesionView from './components/AdhesionView';
+import TeasPlotView from './components/TeasPlotView';
+import BagleyPlotView from './components/BagleyPlotView';
+import Projection2DView from './components/Projection2DView';
+import SphereFittingView from './components/SphereFittingView';
+import GreenSolventView from './components/GreenSolventView';
+import MultiObjectiveView from './components/MultiObjectiveView';
+import GroupContributionView from './components/GroupContributionView';
 import ESCPipelineView from './components/ESCPipelineView';
 import CocrystalScreeningView from './components/CocrystalScreeningView';
 import Printing3dSmoothingView from './components/Printing3dSmoothingView';
@@ -109,6 +117,14 @@ const VIEW_MAP: Record<Tab, React.ComponentType> = {
   history: EvaluationHistoryView,
   comparison: ComparisonView,
   hspVisualization: HSPVisualizationView,
+  adhesion: AdhesionView,
+  teasPlot: TeasPlotView,
+  bagleyPlot: BagleyPlotView,
+  projection2d: Projection2DView,
+  sphereFitting: SphereFittingView,
+  greenSolvent: GreenSolventView,
+  multiObjective: MultiObjectiveView,
+  groupContribution: GroupContributionView,
   escPipeline: ESCPipelineView,
   cocrystalScreening: CocrystalScreeningView,
   printing3dSmoothing: Printing3dSmoothingView,

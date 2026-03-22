@@ -931,63 +931,83 @@ export function registerIpcHandlers(
   });
 
   // --- ESCパイプライン ---
-  ipcMain.handle('esc:screen', (_, polymerHSP: HSPValues, r0: number, solventIds: number[]) => {
-    const solvents = solventIds.map((id) => {
-      const s = solventRepo.getSolventById(id);
-      if (!s) throw new Error(`溶媒 (ID: ${id}) が見つかりません`);
-      return { name: s.name, hsp: s.hsp };
-    });
+  ipcMain.handle('esc:screen', (_, groupId: number) => {
+    const group = partsRepo.getGroupById(groupId);
+    if (!group) throw new Error(`部品グループ (ID: ${groupId}) が見つかりません`);
+    if (group.parts.length === 0) throw new Error(`部品グループ (ID: ${groupId}) に部品がありません`);
+    const firstPart = group.parts[0];
+    const polymerHSP = firstPart.hsp;
+    const r0 = firstPart.r0;
+    const allSolvents = solventRepo.getAllSolvents();
+    const solvents = allSolvents.map((s) => ({ name: s.name, hsp: s.hsp }));
     const err = validateESCInput(polymerHSP, r0, solvents);
     if (err) throw new Error(err);
-    return screenESCRisk(polymerHSP, r0, solvents);
+    const rawResults = screenESCRisk(polymerHSP, r0, solvents);
+    const results = rawResults.map((r) => ({ ...r, riskLevel: r.risk }));
+    return { partsGroup: group, results, evaluatedAt: new Date() };
   });
 
   // --- 共結晶スクリーニング ---
-  ipcMain.handle('cocrystal:screen', (_, apiHSP: HSPValues, r0: number, coformerIds: number[]) => {
-    const coformers = coformerIds.map((id) => {
-      const s = solventRepo.getSolventById(id);
-      if (!s) throw new Error(`コフォーマー (ID: ${id}) が見つかりません`);
-      return { name: s.name, hsp: s.hsp };
-    });
+  ipcMain.handle('cocrystal:screen', (_, drugId: number) => {
+    const drug = drugRepo.getById(drugId);
+    if (!drug) throw new Error(`薬物 (ID: ${drugId}) が見つかりません`);
+    const apiHSP = drug.hsp;
+    const r0 = drug.r0;
+    const allSolvents = solventRepo.getAllSolvents();
+    const coformers = allSolvents.map((s) => ({ name: s.name, hsp: s.hsp }));
     const err = validateCocrystalInput(apiHSP, r0, coformers);
     if (err) throw new Error(err);
-    return screenCocrystals(apiHSP, r0, coformers);
+    const results = screenCocrystals(apiHSP, r0, coformers);
+    return { drug, results, evaluatedAt: new Date() };
   });
 
   // --- 3Dプリント溶剤平滑化 ---
-  ipcMain.handle('printing3d:screen', (_, filamentHSP: HSPValues, r0: number, solventIds: number[]) => {
-    const solvents = solventIds.map((id) => {
-      const s = solventRepo.getSolventById(id);
-      if (!s) throw new Error(`溶媒 (ID: ${id}) が見つかりません`);
-      return { name: s.name, hsp: s.hsp };
-    });
+  ipcMain.handle('printing3d:screen', (_, groupId: number) => {
+    const group = partsRepo.getGroupById(groupId);
+    if (!group) throw new Error(`部品グループ (ID: ${groupId}) が見つかりません`);
+    if (group.parts.length === 0) throw new Error(`部品グループ (ID: ${groupId}) に部品がありません`);
+    const firstPart = group.parts[0];
+    const filamentHSP = firstPart.hsp;
+    const r0 = firstPart.r0;
+    const allSolvents = solventRepo.getAllSolvents();
+    const solvents = allSolvents.map((s) => ({ name: s.name, hsp: s.hsp }));
     const err = validatePrinting3dInput(filamentHSP, r0, solvents);
     if (err) throw new Error(err);
-    return screen3DPrintingSolvents(filamentHSP, r0, solvents);
+    const rawResults = screen3DPrintingSolvents(filamentHSP, r0, solvents);
+    const results = rawResults.map((r) => ({ ...r, effectLevel: r.effect }));
+    return { partsGroup: group, results, evaluatedAt: new Date() };
   });
 
   // --- 誘電体薄膜品質 ---
-  ipcMain.handle('dielectric:screen', (_, polymerHSP: HSPValues, r0: number, solventIds: number[]) => {
-    const solvents = solventIds.map((id) => {
-      const s = solventRepo.getSolventById(id);
-      if (!s) throw new Error(`溶媒 (ID: ${id}) が見つかりません`);
-      return { name: s.name, hsp: s.hsp, boilingPoint: s.boilingPoint ?? undefined };
-    });
+  ipcMain.handle('dielectric:screen', (_, groupId: number) => {
+    const group = partsRepo.getGroupById(groupId);
+    if (!group) throw new Error(`部品グループ (ID: ${groupId}) が見つかりません`);
+    if (group.parts.length === 0) throw new Error(`部品グループ (ID: ${groupId}) に部品がありません`);
+    const firstPart = group.parts[0];
+    const polymerHSP = firstPart.hsp;
+    const r0 = firstPart.r0;
+    const allSolvents = solventRepo.getAllSolvents();
+    const solvents = allSolvents.map((s) => ({ name: s.name, hsp: s.hsp, boilingPoint: s.boilingPoint ?? undefined }));
     const err = validateDielectricInput(polymerHSP, r0, solvents);
     if (err) throw new Error(err);
-    return screenDielectricSolvents(polymerHSP, r0, solvents);
+    const rawResults = screenDielectricSolvents(polymerHSP, r0, solvents);
+    const results = rawResults.map((r) => ({ ...r, qualityLevel: r.filmQuality }));
+    return { partsGroup: group, results, evaluatedAt: new Date() };
   });
 
   // --- 賦形剤適合性 ---
-  ipcMain.handle('excipient:evaluate', (_, apiHSP: HSPValues, r0: number, excipientIds: number[]) => {
-    const excipients = excipientIds.map((id) => {
-      const s = solventRepo.getSolventById(id);
-      if (!s) throw new Error(`賦形剤 (ID: ${id}) が見つかりません`);
-      return { name: s.name, hsp: s.hsp };
-    });
+  ipcMain.handle('excipient:evaluate', (_, drugId: number) => {
+    const drug = drugRepo.getById(drugId);
+    if (!drug) throw new Error(`薬物 (ID: ${drugId}) が見つかりません`);
+    const apiHSP = drug.hsp;
+    const r0 = drug.r0;
+    const allSolvents = solventRepo.getAllSolvents();
+    const excipients = allSolvents.map((s) => ({ name: s.name, hsp: s.hsp }));
     const err = validateExcipientInput(apiHSP, r0, excipients);
     if (err) throw new Error(err);
-    return evaluateExcipientCompatibility(apiHSP, r0, excipients);
+    const rawResults = evaluateExcipientCompatibility(apiHSP, r0, excipients);
+    const results = rawResults.map((r) => ({ ...r, compatibilityLevel: r.compatibility }));
+    return { drug, results, evaluatedAt: new Date() };
   });
 
   // --- ポリマーブレンド相溶性 ---
