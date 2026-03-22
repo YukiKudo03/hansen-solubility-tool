@@ -12,10 +12,27 @@ interface TeasPoint {
   type: 'solvent' | 'part';
 }
 
-/** visualization:teasPlot の戻り値型 */
+/** visualization:teasPlot の戻り値型（core側の構造化配列） */
+interface TeasPlotRawData {
+  solvents: { names: string[]; fd: number[]; fp: number[]; fh: number[]; x: number[]; y: number[] };
+  parts: { names: string[]; fd: number[]; fp: number[]; fh: number[]; x: number[]; y: number[] };
+}
+
+/** View内部で使用するデータ型 */
 interface TeasPlotData {
   solvents: TeasPoint[];
   parts: TeasPoint[];
+}
+
+/** core側構造化配列 → TeasPoint[]に変換 */
+function convertRawToPoints(raw: TeasPlotRawData): TeasPlotData {
+  const solvents: TeasPoint[] = raw.solvents.names.map((name, i) => ({
+    name, fd: raw.solvents.fd[i], fp: raw.solvents.fp[i], fh: raw.solvents.fh[i], type: 'solvent' as const,
+  }));
+  const parts: TeasPoint[] = raw.parts.names.map((name, i) => ({
+    name, fd: raw.parts.fd[i], fp: raw.parts.fp[i], fh: raw.parts.fh[i], type: 'part' as const,
+  }));
+  return { solvents, parts };
 }
 
 /** ツールチップ表示用の状態 */
@@ -59,7 +76,7 @@ export default function TeasPlotView() {
     setLoading(true);
     setError(null);
     window.api.getTeasPlotData()
-      .then((result: TeasPlotData) => setData(result))
+      .then((result: TeasPlotRawData) => setData(convertRawToPoints(result)))
       .catch((e: unknown) => {
         setError(e instanceof Error ? e.message : 'Teasプロットデータの取得に失敗しました');
       })

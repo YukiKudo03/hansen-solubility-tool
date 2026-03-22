@@ -11,10 +11,27 @@ interface BagleyPoint {
   type: 'solvent' | 'part';
 }
 
-/** visualization:bagleyPlot の戻り値型 */
+/** visualization:bagleyPlot の戻り値型（core側構造化配列） */
+interface BagleyPlotRawData {
+  solvents: { names: string[]; deltaV: number[]; deltaH: number[] };
+  parts: { names: string[]; deltaV: number[]; deltaH: number[] };
+}
+
+/** View内部で使用するデータ型 */
 interface BagleyPlotData {
   solvents: BagleyPoint[];
   parts: BagleyPoint[];
+}
+
+/** core側 → BagleyPoint[]に変換 */
+function convertBagleyRaw(raw: BagleyPlotRawData): BagleyPlotData {
+  const solvents: BagleyPoint[] = raw.solvents.names.map((name, i) => ({
+    name, deltaV: raw.solvents.deltaV[i], deltaH: raw.solvents.deltaH[i], type: 'solvent' as const,
+  }));
+  const parts: BagleyPoint[] = raw.parts.names.map((name, i) => ({
+    name, deltaV: raw.parts.deltaV[i], deltaH: raw.parts.deltaH[i], type: 'part' as const,
+  }));
+  return { solvents, parts };
 }
 
 /** ツールチップ用の状態 */
@@ -65,7 +82,7 @@ export default function BagleyPlotView() {
     setLoading(true);
     setError(null);
     window.api.getBagleyPlotData()
-      .then((result: BagleyPlotData) => setData(result))
+      .then((result: BagleyPlotRawData) => setData(convertBagleyRaw(result)))
       .catch((e: unknown) => {
         setError(e instanceof Error ? e.message : 'Bagleyプロットデータの取得に失敗しました');
       })

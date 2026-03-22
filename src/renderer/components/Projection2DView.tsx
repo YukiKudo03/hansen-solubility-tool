@@ -20,9 +20,37 @@ interface ProjectionPane {
   parts: ProjectionPoint[];
 }
 
-/** visualization:projection2d の戻り値型 */
+/** visualization:projection2d の戻り値型（core側構造化配列） */
+interface Projection2DRawPane {
+  plane: string;
+  xLabel: string;
+  yLabel: string;
+  solvents: { names: string[]; x: number[]; y: number[] };
+  parts: { names: string[]; x: number[]; y: number[]; r0: number[] };
+}
+
+interface Projection2DRawData {
+  projections: Projection2DRawPane[];
+}
+
+/** View内部で使用するデータ型 */
 interface Projection2DData {
   projections: ProjectionPane[];
+}
+
+/** core側 → ProjectionPoint[]に変換 */
+function convertProjectionRaw(raw: Projection2DRawData): Projection2DData {
+  const projections: ProjectionPane[] = raw.projections.map(p => ({
+    xLabel: p.xLabel,
+    yLabel: p.yLabel,
+    solvents: p.solvents.names.map((name, i) => ({
+      name, x: p.solvents.x[i], y: p.solvents.y[i], type: 'solvent' as const,
+    })),
+    parts: p.parts.names.map((name, i) => ({
+      name, x: p.parts.x[i], y: p.parts.y[i], r0: p.parts.r0[i], type: 'part' as const,
+    })),
+  }));
+  return { projections };
 }
 
 /** ツールチップ用の状態 */
@@ -266,7 +294,7 @@ export default function Projection2DView() {
     setLoading(true);
     setError(null);
     window.api.getProjection2DData()
-      .then((result: Projection2DData) => setData(result))
+      .then((result: Projection2DRawData) => setData(convertProjectionRaw(result)))
       .catch((e: unknown) => {
         setError(e instanceof Error ? e.message : '2D射影データの取得に失敗しました');
       })
