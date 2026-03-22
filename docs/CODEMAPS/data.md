@@ -1,4 +1,4 @@
-<!-- Generated: 2026-03-21 | Updated: 2026-03-21 | Files scanned: 12 | Token estimate: ~900 -->
+<!-- Generated: 2026-03-22 | Updated: 2026-03-22 | Files scanned: 12 | Token estimate: ~900 -->
 
 # Database Schema & Data Layer
 
@@ -85,6 +85,6 @@ main.ts → initDb()
 
 ---
 
-**Last Updated:** 2026-03-21
+**Last Updated:** 2026-03-22
 
 **Related:** See `architecture.md` for overview, `backend.md` for repository implementation, `frontend.md` for UI interaction.

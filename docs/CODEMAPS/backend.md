@@ -1,4 +1,4 @@
-<!-- Generated: 2026-03-21 | Files scanned: 15 main/db | Token estimate: ~1200 -->
+<!-- Generated: 2026-03-22 | Files scanned: 15 main/db | Token estimate: ~1200 -->
 
 # Backend — Main Process & IPC Handlers
 
@@ -383,4 +383,4 @@ Whitelist pattern prevents arbitrary IPC calls.
 
 **Related:** See `architecture.md` for overview, `frontend.md` for UI components, `data.md` for repository interfaces.
 
-**Last Updated:** 2026-03-21
+**Last Updated:** 2026-03-22

@@ -1,4 +1,4 @@
-<!-- Generated: 2026-03-21 | Files scanned: 349 src | Token estimate: ~980 -->
+<!-- Generated: 2026-03-22 | Files scanned: 349 src | Token estimate: ~980 -->
 
 # Hansen Solubility System Architecture
 
@@ -154,10 +154,10 @@ Utilities:
 | **Data** | `src/db/` | 12 | 2,100 | Schema(9 tables), 8 repos, 7 seed files |
 | **Main** | `src/main/` | 3 | 2,700 | Electron, 167 IPC, auto-updater |
 | **UI** | `src/renderer/` | 214 | 17,700 | 142 components, 69 hooks, i18n |
-| **Tests** | `tests/` | 221 | — | 1717+ unit/renderer + 25 E2E specs |
+| **Tests** | `tests/` | 222 | — | 2170 unit/renderer + 25 E2E specs |
 
 ---
 
-**Last Updated:** 2026-03-21
+**Last Updated:** 2026-03-22
 
 **Next:** See `backend.md` for IPC/handlers, `frontend.md` for components, `data.md` for schema.

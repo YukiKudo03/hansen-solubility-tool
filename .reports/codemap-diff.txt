@@ -1,156 +1,86 @@
 CODEMAP UPDATE REPORT
-Generated: 2026-03-21 (rev 2)
+Generated: 2026-03-22
 
 SUMMARY
 =======
-Updated 6 codemaps to reflect the new Dispersant Selection pipeline (Pipeline J)
-and corrected test file counts (99 → 133 files across all test directories).
+Full project state verification and codemap refresh. All codemaps updated to
+reflect 70+ evaluation pipelines (10 original + 60 new), 11 core computation
+modules, and verified file/test counts from actual source tree.
+
+MAJOR MILESTONES
+================
+- 60 new evaluation pipelines implemented across 4 categories
+- 11 core computation modules (temperature-hsp, evaporation, dispersant-selection,
+  group-contribution, solubility-estimation, adhesion, teas-plot, bagley-plot,
+  projection-2d, sphere-fitting, green-solvent, multi-objective)
+- Runtime errors fixed: VIEW_MAP 8 cases, IPC 5 cases
+- Core test coverage: 98.88%
+- Unit tests: 2170 passed
 
 FILES UPDATED
 =============
 
 1. docs/CODEMAPS/INDEX.md
-   - Evaluation pipelines: 17 → 18 (added Dispersant Selection as Pipeline J)
-   - Core modules: 38 → 39 files (+dispersant-selection.ts)
-   - Core lines: 4,700 → 4,900
-   - Database: 11 → 12 files (+seed-dispersants.ts)
-   - Renderer: 62 → 65 files (+DispersantSelectionView, DispersantBadge, useDispersantSelection)
-   - Tests: corrected to 133 files (47 unit + 5 integration + 56 renderer + 25 E2E)
-   - Total source: 121 files, Total tests: 133 files
+   - Date: 2026-03-21 -> 2026-03-22
+   - Test files: 221 -> 222
+   - Unit tests: 1717+ -> 2170
+   - Nav tabs: 92 -> 93
+   - Coverage: 91% -> 98.88% (core)
 
 2. docs/CODEMAPS/architecture.md
-   - Pipelines: 17 → 18 (Group A: 9→10 core classifiers)
-   - Core modules: 38 → 39
-   - Repositories: 7 → 8 (+DispersantRepository)
-   - Tables: 8 → 9 (+dispersants)
-   - Advanced evaluators re-lettered: J→K through Q→R
+   - Date: 2026-03-21 -> 2026-03-22
+   - Test files: 221 -> 222, tests: 1717+ -> 2170
 
-3. docs/CODEMAPS/backend.md
-   - IPC handlers: 100+ → 110+ (+dispersants CRUD + screen)
-   - Added Pipeline J: Dispersant Selection handlers
-   - Added DispersantRepository interface + SqliteDispersantRepository
-   - Added dispersants table to schema (9 tables)
-   - Added seedDispersants() to init pipeline
-   - Added validateDispersantInput() to validators
+3. docs/CODEMAPS/frontend.md
+   - Date: 2026-03-21 -> 2026-03-22
+   - Nav items: 92 -> 93
 
-4. docs/CODEMAPS/frontend.md
-   - Nav items: 23 → 24 (+分散剤選定 in 選定 category)
-   - Components: 40 → 42 (+DispersantSelectionView, DispersantBadge)
-   - Hooks: 19 → 20 (+useDispersantSelection)
-   - Badges: 8 → 9 (+DispersantBadge)
-   - IPC methods: 100+ → 110+
+4. docs/CODEMAPS/backend.md
+   - Date: 2026-03-21 -> 2026-03-22
 
-5. docs/CODEMAPS/data.md
-   - Tables: 6 → 7 (+dispersants)
-   - Repository interfaces: 5 → 6 (+DispersantRepository)
-   - SQLite implementations: 5 → 6 (+SqliteDispersantRepository)
-   - Seed files: 6 → 7 (+seed-dispersants.ts)
+5. docs/CODEMAPS/README.md
+   - Date: 2026-03-21 -> 2026-03-22
+   - Version: 1.6.0 -> 2.0.0
+   - Nav tabs: 92 -> 93
+   - Test files: 221 -> 222
+   - Coverage: 91% -> 98.88% core
 
-6. docs/CODEMAPS/dependencies.md
-   - Timestamp update only (no new dependencies)
+6. docs/CODEMAPS/data.md
+   - Date: 2026-03-21 -> 2026-03-22
 
-NEW MODULES DOCUMENTED
-======================
+7. docs/CODEMAPS/dependencies.md
+   - Date: 2026-03-21 -> 2026-03-22
 
-Core:
-- src/core/dispersant-selection.ts — Dual-HSP dispersant screening (anchor + solvation)
+VERIFIED COUNTS (2026-03-22)
+=============================
+| Metric              | Count |
+|---------------------|-------|
+| Source files        | 349   |
+| Core modules        | 117   |
+| Components          | 142   |
+| Hooks               | 69    |
+| Nav tabs            | 93    |
+| VIEW_MAP entries    | 93 (all matched) |
+| Test files          | 222   |
+| IPC handlers        | 167   |
+| Unit tests passed   | 2170  |
+| Core coverage       | 98.88%|
+| Evaluation pipelines| 70+ (10 original + 60 new) |
 
-Database:
-- src/db/seed-dispersants.ts — Seed data for ~10 dispersants (oleylamine, PVP, SDS, etc.)
+ARCHITECTURE OVERVIEW
+=====================
+Electron 41 + React 19 + Vite 5 + SQLite (better-sqlite3)
+- src/core/   117 files  15,400 lines  70+ evaluators, 10 classifiers
+- src/db/      12 files   2,100 lines  9 tables, 8 repos, 7 seed files
+- src/main/     3 files   2,700 lines  167 IPC handlers
+- src/renderer/214 files  17,700 lines  142 components, 69 hooks, 93 nav tabs
+- tests/       222 files              2170 unit + 25 E2E specs
 
-UI:
-- src/renderer/components/DispersantSelectionView.tsx — Particle + Solvent → dispersant ranking
-- src/renderer/components/DispersantBadge.tsx — Affinity level badge (L1=best, green→red)
-- src/renderer/hooks/useDispersantSelection.ts — Dispersant screening hook
-
-Tests (7 new):
-- tests/unit/dispersant-selection.test.ts
-- tests/unit/dispersant-validation.test.ts
-- tests/unit/dispersant-report.test.ts
-- tests/integration/dispersant-db.test.ts
-- tests/integration/dispersant-ipc.test.ts
-- tests/renderer/components/DispersantSelectionView.test.tsx
-- tests/renderer/components/DispersantBadge.test.tsx
-- tests/renderer/hooks/useDispersantSelection.test.ts
-
-MODIFIED FILES (from git status)
-================================
-- src/core/types.ts — Added Dispersant type, DispersantAffinityLevel enum, screening result types
-- src/core/validation.ts — Added validateDispersantInput()
-- src/core/report.ts — Added dispersant CSV formatter
-- src/core/accuracy-warnings.ts — Added dispersant accuracy level
-- src/core/evaluation-history.ts — Added dispersant pipeline support
-- src/db/schema.ts — Added dispersants table DDL
-- src/db/repository.ts — Added DispersantRepository interface + CreateDispersantDto
-- src/db/sqlite-repository.ts — Added SqliteDispersantRepository class
-- src/main/ipc-handlers.ts — Added dispersants:* IPC handlers
-- src/main/main.ts — Added seedDispersants() call
-- src/main/preload.ts — Added dispersant IPC bridge methods
-- src/preload.d.ts — Added dispersant API type declarations
-- src/renderer/App.tsx — Added DispersantSelectionView to VIEW_MAP
-- src/renderer/navigation.ts — Added 分散剤選定 tab to 選定 category
-
-ARCHITECTURE CHANGES
-====================
-
-Dispersant Selection (Pipeline J) — Dual-HSP Model:
-  Unique among all pipelines: uses TWO separate HSP evaluations per dispersant.
-  1. Anchor HSP → particle surface affinity (RED_anchor)
-  2. Solvation HSP → solvent compatibility (RED_solvation)
-  3. Composite RED = √(RED_anchor × RED_solvation) — geometric mean
-  This requires the Dispersant type to carry 6 HSP values (3 anchor + 3 solvation)
-  instead of the standard 3 HSP values used by other entities.
-
-Pipeline Letter Reassignment:
-  Previous J-Q (Advanced) → Now K-R
-  This maintains alphabetical continuity with the new J (Dispersant Selection)
-  inserted into Core Classifiers group.
-
-VALIDATION CHECKLIST
-====================
-[✓] All new file paths verified in git status
-[✓] Core module count updated (39 files)
-[✓] Component count updated (42 components)
-[✓] Hook count updated (20 hooks)
-[✓] Badge count updated (9 badges)
-[✓] Navigation tab count updated (24 tabs)
-[✓] IPC handler count updated (110+)
-[✓] Database table count updated (9 tables)
-[✓] Repository count updated (8 repos)
-[✓] Seed file count updated (7 files)
-[✓] All timestamps set to 2026-03-21
-[✓] Cross-references between codemaps reviewed
-
-TOKEN EFFICIENCY
-================
-Generated codemaps total ~3,100 tokens:
-- INDEX.md: ~980 tokens
-- architecture.md: ~980 tokens
-- frontend.md: ~980 tokens
-- data.md: ~900 tokens
-- dependencies.md: ~750 tokens (unchanged)
-
-CORRECTIONS (rev 2)
-====================
-- Test file count was significantly understated (99 → 133)
-  Root cause: previous count missed tests/renderer/ subdirectories
-  (components/ had 35 test files, hooks/ had 18 test files)
-- INDEX.md, architecture.md, README.md updated with correct test counts
-- E2E test file added: tests/e2e/dispersant-selection.spec.ts (17 test cases)
-
-VERIFIED COUNTS (as of rev 2)
-==============================
-| Directory | Files | Breakdown |
-|-----------|-------|-----------|
-| src/core | 39 | 18 evaluators, 10 classifiers, utilities |
-| src/db | 12 | schema, 8 repos, 7 seed files |
-| src/main | 3 | main, ipc-handlers, preload |
-| src/renderer | 65 | 42 components, 20 hooks, App, nav, main, styles |
-| src/i18n | 2 | translations, init |
-| tests/unit | 47 | core logic tests |
-| tests/integration | 5 | DB, IPC tests |
-| tests/renderer | 56 | 35 component + 18 hook + 3 nav/app tests |
-| tests/e2e | 25 | Playwright spec files |
+RUNTIME FIXES APPLIED
+=====================
+- VIEW_MAP mismatches resolved: 8 cases (tab keys without corresponding views)
+- IPC handler registration errors: 5 cases (missing/misnamed handlers)
+- All 93 nav tabs now have matching VIEW_MAP entries (100% coverage)
 
 ---
 End of Report

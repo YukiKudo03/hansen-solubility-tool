@@ -1,4 +1,4 @@
-<!-- Generated: 2026-03-21 | Updated: 2026-03-21 | Files scanned: 2 | Token estimate: ~750 -->
+<!-- Generated: 2026-03-22 | Updated: 2026-03-22 | Files scanned: 2 | Token estimate: ~750 -->
 
 # External Dependencies & Build Tools
 
@@ -187,6 +187,6 @@ hansen-solubility
 
 ---
 
-**Last Updated:** 2026-03-21
+**Last Updated:** 2026-03-22
 
 **Related:** See `architecture.md` for system design, `backend.md` for main process, `data.md` for database.

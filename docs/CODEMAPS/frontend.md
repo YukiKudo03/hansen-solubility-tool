@@ -1,4 +1,4 @@
-<!-- Generated: 2026-03-21 | Files scanned: 214 renderer | Token estimate: ~1200 -->
+<!-- Generated: 2026-03-22 | Files scanned: 214 renderer | Token estimate: ~1200 -->
 
 # Frontend Component Architecture
 
@@ -13,7 +13,7 @@ Screen Width    Navigation Pattern       Component
 
 **Breakpoint detection:** `useMediaQuery()` hook → returns `'desktop' | 'tablet' | 'mobile'`
 
-## 6 Category Navigation (92 feature items)
+## 6 Category Navigation (93 feature items)
 
 | Category | Icon | Items |
 |----------|------|-------|
@@ -164,4 +164,4 @@ Advanced analytics handlers (8+)
 
 **Related:** See `architecture.md` for system overview, `backend.md` for IPC handlers, `data.md` for schema.
 
-**Last Updated:** 2026-03-21
+**Last Updated:** 2026-03-22

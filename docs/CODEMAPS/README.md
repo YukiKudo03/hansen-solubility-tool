@@ -1,6 +1,6 @@
 # Codemaps — Architecture Documentation
 
-This directory contains token-lean architectural documentation for the Hansen Solubility project, updated on 2026-03-21.
+This directory contains token-lean architectural documentation for the Hansen Solubility project, updated on 2026-03-22.
 
 ## Quick Start
 
@@ -16,7 +16,7 @@ This directory contains token-lean architectural documentation for the Hansen So
 |---------|------|---------|
 | [INDEX.md](./INDEX.md) | 8.2K | Navigation guide, module tour, critical paths |
 | [architecture.md](./architecture.md) | 9.5K | System diagram, 70+ evaluators, data flow |
-| [frontend.md](./frontend.md) | 7.1K | 142 components, 6 nav categories, 92 tabs |
+| [frontend.md](./frontend.md) | 7.1K | 142 components, 6 nav categories, 93 tabs |
 | [data.md](./data.md) | 5.8K | SQLite schema, repositories, seed data |
 | [dependencies.md](./dependencies.md) | 5.6K | Packages, build tools, Docker |
 
@@ -45,7 +45,7 @@ Select Group + Solvent → Click "評価実行"
 
 ## Freshness
 
-All codemaps include generation timestamp: `<!-- Generated: 2026-03-21 -->`
+All codemaps include generation timestamp: `<!-- Generated: 2026-03-22 -->`
 
 Update when:
 - Major feature added
@@ -79,6 +79,6 @@ These codemaps are the **single source of truth** for architecture. Reference in
 
 ---
 
-**Generated:** 2026-03-21 | **Version:** 1.6.0 | **Status:** Current (70+ evaluators, 221 test files, 91% coverage)
+**Generated:** 2026-03-22 | **Version:** 2.0.0 | **Status:** Current (70+ evaluators, 222 test files, 98.88% core coverage)
 
 See [../.reports/codemap-diff.txt](../../.reports/codemap-diff.txt) for generation report.

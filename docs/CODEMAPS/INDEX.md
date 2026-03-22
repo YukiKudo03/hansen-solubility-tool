@@ -1,4 +1,4 @@
-<!-- Generated: 2026-03-21 | Files scanned: 349 src + 221 tests | Token estimate: ~980 -->
+<!-- Generated: 2026-03-22 | Files scanned: 349 src + 222 tests | Token estimate: ~980 -->
 
 # Hansen Solubility Project — Codemap Index
 
@@ -11,7 +11,7 @@ A production-grade Electron desktop application for HSP-based material compatibi
 
 ### Implementation Details
 - **[backend.md](./backend.md)** — IPC handlers (167), repository pattern, validation
-- **[frontend.md](./frontend.md)** — MD3 responsive layout, 92 tabs, 69 hooks, dark mode
+- **[frontend.md](./frontend.md)** — MD3 responsive layout, 93 tabs, 69 hooks, dark mode
 - **[data.md](./data.md)** — SQLite schema (9 tables), repositories (8), seed data
 - **[dependencies.md](./dependencies.md)** — External packages, build tools
 
@@ -71,7 +71,7 @@ A production-grade Electron desktop application for HSP-based material compatibi
 - **Styling:** Tailwind CSS 3.4, MD3 design tokens, dark mode
 - **3D Plot:** Plotly.js (plotly.js-basic-dist-min)
 - **i18n:** i18next + react-i18next
-- **Testing:** Vitest 2.1 (1717+ unit) + Playwright 1.58 (98+ E2E)
+- **Testing:** Vitest 2.1 (2170 unit) + Playwright 1.58 (98+ E2E)
 
 ## Module Tour
 
@@ -133,7 +133,7 @@ Pure domain logic (testable, no side effects)
 
 ### src/renderer/ (214 files, ~17,700 lines)
 - `App.tsx` — MD3 responsive layout + `useTheme()`
-- `navigation.ts` — 6カテゴリ・92タブ (70+評価パイプライン)
+- `navigation.ts` — 6カテゴリ・93タブ (70+評価パイプライン)
 - `components/` — 142 components (91 Views, 40 Badges, 3 Nav, SortTableHeader, BookmarkButton, etc.)
 - `hooks/` — 69 hooks (useCsvExport, useSortableTable, useBookmarks, useTheme, useDispersantSelection, etc.)
 
@@ -141,7 +141,7 @@ Pure domain logic (testable, no side effects)
 - `translations.ts` — ja/en 60+キー
 - `index.ts` — i18next初期化
 
-### tests/ (221 files, 1717+ unit/renderer + 25 E2E specs)
+### tests/ (222 files, 2170 unit/renderer + 25 E2E specs)
 
 ## Database Schema (8 tables)
 
@@ -165,9 +165,9 @@ Pure domain logic (testable, no side effects)
 | **Database** | 12 | 2,100 | Schema, 8 repos, 7 seed files |
 | **Main** | 3 | 2,700 | Electron, IPC (167), preload |
 | **Renderer** | 214 | 17,700 | 142 components, 69 hooks, i18n |
-| **Tests** | 221 | — | 1717+ unit/renderer + 25 E2E |
-| **Total** | 570 | 38,600+ | — |
+| **Tests** | 222 | — | 2170 unit/renderer + 25 E2E |
+| **Total** | 571 | 38,600+ | — |
 
 ---
 
-**Last Updated:** 2026-03-21 | **Status:** 70+ evaluation pipelines complete, test coverage 91%
+**Last Updated:** 2026-03-22 | **Status:** 70+ evaluation pipelines complete, core coverage 98.88%
