@@ -1,0 +1,107 @@
+{
+  "basic_info": {
+    "name": "Polymer Blend Miscibility",
+    "name_ja": "ポリマーブレンド相溶性",
+    "category": "Polymer/Materials",
+    "description": "HSP distance (Ra) and RED number between two polymers are used to predict whether a polymer blend will be miscible, immiscible, or partially miscible. The Flory-Huggins interaction parameter chi can be estimated from the HSP distance, providing a thermodynamic basis for miscibility prediction. When RED < 1 (Ra < R0 of either polymer), the polymers are expected to be miscible. This approach is widely used for rapid screening of polymer pairs before experimental blending trials, though entropic effects and specific interactions may require additional consideration.",
+    "maturity_level": "mature"
+  },
+  "hsp_principle": {
+    "hsp_principle": "The underlying principle is that two polymers will be miscible when their HSP values are sufficiently close in Hansen space. The Ra distance quantifies the HSP difference between two polymers. By comparing Ra to the interaction radius R0 of each polymer (determined from solubility sphere fitting), the RED number predicts compatibility. Additionally, the Flory-Huggins chi parameter can be estimated from HSP distance using chi = Vs * (delta1 - delta2)^2 / (RT), where the squared difference is expanded into the three HSP components. Miscibility requires chi < chi_critical = 0.5 * (1/sqrt(N1) + 1/sqrt(N2))^2, where N1 and N2 are degrees of polymerization. Because polymers have very low combinatorial entropy of mixing (large N), even small positive chi values lead to immiscibility, making the HSP distance criterion particularly stringent for high molecular weight pairs.",
+    "key_equation": "Ra = sqrt(4*(dD1-dD2)^2 + (dP1-dP2)^2 + (dH1-dH2)^2); RED = Ra/R0; chi = Vs*Ra^2/(6*R*T)",
+    "red_direction": "low_is_good",
+    "typical_red_threshold": "RED < 1.0 for miscibility; RED < 0.5 strongly suggests miscible blend; RED 0.5-1.0 partial miscibility possible; RED > 1.0 immiscible",
+    "sensitivity_to_hbond_split": "medium",
+    "temperature_pressure_sensitivity": "medium"
+  },
+  "input_data": {
+    "required_inputs": [
+      "HSP values (dD, dP, dH) for polymer A",
+      "HSP values (dD, dP, dH) for polymer B",
+      "Interaction radius R0 for each polymer",
+      "Molar volume of reference solvent (Vs) for chi estimation",
+      "Temperature (for chi calculation)"
+    ],
+    "data_sources": [
+      "HSPiP database (extensive polymer HSP library)",
+      "Group contribution methods (Van Krevelen, Hoy, Hoftyzer)",
+      "Inverse gas chromatography (IGC) measurements",
+      "Solvent swelling/dissolution experiments with sphere fitting",
+      "Literature compilations (Hansen 2007, Barton 1991)"
+    ],
+    "data_availability_score": 4,
+    "complementary_parameters": [
+      "Molecular weight (Mw) of both polymers (affects chi_critical)",
+      "Glass transition temperature (Tg) of each polymer",
+      "Blend composition ratio",
+      "Processing temperature",
+      "Crystallinity (if semicrystalline polymers involved)"
+    ]
+  },
+  "accuracy": {
+    "accuracy_level": "semi-quantitative",
+    "limitations": [
+      "HSP approach assumes van Laar / regular solution behavior and does not capture specific interactions (e.g., hydrogen bond complementarity, charge transfer complexes) that can promote miscibility beyond HSP prediction",
+      "Entropic contributions are approximated; for polymer-polymer systems the combinatorial entropy is very small, making enthalpy dominant, but non-combinatorial (equation-of-state) entropy effects are neglected",
+      "Does not account for LCST/UCST behavior driven by free volume or compressibility effects",
+      "R0 values for polymers are less well-defined than for solvents due to limited number of good solvents",
+      "Blend morphology (phase size, co-continuous vs dispersed) cannot be predicted from HSP alone",
+      "Crystallization effects in semicrystalline blends are not captured"
+    ],
+    "known_failure_modes": [
+      "Polymer pairs with strong specific interactions (e.g., PMMA/PVF2 miscibility driven by C-H...F-C interactions) predicted immiscible by HSP but are experimentally miscible",
+      "LCST-type phase separation (e.g., PS/PVME) where blends are miscible at low temperature but phase-separate on heating, not predicted by static HSP",
+      "Blends where copolymer intramolecular repulsion drives miscibility (e.g., styrene-acrylonitrile copolymers with certain partners)",
+      "High Mw blends where even tiny HSP differences yield chi > chi_critical"
+    ],
+    "validation_method": [
+      "DSC measurement of single vs. dual Tg",
+      "Cloud point determination (optical clarity vs. temperature)",
+      "Small-angle X-ray or neutron scattering (SAXS/SANS)",
+      "Optical microscopy of blend morphology",
+      "Dynamic mechanical analysis (DMA) for Tg detection"
+    ]
+  },
+  "implementation": {
+    "complexity": "medium",
+    "ui_pattern": "pairwise",
+    "existing_modules_reusable": [
+      "calculateRa",
+      "calculateRed",
+      "classifyRisk"
+    ],
+    "multi_component_complexity": "binary",
+    "scale_of_application": "screening"
+  },
+  "literature": {
+    "key_references": [
+      "Hansen, C.M. 'Hansen Solubility Parameters: A User's Handbook', 2nd Ed., CRC Press, 2007",
+      "Flory, P.J. 'Principles of Polymer Chemistry', Cornell University Press, 1953",
+      "Van Krevelen, D.W.; Te Nijenhuis, K. 'Properties of Polymers', 4th Ed., Elsevier, 2009",
+      "Zeng, W.; Du, Y.; Xue, Y.; Frisch, H.L. 'Solubility Parameters', in Physical Properties of Polymers Handbook, Springer, 2007",
+      "Coleman, M.M.; Graf, J.F.; Painter, P.C. 'Specific Interactions and the Miscibility of Polymer Blends', Technomic, 1991"
+    ],
+    "first_reported_year": 1967,
+    "regulatory_relevance": "Not directly referenced in regulatory frameworks, but used as supporting evidence in material qualification for FDA food-contact polymer blends and in REACH substance assessments for polymer additives migration prediction"
+  },
+  "industry_application": {
+    "industry_sectors": [
+      "Automotive (engineering plastic blends for under-hood components)",
+      "Packaging (barrier film blends, recycled polymer compatibility)",
+      "Electronics (polymer alloy housings, insulation blends)",
+      "Medical devices (biocompatible polymer blend screening)",
+      "Recycling (compatibility screening for mixed plastic waste streams)"
+    ],
+    "commercial_tools": [
+      "HSPiP (Hansen Solubility Parameters in Practice) - polymer blend module",
+      "COSMOtherm (COSMO-RS based, complementary to HSP)",
+      "Materials Studio (Synthia module for HSP prediction)",
+      "PolyInfo / NIMS polymer database",
+      "Aspen Polymers (Flory-Huggins chi estimation)"
+    ]
+  },
+  "uncertain": [
+    "first_reported_year",
+    "regulatory_relevance"
+  ]
+}

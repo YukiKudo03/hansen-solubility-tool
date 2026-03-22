@@ -1,0 +1,142 @@
+{
+  "basic_info": {
+    "name": "Li-ion Battery Electrolyte Design",
+    "name_ja": "リチウムイオン電池電解液設計",
+    "category": "Energy/Environment",
+    "description": "Electrolyte salt-solvent HSP compatibility predicts solvation shell structure, ion transport properties, and solid-electrolyte interphase (SEI) formation characteristics in lithium-ion batteries. HSP matching between lithium salts and organic carbonate solvents guides solvent selection and blending to optimize ionic conductivity, electrochemical stability window, and cycle life. The approach extends to next-generation electrolytes including solid-state, ionic liquid, and deep eutectic solvent systems.",
+    "maturity_level": "emerging"
+  },
+  "hsp_principle": {
+    "hsp_principle": "In lithium-ion battery electrolytes, the dissolution and solvation of lithium salts (LiPF6, LiBF4, LiTFSI) in organic solvents (EC, DMC, DEC, EMC) depend on thermodynamic compatibility quantifiable through HSP. The HSP distance between the salt and solvent predicts solvation strength: solvents with HSP close to the salt HSP (particularly in dP and dH components) form strong solvation shells around Li+ ions, promoting salt dissociation and ionic conductivity. However, too-strong solvation (very low Ra) can impede desolvation at the electrode interface, increasing charge-transfer resistance. The HSP framework also predicts solvent-solvent miscibility in blended electrolytes (e.g., EC/DMC), solvent-polymer interactions in gel polymer electrolytes, and solvent-SEI compatibility that governs passivation layer quality. Solvent HSP, particularly the dP and dH components, correlate with the solvent's ability to coordinate Li+ and influence the SEI composition through preferential decomposition of high-dP solvents like EC at the anode surface.",
+    "key_equation": "Ra = sqrt(4*(dD_salt-dD_solvent)^2 + (dP_salt-dP_solvent)^2 + (dH_salt-dH_solvent)^2); Ionic conductivity sigma correlates with salt-solvent compatibility; Donor number and dH are correlated for solvation strength",
+    "red_direction": "threshold_specific",
+    "typical_red_threshold": "RED 0.5-1.0 optimal (sufficient solvation without excessive coordination); RED < 0.5 may indicate too-strong solvation hindering desolvation [uncertain]",
+    "sensitivity_to_hbond_split": "high",
+    "temperature_pressure_sensitivity": "high"
+  },
+  "input_data": {
+    "required_inputs": [
+      "Lithium salt HSP (dD, dP, dH) or ion-pair HSP estimates",
+      "Solvent HSP (dD, dP, dH) for each electrolyte component",
+      "Solvent blend composition (volume or mole fractions)",
+      "Operating temperature range",
+      "Salt concentration"
+    ],
+    "data_sources": [
+      "HSPiP database for common organic carbonate solvents",
+      "Published HSP for battery solvents (EC, DMC, DEC, EMC, PC, FEC)",
+      "Group contribution methods for fluorinated solvent HSP",
+      "Computational chemistry (DFT, COSMO-RS) for salt and additive HSP estimation",
+      "Experimental solubility screening for novel salt-solvent combinations"
+    ],
+    "data_availability_score": 3,
+    "complementary_parameters": [
+      "Solvent dielectric constant and Gutmann donor/acceptor numbers",
+      "Solvent electrochemical stability window (oxidation/reduction potentials)",
+      "Solvent viscosity (affects ion mobility)",
+      "Salt concentration and degree of dissociation",
+      "Li+ transference number",
+      "Electrode surface chemistry and SEI composition",
+      "Operating voltage range and C-rate requirements"
+    ]
+  },
+  "accuracy": {
+    "accuracy_level": "qualitative",
+    "limitations": [
+      "HSP treats salt solvation as a bulk thermodynamic property, but Li+ solvation is dominated by specific coordination chemistry (first solvation shell structure) not fully captured by HSP",
+      "Electrochemical decomposition of solvents at electrode surfaces is kinetically controlled and depends on electrode potential, not just HSP",
+      "SEI formation involves complex multi-step reactions where HSP provides only indirect guidance through solvent reactivity trends",
+      "Ion-ion interactions at typical battery concentrations (1M+) cause significant deviation from dilute-solution HSP predictions",
+      "HSP does not capture the anion contribution to solvation structure and conductivity (contact ion pairs vs. solvent-separated ion pairs)",
+      "Solid-state and polymer electrolytes involve additional factors (crystallinity, segmental motion, grain boundaries) beyond HSP"
+    ],
+    "known_failure_modes": [
+      "Highly concentrated electrolytes (>3M) where ion-ion interactions dominate and the bulk solvent HSP concept breaks down",
+      "Electrolyte additives (FEC, VC) that function through electrochemical decomposition kinetics rather than thermodynamic compatibility",
+      "Ionic liquid electrolytes where the IL itself has tunable HSP but ion transport mechanisms differ fundamentally from molecular solvents",
+      "Solid-state electrolytes where grain boundary resistance and mechanical properties dominate over HSP-like compatibility"
+    ],
+    "validation_method": [
+      "Electrochemical impedance spectroscopy (EIS) for ionic conductivity",
+      "Cyclic voltammetry for electrochemical stability window",
+      "Li+ transference number measurement (Bruce-Vincent method)",
+      "XPS and cryo-TEM for SEI composition and morphology analysis",
+      "Galvanostatic cycling for capacity retention and Coulombic efficiency",
+      "Raman spectroscopy for solvation shell structure characterization"
+    ]
+  },
+  "implementation": {
+    "complexity": "high",
+    "ui_pattern": "optimization",
+    "existing_modules_reusable": [
+      "calculateRa",
+      "calculateRed",
+      "optimizeBlend"
+    ],
+    "multi_component_complexity": "multi",
+    "scale_of_application": "design"
+  },
+  "literature": {
+    "key_references": [
+      {
+        "author": "Xu, K.",
+        "title": "Nonaqueous liquid electrolytes for lithium-based rechargeable batteries",
+        "journal": "Chemical Reviews",
+        "year": 2004,
+        "doi": "10.1021/cr030203g"
+      },
+      {
+        "author": "Xu, K.",
+        "title": "Electrolytes and interphases in Li-ion batteries and beyond",
+        "journal": "Chemical Reviews",
+        "year": 2014,
+        "doi": "10.1021/cr500003w"
+      },
+      {
+        "author": "Venkatraman, V.; Evjen, S.; Lethesh, K.C.; Raj, J.J.; Knuutila, H.K.; Fiksdahl, A.",
+        "title": "Screening ionic liquids for CO2 capture using Hansen solubility parameters",
+        "journal": "International Journal of Molecular Sciences",
+        "year": 2019,
+        "doi": "10.3390/ijms20215151"
+      },
+      {
+        "author": "Lee, S.; Park, S.S.",
+        "title": "Dielectric constants of binary mixtures of propylene carbonate with dimethyl carbonate and ethylene carbonate used in lithium-ion battery electrolytes",
+        "journal": "Journal of Physical Chemistry B",
+        "year": 2021,
+        "doi": "[uncertain]"
+      },
+      {
+        "author": "Hansen, C.M.",
+        "title": "Hansen Solubility Parameters: A User's Handbook, 2nd Edition",
+        "journal": "CRC Press",
+        "year": 2007,
+        "doi": "10.1201/9781420006834"
+      }
+    ],
+    "first_reported_year": "[uncertain]",
+    "regulatory_relevance": "HSP-based electrolyte design supports compliance with UN transport regulations for lithium batteries (UN 38.3 testing requirements) by optimizing electrolyte stability. EU Battery Regulation (2023/1542) requirements for battery passport and sustainability declarations benefit from rational electrolyte design reducing hazardous solvent use. REACH registration of electrolyte solvents and salts requires understanding of mixture properties."
+  },
+  "industry_application": {
+    "industry_sectors": [
+      "Lithium-ion battery manufacturing (automotive, consumer electronics, grid storage)",
+      "Electrolyte material suppliers",
+      "Battery R&D laboratories",
+      "Electric vehicle OEMs",
+      "Next-generation battery development (solid-state, Li-S, Li-air)"
+    ],
+    "commercial_tools": [
+      "HSPiP (Hansen Solubility Parameters in Practice)",
+      "COSMOtherm (COSMO-RS based property prediction)",
+      "Materials Design MedeA (molecular simulation)",
+      "Scienomics MAPS platform",
+      "Battery Design Studio (CD-adapco)"
+    ]
+  },
+  "uncertain": [
+    "hsp_principle.typical_red_threshold",
+    "accuracy.accuracy_level",
+    "literature.key_references[3].doi",
+    "literature.first_reported_year"
+  ]
+}

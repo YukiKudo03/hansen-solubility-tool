@@ -1,0 +1,132 @@
+{
+  "basic_info": {
+    "name": "Thermoset Curing Agent Selection",
+    "name_ja": "熱硬化性樹脂用硬化剤選定",
+    "category": "Polymer/Materials",
+    "description": "Hansen Solubility Parameters are used to predict the miscibility and mixing homogeneity between thermoset resins (epoxy, polyester, vinyl ester) and curing agents (amines, anhydrides, phenolics). The HSP distance between resin and hardener governs initial mixing quality, which in turn affects pot life, gelation uniformity, and ultimately the crosslink density and mechanical properties of the cured network. A low RED value indicates thermodynamic compatibility, promoting fine-scale mixing before cure onset, while excessive HSP mismatch can cause phase separation during cure, leading to heterogeneous crosslink networks and degraded performance.",
+    "maturity_level": "established"
+  },
+  "hsp_principle": {
+    "hsp_principle": "The core principle is that resin-hardener compatibility is governed by the HSP distance (Ra) between the two components. When Ra is small relative to the interaction radius R0 of the resin, the hardener is thermodynamically miscible and will form a homogeneous mixture. During cure, the system undergoes gelation and vitrification; if the initial mixture is well-mixed at the molecular level (low RED), the resulting crosslinked network will be uniform. High Ra leads to micro-phase separation before or during cure, creating domains of under-cured and over-cured material. The Flory-Huggins interaction parameter chi, derived from Ra, can be used to estimate the free energy of mixing and predict the phase behavior of the uncured blend.",
+    "key_equation": "Ra = sqrt(4*(dD1-dD2)^2 + (dP1-dP2)^2 + (dH1-dH2)^2); RED = Ra/R0; chi = V_hardener * Ra^2 / (6*R*T)",
+    "red_direction": "low_is_good",
+    "typical_red_threshold": "RED < 1.0 for good miscibility; RED < 0.7 preferred for optimal mixing homogeneity before gelation",
+    "sensitivity_to_hbond_split": "medium",
+    "temperature_pressure_sensitivity": "medium"
+  },
+  "input_data": {
+    "required_inputs": [
+      "HSP of resin (dD, dP, dH)",
+      "HSP of curing agent (dD, dP, dH)",
+      "Interaction radius R0 of resin",
+      "Molar volume of curing agent",
+      "Cure temperature",
+      "Stoichiometric ratio (equivalent weight)"
+    ],
+    "data_sources": [
+      "HSPiP database (extensive epoxy and amine data)",
+      "Group contribution methods (Van Krevelen, Hoftyzer) for novel hardeners",
+      "Supplier technical data sheets",
+      "Published literature values for common resin-hardener systems",
+      "Inverse gas chromatography for specialty resins"
+    ],
+    "data_availability_score": 4,
+    "complementary_parameters": [
+      "Equivalent weight of resin and hardener",
+      "Viscosity of components at mixing temperature",
+      "Gel time and pot life data",
+      "Glass transition temperature (Tg) of cured system",
+      "Reactivity/activation energy of cure reaction",
+      "Surface tension (for wetting of fillers/fibers)"
+    ]
+  },
+  "accuracy": {
+    "accuracy_level": "semi-quantitative",
+    "limitations": [
+      "HSP predicts thermodynamic miscibility of uncured components but does not capture cure kinetics or reaction-induced phase separation",
+      "Highly reactive systems may gel before achieving equilibrium mixing, making initial HSP matching less predictive",
+      "Crosslinking changes the effective HSP of the network during cure, so initial compatibility may not reflect final morphology",
+      "Multi-component formulations (accelerators, fillers, tougheners) complicate simple binary HSP matching",
+      "Anhydride hardeners with catalysts follow different mixing dynamics than amine systems",
+      "Does not account for specific chemical interactions (e.g., Lewis acid-base catalysis) that affect cure behavior"
+    ],
+    "known_failure_modes": [
+      "Reaction-induced phase separation (RIPS): initially compatible blends can phase-separate during cure as molecular weight increases",
+      "Latent hardeners designed for poor initial miscibility but cure at elevated temperature",
+      "Systems with strong hydrogen bonding between hardener and resin that are not captured by averaged dH values",
+      "Catalytic curing agents used at very low stoichiometric ratios where bulk miscibility is less relevant"
+    ],
+    "validation_method": [
+      "Optical microscopy or SEM of cured cross-sections for phase homogeneity",
+      "DSC measurement of Tg breadth (narrow Tg = homogeneous network)",
+      "DMA tan-delta peak width as homogeneity indicator",
+      "Gel time measurement at controlled temperature",
+      "Mechanical testing (flexural strength, fracture toughness) of cured specimens"
+    ]
+  },
+  "implementation": {
+    "complexity": "medium",
+    "ui_pattern": "screening",
+    "existing_modules_reusable": [
+      "calculateRa",
+      "calculateRed",
+      "classifyRisk"
+    ],
+    "multi_component_complexity": "binary",
+    "scale_of_application": "design"
+  },
+  "literature": {
+    "key_references": [
+      {
+        "author": "Hansen, C.M.",
+        "title": "Hansen Solubility Parameters: A User's Handbook, 2nd Edition",
+        "journal": "CRC Press",
+        "year": 2007,
+        "doi": "10.1201/9781420006834"
+      },
+      {
+        "author": "Mezzenga, R.; Boogh, L.; Manson, J.-A.E.",
+        "title": "A review of dendritic hyperbranched polymer as modifiers in epoxy composites",
+        "journal": "Composites Science and Technology",
+        "year": 2001,
+        "doi": "10.1016/S0266-3538(01)00068-X"
+      },
+      {
+        "author": "Prolongo, S.G.; Cabanelas, J.C.; Baselga, J.",
+        "title": "Reactive compatibilization of epoxy/polyorganosiloxane blends",
+        "journal": "Macromolecular Symposia",
+        "year": 2003,
+        "doi": "[uncertain]"
+      },
+      {
+        "author": "Pascault, J.-P.; Williams, R.J.J.",
+        "title": "Epoxy Polymers: New Materials and Innovations",
+        "journal": "Wiley-VCH",
+        "year": 2010,
+        "doi": "10.1002/9783527628704"
+      }
+    ],
+    "first_reported_year": "[uncertain]",
+    "regulatory_relevance": "Not directly referenced in regulatory frameworks, but HSP-based formulation design supports REACH compliance by enabling substitution of hazardous solvents/diluents in thermoset formulations. Some aerospace specifications indirectly rely on compatibility screening that aligns with HSP principles."
+  },
+  "industry_application": {
+    "industry_sectors": [
+      "Aerospace composites",
+      "Automotive structural adhesives",
+      "Wind energy (blade manufacturing)",
+      "Electronics encapsulation and potting",
+      "Marine coatings and laminates",
+      "Construction (structural adhesives, flooring)"
+    ],
+    "commercial_tools": [
+      "HSPiP (Hansen Solubility Parameters in Practice)",
+      "COSMOtherm (COSMO-RS based prediction)",
+      "Materials Studio (molecular simulation)",
+      "Huntsman / Evonik proprietary formulation tools"
+    ]
+  },
+  "uncertain": [
+    "literature.key_references[2].doi",
+    "literature.first_reported_year"
+  ]
+}

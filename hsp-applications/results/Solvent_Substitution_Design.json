@@ -1,0 +1,144 @@
+{
+  "basic_info": {
+    "name": "Solvent Substitution Design",
+    "name_ja": "溶剤代替設計",
+    "category": "Coatings/Inks",
+    "description": "HSP distance minimization is used to find regulatory-compliant replacement solvents for banned or restricted originals. By identifying solvents or solvent blends with HSP values close to the original solvent, formulators can maintain dissolution power, coating performance, and process compatibility while meeting REACH, VOC, GHS, or other environmental and health regulations. HSP-based substitution is the primary rational design method for solvent replacement in the coatings, inks, adhesives, and cleaning industries.",
+    "maturity_level": "mature"
+  },
+  "hsp_principle": {
+    "hsp_principle": "The core principle is that solvents with similar HSP values will exhibit similar dissolution and solvation behavior toward a given solute or polymer. By calculating the HSP distance (Ra) between the banned solvent and candidate replacements, formulators can rank alternatives by functional equivalence. For solvent blends, the volume-weighted average HSP of the blend is matched to the target HSP of the original solvent. The approach extends to matching the RED value against the polymer's solubility sphere: any solvent or blend with RED < 1 for the target polymer is a functional replacement, but minimizing Ra to the original solvent ensures the closest match in evaporation behavior, viscosity effects, and process characteristics. Multi-objective optimization balances HSP matching with constraints on evaporation rate, flash point, toxicity, cost, and regulatory status.",
+    "key_equation": "Ra = sqrt(4*(dD_orig-dD_new)^2 + (dP_orig-dP_new)^2 + (dH_orig-dH_new)^2); for blends: dD_blend = sum(phi_i * dD_i), dP_blend = sum(phi_i * dP_i), dH_blend = sum(phi_i * dH_i)",
+    "red_direction": "low_is_good",
+    "typical_red_threshold": "Ra < 2-3 MPa^0.5 to the original solvent for close functional match; RED < 1.0 against the target polymer for adequate solvency",
+    "sensitivity_to_hbond_split": "medium",
+    "temperature_pressure_sensitivity": "low"
+  },
+  "input_data": {
+    "required_inputs": [
+      "HSP of original (banned/restricted) solvent (dD, dP, dH)",
+      "HSP of target polymer/resin (dD, dP, dH) and R0",
+      "HSP of candidate replacement solvents (dD, dP, dH)",
+      "Regulatory constraint list (banned substances, VOC limits, OEL thresholds)",
+      "Evaporation rate requirements"
+    ],
+    "data_sources": [
+      "HSPiP database (comprehensive solvent HSP library with 1200+ solvents)",
+      "REACH SVHC candidate list and Annex XIV authorization list",
+      "EPA TRI and TSCA chemical inventories",
+      "Solvent supplier technical data (Eastman, BASF, Dow, Solvay)",
+      "Green chemistry solvent guides (CHEM21, GSK, Pfizer, ACS GCI)",
+      "Published bio-based solvent HSP values"
+    ],
+    "data_availability_score": 5,
+    "complementary_parameters": [
+      "Evaporation rate (relative to butyl acetate or ether)",
+      "Flash point and auto-ignition temperature",
+      "Occupational exposure limits (TWA, STEL)",
+      "VOC classification under relevant jurisdiction",
+      "Cost per unit volume",
+      "Boiling point and vapor pressure",
+      "Kauri-butanol (Kb) value for cross-validation",
+      "Viscosity and density"
+    ]
+  },
+  "accuracy": {
+    "accuracy_level": "semi-quantitative",
+    "limitations": [
+      "HSP matching ensures similar thermodynamic solvency but does not guarantee identical kinetic behavior (evaporation rate, diffusion rate)",
+      "Solvent blends matched by average HSP may have different co-solvency effects than a single solvent at the same HSP point",
+      "Non-equilibrium effects during coating application (evaporation-induced HSP drift) are not captured by static HSP matching",
+      "Azeotrope formation in replacement solvent blends can change evaporation behavior unpredictably",
+      "Some solvent functions (e.g., catalyst activity, reactivity with isocyanates) are chemical-specific and not captured by HSP",
+      "Water-miscible to water-immiscible transitions cannot be predicted by HSP distance alone"
+    ],
+    "known_failure_modes": [
+      "Chlorinated solvent replacement: high-dD solvents with no regulatory issues are scarce, making close HSP matching difficult",
+      "NMP replacement: unique combination of high dP, dH, and high boiling point is hard to replicate with a single green solvent",
+      "Toluene replacement in adhesives: xylene or high-flash-point aromatics match HSP but may face future restrictions themselves",
+      "Multi-functional solvents (e.g., acting as both solvent and reactive diluent) where HSP matching does not address reactivity"
+    ],
+    "validation_method": [
+      "Dissolution power testing (Kauri-butanol value, aniline point)",
+      "Viscosity reduction curves comparing original and replacement in target resin",
+      "Application testing of reformulated coating (spray, brush, dip) for equivalent film quality",
+      "Accelerated stability testing of reformulated product",
+      "Evaporation rate measurement under application conditions",
+      "Film property testing (gloss, adhesion, hardness, flexibility) of final coating"
+    ]
+  },
+  "implementation": {
+    "complexity": "medium",
+    "ui_pattern": "optimization",
+    "existing_modules_reusable": [
+      "calculateRa",
+      "calculateRed",
+      "classifyRisk",
+      "optimizeBlend"
+    ],
+    "multi_component_complexity": "multi",
+    "scale_of_application": "design"
+  },
+  "literature": {
+    "key_references": [
+      {
+        "author": "Hansen, C.M.",
+        "title": "Hansen Solubility Parameters: A User's Handbook, 2nd Edition",
+        "journal": "CRC Press",
+        "year": 2007,
+        "doi": "10.1201/9781420006834"
+      },
+      {
+        "author": "Abbott, S.; Hansen, C.M.",
+        "title": "Hansen Solubility Parameters in Practice (HSPiP) software and eBook",
+        "journal": "HSPiP, 5th Edition",
+        "year": 2013,
+        "doi": "N/A"
+      },
+      {
+        "author": "Jessop, P.G.; Jessop, D.A.; Fu, D.; Phan, L.",
+        "title": "Solvatochromic parameters for solvents of interest in green chemistry",
+        "journal": "Green Chemistry",
+        "year": 2012,
+        "doi": "10.1039/C2GC16670D"
+      },
+      {
+        "author": "Byrne, F.P.; Jin, S.; Paggiola, G.; Petchey, T.H.M.; Clark, J.H.; Farmer, T.J.; Hunt, A.J.; McElroy, C.R.; Sherwood, J.",
+        "title": "Tools and techniques for solvent selection: green solvent selection guides",
+        "journal": "Sustainable Chemical Processes",
+        "year": 2016,
+        "doi": "10.1186/s40508-016-0051-z"
+      },
+      {
+        "author": "Durkee, J.B.",
+        "title": "Cleaning with Solvents: Science and Technology",
+        "journal": "Elsevier",
+        "year": 2014,
+        "doi": "10.1016/C2012-0-00749-9"
+      }
+    ],
+    "first_reported_year": 1971,
+    "regulatory_relevance": "HSP-based solvent substitution is directly relevant to REACH (Annex XIV authorization, SVHC substitution plans), EU VOC Directive 2004/42/EC, US EPA HAP regulations (40 CFR Part 63), California SCAQMD rules, and GHS classification. Some REACH substitution analysis reports explicitly reference HSP as a methodology for identifying suitable alternatives. The ECHA guidance on alternatives assessment acknowledges physicochemical matching approaches consistent with HSP methodology."
+  },
+  "industry_application": {
+    "industry_sectors": [
+      "Automotive coatings and refinish",
+      "Printing inks (packaging, publication, commercial)",
+      "Adhesives and sealants",
+      "Industrial cleaning and degreasing",
+      "Pharmaceutical manufacturing (process solvents)",
+      "Paint and coating manufacturing",
+      "Electronics cleaning",
+      "Textile processing"
+    ],
+    "commercial_tools": [
+      "HSPiP (Hansen Solubility Parameters in Practice) - includes solvent optimizer module",
+      "COSMOtherm (COSMO-RS based solvent screening)",
+      "IBSS Solvent Database and Substitution Tool",
+      "Eastman Solvent Selector",
+      "BASF Navigator (solvent selection tool)",
+      "ACS GCI Solvent Selection Guide"
+    ]
+  },
+  "uncertain": []
+}

@@ -1,0 +1,144 @@
+{
+  "basic_info": {
+    "name": "Coating Defect Prediction",
+    "name_ja": "塗膜欠陥予測",
+    "category": "Coatings/Inks",
+    "description": "Surface tension differences combined with HSP mismatch between coating layers or between coating and substrate are used to predict common defects such as cratering, dewetting, fish eyes, and orange peel. When a contaminant or adjacent layer has significantly different surface energy and HSP from the wet film, Marangoni flow driven by surface tension gradients creates visible defects. HSP matching between successive coating layers ensures interlayer compatibility and prevents delamination, while HSP proximity between solvent blend and resin maintains film uniformity during drying.",
+    "maturity_level": "established"
+  },
+  "hsp_principle": {
+    "hsp_principle": "Coating defects arise from two interacting mechanisms: (1) surface tension gradients (Marangoni effect) that drive lateral flow in the wet film, and (2) thermodynamic incompatibility between components quantified by HSP distance. Cratering occurs when a low-surface-tension contaminant locally reduces surface tension, pulling surrounding liquid away. The severity correlates with both the surface tension difference and the HSP mismatch (which prevents re-dissolution of the contaminant into the bulk film). Dewetting occurs when the coating HSP is far from the substrate surface energy characteristics, reducing adhesive forces below cohesive forces. Orange peel results from surface tension-driven flow that cannot level before viscosity rise during drying, exacerbated by solvent blend HSP drift as fast-evaporating components leave. HSP is used to design solvent blends that maintain consistent surface tension and polymer solvency throughout the evaporation process.",
+    "key_equation": "Ra = sqrt(4*(dD1-dD2)^2 + (dP1-dP2)^2 + (dH1-dH2)^2); RED = Ra/R0; Marangoni number Ma = -(d_gamma/d_c) * (L*Delta_c) / (eta*D)",
+    "red_direction": "low_is_good",
+    "typical_red_threshold": "RED < 1.0 between all coating components for defect-free films; RED > 1.5 between contaminant and film strongly predicts cratering",
+    "sensitivity_to_hbond_split": "medium",
+    "temperature_pressure_sensitivity": "medium"
+  },
+  "input_data": {
+    "required_inputs": [
+      "HSP of coating resin/binder (dD, dP, dH)",
+      "HSP of solvent blend (dD, dP, dH, volume-weighted)",
+      "Surface tension of wet coating",
+      "HSP and surface tension of substrate or previous coat",
+      "Solvent evaporation rate profile",
+      "HSP of potential contaminants (silicones, oils, etc.)"
+    ],
+    "data_sources": [
+      "HSPiP database for solvents, resins, and common contaminants",
+      "Surface tension handbooks and databases",
+      "Coating manufacturer technical data sheets",
+      "Published solvent evaporation rate tables (relative to butyl acetate)",
+      "Contact angle measurements for substrate surface energy estimation"
+    ],
+    "data_availability_score": 4,
+    "complementary_parameters": [
+      "Surface tension of all components and blends",
+      "Solvent evaporation rates (relative and absolute)",
+      "Wet film thickness and application method",
+      "Substrate surface energy (polar and dispersive components)",
+      "Application and drying temperature",
+      "Film viscosity profile during drying",
+      "Additive (leveling agent, defoamer) concentration"
+    ]
+  },
+  "accuracy": {
+    "accuracy_level": "semi-quantitative",
+    "limitations": [
+      "Defect formation is highly kinetic: HSP and surface tension predict thermodynamic driving forces but not whether the defect actually forms before film immobilization",
+      "Marangoni flow modeling requires fluid dynamics simulation beyond simple HSP calculations",
+      "Substrate surface heterogeneity (dust, oil, roughness) introduces variability not captured by average surface energy",
+      "Application method (spray, roll, dip, curtain) affects defect types and thresholds in ways HSP cannot predict",
+      "Multi-layer systems require tracking HSP compatibility at each interface during dynamic drying",
+      "Solvent blend HSP changes continuously during evaporation, requiring time-resolved modeling"
+    ],
+    "known_failure_modes": [
+      "Silicone contamination causing craters even at trace levels (ppm) that are below HSP modeling resolution",
+      "Water-borne coatings where complex surfactant-polymer interactions dominate over simple HSP matching",
+      "High-solids coatings where viscosity effects dominate and solvent HSP role is minimal",
+      "UV-cure coatings where photoinitiator compatibility rather than solvent evaporation drives defect formation",
+      "Powder coatings where melt flow rather than solution thermodynamics governs leveling"
+    ],
+    "validation_method": [
+      "Visual inspection and grading of coated panels (ASTM D714 for blistering, custom scales for cratering)",
+      "Surface profilometry for orange peel quantification (wavescan DOI)",
+      "Contact angle measurement before and after coating",
+      "Cross-cut adhesion test (ASTM D3359) for delamination prediction",
+      "Accelerated weathering and immersion testing for long-term defect emergence"
+    ]
+  },
+  "implementation": {
+    "complexity": "high",
+    "ui_pattern": "matrix",
+    "existing_modules_reusable": [
+      "calculateRa",
+      "calculateRed",
+      "classifyRisk",
+      "optimizeBlend"
+    ],
+    "multi_component_complexity": "multi",
+    "scale_of_application": "design"
+  },
+  "literature": {
+    "key_references": [
+      {
+        "author": "Wicks, Z.W.; Jones, F.N.; Pappas, S.P.; Wicks, D.A.",
+        "title": "Organic Coatings: Science and Technology, 3rd Edition",
+        "journal": "Wiley-Interscience",
+        "year": 2007,
+        "doi": "10.1002/047011422X"
+      },
+      {
+        "author": "Bierwagen, G.P.",
+        "title": "Surface defects and surface flows in coatings",
+        "journal": "Progress in Organic Coatings",
+        "year": 1991,
+        "doi": "[uncertain]"
+      },
+      {
+        "author": "Hansen, C.M.",
+        "title": "Hansen Solubility Parameters: A User's Handbook, 2nd Edition",
+        "journal": "CRC Press",
+        "year": 2007,
+        "doi": "10.1201/9781420006834"
+      },
+      {
+        "author": "Orchard, S.E.",
+        "title": "On surface levelling in viscous liquids and gels",
+        "journal": "Applied Scientific Research, Section A",
+        "year": 1962,
+        "doi": "10.1007/BF00382198"
+      },
+      {
+        "author": "Scriven, L.E.; Sternling, C.V.",
+        "title": "The Marangoni Effects",
+        "journal": "Nature",
+        "year": 1960,
+        "doi": "10.1038/187186a0"
+      }
+    ],
+    "first_reported_year": "[uncertain]",
+    "regulatory_relevance": "HSP-based defect prediction supports VOC-compliant reformulation efforts under EPA, EU Directive 2004/42/EC, and similar regulations. By optimizing solvent blend HSP to maintain film quality with reduced VOC content, formulators can meet environmental targets without sacrificing appearance quality."
+  },
+  "industry_application": {
+    "industry_sectors": [
+      "Automotive OEM and refinish coatings",
+      "Aerospace coatings",
+      "Architectural and decorative paints",
+      "Industrial metal coatings",
+      "Wood furniture coatings",
+      "Electronics conformal coatings",
+      "Packaging coatings and printing"
+    ],
+    "commercial_tools": [
+      "HSPiP (Hansen Solubility Parameters in Practice)",
+      "COSMOtherm",
+      "BASF Formulation Optimizer",
+      "Proprietary tools from coating additive suppliers (BYK, Tego/Evonik, Elementis)",
+      "COMSOL Multiphysics (for Marangoni flow simulation)"
+    ]
+  },
+  "uncertain": [
+    "literature.key_references[1].doi",
+    "literature.first_reported_year"
+  ]
+}

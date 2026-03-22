@@ -1,0 +1,108 @@
+{
+  "basic_info": {
+    "name": "Crystalline Polymer Dissolution Temperature",
+    "name_ja": "結晶性ポリマー溶解温度",
+    "category": "Polymer/Materials",
+    "description": "For semicrystalline polymers, dissolution requires both thermodynamic compatibility (low HSP distance) and sufficient thermal energy to overcome crystalline lattice energy. The HSP distance between polymer and solvent, combined with the polymer melting point (Tm), predicts whether dissolution will occur and at what temperature. Solvents with small Ra to the polymer dissolve it at lower temperatures, while poor solvents may only dissolve the polymer above Tm. This framework also predicts LCST and UCST dissolution behavior, where temperature-dependent HSP shifts cause phase separation or dissolution transitions.",
+    "maturity_level": "established"
+  },
+  "hsp_principle": {
+    "hsp_principle": "Crystalline polymer dissolution is governed by two thermodynamic requirements: (1) the free energy of mixing must be negative (favorable polymer-solvent HSP match, low chi), and (2) the crystal must be destabilized (temperature must approach or exceed the equilibrium dissolution temperature Td). The dissolution temperature Td is depressed below Tm according to the Flory diluent theory: 1/Td - 1/Tm0 = (R/dHu) * (Vu/V1) * (phi_1 - chi * phi_1^2), where dHu is the heat of fusion per repeat unit, Vu is the molar volume of the repeat unit, V1 is the molar volume of the solvent, and phi_1 is the solvent volume fraction. The chi parameter is estimated from HSP distance: chi = Vs * Ra^2 / (6RT). Solvents with lower Ra produce lower chi, which leads to greater Tm depression and lower dissolution temperatures. For LCST behavior, HSP values (particularly dH) decrease with increasing temperature, potentially causing phase separation on heating when hydrogen bonding weakens.",
+    "key_equation": "1/Td - 1/Tm0 = (R/dHu)*(Vu/V1)*(phi1 - chi*phi1^2); chi = Vs*Ra^2/(6*R*T); Ra = sqrt(4*ddD^2 + ddP^2 + ddH^2)",
+    "red_direction": "low_is_good",
+    "typical_red_threshold": "RED < 1.0 for potential dissolution; dissolution temperature decreases as RED decreases. RED < 0.5 typically allows dissolution well below Tm.",
+    "sensitivity_to_hbond_split": "high",
+    "temperature_pressure_sensitivity": "high"
+  },
+  "input_data": {
+    "required_inputs": [
+      "HSP values (dD, dP, dH) for the crystalline polymer (amorphous phase)",
+      "HSP values (dD, dP, dH) for the solvent",
+      "Polymer melting point (Tm0, equilibrium value)",
+      "Heat of fusion per repeat unit (dHu)",
+      "Molar volumes of solvent (V1) and polymer repeat unit (Vu)",
+      "Temperature range of interest"
+    ],
+    "data_sources": [
+      "HSPiP database for polymer and solvent HSP",
+      "DSC measurements for Tm and dHu of the specific polymer grade",
+      "Literature values for common semicrystalline polymers (PE, PP, PET, nylon, PVDF, etc.)",
+      "Temperature-dependent HSP corrections from HSPiP or literature correlations",
+      "ATHAS databank for heat capacity and heat of fusion data"
+    ],
+    "data_availability_score": 3,
+    "complementary_parameters": [
+      "Degree of crystallinity",
+      "Lamellar thickness and crystal perfection",
+      "Polymer molecular weight and molecular weight distribution",
+      "Heating rate (kinetic effect on dissolution)",
+      "Polymer morphology (spherulitic, oriented, etc.)",
+      "Temperature coefficients of HSP (d(delta)/dT)"
+    ]
+  },
+  "accuracy": {
+    "accuracy_level": "semi-quantitative",
+    "limitations": [
+      "HSP values are typically reported at 25C; temperature dependence corrections are approximate and vary by method",
+      "Equilibrium Tm0 is difficult to determine precisely; observed Tm depends on crystallization conditions and heating rate",
+      "Flory diluent theory assumes equilibrium thermodynamics; actual dissolution may be kinetically limited by crystal thickness and chain mobility",
+      "Chi parameter estimated from HSP is concentration-independent, while real chi often depends on composition",
+      "Does not account for solvent-induced crystallization, which can occur when amorphous regions dissolve preferentially",
+      "LCST prediction requires accurate temperature-dependent HSP data, which is scarce for many polymer-solvent systems"
+    ],
+    "known_failure_modes": [
+      "High-density polyethylene in some solvents dissolves at much higher temperatures than predicted due to thick lamellae and high crystallinity",
+      "PVDF/DMF system shows LCST behavior driven by strong H-bonding temperature dependence, poorly captured by standard HSP temperature corrections",
+      "Polymorphic polymers (e.g., nylon 6 alpha vs. gamma form) dissolve at different temperatures despite identical HSP",
+      "Ultra-high molecular weight polymers where dissolution kinetics dominate over thermodynamic predictions"
+    ],
+    "validation_method": [
+      "Cloud point measurements as function of temperature",
+      "DSC dissolution endotherm detection",
+      "Hot-stage optical microscopy observing crystal disappearance",
+      "Turbidimetry during controlled heating/cooling cycles",
+      "Rheological measurements (viscosity change at dissolution)"
+    ]
+  },
+  "implementation": {
+    "complexity": "high",
+    "ui_pattern": "pairwise",
+    "existing_modules_reusable": [
+      "calculateRa",
+      "calculateRed"
+    ],
+    "multi_component_complexity": "binary",
+    "scale_of_application": "design"
+  },
+  "literature": {
+    "key_references": [
+      "Flory, P.J. 'Principles of Polymer Chemistry', Cornell University Press, 1953, Chapter 13",
+      "Hansen, C.M. 'Hansen Solubility Parameters: A User's Handbook', 2nd Ed., CRC Press, 2007, Chapter 6",
+      "Miller-Chou, B.A.; Koenig, J.L. 'A review of polymer dissolution', Progress in Polymer Science, 2003, 28(8), 1223-1270",
+      "Papageorgiou, G.Z.; Bikiaris, D.N. 'Crystallization and melting behavior of three biodegradable poly(alkylene succinates)', Polymer, 2005, 46(26), 12081-12092",
+      "Lindvig, T.; Michelsen, M.L.; Kontogeorgis, G.M. 'A Flory-Huggins model based on the Hansen solubility parameters', Fluid Phase Equilibria, 2002, 203(1-2), 247-260"
+    ],
+    "first_reported_year": 1970,
+    "regulatory_relevance": "Relevant to pharmaceutical formulation where crystalline API dissolution in polymeric matrices (amorphous solid dispersions) must be controlled; FDA guidance on amorphous solid dispersions references thermodynamic miscibility screening [uncertain]"
+  },
+  "industry_application": {
+    "industry_sectors": [
+      "Textile/fiber industry (solution spinning of crystalline polymers like UHMWPE, PAN)",
+      "Pharmaceutical (amorphous solid dispersion design for poorly soluble crystalline APIs)",
+      "Membrane manufacturing (PVDF, cellulose acetate membrane casting from solution)",
+      "Recycling (selective dissolution of crystalline plastics for chemical recycling)",
+      "Polymer processing (solvent welding and bonding of semicrystalline parts)"
+    ],
+    "commercial_tools": [
+      "HSPiP (with temperature-dependent HSP estimation)",
+      "COSMOtherm (temperature-dependent sigma profiles)",
+      "Aspen Plus / Aspen Polymers (Flory-Huggins with T-dependent chi)",
+      "DETHERM database (thermophysical property data for validation)"
+    ]
+  },
+  "uncertain": [
+    "first_reported_year",
+    "regulatory_relevance",
+    "sensitivity_to_hbond_split"
+  ]
+}

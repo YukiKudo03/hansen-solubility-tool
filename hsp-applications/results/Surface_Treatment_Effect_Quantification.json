@@ -1,0 +1,108 @@
+{
+  "basic_info": {
+    "name": "Surface Treatment Effect Quantification",
+    "name_ja": "表面処理効果の定量化",
+    "category": "Adhesion/Surface",
+    "description": "This application uses HSP to quantify the change in surface properties after corona, plasma, flame, or chemical surface treatments. By measuring contact angles with a series of probe liquids before and after treatment, the surface HSP can be determined via the Owens-Wendt or van Oss-Chaudhury-Good framework extended to Hansen's three parameters. The shift in surface HSP (delta-dD, delta-dP, delta-dH) provides a quantitative metric for treatment effectiveness, enabling optimization of treatment intensity, comparison of treatment methods, and prediction of adhesion improvement for specific adhesive-substrate combinations.",
+    "maturity_level": "established"
+  },
+  "hsp_principle": {
+    "hsp_principle": "Surface treatments (corona, plasma, flame, UV/ozone, chemical etching) modify the surface chemistry of polymers by introducing polar functional groups (hydroxyl, carboxyl, carbonyl, amine) and increasing surface roughness. These chemical changes shift the surface HSP, primarily increasing dP and dH components while dD remains relatively unchanged. By performing contact angle measurements with a series of probe liquids spanning Hansen space, the surface HSP before and after treatment can be determined. The HSP shift vector (delta-dP, delta-dH) directly quantifies the polar and hydrogen-bonding enhancement. Larger shifts in dP and dH toward the adhesive's HSP indicate more effective treatment for that adhesive system. The magnitude of the HSP shift also correlates with treatment aging (decay of surface activation over time), enabling shelf-life estimation for treated surfaces.",
+    "key_equation": "cos(theta) = -1 + 2*sqrt(gamma_d_s*gamma_d_l)/gamma_l + 2*sqrt(gamma_p_s*gamma_p_l)/gamma_l; Surface HSP from contact angle series inversion; Delta_HSP = sqrt(4*(dD_after-dD_before)^2 + (dP_after-dP_before)^2 + (dH_after-dH_before)^2)",
+    "red_direction": "low_is_good",
+    "typical_red_threshold": "Post-treatment RED (surface vs. adhesive) < 1.0 indicates successful treatment; delta-dP > 2 MPa^0.5 and delta-dH > 2 MPa^0.5 typically indicates meaningful surface activation for polyolefins",
+    "sensitivity_to_hbond_split": "high",
+    "temperature_pressure_sensitivity": "low"
+  },
+  "input_data": {
+    "required_inputs": [
+      "Contact angle measurements with minimum 5-6 probe liquids (before and after treatment)",
+      "HSP values (dD, dP, dH) and surface tension components of each probe liquid",
+      "Treatment parameters (power, speed, distance, gas composition for plasma/corona)",
+      "HSP of the target adhesive or coating (for RED calculation)",
+      "Time between treatment and measurement (aging effect)"
+    ],
+    "data_sources": [
+      "Contact angle goniometry (sessile drop method)",
+      "HSPiP database (probe liquid HSP values)",
+      "Literature compilations of liquid surface tension components",
+      "XPS data (for correlation with chemical group introduction)",
+      "FTIR-ATR spectra (for surface functional group identification)"
+    ],
+    "data_availability_score": 4,
+    "complementary_parameters": [
+      "Surface energy components (dispersive, polar, acid-base)",
+      "Surface roughness before and after treatment (AFM, profilometry)",
+      "XPS elemental composition (O/C ratio as treatment indicator)",
+      "Water contact angle (quick screening metric)",
+      "Dyne level (surface energy classification)"
+    ]
+  },
+  "accuracy": {
+    "accuracy_level": "semi-quantitative",
+    "limitations": [
+      "Contact angle measurements are sensitive to surface roughness, heterogeneity, and contamination, introducing scatter in derived HSP values",
+      "The inversion from contact angles to surface HSP is ill-conditioned; different probe liquid sets can yield different surface HSP values",
+      "Surface HSP represents an average over a heterogeneous treated surface; local variations in treatment intensity are not captured",
+      "Surface activation decays over time (minutes to weeks depending on substrate); HSP measurements are time-dependent",
+      "The Owens-Wendt and van Oss-Chaudhury-Good models have theoretical limitations in mapping surface energetics to bulk HSP framework",
+      "Surface restructuring (migration of treated groups into bulk) complicates long-term predictions"
+    ],
+    "known_failure_modes": [
+      "Over-treated surfaces where polymer degradation (chain scission, pitting) reduces adhesion despite favorable HSP shift",
+      "Substrates with blooming additives or slip agents that re-contaminate the surface after treatment",
+      "High-crystallinity polymers (HDPE, POM) where surface treatment penetration is limited by crystalline domains",
+      "Probe liquid spreading or partial dissolution of treated surface during contact angle measurement"
+    ],
+    "validation_method": [
+      "Peel adhesion testing before and after treatment (ASTM D903)",
+      "Cross-cut adhesion test (ASTM D3359)",
+      "Tape adhesion test (ASTM D3330)",
+      "XPS correlation (O/C ratio vs. HSP shift)",
+      "Wetting envelope construction and comparison with adhesive surface tension"
+    ]
+  },
+  "implementation": {
+    "complexity": "medium",
+    "ui_pattern": "pairwise",
+    "existing_modules_reusable": [
+      "calculateRa",
+      "calculateRed",
+      "classifyRisk"
+    ],
+    "multi_component_complexity": "binary",
+    "scale_of_application": "design"
+  },
+  "literature": {
+    "key_references": [
+      "Hansen, C.M. 'Hansen Solubility Parameters: A User's Handbook', 2nd Ed., CRC Press, 2007",
+      "Owens, D.K.; Wendt, R.C. 'Estimation of the surface free energy of polymers', Journal of Applied Polymer Science, 1969, DOI: 10.1002/app.1969.070130815",
+      "van Oss, C.J.; Chaudhury, M.K.; Good, R.J. 'Interfacial Lifshitz-van der Waals and polar interactions in macroscopic systems', Chemical Reviews, 1988, DOI: 10.1021/cr00088a006",
+      "Strobel, M.; Lyons, C.S. 'An essay on contact angle measurements', Plasma Processes and Polymers, 2011, DOI: 10.1002/ppap.201000041",
+      "Abbott, S.; Hansen, C.M. 'Hansen Solubility Parameters in Practice (HSPiP)', 5th Ed., 2015"
+    ],
+    "first_reported_year": 1988,
+    "regulatory_relevance": "Surface treatment validation is required in automotive OEM specifications (e.g., VDA, SAE standards) and medical device manufacturing (ISO 13485). HSP-based surface characterization provides quantitative evidence for process validation and is referenced in some industry guidelines for surface preparation qualification in aerospace bonding (ASTM D2093)."
+  },
+  "industry_application": {
+    "industry_sectors": [
+      "Automotive (polyolefin bumper painting, TPO adhesion improvement)",
+      "Packaging (PE/PP film corona treatment for printing and lamination)",
+      "Medical devices (polymer surface activation for bonding and biocompatibility coatings)",
+      "Electronics (plasma treatment for encapsulant adhesion on PCBs)",
+      "Aerospace (CFRP peel ply removal and surface activation monitoring)"
+    ],
+    "commercial_tools": [
+      "HSPiP (surface HSP estimation from contact angle data)",
+      "Kruss ADVANCE software (contact angle analysis with surface energy models)",
+      "DataPhysics OCA series software (automated contact angle with HSP output)",
+      "Tantec surface energy measurement systems",
+      "Surface Analyst (Brighton Science) for real-time surface quality monitoring"
+    ]
+  },
+  "uncertain": [
+    "first_reported_year",
+    "typical_red_threshold",
+    "regulatory_relevance"
+  ]
+}

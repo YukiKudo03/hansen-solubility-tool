@@ -1,0 +1,133 @@
+{
+  "basic_info": {
+    "name": "Natural Dye Extraction Optimization",
+    "name_ja": "天然色素抽出最適化",
+    "category": "Food/Cosmetics",
+    "description": "HSP matching between target pigment molecules (anthocyanins, carotenoids, chlorophylls, betalains) and extraction solvents guides solvent selection and extraction process optimization for food colorants, textile dyes, and cosmetic pigments. By minimizing the HSP distance (Ra) between the solvent and the target pigment, extraction yield and selectivity are maximized while enabling the use of greener, food-safe solvents. This approach replaces empirical trial-and-error with rational solvent screening, particularly valuable for replacing conventional solvents with bio-based or GRAS alternatives.",
+    "maturity_level": "established"
+  },
+  "hsp_principle": {
+    "hsp_principle": "The extraction of natural pigments from plant matrices follows the 'like dissolves like' principle quantified by HSP. A solvent whose HSP (dD, dP, dH) closely matches the HSP of the target pigment will maximize solubility and mass transfer driving force, leading to higher extraction yields. The HSP distance Ra between solvent and pigment governs the thermodynamic affinity. For pigment classes like anthocyanins (high dP, high dH due to glycosylated polyphenol structure) vs. carotenoids (high dD, low dP, low dH due to hydrophobic polyene chain), the optimal solvent profiles differ dramatically. Solvent blending allows fine-tuning of the effective HSP to match the target pigment precisely, enabling mixed-solvent systems (e.g., ethanol-water) that achieve better extraction than either component alone. The approach also enables selectivity: by choosing a solvent HSP that matches one pigment class but not others, selective extraction from complex plant matrices is achievable.",
+    "key_equation": "Ra = sqrt(4*(dD_solvent-dD_pigment)^2 + (dP_solvent-dP_pigment)^2 + (dH_solvent-dH_pigment)^2); RED = Ra/R0_pigment; Extraction yield correlates inversely with Ra",
+    "red_direction": "low_is_good",
+    "typical_red_threshold": "RED < 1.0 for effective extraction; RED < 0.7 for high-yield extraction",
+    "sensitivity_to_hbond_split": "high",
+    "temperature_pressure_sensitivity": "medium"
+  },
+  "input_data": {
+    "required_inputs": [
+      "Target pigment HSP (dD, dP, dH) - varies by pigment class",
+      "Pigment interaction radius R0",
+      "Candidate solvent HSP (dD, dP, dH)",
+      "Extraction temperature (affects HSP, especially dH)",
+      "Solvent blend composition for mixed-solvent systems"
+    ],
+    "data_sources": [
+      "HSPiP database for common solvents",
+      "Group contribution methods (Van Krevelen, Hoftyzer) for pigment HSP estimation",
+      "Published pigment HSP from extraction studies (Generalized HSP for anthocyanins, carotenoids, chlorophylls)",
+      "Experimental solubility screening in graded solvent series",
+      "Molecular dynamics simulation for novel pigment HSP estimation"
+    ],
+    "data_availability_score": 3,
+    "complementary_parameters": [
+      "Extraction temperature and time",
+      "Solid-to-liquid ratio",
+      "Plant matrix particle size",
+      "pH (critical for anthocyanin stability and charge state)",
+      "Solvent viscosity (affects mass transfer kinetics)",
+      "Pigment thermal stability in chosen solvent",
+      "Dielectric constant of solvent"
+    ]
+  },
+  "accuracy": {
+    "accuracy_level": "semi-quantitative",
+    "limitations": [
+      "Natural pigments exist in complex plant matrices with cell wall barriers, so thermodynamic HSP matching alone does not capture mass transfer limitations",
+      "Many natural pigments are glycosylated or complexed with proteins/metals, making HSP estimation from base structure inaccurate",
+      "pH-dependent structural changes (e.g., anthocyanin flavylium cation vs. quinoidal base) shift the effective HSP significantly",
+      "Pigment degradation during extraction (thermal, oxidative) is not captured by HSP",
+      "HSP data for many natural pigment classes remain limited and rely on group contribution estimates",
+      "Co-extraction of non-target compounds (sugars, proteins, pectins) affects apparent extraction efficiency"
+    ],
+    "known_failure_modes": [
+      "Anthocyanin extraction where pH-dependent structural transformation changes HSP during the process",
+      "Carotenoid extraction from highly lipophilic matrices where matrix binding energy exceeds solvent affinity",
+      "Extraction of pigment-protein complexes (e.g., phycocyanin) where protein denaturation dominates over HSP matching",
+      "Supercritical CO2 extraction where pressure-dependent HSP shifts are poorly characterized for pigments"
+    ],
+    "validation_method": [
+      "UV-Vis spectrophotometry for total pigment quantification",
+      "HPLC for individual pigment identification and quantification",
+      "Comparison of extraction yields across solvent series ranked by Ra",
+      "Response surface methodology correlating Ra with measured extraction yield",
+      "Color measurement (CIELAB) of extracts"
+    ]
+  },
+  "implementation": {
+    "complexity": "medium",
+    "ui_pattern": "screening",
+    "existing_modules_reusable": [
+      "calculateRa",
+      "calculateRed",
+      "classifyRisk",
+      "optimizeBlend"
+    ],
+    "multi_component_complexity": "ternary",
+    "scale_of_application": "design"
+  },
+  "literature": {
+    "key_references": [
+      {
+        "author": "Generosi, J.; Hansen, C.M.; Abbott, S.",
+        "title": "Hansen Solubility Parameters in Practice (HSPiP) software documentation and database",
+        "journal": "HSPiP eBook, 5th Edition",
+        "year": 2013,
+        "doi": "N/A"
+      },
+      {
+        "author": "Srinivas, K.; King, J.W.; Howard, L.R.; Monrad, J.K.",
+        "title": "Solubility and solution thermodynamic properties of quercetin and quercetin dihydrate in subcritical water",
+        "journal": "Journal of Food Engineering",
+        "year": 2010,
+        "doi": "10.1016/j.jfoodeng.2010.04.001"
+      },
+      {
+        "author": "Yara-Varon, E.; Fabiano-Tixier, A.S.; Balcells, M.; Canela-Garayoa, R.; Bily, A.; Chemat, F.",
+        "title": "Is it possible to substitute hexane with green solvents for extraction of carotenoids? A theoretical versus experimental solubility study",
+        "journal": "RSC Advances",
+        "year": 2016,
+        "doi": "10.1039/C6RA03016E"
+      },
+      {
+        "author": "Sicaire, A.G.; Vian, M.A.; Fine, F.; Carre, P.; Tostain, S.; Chemat, F.",
+        "title": "Alternative bio-based solvents for extraction of fat and oils: solubility prediction, global yield, extraction kinetics, chemical composition and cost of manufacturing",
+        "journal": "International Journal of Molecular Sciences",
+        "year": 2015,
+        "doi": "10.3390/ijms16048430"
+      }
+    ],
+    "first_reported_year": "[uncertain]",
+    "regulatory_relevance": "HSP-guided solvent selection supports compliance with food safety regulations (FDA GRAS solvents, EU Regulation 1333/2008 on food additives, EU Directive 2009/32/EC on extraction solvents). Enables substitution of hazardous solvents (hexane, dichloromethane) with food-grade alternatives (ethanol, ethyl acetate, supercritical CO2), facilitating regulatory approval of natural colorant extracts."
+  },
+  "industry_application": {
+    "industry_sectors": [
+      "Food and beverage coloring",
+      "Cosmetics and personal care (natural pigments)",
+      "Textile dyeing with natural dyes",
+      "Nutraceutical and dietary supplement manufacturing",
+      "Pharmaceutical (natural-origin APIs and excipients)"
+    ],
+    "commercial_tools": [
+      "HSPiP (Hansen Solubility Parameters in Practice)",
+      "COSMOtherm (COSMO-RS based solvent screening)",
+      "COSMO-RS TmoleX",
+      "ACD/Labs Percepta (solubility prediction module)"
+    ]
+  },
+  "uncertain": [
+    "hsp_principle.typical_red_threshold",
+    "literature.first_reported_year",
+    "literature.key_references[0].doi"
+  ]
+}

@@ -1,0 +1,111 @@
+{
+  "basic_info": {
+    "name": "PSA Tape Peel Strength",
+    "name_ja": "感圧接着テープ剥離強度",
+    "category": "Electronics/Advanced",
+    "description": "Pressure-sensitive adhesives (PSAs) rely on a balance of tack, peel resistance, and shear holding power, all of which correlate with the HSP distance between the adhesive polymer and the adherend surface. When the HSP of the PSA (typically acrylate, rubber, or silicone-based) closely matches that of the substrate, interfacial wetting and molecular interdiffusion are maximized, yielding high peel force. The Ra or RED value between PSA and adherend serves as a screening metric: low RED indicates thermodynamic affinity, promoting intimate contact and bond formation at the interface. This approach enables rapid selection of PSA chemistries for specific substrates (metals, plastics, glass) in electronics assembly, automotive trim, and medical device taping. Beyond simple compatibility, HSP distance also helps predict failure mode transitions between adhesive (clean peel) and cohesive (residue-leaving) failure, since strong interfacial adhesion shifts the locus of failure into the bulk adhesive.",
+    "maturity_level": "established"
+  },
+  "hsp_principle": {
+    "hsp_principle": "The thermodynamic work of adhesion between a PSA and a substrate correlates with their HSP proximity. When the HSP of the PSA polymer (characterized by dD, dP, dH) closely matches the effective HSP of the adherend surface, the Flory-Huggins interaction parameter chi is minimized, promoting molecular wetting and chain interdiffusion across the interface. For polymeric substrates, direct HSP matching applies; for metal or glass surfaces, effective surface HSP values (derived from contact angle or inverse gas chromatography) are used. The peel force is not solely determined by thermodynamic adhesion but also by viscoelastic energy dissipation in the adhesive bulk during debonding. However, HSP matching controls the interfacial contribution: when RED is low, the adhesive wets and bonds strongly to the surface, and the debonding energy is dominated by bulk viscoelastic dissipation (high peel force). When RED is high, poor wetting leads to weak interfacial bonds and low peel force regardless of bulk properties. HSP analysis also guides tackifier selection: tackifiers must be compatible with the PSA polymer (low RED) to plasticize and increase tack, while remaining outside the solubility sphere of the substrate to avoid migration.",
+    "key_equation": "Ra = sqrt(4*(dD_PSA - dD_sub)^2 + (dP_PSA - dP_sub)^2 + (dH_PSA - dH_sub)^2); RED = Ra/R0; W_adhesion ~ 2*gamma_PSA*gamma_sub*[f(Ra)]",
+    "red_direction": "low_is_good",
+    "typical_red_threshold": "RED < 1.0 for good wetting/adhesion; RED < 0.7 for strong adhesive bonding with high peel force; RED > 1.5 indicates poor adhesion",
+    "sensitivity_to_hbond_split": "medium",
+    "temperature_pressure_sensitivity": "medium"
+  },
+  "input_data": {
+    "required_inputs": [
+      "HSP values (dD, dP, dH) of PSA base polymer",
+      "HSP values (dD, dP, dH) of adherend surface (or effective surface HSP)",
+      "R0 of the PSA polymer solubility sphere",
+      "HSP values (dD, dP, dH) of tackifier resin (if used)",
+      "Application temperature"
+    ],
+    "data_sources": [
+      "HSPiP database for common PSA polymers (acrylates, SIS, SBS, silicones)",
+      "Contact angle measurements on adherend surfaces (converted to surface energy components and effective HSP)",
+      "Inverse gas chromatography (IGC) for surface HSP of solid substrates",
+      "Tackifier supplier datasheets with HSP values",
+      "Literature values for common substrates (PE, PP, PET, stainless steel, glass)"
+    ],
+    "data_availability_score": 3,
+    "complementary_parameters": [
+      "Viscoelastic properties of PSA (G', G'' at bonding and debonding rates)",
+      "Surface roughness and surface energy of adherend",
+      "Adhesive coating thickness",
+      "Peel rate and peel angle",
+      "Temperature and humidity during testing",
+      "Tackifier softening point and Mw"
+    ]
+  },
+  "accuracy": {
+    "accuracy_level": "semi-quantitative",
+    "limitations": [
+      "Peel force depends heavily on viscoelastic dissipation which is not captured by thermodynamic HSP distance alone",
+      "Surface HSP of inorganic substrates (metals, glass, ceramics) are approximations derived indirectly from contact angle or IGC data",
+      "PSA formulations are multi-component (base polymer, tackifier, plasticizer, crosslinker) making effective HSP estimation complex",
+      "Rate- and temperature-dependent adhesion behavior requires rheological modeling beyond HSP",
+      "Surface contamination, oxide layers, and surface treatments drastically alter effective surface HSP",
+      "Crosslinked PSA networks cannot be characterized by simple dissolution-based HSP sphere fitting"
+    ],
+    "known_failure_modes": [
+      "High-energy metal surfaces where chemisorption (not HSP-based physisorption) dominates adhesion",
+      "Low-surface-energy substrates (PTFE, silicone) where even HSP-matched PSAs cannot achieve sufficient wetting without surface treatment",
+      "Aging and environmental degradation where interfacial chemistry changes over time independently of initial HSP matching",
+      "Adhesive failure on flexible substrates where mechanical strain energy release rate dominates over thermodynamic adhesion"
+    ],
+    "validation_method": [
+      "180-degree peel test (ASTM D3330/PSTC-101)",
+      "90-degree peel test for rigid substrates",
+      "Loop tack test (ASTM D6195)",
+      "Probe tack measurement (texture analyzer)",
+      "Shear adhesion failure temperature (SAFT) test",
+      "Contact angle measurement on adherend for surface energy correlation"
+    ]
+  },
+  "implementation": {
+    "complexity": "medium",
+    "ui_pattern": "matrix",
+    "existing_modules_reusable": [
+      "calculateRa",
+      "calculateRed",
+      "classifyRisk",
+      "optimizeBlend"
+    ],
+    "multi_component_complexity": "ternary",
+    "scale_of_application": "design"
+  },
+  "literature": {
+    "key_references": [
+      "Hansen, C.M. 'Hansen Solubility Parameters: A User's Handbook', 2nd Ed., CRC Press, 2007, Chapter 16 (Adhesion)",
+      "Lindner, A.; Maevis, T.; Brummer, R.; Lühmann, B.; Creton, C. 'Subcritical Failure of Soft Acrylic Adhesives under Tensile Stress', Langmuir, 2004, 20, 9156-9169",
+      "Dahlquist, C.A. 'Pressure-Sensitive Adhesives', in 'Treatise on Adhesion and Adhesives', Vol. 2, Marcel Dekker, 1969",
+      "Roos, A.; Creton, C.; Novikov, M.B.; Feldstein, M.M. 'Viscoelasticity and Tack of Poly(vinyl pyrrolidone)-Poly(ethylene glycol) Blends', J. Polym. Sci. Part B: Polym. Phys., 2002, 40, 2395-2409",
+      "Abbott, S.; Hansen, C.M. 'Hansen Solubility Parameters in Practice', 5th Ed., HSPiP Software, 2015 (PSA chapter)"
+    ],
+    "first_reported_year": 2000,
+    "regulatory_relevance": "No direct regulatory framework for HSP in PSA design. UL and ASTM standards govern PSA tape performance testing. For medical and food-contact PSA tapes, FDA and EU regulations address biocompatibility and migration limits but do not reference HSP-based design. REACH drives substitution of hazardous solvents in PSA manufacture where HSP guides waterborne and hot-melt alternatives."
+  },
+  "industry_application": {
+    "industry_sectors": [
+      "Electronics assembly (die-attach tapes, thermal interface tapes, EMI shielding tapes)",
+      "Automotive (trim attachment, wire harnessing, surface protection films)",
+      "Medical devices (surgical tapes, wound dressings, transdermal patches)",
+      "Packaging (carton sealing, label stock)",
+      "Construction (glazing tapes, insulation bonding)"
+    ],
+    "commercial_tools": [
+      "HSPiP (PSA-substrate compatibility screening and tackifier selection)",
+      "Tesa/3M/Nitto internal formulation tools (proprietary HSP-based design)",
+      "COSMOtherm (adhesive-substrate interaction prediction)",
+      "Rheology software (Anton Paar RheoCompass) for complementary viscoelastic characterization"
+    ]
+  },
+  "uncertain": [
+    "first_reported_year",
+    "typical_red_threshold",
+    "data_availability_score",
+    "key_references"
+  ]
+}

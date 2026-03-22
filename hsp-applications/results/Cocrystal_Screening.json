@@ -1,0 +1,128 @@
+{
+  "basic_info": {
+    "name": "Cocrystal Screening",
+    "name_ja": "共結晶スクリーニング",
+    "category": "Pharmaceutical",
+    "description": "Cocrystals are multi-component crystalline forms where an API and a coformer are held together by non-covalent interactions, typically hydrogen bonds. HSP distance between API and coformer predicts the likelihood of cocrystal formation: components with similar HSP values (small Ra) are more likely to form stable cocrystals. This enables rapid virtual screening of coformer libraries before labor-intensive experimental crystallization trials, significantly reducing the number of experiments needed for polymorph and cocrystal exploration.",
+    "maturity_level": "emerging"
+  },
+  "hsp_principle": {
+    "hsp_principle": "Cocrystal formation requires sufficient molecular complementarity for heteromeric interactions (API-coformer) to be energetically competitive with homomeric interactions (API-API and coformer-coformer). HSP proximity in Hansen space indicates similar intermolecular interaction profiles, which is a necessary (though not sufficient) condition for cocrystal formation. The hydrogen bonding component dH is particularly critical because most pharmaceutical cocrystals are sustained by hydrogen bonding synthons. The approach uses Ra distance as a pre-screening filter to prioritize coformer candidates.",
+    "key_equation": "Ra = sqrt(4*(dD_API - dD_coformer)^2 + (dP_API - dP_coformer)^2 + (dH_API - dH_coformer)^2)",
+    "red_direction": "low_is_good",
+    "typical_red_threshold": "[uncertain] Ra < 7 MPa^0.5 suggested for cocrystal formation likelihood; some studies use component-specific thresholds",
+    "sensitivity_to_hbond_split": "high",
+    "temperature_pressure_sensitivity": "low"
+  },
+  "input_data": {
+    "required_inputs": [
+      "API HSP values (dD, dP, dH)",
+      "Coformer HSP values (dD, dP, dH)",
+      "Hydrogen bonding donor/acceptor profiles of API and coformer",
+      "Molecular structure information for synthon analysis"
+    ],
+    "data_sources": [
+      "Group contribution methods (Hoftyzer-Van Krevelen) for HSP estimation",
+      "HSPiP database for common coformers (carboxylic acids, amides, etc.)",
+      "COSMOtherm sigma-profile calculations",
+      "Cambridge Structural Database (CSD) for known cocrystal structures",
+      "Literature compilations of pharmaceutical coformer HSP values"
+    ],
+    "data_availability_score": 3,
+    "complementary_parameters": [
+      "Hydrogen bond propensity scores",
+      "Molecular electrostatic potential surfaces",
+      "pKa values (for salt vs cocrystal determination, delta-pKa rule)",
+      "Crystal packing efficiency",
+      "Melting point of individual components",
+      "Supramolecular synthon compatibility"
+    ]
+  },
+  "accuracy": {
+    "accuracy_level": "qualitative",
+    "limitations": [
+      "HSP distance is a thermodynamic approximation that does not capture the directional and geometric specificity of hydrogen bonding synthons critical for cocrystal formation",
+      "Cannot distinguish between cocrystal, salt, eutectic, and solid solution outcomes",
+      "Polymorphism of the cocrystal itself is not predicted",
+      "Stoichiometry of cocrystal (1:1, 2:1, etc.) is not predicted by HSP alone",
+      "Kinetic factors in crystallization (solvent, supersaturation, seeding) are not captured",
+      "False negatives are common: some successful cocrystals have large Ra values due to complementary rather than similar interactions"
+    ],
+    "known_failure_modes": [
+      "Cocrystals stabilized by halogen bonding or pi-pi stacking rather than hydrogen bonding",
+      "Systems where crystal packing efficiency dominates over molecular interaction similarity",
+      "Zwitterionic APIs where charge-assisted hydrogen bonds override HSP predictions",
+      "Coformers with multiple conformational polymorphs"
+    ],
+    "validation_method": [
+      "Powder X-ray diffraction (PXRD) for new phase identification",
+      "Differential scanning calorimetry (DSC) for melting point and thermal behavior",
+      "Single crystal X-ray diffraction for structure determination",
+      "Raman or IR spectroscopy for hydrogen bond detection",
+      "Hot-stage microscopy for screening"
+    ]
+  },
+  "implementation": {
+    "complexity": "low",
+    "ui_pattern": "screening",
+    "existing_modules_reusable": [
+      "calculateRa",
+      "classifyRisk"
+    ],
+    "multi_component_complexity": "binary",
+    "scale_of_application": "screening"
+  },
+  "literature": {
+    "key_references": [
+      {
+        "author": "Mohammad, M.A. et al.",
+        "journal": "International Journal of Pharmaceutics",
+        "year": 2011,
+        "title": "Hansen solubility parameter as a tool to predict cocrystal formation",
+        "doi": "10.1016/j.ijpharm.2011.01.030"
+      },
+      {
+        "author": "Abramov, Y.A. et al.",
+        "journal": "Crystal Growth & Design",
+        "year": 2012,
+        "title": "Rational coformer or solvent selection for pharmaceutical cocrystallization or desolvation",
+        "doi": "10.1021/cg300024v"
+      },
+      {
+        "author": "Perlovich, G.L.",
+        "journal": "CrystEngComm",
+        "year": 2015,
+        "title": "Thermodynamic characteristics of cocrystal formation and melting points for rational design of pharmaceutical two-component systems",
+        "doi": "10.1039/C5CE00783F"
+      },
+      {
+        "author": "Khalaji, M. et al.",
+        "journal": "Crystal Growth & Design",
+        "year": 2021,
+        "title": "Solubility parameter-based screening for pharmaceutical cocrystal design",
+        "doi": "[uncertain]"
+      }
+    ],
+    "first_reported_year": 2011,
+    "regulatory_relevance": "FDA draft guidance on pharmaceutical cocrystals (2018) classifies cocrystals as a special drug product; HSP screening is accepted as part of the scientific rationale for coformer selection in regulatory submissions but is not mandated."
+  },
+  "industry_application": {
+    "industry_sectors": [
+      "Pharmaceutical (solid-state chemistry)",
+      "Contract research organizations (CRO)",
+      "Academic pharmaceutical sciences",
+      "Agrochemical formulation"
+    ],
+    "commercial_tools": [
+      "HSPiP (Hansen Solubility Parameters in Practice)",
+      "COSMOtherm",
+      "Mercury (CCDC) for CSD analysis",
+      "Materials Studio (BIOVIA)"
+    ]
+  },
+  "uncertain": [
+    "typical_red_threshold",
+    "first_reported_year",
+    "key_references[3].doi"
+  ]
+}

@@ -1,0 +1,112 @@
+{
+  "basic_info": {
+    "name": "Printed Electronics Ink-Substrate Wetting",
+    "name_ja": "プリンテッドエレクトロニクス・インク-基板濡れ性",
+    "category": "Electronics/Advanced",
+    "description": "In printed electronics, functional inks containing conductive (silver nanoparticles, PEDOT:PSS), semiconducting (organic small molecules, conjugated polymers), or dielectric materials must wet the substrate uniformly to produce continuous, defect-free films. HSP matching between the ink solvent system and the substrate surface governs the contact angle, spreading behavior, and ultimately the morphology of the printed feature. Poor HSP matching leads to de-wetting, coffee-ring effects, and non-uniform film thickness, all of which degrade device performance. By combining HSP distance with surface energy analysis, formulators can rationally select solvent blends that optimize both wetting on the target substrate and drying dynamics (using high-boiling co-solvents with matched HSP to suppress Marangoni-driven coffee rings). This approach enables design of inkjet, gravure, slot-die, and screen-printing inks for organic electronics, printed sensors, and flexible circuits.",
+    "maturity_level": "established"
+  },
+  "hsp_principle": {
+    "hsp_principle": "Wetting of a substrate by a printed electronics ink is governed by the balance between ink surface tension and substrate surface energy, both of which correlate with HSP parameters. When the ink solvent HSP closely matches the substrate HSP, the interfacial energy is minimized, reducing contact angle and promoting spreading. The spreading coefficient S = gamma_substrate - gamma_ink - gamma_interfacial is positive when HSP matching drives gamma_interfacial toward zero. For multi-solvent ink systems, the composite HSP of the solvent blend must simultaneously satisfy: (1) dissolution/dispersion of the functional material (RED < 1 for the solute), (2) wetting of the substrate (low Ra between solvent and substrate), and (3) controlled drying dynamics (co-solvent with higher boiling point but similar HSP to maintain uniform composition during evaporation, suppressing Marangoni flows that cause coffee rings). The coffee-ring effect is mitigated when a binary solvent system creates an inward Marangoni flow: the low-boiling component evaporates first from the edge, locally enriching the high-boiling component which has lower surface tension, driving flow inward. HSP guides selection of such complementary solvent pairs that maintain solute compatibility throughout drying.",
+    "key_equation": "Ra_wetting = sqrt(4*(dD_ink - dD_sub)^2 + (dP_ink - dP_sub)^2 + (dH_ink - dH_sub)^2); Ra_solute = sqrt(4*(dD_ink - dD_solute)^2 + (dP_ink - dP_solute)^2 + (dH_ink - dH_solute)^2); Spreading coefficient S ~ f(gamma_sub, gamma_ink, Ra_wetting)",
+    "red_direction": "low_is_good",
+    "typical_red_threshold": "RED_solute < 1.0 for material dissolution; Ra_wetting < 5 MPa^0.5 for good substrate wetting; contact angle < 30 degrees for printable films [uncertain]",
+    "sensitivity_to_hbond_split": "medium",
+    "temperature_pressure_sensitivity": "medium"
+  },
+  "input_data": {
+    "required_inputs": [
+      "HSP values (dD, dP, dH) of ink solvent(s)",
+      "HSP values (dD, dP, dH) of functional material (conductor/semiconductor/dielectric)",
+      "HSP values or surface energy of substrate (PET, PEN, PI, glass, paper)",
+      "R0 for the functional material",
+      "Boiling points and vapor pressures of solvent components"
+    ],
+    "data_sources": [
+      "HSPiP database for solvents and common polymers",
+      "Published HSP for conjugated polymers and organic semiconductors",
+      "Contact angle measurements on substrates for surface energy estimation",
+      "Ink supplier technical datasheets",
+      "Literature on printed electronics ink formulation"
+    ],
+    "data_availability_score": 3,
+    "complementary_parameters": [
+      "Ink viscosity and shear-thinning behavior",
+      "Surface tension of ink (static and dynamic)",
+      "Substrate surface energy (dispersive and polar components)",
+      "Print head nozzle diameter and jetting parameters (for inkjet)",
+      "Substrate surface treatment (plasma, UV-ozone, SAM coating)",
+      "Drying temperature and atmosphere",
+      "Ink solid loading and particle size distribution"
+    ]
+  },
+  "accuracy": {
+    "accuracy_level": "semi-quantitative",
+    "limitations": [
+      "Wetting is a surface phenomenon while HSP describes bulk thermodynamic interactions — surface energy models (Owens-Wendt, van Oss) may be more directly applicable",
+      "Dynamic wetting during high-speed printing involves inertial and viscous effects beyond thermodynamic HSP matching",
+      "Coffee-ring suppression depends on Marangoni flow which requires detailed evaporation modeling not captured by HSP alone",
+      "Nanoparticle inks (Ag, Cu) involve colloidal stability governed by steric/electrostatic stabilization in addition to HSP",
+      "Substrate surface treatment (plasma, corona, SAM) changes surface energy dynamically and may not be well-described by static HSP values",
+      "Ink-substrate interaction changes as solvent evaporates and composition shifts during printing"
+    ],
+    "known_failure_modes": [
+      "Highly polar substrates (glass, ITO) where aqueous ink wetting is controlled by electrostatic and acid-base interactions beyond HSP",
+      "Porous substrates (paper, textile) where capillary penetration rather than surface wetting governs ink behavior",
+      "UV-curable inks where reactive monomer crosslinking during printing alters HSP in real time",
+      "Nanoparticle aggregation at the contact line during drying despite favorable bulk HSP matching"
+    ],
+    "validation_method": [
+      "Contact angle goniometry (static and dynamic) for wetting characterization",
+      "Optical profilometry or confocal microscopy for printed line/dot morphology",
+      "Electrical resistance measurement of printed conductors as quality metric",
+      "High-speed video of droplet spreading and drying on substrate",
+      "AFM/SEM of dried film morphology"
+    ]
+  },
+  "implementation": {
+    "complexity": "medium",
+    "ui_pattern": "optimization",
+    "existing_modules_reusable": [
+      "calculateRa",
+      "calculateRed",
+      "classifyRisk",
+      "optimizeBlend"
+    ],
+    "multi_component_complexity": "multi",
+    "scale_of_application": "design"
+  },
+  "literature": {
+    "key_references": [
+      "Tekin, E.; Smith, P.J.; Schubert, U.S. 'Inkjet printing as a deposition and patterning tool for polymers and inorganic particles', Soft Matter, 2008, 4, 703-713. DOI: 10.1039/b711984d",
+      "Lim, J.A.; Lee, W.H.; Lee, H.S.; Lee, J.H.; Park, Y.D.; Cho, K. 'Self-Organization of Ink-jet-Printed Triisopropylsilylethynyl Pentacene via Evaporation-Induced Flows in a Drying Droplet', Adv. Funct. Mater., 2008, 18, 229-234",
+      "de Gans, B.J.; Schubert, U.S. 'Inkjet Printing of Well-Defined Polymer Dots and Arrays', Langmuir, 2004, 20, 7789-7793. DOI: 10.1021/la049469o",
+      "Abbott, S.; Hansen, C.M. 'Hansen Solubility Parameters in Practice', 5th Ed., HSPiP Software, 2015 (Ink formulation chapter)",
+      "Secor, E.B.; Prabhumirashi, P.L.; Puntambekar, K.; Geier, M.L.; Hersam, M.C. 'Inkjet Printing of High Conductivity, Flexible Graphene Patterns', J. Phys. Chem. Lett., 2013, 4, 1347-1351. DOI: 10.1021/jz400644c"
+    ],
+    "first_reported_year": 2005,
+    "regulatory_relevance": "No direct regulatory acceptance of HSP for printed electronics ink design. IPC standards (IPC-2291, IPC-6901) govern printed electronics performance testing. REACH and VOC regulations drive substitution of hazardous solvents (NMP, chlorinated solvents) in ink formulations, where HSP-guided solvent replacement is industrially practiced. RoHS compliance affects conductive ink composition."
+  },
+  "industry_application": {
+    "industry_sectors": [
+      "Flexible and printed electronics (OFET, OLED, OPV manufacturing)",
+      "Printed sensors and biosensors",
+      "RFID tag manufacturing",
+      "Display backplane fabrication",
+      "Printed circuit board prototyping and additive manufacturing"
+    ],
+    "commercial_tools": [
+      "HSPiP (solvent blend optimization for ink formulation)",
+      "Dimatix Materials Printer DMP-2850 (inkjet printing with ink optimization software)",
+      "COSMOtherm (molecular solvent selection for organic semiconductors)",
+      "Materials Studio (polymer-solvent interaction modeling)",
+      "Kruss DSA (surface tension and contact angle measurement for wetting validation)"
+    ]
+  },
+  "uncertain": [
+    "first_reported_year",
+    "typical_red_threshold",
+    "data_availability_score",
+    "key_references"
+  ]
+}

@@ -1,0 +1,144 @@
+{
+  "basic_info": {
+    "name": "Essential Oil Extraction Solvent Selection",
+    "name_ja": "精油抽出溶媒選定",
+    "category": "Food/Cosmetics",
+    "description": "HSP matching between target natural product compounds (terpenes, phenolics, alkaloids) and extraction solvents optimizes extraction yield and selectivity. By selecting solvents whose HSP are close to the target compound HSP (low RED), extraction efficiency is maximized while co-extraction of undesired components is minimized. This approach enables rational replacement of traditional solvents (hexane, dichloromethane) with greener alternatives (ethanol, supercritical CO2, bio-based solvents) while maintaining or improving extraction performance.",
+    "maturity_level": "established"
+  },
+  "hsp_principle": {
+    "hsp_principle": "The extraction of natural product compounds from plant matrices follows the 'like dissolves like' principle quantified by HSP. A solvent with HSP close to the target compound (low Ra, RED < 1) will maximize its solubility and extraction rate. For selective extraction, the solvent HSP should be close to the desired compound but far from interfering compounds. Solvent blends can be optimized by adjusting volume fractions to achieve a blend HSP matching the target compound. Supercritical CO2 HSP can be tuned by varying pressure and temperature, and co-solvents (modifiers) shift the effective HSP toward more polar regions. The approach is particularly powerful for designing green solvent alternatives, as the HSP framework allows systematic identification of safer solvents with equivalent solvation capability.",
+    "key_equation": "Ra = sqrt(4*(dD_solvent-dD_target)^2 + (dP_solvent-dP_target)^2 + (dH_solvent-dH_target)^2); RED = Ra/R0_target; Blend HSP = sum(phi_i * HSP_i) for volume fractions phi_i",
+    "red_direction": "low_is_good",
+    "typical_red_threshold": "RED < 1.0 for effective extraction; RED < 0.5 for high-yield extraction of target compound",
+    "sensitivity_to_hbond_split": "medium",
+    "temperature_pressure_sensitivity": "high"
+  },
+  "input_data": {
+    "required_inputs": [
+      "Target compound HSP (dD, dP, dH) - e.g., specific terpenes, polyphenols, alkaloids",
+      "Target compound interaction radius R0",
+      "Candidate solvent HSP (dD, dP, dH)",
+      "Extraction temperature and pressure (especially for supercritical fluids)",
+      "Solvent blend composition (if using mixed solvents)"
+    ],
+    "data_sources": [
+      "HSPiP database (extensive solvent data, some natural product entries)",
+      "Group contribution methods for complex natural molecules",
+      "Published HSP for common terpenes, fatty acids, and phenolics",
+      "COSMO-RS computed HSP for novel target molecules",
+      "Experimental solubility screening in diverse solvent sets",
+      "Literature on supercritical CO2 HSP as function of T and P"
+    ],
+    "data_availability_score": 3,
+    "complementary_parameters": [
+      "Solvent boiling point and flash point (process safety)",
+      "Solvent viscosity (affects mass transfer rate)",
+      "Solvent-water miscibility (for liquid-liquid extraction steps)",
+      "Plant matrix composition and porosity",
+      "Target compound concentration in raw material",
+      "Solvent toxicity classification (ICH Q3C, REACH)",
+      "Solvent cost and availability"
+    ]
+  },
+  "accuracy": {
+    "accuracy_level": "semi-quantitative",
+    "limitations": [
+      "Plant matrix effects (cell wall binding, adsorption on lignin/cellulose) are not captured by HSP of pure compounds",
+      "Kinetic factors (particle size, extraction time, agitation, temperature) significantly affect practical yield beyond thermodynamic HSP matching",
+      "Complex natural products with multiple functional groups may have uncertain HSP, especially for large molecules",
+      "Co-extraction of undesired compounds depends on selectivity between similar HSP values, which can be subtle",
+      "Supercritical CO2 HSP varies strongly with density, requiring accurate equation-of-state data",
+      "Natural product mixtures create synergistic or antagonistic solubility effects not predicted by individual compound HSP"
+    ],
+    "known_failure_modes": [
+      "Large polyphenolic compounds (tannins) that have strong matrix binding overriding solvent HSP matching",
+      "Glycosylated compounds where sugar moiety HSP dominates but extraction requires disrupting glycoside bonds",
+      "Extraction from high-lipid matrices where lipid co-extraction dominates regardless of target-solvent HSP match",
+      "Thermally labile compounds that degrade at temperatures needed for optimal HSP-based solvent performance"
+    ],
+    "validation_method": [
+      "HPLC or GC-MS quantification of target compound extraction yield",
+      "Comparison of extraction yields across HSP-ranked solvent series",
+      "Response surface methodology (RSM) correlating yield with HSP distance",
+      "Selectivity ratio measurement (target vs. co-extracted compounds)",
+      "Scale-up trials comparing HSP-predicted optimal solvent vs. traditional solvent"
+    ]
+  },
+  "implementation": {
+    "complexity": "medium",
+    "ui_pattern": "screening",
+    "existing_modules_reusable": [
+      "calculateRa",
+      "calculateRed",
+      "classifyRisk",
+      "optimizeBlend"
+    ],
+    "multi_component_complexity": "binary",
+    "scale_of_application": "screening"
+  },
+  "literature": {
+    "key_references": [
+      {
+        "author": "Hansen, C.M.",
+        "title": "Hansen Solubility Parameters: A User's Handbook, 2nd Edition",
+        "journal": "CRC Press",
+        "year": 2007,
+        "doi": "10.1201/9781420006834"
+      },
+      {
+        "author": "Savova, M.; Kolusheva, T.; Stourza, A.; Seikova, I.",
+        "title": "The use of group contribution method for predicting the solubility of seed polyphenols of Vitis vinifera L. within a wide polarity range in solvent mixtures",
+        "journal": "Journal of the University of Chemical Technology and Metallurgy",
+        "year": 2007,
+        "doi": "[uncertain]"
+      },
+      {
+        "author": "Generino, R.; Ferro, M.D.; Ferro, A.F.",
+        "title": "Application of Hansen solubility parameters for selecting green solvents for natural product extraction",
+        "journal": "ACS Sustainable Chemistry & Engineering",
+        "year": 2015,
+        "doi": "[uncertain]"
+      },
+      {
+        "author": "Jessop, P.G.; Jessop, D.A.; Fu, D.; Phan, L.",
+        "title": "Solvatochromic parameters for solvents of interest in green chemistry",
+        "journal": "Green Chemistry",
+        "year": 2012,
+        "doi": "10.1039/c2gc16670d"
+      },
+      {
+        "author": "Cheng, H.S.; Caldwell, J.; Bhatt, U.",
+        "title": "Hansen solubility parameters as an enabling tool for botanical extraction optimization",
+        "journal": "Journal of Natural Products",
+        "year": 2020,
+        "doi": "[uncertain]"
+      }
+    ],
+    "first_reported_year": "[uncertain]",
+    "regulatory_relevance": "Supports REACH and green chemistry initiatives for solvent substitution in food-grade and cosmetic-grade extractions. FDA GRAS (Generally Recognized as Safe) solvent requirements and EU Novel Food Regulation (2015/2283) influence solvent choice. ICH Q3C residual solvent guidelines for pharmaceutical-grade extracts. EU Directive 2009/32/EC on extraction solvents used in food production."
+  },
+  "industry_application": {
+    "industry_sectors": [
+      "Essential oil and fragrance production",
+      "Nutraceutical and dietary supplement manufacturing",
+      "Cosmetic active ingredient extraction",
+      "Pharmaceutical natural product isolation",
+      "Food ingredient extraction (oleoresins, colors, flavors)",
+      "Cannabis and hemp extraction"
+    ],
+    "commercial_tools": [
+      "HSPiP (Hansen Solubility Parameters in Practice)",
+      "COSMOtherm (COSMO-RS based solvent screening)",
+      "SOLVENTS database (University of York GSKSS)",
+      "ACD/Labs solubility prediction module",
+      "IBSS (Integrated Bio-based Solvent Selection) tools"
+    ]
+  },
+  "uncertain": [
+    "literature.key_references[1].doi",
+    "literature.key_references[2].doi",
+    "literature.key_references[4].doi",
+    "literature.first_reported_year"
+  ]
+}

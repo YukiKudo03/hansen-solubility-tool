@@ -1,0 +1,122 @@
+{
+  "basic_info": {
+    "name": "Polymer Additive Migration/Blooming",
+    "name_ja": "ポリマー添加剤移行・ブルーミング予測",
+    "category": "Polymer/Materials",
+    "description": "HSP distance between a polymer additive (stabilizer, plasticizer, flame retardant, antioxidant, UV absorber, etc.) and the polymer matrix is used to predict the tendency and rate of additive migration to the surface (blooming) or into contacting media. Smaller HSP distance indicates better thermodynamic compatibility and lower migration tendency. Larger HSP distance means the additive has lower solubility in the polymer matrix, creating a thermodynamic driving force for migration, surface blooming, or extraction. This is critical for food-contact packaging compliance, medical device biocompatibility, polymer long-term durability, and product aesthetics.",
+    "maturity_level": "established"
+  },
+  "hsp_principle": {
+    "hsp_principle": "Additive migration from a polymer matrix is driven by the thermodynamic activity of the additive in the polymer phase. When the HSP distance Ra between an additive and the polymer is large, the additive has limited solubility in the polymer, and any concentration above the solubility limit will phase-separate and migrate to the surface (blooming) or into a contacting medium. The Flory-Huggins chi parameter, estimated from Ra, determines the equilibrium solubility of the additive in the polymer. Below the solubility limit, migration is slow and diffusion-controlled; above it, the excess additive has high thermodynamic activity and migrates rapidly. For extraction into a contacting medium (food, body fluid), the partition coefficient between polymer and medium can be estimated by comparing Ra(additive-polymer) with Ra(additive-medium): the additive partitions preferentially into the phase with smaller Ra.",
+    "key_equation": "Ra = sqrt(4*(dD_add - dD_poly)^2 + (dP_add - dP_poly)^2 + (dH_add - dH_poly)^2); chi = V_add * Ra^2 / (6 * R * T); Partition coefficient K ~ exp((chi_add-medium - chi_add-polymer) * V_add / (R * T))",
+    "red_direction": "low_is_good",
+    "typical_red_threshold": "RED < 1.0 for good additive-polymer compatibility (low migration risk); RED > 1.2-1.5 indicates significant blooming/migration risk",
+    "sensitivity_to_hbond_split": "medium",
+    "temperature_pressure_sensitivity": "high"
+  },
+  "input_data": {
+    "required_inputs": [
+      "HSP of the additive (delta_d, delta_p, delta_h)",
+      "HSP of the polymer matrix (delta_d, delta_p, delta_h)",
+      "HSP of the contacting medium (if evaluating extraction)",
+      "Molar volume of the additive",
+      "Temperature of use/storage",
+      "Additive concentration in the polymer"
+    ],
+    "data_sources": [
+      "HSPiP database for polymers and common additives",
+      "Group contribution methods for additive HSP (Van Krevelen, Stefanis-Panayiotou)",
+      "Published literature for plasticizers, antioxidants, UV stabilizers",
+      "Food simulant HSP values (water, ethanol, acetic acid, olive oil equivalents)",
+      "Experimental solubility sphere fitting for proprietary additives"
+    ],
+    "data_availability_score": 4,
+    "complementary_parameters": [
+      "Additive molecular weight and molecular size (affects diffusion coefficient)",
+      "Polymer glass transition temperature and crystallinity",
+      "Temperature of application and storage",
+      "Thickness of polymer article",
+      "Additive concentration relative to solubility limit",
+      "Surface area to volume ratio of the article"
+    ]
+  },
+  "accuracy": {
+    "accuracy_level": "semi-quantitative",
+    "limitations": "HSP-based prediction captures thermodynamic compatibility (solubility) but migration rate also depends strongly on kinetic factors: diffusion coefficient of the additive in the polymer (which depends on additive size, polymer Tg, free volume, crystallinity). Crystalline regions act as impermeable barriers, reducing effective diffusivity but not changing thermodynamic driving force. At very low additive concentrations (well below solubility limit), migration is diffusion-controlled and HSP has limited predictive value for rate. Surface blooming involves nucleation and growth kinetics not addressed by HSP. Multi-additive systems may show synergistic or antagonistic effects on migration not captured by simple pairwise HSP analysis.",
+    "known_failure_modes": [
+      "Low-molecular-weight additives with high diffusivity that migrate rapidly even when thermodynamically compatible",
+      "Additive aggregation or crystallization on the surface driven by surface energy effects rather than bulk solubility",
+      "Reactive additives that chemically bind to the polymer (e.g., reactive UV stabilizers) where migration is blocked regardless of HSP",
+      "Multi-layer structures where migration path involves multiple polymer phases",
+      "High-temperature processing that degrades additives, changing their HSP"
+    ],
+    "validation_method": "Migration testing according to EU 10/2011 and FDA protocols (overall migration, specific migration), surface analysis (ATR-FTIR, XPS) for blooming detection, extraction studies with food simulants, accelerated aging at elevated temperatures, gravimetric loss measurements"
+  },
+  "implementation": {
+    "complexity": "medium",
+    "ui_pattern": "screening",
+    "existing_modules_reusable": [
+      "calculateRa",
+      "calculateRed",
+      "classifyRisk"
+    ],
+    "multi_component_complexity": "ternary",
+    "scale_of_application": "design"
+  },
+  "literature": {
+    "key_references": [
+      {
+        "author": "Hansen, C.M.",
+        "title": "Hansen Solubility Parameters: A User's Handbook, 2nd Edition",
+        "journal": "CRC Press",
+        "year": 2007,
+        "doi": "10.1201/9781420006834"
+      },
+      {
+        "author": "Wypych, G.",
+        "title": "Handbook of Plasticizers, 3rd Edition",
+        "journal": "ChemTec Publishing",
+        "year": 2017,
+        "doi": "[uncertain]"
+      },
+      {
+        "author": "Begley, T.; Castle, L.; Feigenbaum, A.; et al.",
+        "title": "Evaluation of migration models that might be used in support of regulations for food-contact plastics",
+        "journal": "Food Additives & Contaminants",
+        "year": 2005,
+        "doi": "10.1080/02652030500098894"
+      },
+      {
+        "author": "Piringer, O.G.; Baner, A.L.",
+        "title": "Plastic Packaging: Interactions with Food and Pharmaceuticals",
+        "journal": "Wiley-VCH",
+        "year": 2008,
+        "doi": "10.1002/9783527621422"
+      }
+    ],
+    "first_reported_year": "[uncertain]",
+    "regulatory_relevance": "Highly relevant to food-contact material regulations. EU Regulation 10/2011 on plastic food-contact materials requires specific migration limits (SMLs) for listed additives. FDA 21 CFR 170-199 governs food-contact substances. EU REACH requires assessment of substance migration for articles. HSP-based screening is accepted as a supporting tool for migration modeling in JRC (EU Joint Research Centre) guidelines. Commission Regulation (EU) 2017/752 references migration modeling approaches."
+  },
+  "industry_application": {
+    "industry_sectors": [
+      "Food and beverage packaging",
+      "Pharmaceutical packaging",
+      "Medical devices",
+      "Automotive (interior component outgassing)",
+      "Wire and cable insulation",
+      "Building and construction materials",
+      "Toy and childcare article safety"
+    ],
+    "commercial_tools": [
+      "HSPiP (Hansen Solubility Parameters in Practice)",
+      "AKTS SML (Specific Migration Limit software)",
+      "FABES MIGRATOOL (migration modeling)",
+      "COSMOtherm (additive-polymer interaction prediction)",
+      "Piringer model implementations in various software"
+    ]
+  },
+  "uncertain": [
+    "literature.key_references[1].doi",
+    "literature.first_reported_year"
+  ]
+}

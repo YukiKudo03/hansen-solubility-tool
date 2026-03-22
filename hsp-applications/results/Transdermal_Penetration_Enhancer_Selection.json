@@ -1,0 +1,127 @@
+{
+  "basic_info": {
+    "name": "Transdermal Penetration Enhancer Selection",
+    "name_ja": "経皮吸収促進剤の選択",
+    "category": "Pharmaceutical",
+    "description": "Transdermal drug delivery requires molecules to permeate through the stratum corneum, the outermost skin barrier composed primarily of intercellular lipids and corneocytes. HSP matching between the drug, skin lipids, and penetration enhancers predicts permeation enhancement. An enhancer with HSP values intermediate between the drug and skin can improve partitioning and diffusion. This approach enables rational selection of chemical penetration enhancers for topical and transdermal formulations, reducing trial-and-error experimentation.",
+    "maturity_level": "established"
+  },
+  "hsp_principle": {
+    "hsp_principle": "The stratum corneum can be characterized by its HSP values (approximately dD=17, dP=8, dH=8 MPa^0.5 for intercellular lipid pathway). Drug permeation depends on partitioning into and diffusing through this barrier. A penetration enhancer works by either disrupting skin lipid organization (enhancer HSP close to skin lipid HSP) or by improving drug-skin compatibility (reducing effective Ra between drug and skin). The optimal enhancer matches the HSP of the drug-skin system to maximize the thermodynamic activity gradient. The three-component HSP triangle (drug-enhancer-skin) is used to find enhancers that bridge the solubility parameter gap.",
+    "key_equation": "Ra(drug-skin) = sqrt(4*(dD_drug - dD_skin)^2 + (dP_drug - dP_skin)^2 + (dH_drug - dH_skin)^2); Enhanced permeation predicted when Ra(drug-enhancer-skin) is minimized",
+    "red_direction": "low_is_good",
+    "typical_red_threshold": "[uncertain] Ra(drug-skin) < 5 MPa^0.5 generally correlates with good passive permeation; enhancers should reduce effective Ra",
+    "sensitivity_to_hbond_split": "high",
+    "temperature_pressure_sensitivity": "medium"
+  },
+  "input_data": {
+    "required_inputs": [
+      "Drug HSP values (dD, dP, dH)",
+      "Skin (stratum corneum) HSP values (dD, dP, dH) - literature reference values",
+      "Penetration enhancer HSP values (dD, dP, dH)",
+      "Drug molecular weight and lipophilicity (log P)"
+    ],
+    "data_sources": [
+      "HSPiP database for common enhancers (fatty acids, terpenes, surfactants, Azone, DMSO)",
+      "Published stratum corneum HSP values (Karande, Mitragotri, etc.)",
+      "Group contribution methods for novel enhancers",
+      "Literature compilations of skin permeation data for validation"
+    ],
+    "data_availability_score": 3,
+    "complementary_parameters": [
+      "Molecular weight of drug (< 500 Da preferred for transdermal)",
+      "Log P / log Ko/w of drug",
+      "Melting point of drug",
+      "Enhancer concentration and vehicle composition",
+      "Skin hydration level",
+      "Formulation pH"
+    ]
+  },
+  "accuracy": {
+    "accuracy_level": "semi-quantitative",
+    "limitations": [
+      "Stratum corneum is a heterogeneous membrane with multiple parallel pathways (intercellular lipid, transcellular, appendageal), each with different effective HSP",
+      "Penetration enhancement mechanisms are diverse (lipid fluidization, keratin denaturation, increased partitioning) and HSP captures only thermodynamic aspects",
+      "Skin variability (age, site, hydration, disease state) introduces uncertainty in reference HSP values",
+      "Dynamic interactions between enhancer and skin lipids (e.g., extraction, restructuring) are not captured by static HSP",
+      "Synergistic effects of enhancer combinations are difficult to predict from individual HSP values"
+    ],
+    "known_failure_modes": [
+      "Enhancers that work primarily by disrupting lipid lamellar structure (e.g., Azone) may not correlate well with simple HSP distance",
+      "Hydrophilic drugs that permeate primarily via the transcellular route",
+      "Macromolecular drugs (peptides, proteins) where size exclusion dominates",
+      "Volatile enhancers where evaporation kinetics affect performance"
+    ],
+    "validation_method": [
+      "Franz diffusion cell experiments with excised skin or synthetic membranes",
+      "In vivo tape stripping studies",
+      "ATR-FTIR spectroscopy for SC lipid order assessment",
+      "Confocal laser scanning microscopy for visualization of permeation pathways",
+      "Skin impedance measurements"
+    ]
+  },
+  "implementation": {
+    "complexity": "medium",
+    "ui_pattern": "screening",
+    "existing_modules_reusable": [
+      "calculateRa",
+      "calculateRed",
+      "classifyRisk"
+    ],
+    "multi_component_complexity": "ternary",
+    "scale_of_application": "screening"
+  },
+  "literature": {
+    "key_references": [
+      {
+        "author": "Karande, P. and Mitragotri, S.",
+        "journal": "Biochimica et Biophysica Acta - Biomembranes",
+        "year": 2009,
+        "title": "Enhancement of transdermal drug delivery via synergistic action of chemicals",
+        "doi": "10.1016/j.bbamem.2009.06.015"
+      },
+      {
+        "author": "Brinkmann, I. and Muller-Goymann, C.C.",
+        "journal": "International Journal of Pharmaceutics",
+        "year": 2003,
+        "title": "Role of isopropyl myristate, isopropyl alcohol and a combination of both in hydrocortisone permeation across the human skin",
+        "doi": "10.1016/S0378-5173(03)00180-8"
+      },
+      {
+        "author": "Ghafourian, T. et al.",
+        "journal": "International Journal of Pharmaceutics",
+        "year": 2010,
+        "title": "Solubility parameters and permeation through biological membranes",
+        "doi": "[uncertain]"
+      },
+      {
+        "author": "Hansen, C.M.",
+        "journal": "Hansen Solubility Parameters: A User's Handbook (book)",
+        "year": 2007,
+        "title": "Chapter on biological materials and skin permeation",
+        "doi": "ISBN 978-0849372483"
+      }
+    ],
+    "first_reported_year": "[uncertain] approximately 2000-2003",
+    "regulatory_relevance": "FDA guidance on topical dermatological products supports science-based enhancer selection. HSP-based rationale is accepted in ANDA submissions for topical generics. EMA guideline on quality of transdermal patches references physicochemical compatibility approaches."
+  },
+  "industry_application": {
+    "industry_sectors": [
+      "Pharmaceutical (topical and transdermal drug delivery)",
+      "Cosmetics and personal care",
+      "Contract development and manufacturing organizations (CDMO)",
+      "Medical device companies (transdermal patches)"
+    ],
+    "commercial_tools": [
+      "HSPiP (Hansen Solubility Parameters in Practice)",
+      "COSMOtherm",
+      "Gaussian (for ab initio HSP calculation)",
+      "SKIN-CAD (proprietary transdermal design tools)"
+    ]
+  },
+  "uncertain": [
+    "typical_red_threshold",
+    "first_reported_year",
+    "key_references[2].doi"
+  ]
+}

@@ -1,0 +1,133 @@
+{
+  "basic_info": {
+    "name": "Polymorph/Solvate Risk Assessment",
+    "name_ja": "多形・溶媒和物リスク評価",
+    "category": "Pharmaceutical",
+    "description": "Solvent HSP regions that overlap with metastable polymorph zones in Hansen space indicate crystallization conditions likely to produce unwanted polymorphic forms or solvates. By mapping the HSP coordinates of crystallization solvents against known polymorph stability domains, formulators can predict which solvent systems risk producing metastable forms during manufacturing. This approach enables rational solvent selection for crystallization processes to ensure consistent production of the desired polymorphic form, reducing batch failures and regulatory complications associated with polymorphic transitions.",
+    "maturity_level": "emerging"
+  },
+  "hsp_principle": {
+    "hsp_principle": "Different polymorphs of the same API present different molecular packing arrangements and therefore different effective surface energies and interaction profiles. The solvent-solute interaction during crystallization, governed by HSP similarity, influences nucleation kinetics and determines which polymorph preferentially nucleates. Solvents with HSP values similar to the metastable form's molecular surface characteristics tend to stabilize that form's crystal nucleus, promoting its growth. Mapping the Hansen space into zones associated with different polymorphic outcomes creates a predictive landscape: the HSP coordinates of the crystallization solvent determine which polymorph domain is accessed. Solvate formation is predicted when the solvent HSP falls within a region of strong complementary hydrogen bonding with the API crystal lattice.",
+    "key_equation": "Ra_polymorph_i = sqrt(4*(dD_solvent - dD_polymorph_i)^2 + (dP_solvent - dP_polymorph_i)^2 + (dH_solvent - dH_polymorph_i)^2); Polymorph outcome predicted by minimum Ra to each form's HSP zone",
+    "red_direction": "threshold_specific",
+    "typical_red_threshold": "Solvent within Ra < 3-5 MPa^0.5 of a metastable polymorph zone risks producing that form; safe crystallization solvents should have Ra > 5 MPa^0.5 from all metastable zones while remaining within solubility sphere of stable form [uncertain]",
+    "sensitivity_to_hbond_split": "high",
+    "temperature_pressure_sensitivity": "high"
+  },
+  "input_data": {
+    "required_inputs": [
+      "API HSP values for each known polymorph (dD, dP, dH)",
+      "Solvent HSP values (dD, dP, dH)",
+      "Crystallization temperature and cooling rate",
+      "Solubility data in candidate solvents for polymorph identification",
+      "Known polymorph landscape of the API"
+    ],
+    "data_sources": [
+      "Experimental polymorph screening results (solvent-based and thermal methods)",
+      "HSPiP database for solvent HSP values",
+      "Cambridge Structural Database (CSD) for crystal packing analysis",
+      "Slurry conversion experiments to establish thermodynamic stability relationships",
+      "Group contribution estimates for API surface HSP per polymorph"
+    ],
+    "data_availability_score": 2,
+    "complementary_parameters": [
+      "Thermodynamic stability ranking of known polymorphs (melting point, enthalpy of fusion)",
+      "Solubility curves in each solvent for each polymorph (enantiotropic vs. monotropic)",
+      "Supersaturation ratio at crystallization onset",
+      "Cooling rate and agitation conditions",
+      "Seed crystal form and quantity",
+      "Water activity in solvent system (for hydrate risk)"
+    ]
+  },
+  "accuracy": {
+    "accuracy_level": "qualitative",
+    "limitations": [
+      "Effective HSP values for individual polymorphs are difficult to determine experimentally and often rely on indirect estimation",
+      "Nucleation kinetics (induction time, critical nucleus size) are not predicted by thermodynamic HSP matching alone",
+      "Concomitant polymorphism (simultaneous nucleation of multiple forms) cannot be predicted",
+      "Solvent-mediated transformation during crystallization adds kinetic complexity beyond HSP prediction",
+      "Disappearing polymorphs phenomenon is inherently unpredictable",
+      "Anti-solvent crystallization introduces rapid composition changes not captured by static HSP analysis"
+    ],
+    "known_failure_modes": [
+      "Kinetically trapped metastable forms that persist despite thermodynamic HSP predictions favoring the stable form",
+      "Template-induced nucleation by impurities or container surfaces overriding solvent HSP effects",
+      "Desolvation of solvates producing unexpected polymorphs during drying",
+      "High-pressure or mechanochemical conditions altering the polymorph landscape beyond ambient HSP predictions"
+    ],
+    "validation_method": [
+      "XRPD pattern matching for polymorph identification",
+      "Single crystal X-ray diffraction for structural confirmation",
+      "DSC/TGA for thermal characterization and solvate detection",
+      "Raman microscopy for in-situ polymorph monitoring during crystallization",
+      "Hot-stage microscopy for visual observation of polymorphic transitions",
+      "Slurry bridging experiments for relative stability confirmation"
+    ]
+  },
+  "implementation": {
+    "complexity": "high",
+    "ui_pattern": "optimization",
+    "existing_modules_reusable": [
+      "calculateRa",
+      "classifyRisk",
+      "optimizeBlend"
+    ],
+    "multi_component_complexity": "ternary",
+    "scale_of_application": "design"
+  },
+  "literature": {
+    "key_references": [
+      {
+        "author": "Threlfall, T.",
+        "journal": "Organic Process Research & Development",
+        "year": 2000,
+        "title": "Crystallisation of polymorphs: thermodynamic insight into the role of solvent",
+        "doi": "10.1021/op000058y"
+      },
+      {
+        "author": "Gu, C.-H. et al.",
+        "journal": "Journal of Crystal Growth",
+        "year": 2004,
+        "title": "Polymorph screening: influence of solvents on the rate of solvent-mediated polymorphic transformation",
+        "doi": "10.1016/j.jcrysgro.2003.12.078"
+      },
+      {
+        "author": "Parambil, J.V. et al.",
+        "journal": "CrystEngComm",
+        "year": 2014,
+        "title": "Application of solubility parameters and related methods to the prediction of solvate and cocrystal formation",
+        "doi": "[uncertain]"
+      },
+      {
+        "author": "Lee, E.H.",
+        "journal": "Asian Journal of Pharmaceutical Sciences",
+        "year": 2014,
+        "title": "A practical guide to pharmaceutical polymorph screening & selection",
+        "doi": "10.1016/j.ajps.2014.05.002"
+      }
+    ],
+    "first_reported_year": 2000,
+    "regulatory_relevance": "ICH Q6A requires identification and control of polymorphic forms. FDA and EMA expect risk assessment of polymorph changes during manufacturing. HSP-based solvent selection rationale for crystallization process design is accepted as part of ICH Q8/Q11 pharmaceutical development and manufacturing process understanding. Polymorph control is a critical quality attribute (CQA) requiring scientific justification."
+  },
+  "industry_application": {
+    "industry_sectors": [
+      "Pharmaceutical (API manufacturing and crystallization process development)",
+      "Generic pharmaceutical development (polymorph IP navigation)",
+      "Contract development and manufacturing organizations (CDMO)",
+      "Pharmaceutical process chemistry"
+    ],
+    "commercial_tools": [
+      "HSPiP (Hansen Solubility Parameters in Practice)",
+      "Mercury (CCDC) for crystal packing analysis",
+      "CrystalPredictor/CrystalOptimizer",
+      "COSMOtherm for solvent screening",
+      "Technobis Crystal16/Crystalline for experimental polymorph screening"
+    ]
+  },
+  "uncertain": [
+    "typical_red_threshold",
+    "first_reported_year",
+    "data_availability_score",
+    "key_references"
+  ]
+}

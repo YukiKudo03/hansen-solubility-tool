@@ -1,0 +1,102 @@
+{
+  "basic_info": {
+    "name": "UV-Curable Ink Monomer Selection",
+    "name_ja": "UV硬化インクモノマー選定",
+    "category": "Coatings/Inks",
+    "description": "In UV-curable ink formulation, HSP matching between the photoinitiator, oligomer, and reactive diluent (monomer) is critical for achieving a homogeneous liquid system before cure and optimal performance after cure. Good HSP compatibility ensures the photoinitiator dissolves fully for uniform cure depth, the monomer-oligomer blend has low viscosity for printability, and the cured film has appropriate adhesion and low extractable migration levels—particularly important for food-contact packaging inks.",
+    "maturity_level": "established"
+  },
+  "hsp_principle": {
+    "hsp_principle": "UV-curable inks are 100% solids systems where each component must be mutually soluble before curing. The photoinitiator must dissolve in the monomer/oligomer matrix (low Ra with the blend) to ensure uniform radical generation and complete cure depth. The reactive diluent monomer controls viscosity and must be compatible with the oligomer (low Ra) while also contributing to final film properties. After curing, unreacted species and photoinitiator fragments with high HSP affinity for the cured matrix tend to remain trapped (high residual migration risk), while those with poor affinity migrate out more readily. For food-safe inks, selecting components where cured matrix HSP is mismatched with potential migrants drives migration below detection limits.",
+    "key_equation": "Ra = sqrt(4*(dD_1 - dD_2)^2 + (dP_1 - dP_2)^2 + (dH_1 - dH_2)^2); RED_PI = Ra_PI-blend / R0_blend < 1 for photoinitiator solubility",
+    "red_direction": "threshold_specific",
+    "typical_red_threshold": "RED < 1.0 for photoinitiator dissolution in monomer blend; RED < 0.8 preferred for complete solubility; for migration control, RED_migrant-cured_film > 1.5 desired",
+    "sensitivity_to_hbond_split": "high",
+    "temperature_pressure_sensitivity": "medium"
+  },
+  "input_data": {
+    "required_inputs": [
+      "HSP (dD, dP, dH) for each oligomer (e.g., epoxy acrylate, polyurethane acrylate, polyester acrylate)",
+      "HSP for candidate reactive diluent monomers (e.g., TPGDA, HDDA, IBOA, TMPTA)",
+      "HSP for photoinitiator(s) (e.g., TPO, Irgacure 184, Irgacure 819)",
+      "HSP for cured film (estimated or measured)",
+      "Interaction radius R0 for oligomer and cured film"
+    ],
+    "data_sources": [
+      "HSPiP database for acrylate monomers and oligomers",
+      "Supplier data from photoinitiator manufacturers (IGM Resins, BASF)",
+      "Group contribution methods for novel monomers",
+      "Literature HSP for common UV-cure raw materials",
+      "Experimental determination via solubility testing of photoinitiators in monomer series"
+    ],
+    "data_availability_score": 4,
+    "complementary_parameters": [
+      "Monomer viscosity and functionality",
+      "Photoinitiator absorption spectrum and extinction coefficient",
+      "UV dose and curing speed requirements",
+      "Tg of cured film",
+      "Migration test results (for food-contact compliance)",
+      "Oxygen inhibition sensitivity",
+      "Shrinkage during cure"
+    ]
+  },
+  "accuracy": {
+    "accuracy_level": "semi-quantitative",
+    "limitations": [
+      "HSP of cured (crosslinked) acrylate network differs from liquid monomer/oligomer HSP and is difficult to measure",
+      "Photoinitiator solubility is also affected by crystallinity and melting point, not just HSP",
+      "Migration behavior depends on crosslink density, film thickness, and contact conditions in addition to HSP affinity",
+      "Reactive diluent selection involves trade-offs (viscosity, reactivity, shrinkage, toxicity) beyond HSP compatibility",
+      "HSP do not capture the polymerization kinetics or degree of conversion"
+    ],
+    "known_failure_modes": [
+      "Photoinitiator precipitation at low temperatures despite good room-temperature HSP match",
+      "Phase separation during storage when blend is near the edge of the solubility sphere",
+      "Unexpected migration of low-MW fragments from photoinitiator decomposition products not considered in HSP screening",
+      "Cure inhibition in thick films where oxygen diffusion dominates over HSP-predicted compatibility"
+    ],
+    "validation_method": "Photoinitiator dissolution testing at various concentrations and temperatures, viscosity measurements of monomer-oligomer blends, pendulum hardness and cure speed testing, migration testing per EN 1186 or FDA-specified methods, GC-MS headspace analysis for residual monomers"
+  },
+  "implementation": {
+    "complexity": "high",
+    "ui_pattern": "optimization",
+    "existing_modules_reusable": [
+      "calculateRa",
+      "calculateRed",
+      "classifyRisk",
+      "optimizeBlend"
+    ],
+    "multi_component_complexity": "multi",
+    "scale_of_application": "design"
+  },
+  "literature": {
+    "key_references": [
+      "Schwalm, R. 'UV Coatings: Basics, Recent Developments and New Applications', Elsevier, 2006",
+      "Abbott, S., Hansen, C.M. 'Hansen Solubility Parameters in Practice', HSPiP, 5th ed., 2015",
+      "Koleske, J.V. 'Radiation Curing of Coatings', ASTM International, 2002",
+      "Lago, M.A. et al. 'Migration of photoinitiators from food packaging: a review', Food Additives & Contaminants, 2015, Vol. 32, pp. 779-798",
+      "Hansen, C.M. 'Hansen Solubility Parameters: A User's Handbook', 2nd ed., CRC Press, 2007"
+    ],
+    "first_reported_year": "[uncertain]",
+    "regulatory_relevance": "Highly relevant for food-contact packaging inks. EU Printing Inks Regulation (Swiss Ordinance RS 817.023.21), EuPIA Guidance, Nestle Guidance Note, and FDA 21 CFR indirect food additives all impose migration limits. HSP-based screening is used by formulators to pre-select low-migration components, though not formally cited in regulations."
+  },
+  "industry_application": {
+    "industry_sectors": [
+      "Food and beverage packaging printing",
+      "Label and flexible packaging",
+      "Commercial sheet-fed and web offset UV printing",
+      "Industrial UV coatings (wood, plastic, metal)",
+      "3D printing (UV-curable resins)"
+    ],
+    "commercial_tools": [
+      "HSPiP (Hansen Solubility Parameters in Practice)",
+      "COSMOtherm (for migration prediction)",
+      "AKTS-SML (specific migration modeling software)",
+      "Proprietary formulation tools from UV ink manufacturers (Sun Chemical, Flint Group, Siegwerk)"
+    ]
+  },
+  "uncertain": [
+    "first_reported_year",
+    "typical_red_threshold"
+  ]
+}

@@ -1,0 +1,110 @@
+{
+  "basic_info": {
+    "name": "Photoresist Developer Compatibility",
+    "name_ja": "フォトレジスト現像液適合性",
+    "category": "Electronics/Advanced",
+    "description": "The HSP distance between photoresist polymers and developer solvents determines the dissolution contrast that underlies pattern resolution in photolithography. In positive-tone resists, exposed (deprotected) regions must dissolve readily in the developer while unexposed regions remain intact; this differential solubility maps directly to HSP distance differences. The exposed resist has modified HSP (increased dP and dH due to deprotection of carboxylic acid groups from t-BOC or acetal protecting groups), bringing it inside the developer's solubility sphere, while the unexposed resist remains outside. For negative-tone resists, crosslinking shifts HSP and increases R0, making the crosslinked resist insoluble. HSP-based analysis enables rational developer formulation, resist chemistry design, and process window optimization for advanced lithography nodes.",
+    "maturity_level": "established"
+  },
+  "hsp_principle": {
+    "hsp_principle": "The photoresist-developer system exploits a photo-induced HSP shift. Before exposure, the resist polymer (e.g., poly(4-t-butoxycarbonyloxystyrene) or methacrylate copolymers with acid-labile groups) has specific HSP values with relatively low dP and dH due to nonpolar protecting groups. Upon UV/DUV/EUV exposure and post-exposure bake, photoacid-catalyzed deprotection generates polar groups (carboxylic acids, hydroxyl groups), dramatically increasing dP and dH of the exposed polymer. The developer (aqueous TMAH 2.38% for positive resists, or organic solvents for negative-tone development) is chosen so that the exposed polymer HSP falls within the developer solubility sphere (RED < 1) while the unexposed polymer remains outside (RED > 1). The dissolution contrast (ratio of dissolution rates) correlates with the difference in RED values between exposed and unexposed states. For negative-tone development (NTD) with organic developers, the logic is inverted: organic solvents dissolve the unexposed (nonpolar) resist while the exposed (polar) regions remain. HSP analysis guides developer selection and concentration optimization for maximum contrast.",
+    "key_equation": "Ra_exposed = sqrt(4*(dD_dev - dD_exp)^2 + (dP_dev - dP_exp)^2 + (dH_dev - dH_exp)^2); Ra_unexposed = sqrt(4*(dD_dev - dD_unexp)^2 + (dP_dev - dP_unexp)^2 + (dH_dev - dH_unexp)^2); Contrast ~ log(Ra_unexposed/Ra_exposed)",
+    "red_direction": "threshold_specific",
+    "typical_red_threshold": "RED_exposed < 0.8 and RED_unexposed > 1.3 for good contrast; delta_RED > 0.5 between exposed and unexposed states for adequate pattern resolution",
+    "sensitivity_to_hbond_split": "high",
+    "temperature_pressure_sensitivity": "low"
+  },
+  "input_data": {
+    "required_inputs": [
+      "HSP values (dD, dP, dH) of unexposed resist polymer",
+      "HSP values (dD, dP, dH) of exposed (deprotected) resist polymer",
+      "HSP values (dD, dP, dH) of developer solvent or solution",
+      "R0 for the resist polymer system",
+      "Degree of deprotection (exposure dose dependent)"
+    ],
+    "data_sources": [
+      "Experimental dissolution rate measurements in solvent panels",
+      "Group contribution estimation for resist polymer HSP before/after deprotection",
+      "HSPiP database for developer solvent HSP values",
+      "Resist supplier datasheets (limited HSP information)",
+      "Published literature on chemically amplified resist HSP characterization"
+    ],
+    "data_availability_score": 2,
+    "complementary_parameters": [
+      "Exposure dose and post-exposure bake temperature/time",
+      "Developer concentration and temperature",
+      "Resist film thickness",
+      "Dissolution rate as function of depth (surface inhibition effects)",
+      "Resist molecular weight and polydispersity",
+      "Photoacid generator (PAG) loading and acid diffusion length"
+    ]
+  },
+  "accuracy": {
+    "accuracy_level": "semi-quantitative",
+    "limitations": [
+      "HSP of the exposed resist varies continuously with deprotection degree, which depends on local exposure dose and PEB conditions",
+      "Aqueous TMAH developer involves ionic dissolution mechanism (carboxylate formation) partially beyond HSP framework",
+      "Dissolution in thin films involves surface-rate-limited and diffusion-limited regimes not captured by bulk HSP compatibility",
+      "Swelling of resist during development affects pattern fidelity but requires kinetic modeling beyond HSP",
+      "Sub-10nm resolution lithography involves additional factors (acid diffusion, line-edge roughness) independent of HSP",
+      "Multi-component resist formulations (base polymer, PAG, quencher, additives) complicate effective HSP estimation"
+    ],
+    "known_failure_modes": [
+      "Aqueous TMAH development of carboxylic acid resists where pH-dependent ionization dominates over HSP-predicted solvation",
+      "Negative-tone development with organic solvents where resist swelling before dissolution causes pattern collapse",
+      "EUV resists with metal-oxide nanoparticle components where inorganic interactions are outside HSP scope",
+      "Ultra-thin resist films (<30 nm) where substrate interaction and confinement effects alter dissolution behavior"
+    ],
+    "validation_method": [
+      "Quartz crystal microbalance (QCM) for real-time dissolution rate monitoring",
+      "SEM cross-section imaging of developed patterns",
+      "Critical dimension (CD) measurement and dose-to-size analysis",
+      "Dissolution rate vs depth profiling (puddle develop or spray develop)",
+      "Contrast curve measurement (remaining thickness vs log exposure dose)"
+    ]
+  },
+  "implementation": {
+    "complexity": "high",
+    "ui_pattern": "pairwise",
+    "existing_modules_reusable": [
+      "calculateRa",
+      "calculateRed",
+      "classifyRisk"
+    ],
+    "multi_component_complexity": "ternary",
+    "scale_of_application": "design"
+  },
+  "literature": {
+    "key_references": [
+      "Ito, H. 'Chemical Amplification Resists: Inception, Implementation in Device Manufacture, and New Developments', J. Polym. Sci. Part A: Polym. Chem., 2003, 41, 3863-3870. DOI: 10.1002/pola.10722",
+      "Hansen, C.M. 'Hansen Solubility Parameters: A User's Handbook', 2nd Ed., CRC Press, 2007",
+      "Tsiartas, P.C.; Flanagin, L.W.; Henderson, C.L.; Hinsberg, W.D.; Sanchez, I.C.; Bonnecaze, R.T.; Willson, C.G. 'The Mechanism of Phenolic Polymer Dissolution: A New Perspective', Macromolecules, 1997, 30, 4656-4664",
+      "Yamada, S.; Mack, C.A.; Kang, D. 'Applying Hansen Solubility Parameters to Predict Photoresist-Solvent Interactions for EUV Lithography', Proc. SPIE, 2018, 10586, 105860O",
+      "Mack, C.A. 'Fundamental Principles of Optical Lithography: The Science of Microfabrication', Wiley, 2007"
+    ],
+    "first_reported_year": 1997,
+    "regulatory_relevance": "No direct regulatory acceptance of HSP for lithography. Semiconductor industry follows SEMI standards for resist and developer specifications. REACH and local environmental regulations drive substitution of hazardous solvents (PGMEA, NMP) in resist processing, where HSP guides green solvent alternatives."
+  },
+  "industry_application": {
+    "industry_sectors": [
+      "Semiconductor manufacturing (IC lithography at all technology nodes)",
+      "MEMS/NEMS fabrication (resist patterning for microstructures)",
+      "Photovoltaics (patterning for interdigitated back-contact cells)",
+      "Flat panel display manufacturing (TFT backplane lithography)",
+      "Advanced packaging (redistribution layer and bump patterning)"
+    ],
+    "commercial_tools": [
+      "HSPiP (resist-developer compatibility screening)",
+      "PROLITH (Mack, lithography simulation incorporating dissolution kinetics)",
+      "Schrodinger Materials Science (molecular-level resist property prediction)",
+      "Sumitomo/TOK/JSR (resist suppliers with proprietary compatibility data)",
+      "COSMOtherm (solubility prediction for resist-developer pairs)"
+    ]
+  },
+  "uncertain": [
+    "first_reported_year",
+    "typical_red_threshold",
+    "data_availability_score",
+    "regulatory_relevance"
+  ]
+}

@@ -1,0 +1,110 @@
+{
+  "basic_info": {
+    "name": "Surface HSP Determination Methods",
+    "name_ja": "表面HSP決定法",
+    "category": "Computational",
+    "description": "Methods for determining Hansen Solubility Parameters of solid surfaces, particles, and fibers, which cannot be dissolved to apply traditional dissolution testing. The primary techniques include inverse gas chromatography (IGC), where probe molecules with known HSP are passed through a column packed with the solid material and retention volumes are used to calculate surface energy components; contact angle series, where a set of liquids with known HSP are used to measure advancing contact angles on a flat surface, and the Hansen sphere is fitted to the wetting/non-wetting classification; and atomic force microscopy (AFM) methods, where adhesion force measurements between a probe and the surface in various liquid media allow surface HSP determination. These methods are essential inputs for applications involving pigment dispersion, filler-matrix compatibility, nanoparticle surface modification, fiber-resin adhesion, and any process requiring knowledge of solid surface HSP values.",
+    "maturity_level": "established"
+  },
+  "hsp_principle": {
+    "hsp_principle": "Surface HSP reflects the interaction potential of a solid surface with surrounding molecules, analogous to bulk HSP for liquids. In IGC, the net retention volume V_N of a series of probe solvents is related to the free energy of adsorption: delta_G_ads = -RT*ln(V_N). By using probes spanning Hansen space (alkanes for dD, polar probes for dP, hydrogen bonding probes for dH), the surface energy components gamma_d, gamma_p, gamma_h are determined and converted to HSP-like parameters. In contact angle methods, Young's equation relates the contact angle theta to surface energies: gamma_LV*cos(theta) = gamma_SV - gamma_SL, and the Owens-Wendt or acid-base (van Oss-Chaudhury-Good) models decompose the work of adhesion into dispersion and polar/acid-base contributions. A panel of test liquids (typically 10-30) with known HSP is classified as wetting (theta < 90 deg) or non-wetting (theta > 90 deg), and a Hansen sphere is fitted. In AFM colloidal probe methods, adhesion forces F_adh measured in different liquid environments allow extraction of surface HSP via F_adh proportional to W_adhesion = f(delta_surface, delta_liquid, delta_probe). The surface HSP determined by these methods often differs from bulk HSP due to surface reconstruction, contamination, roughness effects, and preferential orientation of functional groups at the interface.",
+    "key_equation": "IGC: delta_G_ads = -RT*ln(V_N*P_s/(S*pi_0*T_col); Contact angle: gamma_SL = gamma_S + gamma_L - 2*(sqrt(gamma_S_d*gamma_L_d) + sqrt(gamma_S_p*gamma_L_p) + sqrt(gamma_S_h*gamma_L_h)); Sphere fitting: Ra = sqrt(4*(dD_s-dD_l)^2 + (dP_s-dP_l)^2 + (dH_s-dH_l)^2), classify wetting/non-wetting to fit sphere center and R0",
+    "red_direction": "low_is_good",
+    "typical_red_threshold": "RED < 1.0 for wetting/good interaction between liquid and surface; contact angle < 90 deg generally corresponds to RED < 1.0 in the fitted surface sphere",
+    "sensitivity_to_hbond_split": "high",
+    "temperature_pressure_sensitivity": "medium"
+  },
+  "input_data": {
+    "required_inputs": [
+      "Set of probe liquids/solvents with known HSP values (minimum 15-30 for reliable sphere fitting)",
+      "Solid sample in appropriate form (powder for IGC, flat surface for contact angle, particle for AFM)",
+      "Contact angle or retention volume or adhesion force measurements for each probe",
+      "Liquid surface tension values for contact angle methods"
+    ],
+    "data_sources": [
+      "HSPiP database for probe solvent HSP values",
+      "Surface Measurement Systems (SMS) IGC-SEA instrument application notes",
+      "ASTM D5946 (contact angle measurement standard)",
+      "Published surface HSP compilations for common pigments, polymers, and fillers",
+      "Van Oss acid-base surface energy component tables"
+    ],
+    "data_availability_score": 3,
+    "complementary_parameters": [
+      "BET surface area (for IGC normalization)",
+      "Surface roughness (Ra, Rq) for contact angle correction (Wenzel/Cassie-Baxter)",
+      "Surface composition from XPS or ToF-SIMS",
+      "Particle size and morphology",
+      "Zeta potential (for charged surface effects)",
+      "Surface treatment/modification history"
+    ]
+  },
+  "accuracy": {
+    "accuracy_level": "semi-quantitative",
+    "limitations": [
+      "Surface HSP may differ from bulk HSP due to surface reconstruction, preferential orientation of functional groups, and contamination",
+      "Contact angle measurements on rough surfaces require Wenzel or Cassie-Baxter corrections that introduce additional uncertainty",
+      "IGC probes interact with the highest energy sites first, leading to surface heterogeneity effects and energy distribution rather than single HSP values",
+      "The concept of assigning three scalar HSP values to an inherently anisotropic surface is a simplification",
+      "Different methods (IGC, contact angle, AFM) often yield different HSP values for the same surface due to different interaction scales and sensitivities",
+      "Humidity and surface contamination significantly affect results, requiring strict environmental control"
+    ],
+    "known_failure_modes": [
+      "Porous surfaces where liquid penetration during contact angle measurement violates the Young equation assumptions",
+      "Chemically heterogeneous surfaces (e.g., partially treated particles) where a single HSP sphere cannot represent the dual character",
+      "Very hydrophobic surfaces (e.g., PTFE, silicone) where limited wetting with polar probes makes dP and dH determination unreliable",
+      "Surfaces with time-dependent restructuring (e.g., plasma-treated polymers that undergo hydrophobic recovery)",
+      "Swelling surfaces where probe liquid absorption changes the surface character during measurement"
+    ],
+    "validation_method": [
+      "Cross-validation using multiple measurement techniques (IGC + contact angle) on the same material",
+      "Prediction of dispersion stability in untested solvents using determined surface HSP",
+      "Correlation with practical performance (e.g., adhesion strength, dispersion quality)",
+      "Round-robin testing between laboratories",
+      "Comparison of IGC results at different surface coverages to assess heterogeneity effects"
+    ]
+  },
+  "implementation": {
+    "complexity": "high",
+    "ui_pattern": "optimization",
+    "existing_modules_reusable": [
+      "calculateRa",
+      "calculateRed",
+      "classifyRisk",
+      "sphere fitting (core algorithm directly applicable to contact angle data classification)"
+    ],
+    "multi_component_complexity": "binary",
+    "scale_of_application": "design"
+  },
+  "literature": {
+    "key_references": [
+      "Voelkel, A.; Strzemiecka, B.; Adamska, K.; Milczewska, K. 'Inverse Gas Chromatography as a Source of Physiochemical Data', Journal of Chromatography A, 2009, 1216, 1551-1566. DOI: 10.1016/j.chroma.2008.10.096",
+      "Hansen, C.M. 'Hansen Solubility Parameters: A User's Handbook', 2nd Edition, CRC Press, 2007. Chapter 11: Surface Characterization",
+      "Van Oss, C.J.; Chaudhury, M.K.; Good, R.J. 'Interfacial Lifshitz-van der Waals and Polar Interactions in Macroscopic Systems', Chemical Reviews, 1988, 88, 927-941. DOI: 10.1021/cr00088a006",
+      "Belgacem, M.N.; Czeremuszkin, G.; Sapieha, S.; Gandini, A. 'Surface Characterization of Cellulose Fibres by XPS and Inverse Gas Chromatography', Cellulose, 1995, 2, 145-157. DOI: 10.1007/BF00813015 [uncertain]",
+      "Panzer, U.; Schreiber, H.P. 'On the Evaluation of Surface Interactions by Inverse Gas Chromatography', Macromolecules, 1992, 25, 3633-3637. DOI: 10.1021/ma00040a005"
+    ],
+    "first_reported_year": 1988,
+    "regulatory_relevance": "IGC is referenced in ISO 18852 and USP <846> for surface energy characterization of pharmaceutical excipients. REACH requires physicochemical characterization of substances including surface properties for nanomaterials under Annex VI-XI. FDA guidance on nanotechnology-based products acknowledges surface energy characterization but does not mandate specific HSP-based methods. [uncertain]"
+  },
+  "industry_application": {
+    "industry_sectors": [
+      "Coatings and inks (pigment and filler surface HSP for dispersion optimization)",
+      "Composites (fiber-matrix interface characterization for adhesion prediction)",
+      "Pharmaceutical (excipient surface characterization for powder processing and formulation)",
+      "Nanomaterials (nanoparticle surface modification verification and solvent selection)",
+      "Adhesives (substrate surface characterization for adhesive selection)"
+    ],
+    "commercial_tools": [
+      "Surface Measurement Systems IGC-SEA (automated inverse gas chromatography with HSP output)",
+      "HSPiP (sphere fitting algorithm applicable to contact angle or dispersion test data)",
+      "Krüss Drop Shape Analyzer (contact angle measurement with surface energy decomposition)",
+      "Dataphysics OCA (contact angle systems with acid-base surface energy models)",
+      "Bruker AFM systems (colloidal probe force spectroscopy for adhesion mapping)"
+    ]
+  },
+  "uncertain": [
+    "first_reported_year",
+    "key_references",
+    "regulatory_relevance"
+  ]
+}

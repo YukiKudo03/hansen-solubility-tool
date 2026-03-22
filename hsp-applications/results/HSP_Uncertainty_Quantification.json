@@ -1,0 +1,105 @@
+{
+  "basic_info": {
+    "name": "HSP Uncertainty Quantification",
+    "name_ja": "HSP不確実性定量化",
+    "category": "Computational",
+    "description": "This application addresses the propagation of experimental uncertainty through Hansen Solubility Parameter determination. When HSP values are derived from solubility sphere fitting, the underlying experimental data (good/bad solvent classifications, swelling ratios, dissolution rates) carry inherent measurement uncertainty. Bayesian inference and Monte Carlo simulation methods are used to propagate these uncertainties through the sphere fitting algorithm, yielding not point estimates but confidence regions (ellipsoids) in Hansen space. This enables quantitative risk assessment for any downstream HSP-based prediction, providing error bars on Ra distances, RED numbers, and compatibility classifications.",
+    "maturity_level": "emerging"
+  },
+  "hsp_principle": {
+    "hsp_principle": "The core principle is that HSP sphere fitting is an inverse problem with inherent uncertainty. Each experimental data point (solvent classified as good or bad) constrains the sphere center (dD, dP, dH) and radius R0 but does not uniquely determine them. By treating solvent test outcomes as Bernoulli trials with probability related to RED, a likelihood function can be constructed. Bayesian inference with a prior on HSP space yields a posterior distribution over (dD, dP, dH, R0). Monte Carlo methods (MCMC or bootstrap resampling of the solvent test set) sample this posterior, generating an ensemble of spheres. The spread of sphere centers defines the HSP confidence region, while propagation through downstream calculations (Ra, RED, chi) gives uncertainty on any prediction. This replaces single-point HSP with probabilistic HSP, enabling decisions under uncertainty.",
+    "key_equation": "P(good|RED) = 1/(1+exp(k*(RED-1))); posterior ~ product_i P(outcome_i|dD,dP,dH,R0) * prior(dD,dP,dH,R0); Ra_uncertainty = sqrt(sum(partial_Ra/partial_HSPj * sigma_HSPj)^2)",
+    "red_direction": "threshold_specific",
+    "typical_red_threshold": "Not a single threshold; the output is a probability distribution over RED values, e.g., P(RED < 1.0) = 0.85 indicates 85% confidence of compatibility",
+    "sensitivity_to_hbond_split": "medium",
+    "temperature_pressure_sensitivity": "low"
+  },
+  "input_data": {
+    "required_inputs": [
+      "Solvent test results (good/bad/partial classification for each test solvent)",
+      "HSP values (dD, dP, dH) for each test solvent",
+      "Number and diversity of test solvents used",
+      "Experimental protocol details (temperature, concentration, observation time)",
+      "Prior distribution or bounds on expected HSP range"
+    ],
+    "data_sources": [
+      "HSPiP database (reference solvent HSP values)",
+      "Laboratory solubility/swelling experiments",
+      "Literature solubility data compilations",
+      "Group contribution estimates (for prior construction)",
+      "Inverse gas chromatography measurements"
+    ],
+    "data_availability_score": 4,
+    "complementary_parameters": [
+      "Number of test solvents (affects posterior width)",
+      "Spatial distribution of test solvents in Hansen space",
+      "Experimental repeatability data (replicate measurements)",
+      "Solvent purity and grade information",
+      "Observation criteria definitions (e.g., clear solution threshold)"
+    ]
+  },
+  "accuracy": {
+    "accuracy_level": "quantitative",
+    "limitations": [
+      "Assumes the Hansen sphere model is correct; systematic model error (non-spherical solubility regions) is not captured by parameter uncertainty alone",
+      "Quality of uncertainty estimates depends heavily on the number and spatial diversity of test solvents; sparse or clustered data yield overconfident posteriors",
+      "Binary good/bad classifications discard information compared to continuous response variables (e.g., dissolution rate)",
+      "Prior selection can significantly influence posterior when data is sparse, introducing subjectivity",
+      "Correlation between dD, dP, dH parameters is often ignored in simplified error propagation but can be significant",
+      "Computational cost of full MCMC can be high for real-time applications"
+    ],
+    "known_failure_modes": [
+      "When test solvents are clustered in one region of Hansen space, the posterior is poorly constrained in orthogonal directions, yielding artificially tight confidence intervals in some directions",
+      "Multimodal posteriors can arise when the data is consistent with multiple sphere positions, causing Gaussian approximations to fail",
+      "Bootstrap resampling with small solvent sets (< 20) can underestimate true uncertainty",
+      "Systematic errors in reference solvent HSP values propagate as bias that is not captured by the uncertainty analysis"
+    ],
+    "validation_method": [
+      "Cross-validation: withhold solvents and check prediction interval coverage",
+      "Comparison of confidence intervals with repeat HSP determinations by independent labs",
+      "Calibration checks: do 95% confidence regions contain the true value 95% of the time in simulated data",
+      "Comparison with alternative HSP determination methods (IGC, group contribution) to check consistency within error bars"
+    ]
+  },
+  "implementation": {
+    "complexity": "high",
+    "ui_pattern": "optimization",
+    "existing_modules_reusable": [
+      "calculateRa",
+      "calculateRed",
+      "sphere fitting module (as likelihood function core)"
+    ],
+    "multi_component_complexity": "binary",
+    "scale_of_application": "design"
+  },
+  "literature": {
+    "key_references": [
+      "Gharagheizi, F.; Angaji, M.T. 'A Bayesian approach for determination of Hansen solubility parameters', Journal of Molecular Liquids, 2006",
+      "Hansen, C.M. 'Hansen Solubility Parameters: A User's Handbook', 2nd Ed., CRC Press, 2007",
+      "Vay, K.; Scheler, S.; Friess, W. 'Application of Hansen solubility parameters for understanding and prediction of drug distribution in microspheres', International Journal of Pharmaceutics, 2011",
+      "Louwerse, M.J.; Maldonado, A.; Rousseau, S.; Moreau-Masselon, C.; Rber, B.; Thijssen, J.M. 'Revisiting Hansen Solubility Parameters by Including Thermodynamics', ChemPhysChem, 2017",
+      "Jarvas, G.; Quellet, C.; Dallos, A. 'Estimation of Hansen solubility parameters using multivariate nonlinear QSPR modeling with COSMO screening charge density moments', Fluid Phase Equilibria, 2011"
+    ],
+    "first_reported_year": 2006,
+    "regulatory_relevance": "Not directly referenced in regulatory frameworks. However, uncertainty quantification is increasingly expected in ICH Q8-Q12 pharmaceutical Quality by Design submissions where HSP is used for solvent selection, providing confidence levels for material compatibility claims."
+  },
+  "industry_application": {
+    "industry_sectors": [
+      "Pharmaceutical (QbD-based solvent and excipient selection with confidence levels)",
+      "Chemical R&D (robust solvent screening under data uncertainty)",
+      "Coatings and adhesives (reliability-based formulation design)",
+      "Academic research (method development and validation studies)"
+    ],
+    "commercial_tools": [
+      "HSPiP (provides basic sphere fitting statistics but limited uncertainty propagation)",
+      "MATLAB/Python custom implementations (most common for full Bayesian analysis)",
+      "COSMOtherm (offers alternative sigma-profile based uncertainty estimation)",
+      "R statistical packages (for MCMC sampling and Bayesian inference)"
+    ]
+  },
+  "uncertain": [
+    "first_reported_year",
+    "typical_red_threshold",
+    "regulatory_relevance"
+  ]
+}

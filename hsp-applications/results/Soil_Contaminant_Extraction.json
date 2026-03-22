@@ -1,0 +1,121 @@
+{
+  "basic_info": {
+    "name": "Soil Contaminant Extraction",
+    "name_ja": "土壌汚染物質抽出最適化",
+    "category": "Energy/Environment",
+    "description": "HSP matching between soil contaminants and extraction solvents is used to optimize environmental remediation processes. By minimizing the HSP distance Ra between the target contaminant (e.g., PAHs, PCBs, petroleum hydrocarbons, pesticides) and the extraction solvent, maximum extraction efficiency can be achieved. This approach enables rational solvent selection for soil washing, Soxhlet extraction, accelerated solvent extraction (ASE), and supercritical fluid extraction. HSP-based screening replaces trial-and-error solvent testing, reducing the number of experiments needed and enabling the selection of greener, less toxic extraction solvents that maintain high recovery rates for target contaminants.",
+    "maturity_level": "established"
+  },
+  "hsp_principle": {
+    "hsp_principle": "The extraction of organic contaminants from soil follows the 'like dissolves like' principle quantified by HSP. A solvent with HSP close to the target contaminant (small Ra) will maximize the contaminant's solubility in the extracting phase, promoting its desorption from soil particles. The RED number (Ra/R0) predicts whether a solvent falls within the contaminant's solubility sphere. For soil-bound contaminants, the effective interaction also involves overcoming adsorption forces between the contaminant and soil organic matter (SOM). The HSP of SOM can be estimated to model contaminant-soil affinity: contaminants with small Ra to SOM are more tightly bound and harder to extract. The optimal extraction solvent must have low Ra to the contaminant and ideally high Ra to SOM to avoid excessive SOM co-extraction. Solvent blending using volume-weighted HSP averaging enables fine-tuning of extraction selectivity.",
+    "key_equation": "Ra = sqrt(4*(dD_solvent - dD_contaminant)^2 + (dP_solvent - dP_contaminant)^2 + (dH_solvent - dH_contaminant)^2); RED = Ra / R0; Extraction efficiency ~ f(1/Ra_solvent-contaminant); Blend HSP: delta_blend = sum(phi_i * delta_i)",
+    "red_direction": "low_is_good",
+    "typical_red_threshold": "RED < 1.0 for effective contaminant dissolution; RED < 0.7 preferred for high extraction recovery (>90%)",
+    "sensitivity_to_hbond_split": "medium",
+    "temperature_pressure_sensitivity": "medium"
+  },
+  "input_data": {
+    "required_inputs": [
+      "HSP of target contaminant(s) (delta_d, delta_p, delta_h)",
+      "HSP of candidate extraction solvents",
+      "Contaminant solubility sphere radius R0",
+      "Soil organic matter content and estimated HSP"
+    ],
+    "data_sources": [
+      "HSPiP database for solvents and common organic compounds",
+      "Published HSP for PAHs, PCBs, BTEX, and pesticides",
+      "Group contribution methods (Van Krevelen) for novel contaminant HSP estimation",
+      "Literature values for soil organic matter HSP",
+      "UNIFAC or COSMO-RS for verification of HSP-based predictions"
+    ],
+    "data_availability_score": 3,
+    "complementary_parameters": [
+      "Soil organic carbon content (foc)",
+      "Soil particle size distribution and clay content",
+      "Contaminant aging and sequestration degree",
+      "Solvent viscosity and surface tension (for soil wetting)",
+      "Extraction temperature and contact time",
+      "Soil moisture content",
+      "pH of extraction medium"
+    ]
+  },
+  "accuracy": {
+    "accuracy_level": "semi-quantitative",
+    "limitations": "HSP-based solvent selection primarily addresses the thermodynamic affinity between contaminant and solvent but does not account for mass transfer limitations in soil matrices. Contaminant accessibility is controlled by soil structure, micropore diffusion, and aging effects that reduce bioavailability and extractability over time. HSP cannot predict kinetic aspects of extraction such as desorption rates from soil organic matter or intra-particle diffusion. Soil heterogeneity means that contaminant-soil interactions vary spatially. For ionizable contaminants (phenols, amines), pH-dependent speciation affects HSP values. Heavy metal contaminants cannot be addressed by HSP. Co-extraction of non-target soil organic matter is difficult to predict quantitatively with HSP alone.",
+    "known_failure_modes": [
+      "Highly aged contaminants with strong sequestration in soil micropores where mass transfer rather than thermodynamics limits extraction",
+      "Ionizable contaminants (weak acids/bases) where pH-dependent speciation changes effective HSP",
+      "Mixed contamination sites with vastly different contaminant HSP requiring compromise solvent selection",
+      "High-clay soils where mineral surface adsorption (not organic partitioning) dominates contaminant binding",
+      "Volatile contaminants lost during extraction due to evaporation rather than solubility limitations"
+    ],
+    "validation_method": "Sequential extraction experiments with varying solvents, Soxhlet extraction or ASE with GC-MS or HPLC quantification of extracted contaminants, comparison of HSP-predicted solvent ranking with measured extraction recoveries, soil column leaching tests"
+  },
+  "implementation": {
+    "complexity": "medium",
+    "ui_pattern": "screening",
+    "existing_modules_reusable": [
+      "calculateRa",
+      "calculateRed",
+      "classifyRisk",
+      "optimizeBlend"
+    ],
+    "multi_component_complexity": "ternary",
+    "scale_of_application": "screening"
+  },
+  "literature": {
+    "key_references": [
+      {
+        "author": "Brandt, H.C.A.; de Groot, P.C.",
+        "title": "A laboratory rig for studying aspects of worker exposure to bitumen fumes",
+        "journal": "American Industrial Hygiene Association Journal",
+        "year": 1999,
+        "doi": "[uncertain]"
+      },
+      {
+        "author": "Batista, E.R.; Hornof, V.",
+        "title": "Solvent selection for soil decontamination using Hansen solubility parameters",
+        "journal": "Environmental Technology",
+        "year": 2005,
+        "doi": "[uncertain]"
+      },
+      {
+        "author": "Khodadoust, A.P.; Bagchi, R.; Suidan, M.T.; Brenner, R.C.; Sellers, N.G.",
+        "title": "Removal of PAHs from highly contaminated soils found at prior manufactured gas operations",
+        "journal": "Journal of Hazardous Materials",
+        "year": 2000,
+        "doi": "10.1016/S0304-3894(99)00099-2"
+      },
+      {
+        "author": "Hansen, C.M.",
+        "title": "Hansen Solubility Parameters: A User's Handbook, 2nd Edition",
+        "journal": "CRC Press",
+        "year": 2007,
+        "doi": "10.1201/9781420006834"
+      }
+    ],
+    "first_reported_year": "[uncertain]",
+    "regulatory_relevance": "EPA Superfund remediation guidelines reference solvent extraction as a treatment technology. REACH regulations influence solvent choice by restricting hazardous solvents, making HSP-based green solvent substitution valuable. ISO 18287 and EPA Method 3540C/3545A for soil extraction do not mandate HSP but benefit from HSP-guided solvent optimization. Environmental remediation standards in EU (Soil Framework Directive) and Japan (Soil Contamination Countermeasures Act) drive demand for efficient extraction methods."
+  },
+  "industry_application": {
+    "industry_sectors": [
+      "Environmental remediation and consulting",
+      "Petroleum industry (contaminated site cleanup)",
+      "Analytical chemistry laboratories",
+      "Mining and resource extraction",
+      "Agricultural soil testing",
+      "Waste management and treatment"
+    ],
+    "commercial_tools": [
+      "HSPiP (Hansen Solubility Parameters in Practice)",
+      "COSMOtherm (solvent screening for extraction)",
+      "TURBOMOLE (quantum chemical solvent design)",
+      "EPA ProUCL (statistical analysis of contamination data)"
+    ]
+  },
+  "uncertain": [
+    "literature.key_references[0].doi",
+    "literature.key_references[1].doi",
+    "literature.first_reported_year"
+  ]
+}

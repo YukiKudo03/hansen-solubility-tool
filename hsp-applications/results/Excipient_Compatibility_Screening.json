@@ -1,0 +1,130 @@
+{
+  "basic_info": {
+    "name": "Excipient Compatibility Screening",
+    "name_ja": "賦形剤適合性スクリーニング",
+    "category": "Pharmaceutical",
+    "description": "Excipient compatibility screening uses HSP distance between an active pharmaceutical ingredient (API) and common tablet excipients (binders, fillers, disintegrants, lubricants, glidants) to predict physical stability of solid dosage formulations. A small HSP distance (Ra) between API and excipient indicates thermodynamic affinity, which may promote dissolution of the drug into the excipient matrix or eutectic formation, while a large Ra suggests immiscibility and physical separation. By mapping all candidate excipients in Hansen space relative to the API, formulators can rapidly identify combinations prone to incompatibility (e.g., API softening, discoloration, potency loss) and prioritize stable formulations before committing to accelerated stability studies.",
+    "maturity_level": "established"
+  },
+  "hsp_principle": {
+    "hsp_principle": "The physical compatibility between an API and excipients is governed by the thermodynamic affinity of their molecular interactions. When the HSP distance (Ra) between the API and an excipient is small, the components share similar dispersion, polar, and hydrogen-bonding characteristics, which can lead to molecular-level mixing, solid solution formation, or surface wetting effects that alter drug stability or dissolution. Conversely, a large Ra indicates dissimilar interaction profiles and predicts physical separation with minimal interaction. For excipient screening, the goal is context-dependent: for binders, moderate affinity may be desirable for granule cohesion, while for lubricants like magnesium stearate, excessive affinity to the API surface can retard dissolution. The approach positions the API and all candidate excipients as points in 3D Hansen space and uses Ra or RED values to rank compatibility risk.",
+    "key_equation": "Ra = sqrt(4*(dD_API - dD_exc)^2 + (dP_API - dP_exc)^2 + (dH_API - dH_exc)^2)",
+    "red_direction": "threshold_specific",
+    "typical_red_threshold": "Ra < 5 MPa^0.5 suggests high affinity (risk of solid-state interaction); Ra > 10 MPa^0.5 suggests low interaction risk; intermediate values require case-by-case evaluation",
+    "sensitivity_to_hbond_split": "medium",
+    "temperature_pressure_sensitivity": "medium"
+  },
+  "input_data": {
+    "required_inputs": [
+      "API HSP values (dD, dP, dH)",
+      "Excipient HSP values (dD, dP, dH) for each candidate",
+      "Temperature of storage and processing conditions",
+      "Drug-excipient ratio in formulation"
+    ],
+    "data_sources": [
+      "HSPiP database for common pharmaceutical excipients",
+      "Group contribution methods (Van Krevelen, Hoftyzer) for novel excipients",
+      "Handbook of Pharmaceutical Excipients for physical property data",
+      "Published literature values for FDA-approved excipients (e.g., MCC, lactose, PVP, HPMC, magnesium stearate)",
+      "Experimental solubility testing for HSP determination of new APIs"
+    ],
+    "data_availability_score": 3,
+    "complementary_parameters": [
+      "Moisture content and water activity",
+      "Melting point and glass transition temperature of API and excipients",
+      "Particle size distribution",
+      "Compaction pressure",
+      "pH of the microenvironment (for pH-sensitive interactions)",
+      "Specific surface area of excipients"
+    ]
+  },
+  "accuracy": {
+    "accuracy_level": "semi-quantitative",
+    "limitations": [
+      "HSP predicts thermodynamic affinity but not kinetic rates of solid-state reactions or chemical degradation",
+      "Chemical incompatibilities (e.g., Maillard reaction between lactose and primary amines) are not captured by HSP distance",
+      "Surface interactions at particle-particle contacts may differ from bulk HSP predictions",
+      "Moisture-mediated interactions add complexity not fully described by anhydrous HSP values",
+      "Polymorphic form of the API can shift effective HSP values",
+      "Mechanical processing (milling, compaction) can alter local interactions beyond equilibrium HSP predictions"
+    ],
+    "known_failure_modes": [
+      "Chemical reactions between API and excipient functional groups (acid-base, oxidation, transesterification) not predicted by HSP",
+      "Moisture-catalyzed degradation where water acts as a mediator rather than a solvent",
+      "Lubricant over-blending effects that are process-dependent rather than thermodynamic",
+      "Excipient impurities (e.g., residual peroxides in PEG, formaldehyde in PVP) driving incompatibility"
+    ],
+    "validation_method": [
+      "Binary mixture accelerated stability studies (40C/75%RH, 2-4 weeks)",
+      "Differential scanning calorimetry (DSC) of API-excipient blends for thermal event shifts",
+      "Isothermal stress testing (IST) with HPLC assay for degradation products",
+      "XRPD for polymorphic changes in blends",
+      "FTIR/Raman spectroscopy for interaction detection",
+      "Visual inspection and colorimetric analysis"
+    ]
+  },
+  "implementation": {
+    "complexity": "low",
+    "ui_pattern": "matrix",
+    "existing_modules_reusable": [
+      "calculateRa",
+      "calculateRed",
+      "classifyRisk"
+    ],
+    "multi_component_complexity": "multi",
+    "scale_of_application": "screening"
+  },
+  "literature": {
+    "key_references": [
+      {
+        "author": "Greenhalgh, D.J. et al.",
+        "journal": "Journal of Pharmaceutical Sciences",
+        "year": 1999,
+        "title": "Solubility parameters as predictors of miscibility in solid dispersions",
+        "doi": "10.1021/js9804069"
+      },
+      {
+        "author": "Hancock, B.C. et al.",
+        "journal": "Pharmaceutical Research",
+        "year": 1997,
+        "title": "The use of solubility parameters in pharmaceutical dosage form design",
+        "doi": "10.1023/A:1012167202002"
+      },
+      {
+        "author": "Bharate, S.S. et al.",
+        "journal": "Journal of Pharmaceutical Investigation",
+        "year": 2016,
+        "title": "Interactions and incompatibilities of pharmaceutical excipients with active pharmaceutical ingredients: a comprehensive review",
+        "doi": "10.1007/s40005-016-0234-8"
+      },
+      {
+        "author": "Forster, A. et al.",
+        "journal": "Journal of Pharmacy and Pharmacology",
+        "year": 2001,
+        "title": "Selection of excipients for melt extrusion with two poorly water-soluble drugs by solubility parameter calculation and thermal analysis",
+        "doi": "10.1211/0022357011775532"
+      }
+    ],
+    "first_reported_year": 1997,
+    "regulatory_relevance": "Excipient compatibility screening is a standard component of ICH Q8 pharmaceutical development. HSP-based rationale for excipient selection is accepted in IND and NDA filings as supporting evidence for formulation design. FDA guidance on pharmaceutical development encourages science-based approaches to excipient selection, and HSP screening is recognized as a valid in-silico preselection tool."
+  },
+  "industry_application": {
+    "industry_sectors": [
+      "Pharmaceutical (oral solid dosage forms)",
+      "Generic pharmaceutical development",
+      "Contract development and manufacturing organizations (CDMO)",
+      "Pharmaceutical excipient manufacturers"
+    ],
+    "commercial_tools": [
+      "HSPiP (Hansen Solubility Parameters in Practice)",
+      "COSMOtherm (Dassault Systemes / SCM)",
+      "ADMET Predictor (Simulations Plus)",
+      "Minitab / JMP for DOE-based compatibility studies"
+    ]
+  },
+  "uncertain": [
+    "typical_red_threshold",
+    "first_reported_year",
+    "sensitivity_to_hbond_split"
+  ]
+}

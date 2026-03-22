@@ -1,0 +1,111 @@
+{
+  "basic_info": {
+    "name": "Group Contribution Method Updates",
+    "name_ja": "基団寄与法の更新",
+    "category": "Computational",
+    "description": "Updated group contribution methods for predicting Hansen Solubility Parameters from molecular structure, extending the classical Hoftyzer-Van Krevelen (HVK) approach with DFT-derived fragment contributions for novel chemical structures. Group contribution methods estimate HSP by summing contributions from functional groups (fragments) in a molecule: each group contributes additive increments to the dispersion, polar, and hydrogen bonding cohesive energy components. The original HVK parameters cover common organic functional groups but lack entries for modern chemical motifs such as fluorinated groups, siloxanes, ionic liquid cations/anions, organometallic fragments, and heterocyclic structures found in pharmaceutical APIs and advanced materials. Updated parameter sets incorporate quantum chemical (DFT) calculations of fragment cohesive energies, COSMO-RS derived interaction parameters, and machine learning corrections to extend coverage to novel chemical spaces while maintaining backward compatibility with classical predictions.",
+    "maturity_level": "established"
+  },
+  "hsp_principle": {
+    "hsp_principle": "Group contribution methods decompose the total cohesive energy of a molecule into additive contributions from its constituent functional groups. In the Hoftyzer-Van Krevelen framework: dD = sum(Fdi) / V, where Fdi is the molar attraction constant for group i and V is the molar volume; dP = sqrt(sum(Fpi^2)) / V, where Fpi is the polar component attraction constant; dH = sqrt(sum(Ehi) / V), where Ehi is the hydrogen bonding energy per group. The molar volume V is itself estimated by group contribution (Van Krevelen volume increments). DFT-derived updates replace empirical group parameters with quantum chemically computed values: the cohesive energy density of a molecular fragment is calculated from the difference between gas-phase and condensed-phase (COSMO or PCM solvation model) energies at the B3LYP/6-311+G(d,p) or similar level of theory. This enables parameterization for groups not covered by experimental data. Machine learning extensions use graph neural networks or descriptor-based models trained on experimental HSP data to learn nonlinear group interaction corrections that capture proximity effects, intramolecular hydrogen bonding, and conformational contributions missed by simple additive schemes.",
+    "key_equation": "dD = sum(Fdi) / V; dP = sqrt(sum(Fpi^2)) / V; dH = sqrt(sum(Ehi) / V); V = sum(Vi); DFT correction: Fdi(DFT) = (E_cohesive,d(fragment) * V_fragment)^(1/2) from COSMO-RS sigma-profile decomposition; ML correction: delta_HSP = f_NN(molecular_graph, group_features)",
+    "red_direction": "low_is_good",
+    "typical_red_threshold": "Not directly applicable; group contribution predicts absolute HSP values rather than RED. Prediction accuracy: +/- 1.0-2.0 MPa^0.5 for well-parameterized groups; +/- 2.0-4.0 MPa^0.5 for novel groups [uncertain]",
+    "sensitivity_to_hbond_split": "high",
+    "temperature_pressure_sensitivity": "low"
+  },
+  "input_data": {
+    "required_inputs": [
+      "Molecular structure (SMILES, InChI, or structural formula) of the target compound",
+      "Fragment decomposition scheme (functional group identification)",
+      "Group contribution parameter table (Fdi, Fpi, Ehi, Vi for each group)",
+      "For DFT-derived parameters: optimized fragment geometries and COSMO cavities",
+      "For ML-corrected methods: trained model weights and molecular descriptors"
+    ],
+    "data_sources": [
+      "Van Krevelen & Te Nijenhuis 'Properties of Polymers', 4th ed. (classical HVK parameters for ~40 common groups)",
+      "Stefanis & Panayiotou group contribution tables (extended set with ~130 first-order and ~80 second-order groups)",
+      "DFT calculations using Gaussian, ORCA, or Turbomole with COSMO-RS (COSMOtherm) for fragment parameterization",
+      "Experimental HSP databases (HSPiP) for training and validation of updated parameters",
+      "PubChem and ChEMBL for molecular structures of novel compounds"
+    ],
+    "data_availability_score": 4,
+    "complementary_parameters": [
+      "Molar volume (experimental or estimated by group contribution)",
+      "Molecular weight",
+      "Density at reference temperature",
+      "Number and type of rotatable bonds (conformational correction)",
+      "Intramolecular hydrogen bond geometry (for correction of Ehi overestimation)",
+      "Aromaticity index (ring current effects on dD)"
+    ]
+  },
+  "accuracy": {
+    "accuracy_level": "semi-quantitative",
+    "limitations": [
+      "Additive group contribution assumes fragment contributions are independent of molecular context; proximity effects between groups are ignored in first-order schemes",
+      "Intramolecular hydrogen bonding reduces the effective dH compared to the sum of group contributions, causing systematic overestimation",
+      "Conformational effects (folded vs extended chain) affect molar volume and thus all HSP components, but are not captured by simple group addition",
+      "DFT fragment calculations require careful choice of capping groups and solvation model, introducing method-dependent systematic errors",
+      "Novel heterocyclic and organometallic fragments have limited experimental validation data",
+      "Polymer repeat unit HSP estimation requires additional corrections for chain connectivity and end-group effects",
+      "Second-order corrections (Stefanis-Panayiotou) improve accuracy but add complexity and are not available for all group combinations"
+    ],
+    "known_failure_modes": [
+      "Molecules with strong intramolecular hydrogen bonding (e.g., salicylates, ortho-amino phenols) where dH is overestimated by 3-5 MPa^0.5",
+      "Highly branched molecules where steric effects reduce effective molar volume and increase dD beyond group contribution predictions",
+      "Zwitterionic molecules and ionic liquids where electrostatic interactions are poorly represented by fragment addition",
+      "Large macrocyclic compounds where ring strain and cavity effects are not captured",
+      "Compounds with significant mesomeric effects (extended conjugation) where electron delocalization affects dP beyond local group contributions"
+    ],
+    "validation_method": [
+      "Comparison of predicted HSP with experimental values from dissolution testing or IGC",
+      "Leave-one-out cross-validation on experimental HSP databases",
+      "Comparison with COSMO-RS computed HSP as independent computational reference",
+      "Statistical analysis of prediction errors (RMSE, MAE) across chemical classes",
+      "Blind prediction challenges on newly synthesized compounds"
+    ]
+  },
+  "implementation": {
+    "complexity": "high",
+    "ui_pattern": "pairwise",
+    "existing_modules_reusable": [
+      "calculateRa",
+      "calculateRed"
+    ],
+    "multi_component_complexity": "binary",
+    "scale_of_application": "screening"
+  },
+  "literature": {
+    "key_references": [
+      "Van Krevelen, D.W.; Te Nijenhuis, K. 'Properties of Polymers', 4th ed., Elsevier, 2009 (Chapter 7: Cohesive properties and solubility - original HVK group contribution parameters)",
+      "Stefanis, E.; Panayiotou, C. 'Prediction of Hansen Solubility Parameters with a New Group-Contribution Method', International Journal of Thermophysics, 2008, 29, 568-585. DOI: 10.1007/s10765-008-0415-z",
+      "Just, S.; Sievert, F.; Thommes, M.; Breitkreutz, J. 'Improved Group Contribution Parameter Set for the Application of Solubility Parameters to Melt Extrusion', European Journal of Pharmaceutics and Biopharmaceutics, 2013, 85, 1191-1199 [uncertain]",
+      "Klamt, A. 'COSMO-RS: From Quantum Chemistry to Fluid Phase Thermodynamics and Drug Design', Elsevier, 2005 (Foundation for DFT-based HSP estimation)",
+      "Hansen, C.M. 'Hansen Solubility Parameters: A User's Handbook', 2nd ed., CRC Press, 2007 (Chapter 3: Methods of estimation)"
+    ],
+    "first_reported_year": 1965,
+    "regulatory_relevance": "Group contribution HSP estimation is accepted as a screening tool in REACH chemical safety assessments when experimental data is unavailable. ECHA guidance R.6 references QSAR and group contribution methods for property estimation. FDA accepts computational property estimation as supporting evidence in drug substance characterization (ICH Q6A). EMA reflection paper on the use of in silico methods references group contribution as an established computational chemistry approach."
+  },
+  "industry_application": {
+    "industry_sectors": [
+      "Pharmaceutical (API HSP prediction for formulation development of novel drug candidates)",
+      "Polymer science (prediction of HSP for new polymer structures and copolymers)",
+      "Agrochemical (HSP estimation for novel pesticide active ingredients)",
+      "Specialty chemicals (rapid HSP screening for novel surfactants, plasticizers, and additives)",
+      "Materials science (HSP prediction for novel monomers, ionic liquids, and deep eutectic solvents)"
+    ],
+    "commercial_tools": [
+      "HSPiP (built-in Y-MB group contribution module with DIY parameter extension)",
+      "COSMOtherm (DFT-based COSMO-RS HSP estimation, most rigorous computational approach)",
+      "Materials Studio (Synthia module for polymer property prediction including HSP by group contribution)",
+      "Scifinder/Chemical Abstracts (predicted properties including solubility parameters)",
+      "BIOVIA Pipeline Pilot (workflow for automated group contribution HSP estimation) [uncertain]"
+    ]
+  },
+  "uncertain": [
+    "typical_red_threshold",
+    "key_references",
+    "first_reported_year",
+    "commercial_tools"
+  ]
+}

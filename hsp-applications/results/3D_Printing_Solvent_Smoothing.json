@@ -1,0 +1,134 @@
+{
+  "basic_info": {
+    "name": "3D Printing Solvent Smoothing",
+    "name_ja": "3Dプリント溶剤スムージング",
+    "category": "Polymer/Materials",
+    "description": "HSP distance between a thermoplastic 3D printing filament (ABS, PLA, PETG, ASA, etc.) and a vapor or liquid solvent is used to predict surface smoothing effectiveness. When the solvent HSP is within the polymer's solubility sphere (RED < 1), the solvent dissolves and redistributes the surface layer, eliminating layer lines and improving surface finish. Controlled exposure time and solvent concentration allow graduated smoothing from light polish to near-injection-mold quality. HSP matching enables rational solvent selection that balances smoothing rate, dimensional accuracy, and safety.",
+    "maturity_level": "emerging"
+  },
+  "hsp_principle": {
+    "hsp_principle": "The solvent must have sufficient thermodynamic affinity to the printed polymer surface to swell and partially dissolve the outermost layer. The HSP distance Ra between solvent and polymer determines whether dissolution occurs: solvents within the polymer's Hansen solubility sphere (RED < 1) will dissolve the surface, while those just outside (1.0 < RED < 1.3) may only swell it, providing gentler smoothing. The rate of surface dissolution depends on how deep within the sphere the solvent sits (lower RED = faster attack). Vapor-phase smoothing adds mass transport kinetics: the solvent vapor partial pressure and diffusion coefficient into the polymer determine the smoothing rate alongside thermodynamic compatibility.",
+    "key_equation": "Ra = sqrt(4*(dD_solv-dD_poly)^2 + (dP_solv-dP_poly)^2 + (dH_solv-dH_poly)^2); RED = Ra/R0_polymer",
+    "red_direction": "low_is_good",
+    "typical_red_threshold": "RED < 1.0 for effective smoothing; RED 0.8-1.0 preferred for controlled smoothing without over-dissolution; RED < 0.5 may cause excessive swelling and dimensional loss",
+    "sensitivity_to_hbond_split": "medium",
+    "temperature_pressure_sensitivity": "medium"
+  },
+  "input_data": {
+    "required_inputs": [
+      "HSP of the filament polymer (dD, dP, dH)",
+      "Interaction radius R0 of the polymer",
+      "HSP of candidate smoothing solvent (dD, dP, dH)",
+      "Vapor pressure of solvent at treatment temperature",
+      "Exposure time and temperature"
+    ],
+    "data_sources": [
+      "HSPiP database (common solvents well-documented)",
+      "Published polymer HSP values (ABS, PLA, PETG in Hansen handbook and literature)",
+      "3D printing community empirical data (maker forums, YouTube documentation)",
+      "Group contribution estimation for novel bio-solvents",
+      "Filament manufacturer datasheets (limited HSP data)"
+    ],
+    "data_availability_score": 3,
+    "complementary_parameters": [
+      "Solvent vapor pressure at treatment temperature",
+      "Solvent boiling point and flash point (safety)",
+      "Polymer glass transition temperature (Tg)",
+      "Part wall thickness and infill percentage",
+      "Exposure time and chamber geometry",
+      "Solvent diffusion coefficient in the polymer"
+    ]
+  },
+  "accuracy": {
+    "accuracy_level": "semi-quantitative",
+    "limitations": [
+      "HSP predicts whether a solvent can dissolve the polymer surface but does not quantify the smoothing rate or final surface roughness",
+      "Filament blends and additives (colorants, UV stabilizers) may shift effective HSP from published pure-polymer values",
+      "Vapor-phase smoothing kinetics depend on chamber design, temperature uniformity, and solvent concentration, which are not captured by HSP alone",
+      "Crystalline regions in semi-crystalline polymers (PLA, PETG) are more resistant to solvent attack than amorphous regions",
+      "Layer adhesion quality and print orientation affect smoothing uniformity",
+      "Multi-material prints present varying HSP targets on a single part"
+    ],
+    "known_failure_modes": [
+      "PLA is difficult to smooth because few common safe solvents fall within its solubility sphere; ethyl acetate works but slowly",
+      "Over-exposure to strong solvents (acetone on ABS at RED ~0.3) causes excessive swelling, warping, and loss of detail",
+      "Stress-cracking from solvents at RED slightly above 1.0 (environmental stress cracking rather than smoothing)",
+      "Filled or composite filaments (carbon fiber, glass fiber) do not smooth uniformly due to exposed filler particles"
+    ],
+    "validation_method": [
+      "Surface profilometry (Ra roughness measurement before/after smoothing)",
+      "Optical microscopy of layer line visibility",
+      "Dimensional measurement with calipers or CMM for distortion assessment",
+      "Weight gain/loss measurement to quantify solvent absorption",
+      "Tensile testing to check for mechanical property degradation"
+    ]
+  },
+  "implementation": {
+    "complexity": "low",
+    "ui_pattern": "screening",
+    "existing_modules_reusable": [
+      "calculateRa",
+      "calculateRed",
+      "classifyRisk"
+    ],
+    "multi_component_complexity": "binary",
+    "scale_of_application": "screening"
+  },
+  "literature": {
+    "key_references": [
+      {
+        "author": "Galantucci, L.M.; Lavecchia, F.; Percoco, G.",
+        "title": "Experimental study aiming to enhance the surface finish of fused deposition modeled parts",
+        "journal": "CIRP Annals - Manufacturing Technology",
+        "year": 2009,
+        "doi": "10.1016/j.cirp.2009.03.071"
+      },
+      {
+        "author": "Singh, R.; Singh, S.; Singh, I.P.; Fabbrocino, F.; Fraternali, F.",
+        "title": "Investigation for surface finish improvement of FDM parts by vapor smoothing process",
+        "journal": "Composites Part B: Engineering",
+        "year": 2017,
+        "doi": "10.1016/j.compositesb.2016.11.036"
+      },
+      {
+        "author": "Tantillo, A. et al.",
+        "title": "Solvent vapor smoothing of three-dimensional printed objects using Hansen solubility parameters [uncertain]",
+        "journal": "[uncertain]",
+        "year": "[uncertain]",
+        "doi": "[uncertain]"
+      },
+      {
+        "author": "Hansen, C.M.",
+        "title": "Hansen Solubility Parameters: A User's Handbook, 2nd Edition",
+        "journal": "CRC Press",
+        "year": 2007,
+        "doi": "10.1201/9781420006834"
+      }
+    ],
+    "first_reported_year": "[uncertain]",
+    "regulatory_relevance": "No direct regulatory framework, but solvent selection must comply with workplace exposure limits (OELs), VOC regulations, and REACH restrictions. HSP-based screening helps identify safer solvent alternatives that meet environmental and health regulations while still achieving effective smoothing."
+  },
+  "industry_application": {
+    "industry_sectors": [
+      "Rapid prototyping and product development",
+      "Consumer products (customized goods)",
+      "Medical device prototyping",
+      "Architectural modeling",
+      "Hobbyist/maker community",
+      "Dental and jewelry casting patterns"
+    ],
+    "commercial_tools": [
+      "HSPiP (Hansen Solubility Parameters in Practice)",
+      "Polymaker Polysher (commercial PVB smoothing system)",
+      "XTC-3D and similar post-processing coatings (indirect)",
+      "Zortrax Apoller (commercial vapor smoothing chamber)"
+    ]
+  },
+  "uncertain": [
+    "literature.key_references[2].title",
+    "literature.key_references[2].journal",
+    "literature.key_references[2].year",
+    "literature.key_references[2].doi",
+    "literature.first_reported_year"
+  ]
+}

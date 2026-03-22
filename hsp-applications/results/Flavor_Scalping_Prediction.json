@@ -1,0 +1,140 @@
+{
+  "basic_info": {
+    "name": "Flavor Scalping Prediction",
+    "name_ja": "フレーバースキャルピング予測",
+    "category": "Food/Cosmetics",
+    "description": "HSP distance between aroma compounds and packaging polymers predicts the sorption (scalping) of flavor and aroma molecules from food products into the packaging material. Low HSP distance (high affinity) between a flavor compound and the packaging polymer indicates high sorption risk, leading to flavor loss, off-taste development, and reduced product shelf life. This approach enables packaging material selection and barrier layer design to minimize flavor scalping in beverages, dairy products, snack foods, and other flavor-sensitive products.",
+    "maturity_level": "established"
+  },
+  "hsp_principle": {
+    "hsp_principle": "Flavor scalping occurs when aroma molecules partition from the food matrix into the packaging polymer due to thermodynamic affinity. The HSP distance (Ra) between a flavor compound and the packaging polymer determines the partition coefficient: lower Ra means higher solubility of the flavor in the polymer, and thus greater sorption. For polyolefin packaging (PE, PP), non-polar aroma compounds (terpenes, aldehydes) have low Ra and are rapidly scalped, while polar polymers (PET, EVOH, nylon) resist sorption of these compounds due to high Ra. The approach allows ranking of packaging materials by their resistance to scalping of specific flavor profiles, and identifies which flavor notes in a complex mixture are most at risk.",
+    "key_equation": "Ra = sqrt(4*(dD_flavor-dD_polymer)^2 + (dP_flavor-dP_polymer)^2 + (dH_flavor-dH_polymer)^2); RED = Ra/R0_polymer; Partition coefficient K_p ~ exp(-Ra^2 * V_m / (RT)); Sorption S ~ K_p * C_food * A * sqrt(D*t)",
+    "red_direction": "high_is_good",
+    "typical_red_threshold": "RED > 1.0 for acceptable scalping resistance; RED < 0.8 indicates high scalping risk for that flavor-polymer pair",
+    "sensitivity_to_hbond_split": "medium",
+    "temperature_pressure_sensitivity": "medium"
+  },
+  "input_data": {
+    "required_inputs": [
+      "Aroma compound HSP (dD, dP, dH) for key flavor molecules",
+      "Packaging polymer HSP (dD, dP, dH) and interaction radius R0",
+      "Food matrix composition (aqueous, lipid fraction, ethanol content)",
+      "Storage temperature and expected shelf life",
+      "Packaging wall thickness and contact surface area"
+    ],
+    "data_sources": [
+      "HSPiP database (solvents, polymers, and some aroma compounds)",
+      "Published HSP for common flavor compounds (limonene, linalool, menthol, vanillin, etc.)",
+      "Group contribution methods for novel or complex aroma molecules",
+      "Polymer manufacturer datasheets for packaging grades",
+      "Literature compilations of aroma compound physicochemical properties"
+    ],
+    "data_availability_score": 4,
+    "complementary_parameters": [
+      "Aroma compound molecular weight and molar volume",
+      "Diffusion coefficient in the polymer",
+      "Polymer crystallinity (reduces amorphous fraction available for sorption)",
+      "Polymer glass transition temperature (Tg)",
+      "Food matrix fat content and pH",
+      "Headspace concentration of aroma compounds",
+      "Barrier layer presence and thickness (EVOH, aluminum foil)"
+    ]
+  },
+  "accuracy": {
+    "accuracy_level": "semi-quantitative",
+    "limitations": [
+      "HSP predicts thermodynamic partition but not diffusion kinetics; fast-diffusing small molecules may scalp before equilibrium predictions apply",
+      "Polymer crystallinity creates tortuous diffusion paths not captured by amorphous-phase HSP alone",
+      "Multi-component aroma systems may exhibit competitive sorption where one compound affects another's uptake",
+      "Food matrix effects (fat globules, protein binding, pH) modify the effective activity of aroma compounds available for scalping",
+      "Polymer surface treatments, corona treatment, or coatings can alter surface HSP vs. bulk polymer HSP",
+      "Retort or hot-fill conditions transiently change polymer free volume and accelerate scalping beyond static HSP prediction"
+    ],
+    "known_failure_modes": [
+      "Highly volatile low-molecular-weight compounds (acetaldehyde, diacetyl) that permeate through even HSP-mismatched polymers due to small molecular size",
+      "EVOH barrier layers that lose effectiveness at high humidity, altering effective HSP-based barrier predictions",
+      "PET bottles where post-processing crystallinity varies and affects scalping inconsistently across the container",
+      "Recycled polymer packaging where contaminants modify the effective HSP of the polymer matrix"
+    ],
+    "validation_method": [
+      "Headspace GC-MS or SPME-GC-MS for quantifying aroma loss from food over time",
+      "Gravimetric sorption measurement of polymer samples immersed in aroma solutions",
+      "Sensory panel evaluation of flavor intensity changes during shelf life",
+      "ATR-FTIR or Raman spectroscopy to detect sorbed compounds in polymer cross-sections",
+      "Migration cell testing with food simulants (EU 10/2011 simulants)",
+      "Accelerated testing at elevated temperature with Arrhenius extrapolation"
+    ]
+  },
+  "implementation": {
+    "complexity": "medium",
+    "ui_pattern": "matrix",
+    "existing_modules_reusable": [
+      "calculateRa",
+      "calculateRed",
+      "classifyRisk"
+    ],
+    "multi_component_complexity": "ternary",
+    "scale_of_application": "screening"
+  },
+  "literature": {
+    "key_references": [
+      {
+        "author": "Piringer, O.G.; Baner, A.L.",
+        "title": "Plastic Packaging: Interactions with Food and Pharmaceuticals, 2nd Edition",
+        "journal": "Wiley-VCH",
+        "year": 2008,
+        "doi": "10.1002/9783527621422"
+      },
+      {
+        "author": "Nielsen, T.J.; Jagerstad, I.M.; Oste, R.E.",
+        "title": "Study of factors affecting the absorption of aroma compounds into low-density polyethylene",
+        "journal": "Journal of the Science of Food and Agriculture",
+        "year": 1992,
+        "doi": "10.1002/jsfa.2740600311"
+      },
+      {
+        "author": "Ducruet, V.; Vitrac, O.; Saillard, P.; Guichard, E.; Feigenbaum, A.; Hirata, Y.",
+        "title": "Sorption of aroma compounds in PET and PVC during storage of a strawberry syrup",
+        "journal": "Food Additives & Contaminants",
+        "year": 2007,
+        "doi": "10.1080/02652030701459256"
+      },
+      {
+        "author": "Hansen, C.M.",
+        "title": "Hansen Solubility Parameters: A User's Handbook, 2nd Edition",
+        "journal": "CRC Press",
+        "year": 2007,
+        "doi": "10.1201/9781420006834"
+      },
+      {
+        "author": "Linssen, J.P.H.; Verheul, A.; Roozen, J.P.; Posthumus, M.A.",
+        "title": "Absorption of flavour compounds by packaging material: drink yoghurts in HDPE bottles",
+        "journal": "International Dairy Journal",
+        "year": 1991,
+        "doi": "10.1016/0958-6946(91)90004-R"
+      }
+    ],
+    "first_reported_year": 1988,
+    "regulatory_relevance": "Flavor scalping is indirectly addressed under EU food contact regulations (EC 1935/2004, EU 10/2011) through overall migration limits and organoleptic requirements (Article 3: materials shall not transfer components in quantities that could change food's organoleptic characteristics). FDA 21 CFR Parts 174-179 also require that food contact materials not impart taste or odor. Industry quality standards (e.g., ISBT guidelines for PET bottles) include scalping-related testing requirements."
+  },
+  "industry_application": {
+    "industry_sectors": [
+      "Beverage packaging (juices, soft drinks, flavored water)",
+      "Dairy product packaging (yogurt, flavored milk)",
+      "Snack food packaging (chips, confectionery)",
+      "Coffee and tea packaging",
+      "Pharmaceutical flavor-masked dosage forms",
+      "Wine and spirits closures"
+    ],
+    "commercial_tools": [
+      "HSPiP (Hansen Solubility Parameters in Practice)",
+      "AKTS SML software (migration and sorption modeling)",
+      "Fabes FMCT (Food Migration Calculation Tool)",
+      "COSMOtherm (COSMO-RS for partition coefficient prediction)",
+      "PIRA/Smithers packaging consultancy tools"
+    ]
+  },
+  "uncertain": [
+    "literature.first_reported_year"
+  ]
+}

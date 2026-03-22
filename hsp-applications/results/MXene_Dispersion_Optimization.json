@@ -1,0 +1,111 @@
+{
+  "basic_info": {
+    "name": "MXene Dispersion Optimization",
+    "name_ja": "MXene分散最適化",
+    "category": "Electronics/Advanced",
+    "description": "HSP-based solvent selection and optimization for delamination and stable dispersion of MXene (Ti3C2Tx) nanosheets. MXenes are 2D transition metal carbides/nitrides with hydrophilic surface terminations (-OH, -O, -F) that create a unique surface chemistry distinct from graphene. The HSP sphere for MXene is determined experimentally by testing dispersion stability across a solvent panel, identifying solvents within the Hansen sphere (RED < 1) that produce stable colloidal dispersions of delaminated single- or few-layer flakes. The hydrophilic surface groups shift MXene HSP toward higher polar (dP) and hydrogen bonding (dH) components compared to pristine graphene, enabling dispersion in polar protic solvents including water. This approach guides solvent selection for applications in energy storage electrodes, electromagnetic interference shielding films, sensors, and conductive inks.",
+    "maturity_level": "emerging"
+  },
+  "hsp_principle": {
+    "hsp_principle": "MXene (Ti3C2Tx) nanosheets possess surface terminations (-OH, -O, -F, -Cl) introduced during selective etching of the A-layer from MAX phase precursors. These terminations create a strongly hydrophilic surface with HSP values significantly different from non-functionalized 2D materials: reported values cluster around dD ~ 16.2-18.0 MPa^0.5, dP ~ 9.0-14.0 MPa^0.5, dH ~ 14.0-22.0 MPa^0.5, depending on etching conditions and termination composition. The high dH component reflects extensive hydrogen bonding capacity of the -OH and -F terminations. Stable dispersions form when the solvent HSP lies within the MXene Hansen sphere (RED < 1), meaning the solvent-MXene interaction energy overcomes the van der Waals attraction between stacked sheets. The surface termination ratio (Tx = OH:O:F) directly influences the sphere center position in Hansen space, so different etching protocols (HF, LiF/HCl, fluorine-free) yield MXenes with different optimal solvent sets. Water and polar aprotic solvents like DMSO and NMP are typically good dispersants due to the high polar and hydrogen bonding character.",
+    "key_equation": "Ra = sqrt(4*(dD_solv - dD_MXene)^2 + (dP_solv - dP_MXene)^2 + (dH_solv - dH_MXene)^2); RED = Ra/R0; Dispersion stability correlates with RED < 1",
+    "red_direction": "low_is_good",
+    "typical_red_threshold": "RED < 1.0 for stable dispersion; RED < 0.6 for high-concentration dispersion (>1 mg/mL); RED > 1.2 poor dispersion [uncertain]",
+    "sensitivity_to_hbond_split": "high",
+    "temperature_pressure_sensitivity": "medium"
+  },
+  "input_data": {
+    "required_inputs": [
+      "HSP values (dD, dP, dH) and R0 of the MXene material (from sphere fitting on solvent panel data)",
+      "HSP values (dD, dP, dH) of candidate solvents",
+      "MXene composition (Ti3C2Tx, Ti2CTx, etc.) and surface termination ratio (OH:O:F)",
+      "Etching protocol details (HF concentration, LiF/HCl, or fluorine-free method)",
+      "Target dispersion concentration and stability requirements"
+    ],
+    "data_sources": [
+      "Experimental dispersion testing across solvent panels (primary method, typically 20-40 solvents)",
+      "HSPiP database for solvent HSP values",
+      "Published MXene HSP values (Maleski 2019, Sobolciak 2019)",
+      "XPS characterization of surface termination ratios to correlate with HSP shifts",
+      "Contact angle measurements for surface energy estimation"
+    ],
+    "data_availability_score": 1,
+    "complementary_parameters": [
+      "Surface termination composition from XPS (OH:O:F:Cl ratio)",
+      "Zeta potential of dispersed MXene sheets",
+      "Solvent boiling point and viscosity (processing considerations)",
+      "MXene flake lateral size and thickness (from AFM/SEM)",
+      "Oxidation state and shelf life (MXene degrades in water/oxygen exposure)",
+      "pH of the dispersion medium"
+    ]
+  },
+  "accuracy": {
+    "accuracy_level": "semi-quantitative",
+    "limitations": [
+      "MXene HSP values vary significantly with surface termination composition, which depends on synthesis protocol and is difficult to control precisely",
+      "Oxidative degradation of MXene in aqueous and oxygenated environments changes surface chemistry over time, shifting the effective HSP",
+      "The high surface charge density of delaminated MXene introduces strong electrostatic interactions not captured by the HSP framework",
+      "Intercalated species (Li+, TMA+, etc.) from delamination process alter effective surface chemistry and may expand the good-solvent region beyond HSP predictions",
+      "Limited number of published MXene HSP studies means sphere parameters carry large uncertainty",
+      "The 4:1:1 weighting in the Ra equation may not be optimal for these highly polar 2D materials"
+    ],
+    "known_failure_modes": [
+      "Water dispersions stabilized primarily by electrostatic repulsion from surface charges rather than thermodynamic HSP compatibility",
+      "Solvents that cause MXene oxidation (e.g., water at elevated temperature) appear as good solvents initially but degrade the material",
+      "Mixed termination MXenes where the surface is heterogeneous and a single HSP sphere is a poor representation",
+      "Concentrated dispersions where liquid crystalline ordering creates rheological behavior not predicted by HSP alone"
+    ],
+    "validation_method": [
+      "UV-Vis-NIR spectroscopy of supernatant after centrifugation (MXene has characteristic absorption at ~770 nm for Ti3C2Tx)",
+      "Dynamic light scattering (DLS) for hydrodynamic size and stability",
+      "Zeta potential measurement",
+      "XRD to confirm delamination (disappearance of (002) peak of multilayer MXene)",
+      "AFM for flake thickness confirmation (single layer ~1.5 nm for Ti3C2Tx)",
+      "Sedimentation monitoring over days to weeks"
+    ]
+  },
+  "implementation": {
+    "complexity": "medium",
+    "ui_pattern": "screening",
+    "existing_modules_reusable": [
+      "calculateRa",
+      "calculateRed",
+      "classifyRisk",
+      "sphere fitting"
+    ],
+    "multi_component_complexity": "binary",
+    "scale_of_application": "screening"
+  },
+  "literature": {
+    "key_references": [
+      "Maleski, K.; Mochalin, V.N.; Gogotsi, Y. 'Dispersions of Two-Dimensional Titanium Carbide MXene in Organic Solvents', Chemistry of Materials, 2017, 29, 1632-1640. DOI: 10.1021/acs.chemmater.6b04830",
+      "Sobolciak, P.; Ali, A.; Hassan, M.K.; Helal, M.I.; Tanvir, A.; Popelka, A.; Al-Maadeed, M.A.; Krupa, I.; Mahmoud, K.A. 'Two-Dimensional Ti3C2Tx (MXene)-Polymer Nanocomposites: A Hansen Solubility Parameter Study', ACS Applied Materials & Interfaces, 2019, 11, 29818-29829 [uncertain]",
+      "Gogotsi, Y.; Anasori, B. 'The Rise of MXenes', ACS Nano, 2019, 13, 8491-8494. DOI: 10.1021/acsnano.9b06394",
+      "Naguib, M.; Kurtoglu, M.; Presser, V.; Lu, J.; Niu, J.; Heon, M.; Hultman, L.; Gogotsi, Y.; Barsoum, M.W. 'Two-Dimensional Nanocrystals Produced by Exfoliation of Ti3AlC2', Advanced Materials, 2011, 23, 4248-4253",
+      "Hansen, C.M. 'Hansen Solubility Parameters: A User's Handbook', 2nd ed., CRC Press, 2007"
+    ],
+    "first_reported_year": 2017,
+    "regulatory_relevance": "No specific regulatory framework for HSP-based MXene dispersion assessment. General nanomaterial regulations (REACH, TSCA) require characterization of dispersion behavior but do not prescribe HSP methodology. MXene safety assessment is still in early stages."
+  },
+  "industry_application": {
+    "industry_sectors": [
+      "Energy storage (MXene electrode slurries for supercapacitors and batteries)",
+      "Electronics (conductive MXene inks for printed electronics and flexible devices)",
+      "EMI shielding (MXene films and coatings for electromagnetic interference shielding)",
+      "Sensors (MXene-based chemical and biosensors)",
+      "Composites (MXene-polymer nanocomposites for mechanical and electrical enhancement)"
+    ],
+    "commercial_tools": [
+      "HSPiP (sphere fitting for MXene HSP determination from dispersion data)",
+      "Materials Studio (molecular dynamics simulation of MXene-solvent interactions)",
+      "COSMOtherm (sigma-profile based prediction of MXene surface interactions) [uncertain]"
+    ]
+  },
+  "uncertain": [
+    "typical_red_threshold",
+    "data_availability_score",
+    "first_reported_year",
+    "key_references",
+    "commercial_tools"
+  ]
+}

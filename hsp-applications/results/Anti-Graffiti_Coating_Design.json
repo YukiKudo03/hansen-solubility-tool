@@ -1,0 +1,100 @@
+{
+  "basic_info": {
+    "name": "Anti-Graffiti Coating Design",
+    "name_ja": "防落書きコーティング設計",
+    "category": "Coatings/Inks",
+    "description": "Anti-graffiti coatings are designed to maximize HSP mismatch between the protective topcoat and common graffiti materials (spray paints, markers, inks). By ensuring a large HSP distance (high Ra or RED > 1) between the coating surface and graffiti media, the graffiti cannot wet, penetrate, or bond strongly to the surface, enabling easy removal with mild solvents or pressure washing without damaging the underlying coating.",
+    "maturity_level": "established"
+  },
+  "hsp_principle": {
+    "hsp_principle": "The principle is inverted compared to adhesion optimization: the goal is to maximize incompatibility between the topcoat and graffiti materials. A coating with HSP far from common graffiti solvents and binders (typically aromatic hydrocarbons, ketones, and alkyd/acrylic resins) will resist penetration and adhesion of graffiti. Fluoropolymers and silicone-based coatings achieve this naturally due to their very low dP and dH values, creating large Ra distances from most graffiti formulations. The coating must simultaneously maintain adhesion to the underlying substrate (low Ra with substrate) while repelling graffiti (high Ra with graffiti).",
+    "key_equation": "Ra_graffiti = sqrt(4*(dD_coat - dD_graffiti)^2 + (dP_coat - dP_graffiti)^2 + (dH_coat - dH_graffiti)^2); RED_graffiti = Ra_graffiti / R0_coat >> 1 desired",
+    "red_direction": "high_is_good",
+    "typical_red_threshold": "RED > 1.5 for effective graffiti resistance; Ra > 8 MPa^0.5 preferred between coating and graffiti binder",
+    "sensitivity_to_hbond_split": "medium",
+    "temperature_pressure_sensitivity": "low"
+  },
+  "input_data": {
+    "required_inputs": [
+      "Topcoat HSP (dD, dP, dH)",
+      "HSP of common graffiti materials (spray paint binders, marker solvents, permanent ink resins)",
+      "Substrate HSP for adhesion verification",
+      "Topcoat interaction radius R0"
+    ],
+    "data_sources": [
+      "HSPiP database for fluoropolymers, silicones, polyurethanes",
+      "Literature HSP for common spray paint formulations (alkyd, acrylic, lacquer)",
+      "Manufacturer data for anti-graffiti coating resins",
+      "Contact angle measurements for surface characterization",
+      "Group contribution methods for novel coating chemistries"
+    ],
+    "data_availability_score": 3,
+    "complementary_parameters": [
+      "Surface energy and contact angle (water and diiodomethane)",
+      "Surface roughness",
+      "Coating hardness and crosslink density",
+      "Chemical resistance to cleaning agents",
+      "UV and weathering stability",
+      "Porosity of substrate (for sacrificial systems)"
+    ]
+  },
+  "accuracy": {
+    "accuracy_level": "semi-quantitative",
+    "limitations": [
+      "Graffiti materials vary widely in composition; a single HSP target for 'graffiti' is an oversimplification",
+      "Surface texture and porosity effects are not captured by HSP alone",
+      "Sacrificial anti-graffiti systems work by a different mechanism (removal of coating layer) not well described by HSP mismatch",
+      "Weathering and UV degradation change coating surface HSP over time",
+      "Permanent anti-graffiti coatings may lose performance after repeated cleaning cycles"
+    ],
+    "known_failure_modes": [
+      "Aggressive solvent-based graffiti (e.g., bitumen markers) that can penetrate even low-energy surfaces",
+      "Porous substrates (bare concrete, brick) where graffiti penetrates below the coating",
+      "Coatings that degrade under UV exposure, increasing surface energy and graffiti adhesion over time",
+      "Etching-type vandalism (acid-based) that operates by chemical attack rather than adhesion"
+    ],
+    "validation_method": "Graffiti application and removal testing per ASTM D6578 or EN 1062-11, contact angle measurement before and after cleaning cycles, cross-cut adhesion testing of coating to substrate, accelerated weathering (QUV) followed by graffiti resistance re-testing"
+  },
+  "implementation": {
+    "complexity": "medium",
+    "ui_pattern": "optimization",
+    "existing_modules_reusable": [
+      "calculateRa",
+      "calculateRed",
+      "classifyRisk",
+      "optimizeBlend"
+    ],
+    "multi_component_complexity": "ternary",
+    "scale_of_application": "design"
+  },
+  "literature": {
+    "key_references": [
+      "Hansen, C.M. 'Hansen Solubility Parameters: A User's Handbook', 2nd ed., CRC Press, 2007",
+      "Rabea, A.M., Mohseni, M. 'Anti-graffiti coatings: a review', Journal of Coatings Technology and Research, 2015, Vol. 12, pp. 1-15",
+      "Lettieri, M., Masieri, M. 'Surface characterization and effectiveness of anti-graffiti coatings on cultural heritage stone materials', Applied Surface Science, 2014",
+      "Abbott, S. 'Chemical resistance and Hansen Solubility Parameters', HSPiP documentation, 2015"
+    ],
+    "first_reported_year": "[uncertain]",
+    "regulatory_relevance": "VOC content regulations (EPA, EU Directive 2004/42/EC) apply to anti-graffiti coating formulations. No specific regulatory framework references HSP-based design, but municipal and transportation authorities specify performance standards for anti-graffiti systems."
+  },
+  "industry_application": {
+    "industry_sectors": [
+      "Public infrastructure and transportation",
+      "Cultural heritage and monument preservation",
+      "Commercial building facades",
+      "Public transit vehicles (trains, buses)",
+      "Urban furniture and signage"
+    ],
+    "commercial_tools": [
+      "HSPiP (Hansen Solubility Parameters in Practice)",
+      "COSMOtherm (for novel coating molecular design)",
+      "DataPhysics OCA (contact angle measurement)",
+      "Proprietary formulation tools from coating manufacturers (e.g., Teknos, Protectosil)"
+    ]
+  },
+  "uncertain": [
+    "first_reported_year",
+    "typical_red_threshold",
+    "data_availability_score"
+  ]
+}

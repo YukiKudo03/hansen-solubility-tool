@@ -1,0 +1,109 @@
+{
+  "basic_info": {
+    "name": "ML HSP Prediction from Structure",
+    "name_ja": "構造からのML HSP予測",
+    "category": "Computational",
+    "description": "Machine learning and QSPR (Quantitative Structure-Property Relationship) models that predict Hansen Solubility Parameters directly from molecular structure representations such as SMILES strings, molecular fingerprints, or 3D molecular descriptors. Approaches range from classical random forest and gradient boosting models using calculated molecular descriptors (e.g., topological, electronic, geometric features) to deep learning architectures including graph neural networks (GNN) operating on molecular graphs and transformer models processing SMILES tokens. These models are trained on experimental HSP databases (typically 500-10,000 compounds from HSPiP or curated literature) and can predict dD, dP, and dH for novel compounds without experimental measurement, enabling rapid virtual screening of candidate molecules for solvent selection, polymer design, and formulation optimization.",
+    "maturity_level": "emerging"
+  },
+  "hsp_principle": {
+    "hsp_principle": "ML models learn the implicit mapping from molecular structure features to HSP components by capturing structure-property relationships present in training data. The dispersion component dD correlates with molecular polarizability, molecular volume, and the presence of aromatic/aliphatic moieties. The polar component dP correlates with permanent dipole moment, charge distribution asymmetry, and electronegative atom content. The hydrogen bonding component dH correlates with hydrogen bond donor/acceptor counts, hydroxyl/amine/carboxyl group presence, and intramolecular hydrogen bonding capacity. Classical QSPR models use hand-crafted descriptors (e.g., RDKit descriptors, Dragon descriptors, MACCS keys) and learn linear or nonlinear mappings. GNN models learn atom- and bond-level representations through message-passing on molecular graphs, capturing local chemical environment effects. Transformer-based models treat SMILES as sequences and learn context-dependent token embeddings. Multi-task learning predicting all three HSP components simultaneously often improves accuracy by exploiting inter-component correlations. Transfer learning from large pre-trained molecular representations (e.g., MolBERT, ChemBERTa) further improves prediction on small HSP datasets.",
+    "key_equation": "HSP_predicted = f_ML(molecular_representation); Loss = sum_i(w_dD*(dD_pred - dD_exp)^2 + w_dP*(dP_pred - dP_exp)^2 + w_dH*(dH_pred - dH_exp)^2); Typical RMSE targets: dD < 1.0, dP < 1.5, dH < 2.0 MPa^0.5",
+    "red_direction": "low_is_good",
+    "typical_red_threshold": "Prediction quality metric: RMSE < 1.0 MPa^0.5 per component considered good; R^2 > 0.85 for dD, > 0.75 for dP, > 0.70 for dH typical for best models",
+    "sensitivity_to_hbond_split": "high",
+    "temperature_pressure_sensitivity": "low"
+  },
+  "input_data": {
+    "required_inputs": [
+      "Molecular structure (SMILES string, InChI, or molecular graph)",
+      "Training dataset of experimentally determined HSP values (dD, dP, dH) for reference compounds",
+      "Molecular descriptor calculations or learned representations",
+      "Model architecture selection and hyperparameters"
+    ],
+    "data_sources": [
+      "HSPiP database (~10,000 compounds with experimental/group-contribution HSP)",
+      "Hansen's original solubility parameter compilations",
+      "Published experimental HSP from dissolution/swelling/IGC measurements",
+      "PubChem/ChEMBL for molecular structures",
+      "RDKit or Mordred for molecular descriptor generation"
+    ],
+    "data_availability_score": 4,
+    "complementary_parameters": [
+      "Molar volume (often co-predicted or needed for validation)",
+      "Boiling point (correlated with dD, useful as auxiliary training target)",
+      "Molecular weight and density",
+      "Experimental HSP uncertainty estimates for training data quality weighting",
+      "3D conformer generation for geometry-dependent descriptors"
+    ]
+  },
+  "accuracy": {
+    "accuracy_level": "semi-quantitative",
+    "limitations": [
+      "Training data is biased toward common organic solvents; predictions degrade for compound classes underrepresented in training (e.g., organometallics, salts, large biomolecules)",
+      "dH prediction is consistently the least accurate component due to the complexity of hydrogen bonding patterns and cooperative effects not fully captured by structure alone",
+      "Models trained on room-temperature HSP data cannot predict temperature dependence without explicit T-dependent training data",
+      "SMILES-based models may not distinguish stereoisomers or conformational effects adequately",
+      "Applicability domain is limited; extrapolation outside the chemical space of the training set is unreliable",
+      "Group contribution methods (Hoftyzer-Van Krevelen, Hoy) serve as strong baselines that ML only modestly outperforms for well-represented compound classes"
+    ],
+    "known_failure_modes": [
+      "Polymers and macromolecules where HSP depends on chain conformation and molecular weight, not just repeat unit structure",
+      "Ionic compounds and salts where Coulombic interactions dominate beyond the HSP framework",
+      "Molecules with strong intramolecular hydrogen bonding (e.g., salicylaldehyde) where structural descriptors overpredict dH",
+      "Highly flexible molecules where multiple conformers contribute differently to HSP",
+      "Novel heterocyclic scaffolds or functional group combinations absent from training data"
+    ],
+    "validation_method": [
+      "k-fold cross-validation (typically 5-fold or 10-fold) on the training dataset",
+      "External test set validation with held-out compounds",
+      "Comparison against group contribution method predictions",
+      "Experimental validation via dissolution testing or IGC for selected predictions",
+      "Applicability domain analysis using descriptor space coverage metrics"
+    ]
+  },
+  "implementation": {
+    "complexity": "high",
+    "ui_pattern": "optimization",
+    "existing_modules_reusable": [
+      "calculateRa (for downstream use of predicted HSP)",
+      "calculateRed (for downstream screening with predicted values)",
+      "classifyRisk (for confidence-based risk labeling)"
+    ],
+    "multi_component_complexity": "binary",
+    "scale_of_application": "screening"
+  },
+  "literature": {
+    "key_references": [
+      "Stefanis, E.; Panayiotou, C. 'Prediction of Hansen Solubility Parameters with a New Group-Contribution Method', International Journal of Thermophysics, 2008, 29, 568-585. DOI: 10.1007/s10765-008-0415-z",
+      "Gharagheizi, F.; Sattari, M.; Tirandazi, B. 'Prediction of Hansen Solubility Parameters of Organic Compounds Using Quantitative Structure-Property Relationship Methods', Journal of Chemical & Engineering Data, 2011, 56, 1853-1858. DOI: 10.1021/je1011967 [uncertain]",
+      "Sanchez-Lengeling, B.; Aspuru-Guzik, A. 'Inverse Molecular Design Using Machine Learning: Generative Models for Matter Engineering', Science, 2018, 361, 360-365. DOI: 10.1126/science.aat2663",
+      "Yang, K.; Swanson, K.; Jin, W.; Coley, C.; Eiden, P.; Gao, H.; Guzman-Perez, A.; Hopper, T.; Kelley, B.; Mathea, M.; Palmer, A.; Settels, V.; Jaakkola, T.; Jensen, K.; Barzilay, R. 'Analyzing Learned Molecular Representations for Property Prediction', Journal of Chemical Information and Modeling, 2019, 59, 3370-3388. DOI: 10.1021/acs.jcim.9b00237",
+      "Lim, H.; Jung, Y. 'MLSolvA: Solvation Free Energy Prediction from Pairwise Atomistic Interactions by Machine Learning', Journal of Chemical Information and Modeling, 2021, 61, 1011-1022 [uncertain]"
+    ],
+    "first_reported_year": 2008,
+    "regulatory_relevance": "No direct regulatory acceptance for ML-predicted HSP values. REACH encourages use of validated QSPR models for physicochemical property prediction under read-across and grouping approaches. OECD Principles for QSAR Validation (2004) provide the framework for regulatory acceptance of ML-predicted properties, but specific validation of HSP prediction models for regulatory purposes has not been established. [uncertain]"
+  },
+  "industry_application": {
+    "industry_sectors": [
+      "Pharmaceutical (virtual screening of solvents for API crystallization and formulation)",
+      "Chemical manufacturing (solvent replacement and green chemistry initiatives)",
+      "Materials science (polymer-solvent compatibility prediction for novel materials)",
+      "Agrochemical (formulation solvent screening for new active ingredients)",
+      "Coatings and adhesives (rapid screening of novel resin-solvent combinations)"
+    ],
+    "commercial_tools": [
+      "HSPiP (includes group contribution and Y-MB method for HSP estimation)",
+      "COSMOtherm (sigma-profile based, not strictly ML but computational prediction)",
+      "ACD/Labs Percepta (QSPR-based physicochemical property prediction)",
+      "Schrödinger Materials Science Suite (ML-based molecular property prediction)",
+      "RDKit + scikit-learn / PyTorch Geometric (open-source ML pipeline for custom models)"
+    ]
+  },
+  "uncertain": [
+    "typical_red_threshold",
+    "first_reported_year",
+    "key_references",
+    "regulatory_relevance"
+  ]
+}

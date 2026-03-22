@@ -1,0 +1,110 @@
+{
+  "basic_info": {
+    "name": "Quantum Dot Ligand Exchange Solvent",
+    "name_ja": "量子ドットリガンド交換溶媒",
+    "category": "Electronics/Advanced",
+    "description": "Colloidal quantum dots (QDs) are stabilized by surface ligands whose HSP must match the processing solvent to maintain colloidal stability. During ligand exchange — replacing long-chain native ligands (e.g., oleic acid) with short-chain or inorganic ligands for improved charge transport in devices — the solvent must simultaneously dissolve the incoming ligand, solvate the QD with its new surface chemistry, and ideally be a poor solvent for the outgoing ligand to drive the exchange. HSP matching between the QD-ligand shell and the exchange solvent governs aggregation, precipitation, and the completeness of ligand exchange, directly affecting QD film quality in LEDs, solar cells, and photodetectors. This framework enables systematic solvent selection for each step of QD processing rather than relying on empirical trial-and-error.",
+    "maturity_level": "emerging"
+  },
+  "hsp_principle": {
+    "hsp_principle": "QDs are effectively colloidal particles whose dispersibility depends on the HSP match between the ligand shell (the outermost organic or inorganic layer) and the solvent. The native synthesis ligands (oleic acid, oleylamine, trioctylphosphine oxide) have characteristic HSP, and solvents with low Ra to these ligands maintain stable dispersions. During ligand exchange, the QD surface transitions from one ligand type to another (e.g., oleic acid to mercaptopropionic acid, or from organic to halide/inorganic ligands). The exchange solvent must: (1) have RED < 1 relative to the incoming ligand to keep it dissolved and available for exchange, (2) have RED < 1 relative to the QD with partially exchanged ligand shell to prevent aggregation during the process, and (3) ideally have RED > 1 relative to the outgoing ligand-QD combination to thermodynamically drive precipitation/phase separation of the native ligand. Two-phase ligand exchange protocols explicitly exploit HSP differences: QDs transfer from a nonpolar phase (matching native ligands) to a polar phase (matching new ligands) at the interface. HSP distance also predicts the colloidal stability of the final QD ink for deposition.",
+    "key_equation": "Ra = sqrt(4*(dD_solv - dD_ligand)^2 + (dP_solv - dP_ligand)^2 + (dH_solv - dH_ligand)^2); RED_incoming = Ra_incoming/R0_incoming; RED_outgoing = Ra_outgoing/R0_outgoing",
+    "red_direction": "threshold_specific",
+    "typical_red_threshold": "RED < 1.0 for incoming ligand-solvent compatibility; RED > 1.2 for outgoing ligand-solvent incompatibility to drive exchange; RED < 0.8 for final QD ink colloidal stability [uncertain]",
+    "sensitivity_to_hbond_split": "high",
+    "temperature_pressure_sensitivity": "medium"
+  },
+  "input_data": {
+    "required_inputs": [
+      "HSP values (dD, dP, dH) of native (outgoing) ligand",
+      "HSP values (dD, dP, dH) of target (incoming) ligand",
+      "HSP values (dD, dP, dH) of exchange solvent(s)",
+      "R0 for QD-ligand colloidal stability sphere",
+      "QD core composition and size (affects surface energy)"
+    ],
+    "data_sources": [
+      "HSPiP database for common solvents and small organic molecules",
+      "Group contribution estimation for ligand molecules (oleic acid, thiols, amines, carboxylates)",
+      "Experimental dispersion stability testing (centrifugation, DLS) in solvent panels",
+      "Published QD-solvent compatibility studies in nanocrystal literature",
+      "IGC or contact angle measurements for QD surface characterization"
+    ],
+    "data_availability_score": 2,
+    "complementary_parameters": [
+      "QD core size and size distribution",
+      "Ligand grafting density on QD surface",
+      "Solvent boiling point and vapor pressure (for film deposition)",
+      "Solvent viscosity (affects processing and film quality)",
+      "Dielectric constant of solvent (affects electrostatic stabilization for charged ligands)",
+      "Ligand binding energy to QD surface (thermodynamic driving force for exchange)"
+    ]
+  },
+  "accuracy": {
+    "accuracy_level": "semi-quantitative",
+    "limitations": [
+      "QD surface is not a bulk material — effective HSP of a ligand-capped nanoparticle surface is size-dependent and curvature-dependent",
+      "Ligand exchange involves kinetic barriers (activation energy for ligand desorption/adsorption) not captured by thermodynamic HSP",
+      "Inorganic ligands (halides, metal chalcogenide complexes) are poorly described by organic HSP parameters",
+      "Mixed ligand shells during incomplete exchange have ill-defined composite HSP",
+      "Electrostatic stabilization (for charged ligand-capped QDs in polar solvents) operates outside HSP framework",
+      "Quantum confinement and surface trap states affected by ligand exchange are not predicted by HSP"
+    ],
+    "known_failure_modes": [
+      "Inorganic ligand (e.g., S2-, SCN-) exchange in formamide/DMSO where ionic interactions dominate over van der Waals HSP matching",
+      "Large QDs (>10 nm) where gravitational settling competes with colloidal stability regardless of HSP match",
+      "Ligand exchange at elevated temperatures where rapid kinetics cause uncontrolled aggregation despite favorable HSP",
+      "Multi-shell QDs (e.g., CdSe/CdS/ZnS) where surface composition differs from simple ligand model"
+    ],
+    "validation_method": [
+      "Dynamic light scattering (DLS) for colloidal stability and aggregation monitoring",
+      "UV-Vis and photoluminescence spectroscopy (QD optical properties as proxy for surface quality)",
+      "FTIR/NMR to confirm ligand exchange completeness",
+      "Thermogravimetric analysis (TGA) for ligand content quantification",
+      "Thin film characterization (AFM, SEM) for QD film morphology after deposition"
+    ]
+  },
+  "implementation": {
+    "complexity": "high",
+    "ui_pattern": "optimization",
+    "existing_modules_reusable": [
+      "calculateRa",
+      "calculateRed",
+      "classifyRisk",
+      "optimizeBlend"
+    ],
+    "multi_component_complexity": "ternary",
+    "scale_of_application": "design"
+  },
+  "literature": {
+    "key_references": [
+      "Shen, Y.; Gee, M.Y.; Greytak, A.B. 'Purification technologies for colloidal nanocrystals', Chem. Commun., 2017, 53, 827-841. DOI: 10.1039/C6CC07998A",
+      "�Nag, A.; Kovalenko, M.V.; Lee, J.S.; Liu, W.; Spokoyny, B.; Talapin, D.V. 'Metal-free Inorganic Ligands for Colloidal Nanocrystals: S2-, HS-, Se2-, HSe-, Te2-, OH-, NH2-', J. Am. Chem. Soc., 2011, 133, 10612-10620. DOI: 10.1021/ja2029415",
+      "Hansen, C.M.; Smith, A.L. 'Using Hansen solubility parameters to correlate solubility of C60 fullerene in organic solvents and in polymers', Carbon, 2004, 42, 1591-1597",
+      "Mori, Y.; Yamada, K. 'Hansen Solubility Parameters for Selection of Dispersing Solvents for Quantum Dots', J. Chem. Eng. Data, 2020, 65, 5434-5441 [uncertain]",
+      "Boles, M.A.; Ling, D.; Hyeon, T.; Talapin, D.V. 'The surface science of nanocrystals', Nature Mater., 2016, 15, 141-153. DOI: 10.1038/nmat4526"
+    ],
+    "first_reported_year": 2015,
+    "regulatory_relevance": "No established regulatory framework for HSP in QD processing. RoHS restricts cadmium-based QDs driving adoption of InP and perovskite QDs. REACH governs solvent use in QD manufacturing. OSHA/exposure limits apply to exchange solvents (formamide, DMF, hydrazine). HSP-guided solvent substitution supports compliance with green chemistry initiatives."
+  },
+  "industry_application": {
+    "industry_sectors": [
+      "Display technology (QD-LED/QLED TVs, QD color conversion films)",
+      "Photovoltaics (QD solar cells, luminescent solar concentrators)",
+      "Photodetectors and image sensors",
+      "Biomedical imaging (QD fluorescent labels)",
+      "Quantum computing and photonics research"
+    ],
+    "commercial_tools": [
+      "HSPiP (solvent screening for nanoparticle dispersions)",
+      "COSMOtherm (molecular-level solvent-ligand interaction prediction)",
+      "Nanocyl/Nanoco/QD Vision proprietary formulation tools",
+      "Materials Studio (atomistic simulation of QD-ligand-solvent systems)"
+    ]
+  },
+  "uncertain": [
+    "first_reported_year",
+    "typical_red_threshold",
+    "data_availability_score",
+    "key_references"
+  ]
+}

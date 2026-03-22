@@ -1,0 +1,112 @@
+{
+  "basic_info": {
+    "name": "Organic Semiconductor Thin Film",
+    "name_ja": "有機半導体薄膜",
+    "category": "Electronics/Advanced",
+    "description": "The HSP relationship between organic semiconductor molecules and processing solvents critically affects thin film morphology, crystallinity, domain size, and ultimately charge transport performance in organic field-effect transistors (OFETs), organic light-emitting diodes (OLEDs), and organic photovoltaics (OPVs). Solvent selection based on HSP matching controls the dissolution state, nucleation kinetics during film formation, and phase separation in donor-acceptor bulk heterojunction blends. Solvents with HSP close to the semiconductor (low RED) produce good dissolution but may yield amorphous films, while solvents at intermediate RED values can promote controlled crystallization. For OPV bulk heterojunction systems, differential HSP matching between solvent and donor vs acceptor components controls the phase-separated morphology essential for charge generation and transport.",
+    "maturity_level": "established"
+  },
+  "hsp_principle": {
+    "hsp_principle": "Organic semiconductors (conjugated polymers like P3HT, PCBM, small molecules like pentacene derivatives) have characteristic HSP values dominated by strong dispersion interactions from extended pi-conjugation (dD ~ 18-20 MPa^0.5), with varying polar and hydrogen bonding components depending on functional groups. The solvent HSP determines: (1) dissolution quality, where RED < 1 ensures complete dissolution for solution processing; (2) film formation kinetics, where solvent evaporation rate and residual solvent-semiconductor interaction control nucleation and crystal growth; (3) in BHJ OPV blends, the relative RED of the solvent to donor and acceptor determines the sequential phase separation during drying, producing the nanoscale morphology critical for device performance. Solvent additives (e.g., DIO, CN) with specific HSP values can selectively dissolve one component, enabling morphology control. The Flory-Huggins chi parameter estimated from HSP predicts polymer-fullerene miscibility and the thermodynamic driving force for phase separation.",
+    "key_equation": "Ra = sqrt(4*(dD_solv - dD_OSC)^2 + (dP_solv - dP_OSC)^2 + (dH_solv - dH_OSC)^2); RED = Ra/R0; chi_donor-acceptor = Vs*(Ra_D-A)^2/(6*R*T)",
+    "red_direction": "threshold_specific",
+    "typical_red_threshold": "RED < 1.0 for dissolution; RED 0.3-0.7 for optimal film crystallinity; RED_donor-acceptor > 0.5 for BHJ phase separation; solvent additive RED < 1 for one component and > 1 for other",
+    "sensitivity_to_hbond_split": "medium",
+    "temperature_pressure_sensitivity": "medium"
+  },
+  "input_data": {
+    "required_inputs": [
+      "HSP values (dD, dP, dH) of the organic semiconductor(s)",
+      "HSP values (dD, dP, dH) of candidate processing solvents",
+      "HSP values of solvent additives (if BHJ morphology control needed)",
+      "R0 of the organic semiconductor from solubility sphere fitting",
+      "Desired film thickness and deposition method"
+    ],
+    "data_sources": [
+      "Experimental solubility testing in solvent panels with sphere fitting",
+      "Published HSP for common organic semiconductors (P3HT, PCBM, PEDOT:PSS)",
+      "HSPiP database for processing solvent HSP values",
+      "Group contribution estimation for novel semiconductor molecules",
+      "Contact angle and surface energy measurements for thin film characterization"
+    ],
+    "data_availability_score": 2,
+    "complementary_parameters": [
+      "Solvent boiling point (controls drying kinetics and crystallization time)",
+      "Solvent vapor pressure and evaporation rate",
+      "Solution concentration and viscosity",
+      "Substrate surface energy and treatment",
+      "Deposition method parameters (spin speed, slot-die gap, temperature)",
+      "Molecular weight and regioregularity of conjugated polymers"
+    ]
+  },
+  "accuracy": {
+    "accuracy_level": "semi-quantitative",
+    "limitations": [
+      "Film morphology depends on kinetic factors (evaporation rate, substrate interaction) not captured by equilibrium HSP",
+      "Conjugated molecules with strong pi-pi stacking have directional interactions poorly represented by isotropic HSP",
+      "HSP of organic semiconductors are difficult to determine accurately due to limited solubility in many solvents and tendency to aggregate",
+      "BHJ morphology optimization involves complex three-component (or more) phase behavior beyond simple pairwise HSP distances",
+      "Post-deposition annealing (thermal or solvent vapor) further modifies morphology independent of initial solvent HSP",
+      "Device performance correlates with morphology but the HSP-to-morphology-to-performance chain involves many intervening variables"
+    ],
+    "known_failure_modes": [
+      "Solvents with identical RED but different boiling points produce drastically different film morphologies due to kinetic effects",
+      "Halogenated solvent additives (DIO, CN) whose effectiveness depends on selective solvation not fully captured by bulk HSP",
+      "P3HT fiber/whisker formation from marginal solvents where aging and pre-aggregation dominate over thermodynamic HSP prediction",
+      "Non-fullerene acceptor (NFA) systems where complex molecular geometries create HSP estimation challenges"
+    ],
+    "validation_method": [
+      "Grazing incidence X-ray diffraction (GIXD) for crystallinity and orientation",
+      "Atomic force microscopy (AFM) for surface morphology and domain size",
+      "Transmission electron microscopy (TEM) for bulk morphology",
+      "UV-Vis absorption spectroscopy for aggregation state",
+      "Space-charge limited current (SCLC) for charge mobility measurement",
+      "Device characterization (J-V curves for OPV, transfer curves for OFET)"
+    ]
+  },
+  "implementation": {
+    "complexity": "high",
+    "ui_pattern": "optimization",
+    "existing_modules_reusable": [
+      "calculateRa",
+      "calculateRed",
+      "classifyRisk",
+      "optimizeBlend"
+    ],
+    "multi_component_complexity": "ternary",
+    "scale_of_application": "design"
+  },
+  "literature": {
+    "key_references": [
+      "Liao, H.C.; Ho, C.C.; Chang, C.Y.; Jao, M.H.; Darling, S.B.; Su, W.F. 'Additives for Morphology Control in High-Efficiency Organic Solar Cells', Materials Today, 2013, 16, 326-336",
+      "Duong, D.T.; Walker, B.; Lin, J.; Kim, C.; Love, J.; Purushothaman, B.; Anthony, J.E.; Nguyen, T.Q. 'Molecular Solubility and Hansen Solubility Parameters for the Analysis of Phase Separation in Bulk Heterojunctions', J. Polym. Sci. Part B: Polym. Phys., 2012, 50, 1405-1413. DOI: 10.1002/polb.23153",
+      "Walker, B.; Tamayo, A.; Duong, D.T.; Dang, X.D.; Kim, C.; Granstrom, J.; Nguyen, T.Q. 'A Systematic Approach to Solvent Selection Based on Cohesive Energy Densities in a Molecular Bulk Heterojunction System', Adv. Energy Mater., 2011, 1, 221-229",
+      "Machui, F.; Langner, S.; Zhu, X.; Abbott, S.; Brabec, C.J. 'Determination of the P3HT:PCBM Solubility Parameters via a Binary Solvent Gradient Method', Solar Energy Materials and Solar Cells, 2012, 100, 138-146",
+      "Ye, L.; Hu, H.; Ghasemi, M.; Wang, T.; Collins, B.A.; Kim, J.H.; Jiang, K.; Carpenter, J.H.; Li, H.; Li, Z.; McAfee, T.; Zhao, J.; Chen, X.; Lai, J.L.Y.; Ma, T.; Bredas, J.L.; Yan, H.; Ade, H. 'Quantitative Relations between Interaction Parameter, Miscibility and Function in Organic Solar Cells', Nature Materials, 2018, 17, 253-260"
+    ],
+    "first_reported_year": 2011,
+    "regulatory_relevance": "No direct regulatory framework for HSP in organic electronics fabrication. RoHS and REACH regulations govern solvent use in electronics manufacturing, making HSP-guided substitution of halogenated solvents (chlorobenzene, dichlorobenzene) with greener alternatives increasingly relevant."
+  },
+  "industry_application": {
+    "industry_sectors": [
+      "Organic photovoltaics (BHJ active layer morphology optimization)",
+      "OLED displays (emissive layer and charge transport layer deposition)",
+      "Organic/printed electronics (OFET channel layer processing)",
+      "Flexible electronics (roll-to-roll processing solvent selection)",
+      "Wearable sensors (organic semiconductor-based sensing layers)"
+    ],
+    "commercial_tools": [
+      "HSPiP (solvent screening and sphere fitting)",
+      "Scienomics MAPS (molecular simulation for organic electronics)",
+      "Schrodinger Materials Science Suite (molecular HSP prediction)",
+      "COSMOtherm (sigma-profile based solubility for conjugated molecules)",
+      "Ossila (organic electronics materials supplier with processing guides)"
+    ]
+  },
+  "uncertain": [
+    "first_reported_year",
+    "typical_red_threshold",
+    "data_availability_score",
+    "regulatory_relevance"
+  ]
+}

@@ -1,0 +1,110 @@
+{
+  "basic_info": {
+    "name": "Structural Adhesive Joint Design",
+    "name_ja": "構造用接着継手設計",
+    "category": "Adhesion/Surface",
+    "description": "HSP matching between a structural adhesive and both adherend surfaces is used to predict adhesive bond strength and long-term durability. The principle is that thermodynamic work of adhesion correlates with HSP proximity between adhesive and substrate. By calculating Ra between the adhesive and each adherend, engineers can screen adhesive candidates for optimal compatibility with dissimilar-material joints (e.g., metal-to-composite, aluminum-to-CFRP). Low Ra values indicate favorable intermolecular interactions at the interface, leading to higher bond strength and better resistance to environmental degradation (moisture, thermal cycling).",
+    "maturity_level": "established"
+  },
+  "hsp_principle": {
+    "hsp_principle": "The underlying principle is that adhesion strength at a bonded interface depends on the thermodynamic work of adhesion, which is maximized when intermolecular interactions between adhesive and adherend are well-matched. The HSP distance Ra between adhesive and substrate surface quantifies this interaction mismatch. For a joint with two different adherends (A and B), the adhesive should minimize both Ra(adhesive-A) and Ra(adhesive-B). The work of adhesion Wa is related to surface energies via Wa = gamma_A + gamma_adhesive - gamma_AB, and HSP proximity minimizes the interfacial energy gamma_AB. In practice, RED values for both interfaces should be low. For structural joints under load, the cohesive strength of the adhesive and mechanical interlocking also contribute, but HSP matching ensures the interfacial (adhesive) failure mode is suppressed in favor of cohesive failure, which is the preferred failure mode in structural design.",
+    "key_equation": "Ra = sqrt(4*(dD_adh-dD_sub)^2 + (dP_adh-dP_sub)^2 + (dH_adh-dH_sub)^2); RED = Ra/R0; Wa ~ 2*sqrt(gamma_d1*gamma_d2) + 2*sqrt(gamma_p1*gamma_p2) + 2*sqrt(gamma_h1*gamma_h2)",
+    "red_direction": "low_is_good",
+    "typical_red_threshold": "RED < 1.0 for adequate adhesion; RED < 0.7 for high-strength structural bonds; RED > 1.5 indicates likely adhesive failure at interface",
+    "sensitivity_to_hbond_split": "high",
+    "temperature_pressure_sensitivity": "medium"
+  },
+  "input_data": {
+    "required_inputs": [
+      "HSP values (dD, dP, dH) for the structural adhesive (cured state)",
+      "Surface HSP values (dD, dP, dH) for adherend A",
+      "Surface HSP values (dD, dP, dH) for adherend B",
+      "Interaction radius R0 for the adhesive",
+      "Service temperature range"
+    ],
+    "data_sources": [
+      "HSPiP database (adhesive and polymer HSP values)",
+      "Contact angle measurements with probe liquids (surface HSP determination)",
+      "Inverse gas chromatography (surface energy and HSP of adherends)",
+      "Adhesive manufacturer technical data sheets",
+      "Literature values for common substrates (metals, CFRP, glass)"
+    ],
+    "data_availability_score": 3,
+    "complementary_parameters": [
+      "Surface roughness (Ra, Rz) of adherends",
+      "Surface free energy components (dispersive, polar)",
+      "Adhesive modulus and Tg (mechanical performance)",
+      "Joint geometry (overlap length, bondline thickness)",
+      "Environmental conditions (humidity, temperature cycling range)",
+      "Surface pretreatment details (abrasion, chemical etch, primer)"
+    ]
+  },
+  "accuracy": {
+    "accuracy_level": "semi-quantitative",
+    "limitations": [
+      "HSP matching addresses only the thermodynamic component of adhesion; mechanical interlocking, chemical bonding (covalent, ionic), and diffusion bonding are not captured",
+      "Surface HSP may differ significantly from bulk HSP due to surface reconstruction, contamination, or oxidation layers",
+      "Cured adhesive HSP depends on cure schedule and degree of conversion, introducing variability",
+      "Does not predict failure load directly; only indicates relative ranking of adhesive-substrate compatibility",
+      "Environmental degradation mechanisms (hydrolysis, oxidation) require kinetic modeling beyond HSP",
+      "Metal adherend surface HSP is difficult to define and highly dependent on oxide layer and surface treatment"
+    ],
+    "known_failure_modes": [
+      "Highly reactive adhesives (cyanoacrylates, structural acrylics) where chemical bonding dominates over physical adsorption, making HSP matching less relevant",
+      "Joints with mechanical interlocking as primary adhesion mechanism (rough or porous substrates)",
+      "Low-surface-energy substrates (PTFE, polyolefins) where HSP matching is necessary but not sufficient without surface activation",
+      "High-temperature joints where adhesive degradation limits performance regardless of initial HSP match"
+    ],
+    "validation_method": [
+      "Lap shear strength testing (ASTM D1002, ISO 4587)",
+      "Peel testing (ASTM D903, T-peel, climbing drum)",
+      "Failure mode analysis (adhesive vs. cohesive vs. mixed failure)",
+      "Environmental aging tests (humidity exposure, thermal cycling, salt spray)",
+      "Cross-cut adhesion testing (ASTM D3359) for coating-like thin adhesive layers"
+    ]
+  },
+  "implementation": {
+    "complexity": "medium",
+    "ui_pattern": "optimization",
+    "existing_modules_reusable": [
+      "calculateRa",
+      "calculateRed",
+      "classifyRisk",
+      "optimizeBlend (for adhesive formulation adjustment)"
+    ],
+    "multi_component_complexity": "ternary",
+    "scale_of_application": "design"
+  },
+  "literature": {
+    "key_references": [
+      "Hansen, C.M. 'Hansen Solubility Parameters: A User's Handbook', 2nd Ed., CRC Press, 2007, Chapter 11: Adhesion",
+      "Packham, D.E. 'Handbook of Adhesion', 2nd Ed., John Wiley & Sons, 2005",
+      "Abbott, S.; Hansen, C.M. 'Hansen Solubility Parameters in Practice (HSPiP)', 5th Ed., 2015, Chapter on Adhesion",
+      "Kinloch, A.J. 'Adhesion and Adhesives: Science and Technology', Chapman & Hall, 1987",
+      "Della Volpe, C.; Siboni, S. 'Acid-base surface free energies of solids and the definition of scales in the Good-van Oss-Chaudhury theory', Journal of Adhesion Science and Technology, 2000"
+    ],
+    "first_reported_year": 1990,
+    "regulatory_relevance": "Structural adhesive joints in aerospace must meet certification requirements (FAA AC 20-107B, EASA CS-25). While HSP is not directly mandated, it is used as a screening tool during adhesive qualification programs. Automotive structural bonding follows ISO 11339 and OEM-specific qualification protocols where material compatibility assessment (including HSP analysis) supports design rationale."
+  },
+  "industry_application": {
+    "industry_sectors": [
+      "Aerospace (metal-to-composite bonding, CFRP structural joints)",
+      "Automotive (multi-material lightweight body construction, BIW bonding)",
+      "Wind energy (blade root bonding, spar cap adhesion)",
+      "Marine (hull panel bonding, composite-to-metal joints)",
+      "Construction (structural glazing, curtain wall adhesive selection)"
+    ],
+    "commercial_tools": [
+      "HSPiP (adhesive-substrate matching module)",
+      "Henkel LOCTITE Design Guide (proprietary adhesive selection tool)",
+      "3M Adhesive Selector (web-based tool with compatibility data)",
+      "Dassault SIMULIA (FEA with cohesive zone models for joint analysis)",
+      "COSMOtherm (surface interaction energy estimation)"
+    ]
+  },
+  "uncertain": [
+    "first_reported_year",
+    "typical_red_threshold",
+    "sensitivity_to_hbond_split"
+  ]
+}

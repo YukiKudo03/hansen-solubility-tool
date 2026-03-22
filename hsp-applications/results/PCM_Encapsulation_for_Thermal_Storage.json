@@ -1,0 +1,110 @@
+{
+  "basic_info": {
+    "name": "PCM Encapsulation for Thermal Storage",
+    "name_ja": "蓄熱用PCMカプセル化",
+    "category": "Energy/Environment",
+    "description": "HSP matching between phase-change materials (PCMs) and shell/matrix polymers is used to predict encapsulation compatibility and long-term cycling stability in thermal energy storage systems. PCMs (paraffins, fatty acids, salt hydrates) undergo solid-liquid transitions to store/release latent heat. Microencapsulation in polymer shells (melamine-formaldehyde, PMMA, polyurea) protects the PCM from leakage. HSP compatibility between the molten PCM core and the shell polymer determines interfacial adhesion, shell integrity under thermal cycling, and resistance to PCM permeation through the shell wall. A moderate HSP distance ensures the shell does not dissolve in or swell excessively with the PCM, while sufficient affinity maintains adhesion. This approach enables rational shell polymer selection and predicts long-term durability of encapsulated PCM systems.",
+    "maturity_level": "emerging"
+  },
+  "hsp_principle": {
+    "hsp_principle": "The principle relies on controlling the HSP distance between the molten PCM core and the polymeric shell material. If the Ra distance is too small (RED << 1), the shell polymer may swell or dissolve in the PCM, leading to shell failure. If Ra is too large (RED >> 1), poor interfacial adhesion results in delamination and cracking during thermal cycling. An optimal intermediate RED range exists where the shell maintains structural integrity while providing sufficient adhesion to the PCM. For paraffin-based PCMs (dominated by dD), shell polymers with moderate polar and hydrogen bonding components create an appropriate mismatch that prevents dissolution while crosslinked networks resist swelling. The HSP approach also guides selection of surfactants and emulsifiers used during the encapsulation process (e.g., in situ polymerization, coacervation) by matching surfactant HSP to both core and shell phases.",
+    "key_equation": "Ra = sqrt(4*(dD_PCM - dD_shell)^2 + (dP_PCM - dP_shell)^2 + (dH_PCM - dH_shell)^2); RED = Ra/R0_shell; Swelling ratio correlates with 1/Ra^2",
+    "red_direction": "threshold_specific",
+    "typical_red_threshold": "RED 0.8-1.2 optimal for encapsulation; RED < 0.6 risk of shell swelling/dissolution; RED > 1.5 poor adhesion and delamination risk",
+    "sensitivity_to_hbond_split": "medium",
+    "temperature_pressure_sensitivity": "medium"
+  },
+  "input_data": {
+    "required_inputs": [
+      "HSP values (dD, dP, dH) of the PCM in liquid state",
+      "HSP values (dD, dP, dH) of the shell polymer",
+      "Interaction radius R0 of the shell polymer",
+      "PCM melting temperature and operating temperature range",
+      "Shell polymer crosslink density (if crosslinked)"
+    ],
+    "data_sources": [
+      "HSPiP database for common paraffins and polymers",
+      "Group contribution methods for PCM HSP estimation (Van Krevelen)",
+      "Literature values for paraffin wax HSP (Archer 1991, Hansen 2007)",
+      "Experimental solubility/swelling tests for shell polymer sphere fitting",
+      "Supplier datasheets for commercial PCM products"
+    ],
+    "data_availability_score": 3,
+    "complementary_parameters": [
+      "PCM melting point and latent heat of fusion",
+      "Shell polymer Tg and crosslink density",
+      "Thermal expansion coefficient mismatch between core and shell",
+      "Shell thickness and mechanical strength",
+      "Volume change of PCM upon phase transition",
+      "Interfacial tension between PCM and shell"
+    ]
+  },
+  "accuracy": {
+    "accuracy_level": "semi-quantitative",
+    "limitations": [
+      "HSP values for PCMs change between solid and liquid states; liquid-state values at operating temperature are needed but less commonly tabulated",
+      "Crosslinked shell polymers have effectively larger R0 (more solvent-resistant), which modifies RED interpretation",
+      "Volume expansion of PCM during melting creates mechanical stress not captured by HSP compatibility alone",
+      "Salt hydrate PCMs have very different HSP profiles and may involve ionic interactions beyond HSP framework",
+      "Long-term cycling degradation involves chemical aging, not just thermodynamic compatibility",
+      "Microencapsulation process kinetics (polymerization rate, emulsion stability) also determine shell quality"
+    ],
+    "known_failure_modes": [
+      "Paraffin PCMs with low-Tg shell polymers where RED < 0.5 leads to progressive shell softening and leakage over cycling",
+      "Salt hydrate PCMs where ionic species interact with shell material through mechanisms not captured by HSP",
+      "Shape-stabilized PCMs in porous matrices where capillary effects dominate over HSP-predicted compatibility",
+      "High-temperature PCMs (>100C) where polymer shell degradation occurs before HSP-predicted incompatibility"
+    ],
+    "validation_method": [
+      "DSC cycling tests (1000+ melt-freeze cycles) monitoring latent heat retention",
+      "SEM/TEM imaging of capsule morphology before and after cycling",
+      "Leakage testing by mass loss measurement on filter paper",
+      "Swelling ratio measurement of shell polymer in molten PCM",
+      "TGA for thermal stability assessment of encapsulated PCM"
+    ]
+  },
+  "implementation": {
+    "complexity": "medium",
+    "ui_pattern": "screening",
+    "existing_modules_reusable": [
+      "calculateRa",
+      "calculateRed",
+      "classifyRisk"
+    ],
+    "multi_component_complexity": "binary",
+    "scale_of_application": "design"
+  },
+  "literature": {
+    "key_references": [
+      "Salaun, F.; Devaux, E.; Bourbigot, S.; Rumeau, P. 'Influence of the Solvent on the Microencapsulation of an Hydrated Salt', Carbohydrate Polymers, 2010, 79, 964-974",
+      "Hansen, C.M. 'Hansen Solubility Parameters: A User's Handbook', 2nd Ed., CRC Press, 2007",
+      "Su, W.; Darkwa, J.; Kokogiannakis, G. 'Review of Solid-Liquid Phase Change Materials and Their Encapsulation Technologies', Renewable and Sustainable Energy Reviews, 2015, 48, 373-391",
+      "Zhang, H.; Wang, X. 'Fabrication and Performances of Microencapsulated Phase Change Materials Based on n-Octadecane Core and Resorcinol-Modified Melamine-Formaldehyde Shell', Colloids and Surfaces A, 2009, 332, 129-138",
+      "Jurkowska, M.; Szczygiel, I. 'Review on Properties of Microencapsulated Phase Change Materials Slurries', Applied Thermal Engineering, 2016, 98, 365-373"
+    ],
+    "first_reported_year": 2010,
+    "regulatory_relevance": "No direct regulatory framework for HSP-based PCM encapsulation selection. Building energy codes (ASHRAE, EN standards) specify PCM performance requirements but not material selection methodology. For food-contact thermal packaging, FDA and EFSA regulations on polymer shell materials apply indirectly."
+  },
+  "industry_application": {
+    "industry_sectors": [
+      "Building and construction (thermal energy storage in walls and ceilings)",
+      "Textiles (thermoregulating fabrics with microencapsulated PCM)",
+      "Electronics (thermal management of batteries and power electronics)",
+      "Solar energy (thermal storage for concentrated solar power)",
+      "Cold chain logistics (temperature-controlled packaging)"
+    ],
+    "commercial_tools": [
+      "HSPiP (polymer-solvent compatibility module)",
+      "Materials Studio (molecular dynamics for interfacial compatibility)",
+      "COMSOL Multiphysics (coupled thermal-mechanical modeling of capsules)",
+      "Rubitherm (commercial PCM supplier with material datasheets)",
+      "Phase Change Energy Solutions (encapsulated PCM product design tools)"
+    ]
+  },
+  "uncertain": [
+    "first_reported_year",
+    "typical_red_threshold",
+    "data_availability_score",
+    "regulatory_relevance"
+  ]
+}

@@ -1,0 +1,139 @@
+{
+  "basic_info": {
+    "name": "Fragrance Encapsulation",
+    "name_ja": "香料カプセル化",
+    "category": "Food/Cosmetics",
+    "description": "The HSP distance between a fragrance molecule and a wall material (polymer shell) predicts encapsulation efficiency, retention during storage, and controlled release kinetics. When the wall material HSP is sufficiently different from the fragrance HSP (high RED), the fragrance is effectively entrapped with minimal permeation through the shell. Conversely, matching HSP between fragrance and the external medium drives release. This principle enables rational selection of wall materials for microencapsulation and nanoencapsulation of fragrances in detergents, fabric softeners, personal care products, and fine perfumery.",
+    "maturity_level": "established"
+  },
+  "hsp_principle": {
+    "hsp_principle": "Fragrance encapsulation relies on the thermodynamic incompatibility between the fragrance core and the wall material to retain the volatile payload. A high HSP distance (Ra) between fragrance and wall polymer means low affinity, reducing diffusion of fragrance molecules through the shell wall. The release is then triggered when the capsule encounters a medium (e.g., skin surface, fabric, water) whose HSP is closer to the fragrance, creating a thermodynamic driving force for partitioning out of the capsule. The permeability of the wall to each fragrance component scales with its solubility in the wall polymer, which is inversely related to Ra. For multi-component fragrance blends, differential RED values predict selective retention and release order of individual fragrance notes.",
+    "key_equation": "Ra = sqrt(4*(dD_fragrance - dD_wall)^2 + (dP_fragrance - dP_wall)^2 + (dH_fragrance - dH_wall)^2); RED = Ra/R0_wall; Permeability ~ exp(-k * Ra^2)",
+    "red_direction": "high_is_good",
+    "typical_red_threshold": "RED > 1.0 for good retention; RED > 1.5 for excellent barrier against fragrance permeation through wall",
+    "sensitivity_to_hbond_split": "medium",
+    "temperature_pressure_sensitivity": "medium"
+  },
+  "input_data": {
+    "required_inputs": [
+      "Fragrance component HSP (dD, dP, dH) for each key aroma molecule",
+      "Wall material polymer HSP (dD, dP, dH) and interaction radius R0",
+      "External medium HSP (water, skin lipid model, fabric surface)",
+      "Wall thickness and capsule diameter",
+      "Storage and use temperature"
+    ],
+    "data_sources": [
+      "HSPiP database (extensive solvent and fragrance molecule data)",
+      "Group contribution methods (Van Krevelen, Hoftyzer) for novel fragrance molecules",
+      "Fragrance supplier technical data sheets",
+      "Published HSP tables for common aroma chemicals (Archer 2007, Abbott & Hansen)",
+      "Experimental determination via solubility testing in solvent series"
+    ],
+    "data_availability_score": 3,
+    "complementary_parameters": [
+      "Fragrance vapor pressure and boiling point",
+      "Wall material glass transition temperature (Tg)",
+      "Wall material crystallinity and crosslink density",
+      "Capsule size distribution",
+      "Wall thickness uniformity",
+      "Partition coefficient (logP) of fragrance components",
+      "Ambient humidity and temperature conditions"
+    ]
+  },
+  "accuracy": {
+    "accuracy_level": "semi-quantitative",
+    "limitations": [
+      "HSP alone does not account for wall porosity, defects, or mechanical rupture during handling",
+      "Crystalline or highly crosslinked wall materials may have barrier properties exceeding HSP predictions due to kinetic trapping",
+      "Multi-component fragrance blends exhibit complex co-diffusion and competitive transport not captured by individual RED values",
+      "Fragrance molecules are often small and volatile, so kinetic factors (diffusion coefficient, wall thickness) are critical alongside thermodynamic HSP matching",
+      "Surface interactions at the wall-core interface (e.g., adsorption, hydrogen bonding) may not be fully captured by bulk HSP values",
+      "Encapsulation processes (coacervation, spray drying, interfacial polymerization) introduce process-dependent wall structures that affect performance beyond HSP prediction"
+    ],
+    "known_failure_modes": [
+      "Small, non-polar fragrance molecules (e.g., limonene, pinene) that permeate even through HSP-mismatched walls due to high diffusivity",
+      "Wall materials that plasticize or swell upon long-term contact with fragrance, changing their effective HSP over time",
+      "Fragrance components with strong specific interactions (e.g., vanillin hydrogen bonding) not fully represented by average dH",
+      "Aqueous environments that hydrolyze or degrade certain wall materials (e.g., polyurea, melamine-formaldehyde) regardless of HSP"
+    ],
+    "validation_method": [
+      "Headspace GC-MS for fragrance retention and release profiling",
+      "Thermogravimetric analysis (TGA) for encapsulated fragrance content",
+      "Accelerated aging tests at elevated temperature",
+      "Sensory panel evaluation of fragrance intensity over time",
+      "Optical and SEM microscopy for capsule integrity assessment",
+      "Dynamic vapor sorption (DVS) for wall permeability measurement"
+    ]
+  },
+  "implementation": {
+    "complexity": "medium",
+    "ui_pattern": "screening",
+    "existing_modules_reusable": [
+      "calculateRa",
+      "calculateRed",
+      "classifyRisk"
+    ],
+    "multi_component_complexity": "ternary",
+    "scale_of_application": "design"
+  },
+  "literature": {
+    "key_references": [
+      {
+        "author": "Hansen, C.M.",
+        "title": "Hansen Solubility Parameters: A User's Handbook, 2nd Edition",
+        "journal": "CRC Press",
+        "year": 2007,
+        "doi": "10.1201/9781420006834"
+      },
+      {
+        "author": "Quellet, C.; Schudel, M.; Ringgenberg, R.",
+        "title": "Flavors & fragrance delivery systems",
+        "journal": "Chimia",
+        "year": 2001,
+        "doi": "10.2533/chimia.2001.12"
+      },
+      {
+        "author": "Madene, A.; Jacquot, M.; Scher, J.; Desobry, S.",
+        "title": "Flavour encapsulation and controlled release - a review",
+        "journal": "International Journal of Food Science & Technology",
+        "year": 2006,
+        "doi": "10.1111/j.1365-2621.2005.00980.x"
+      },
+      {
+        "author": "Arshady, R.",
+        "title": "Microspheres, Microcapsules & Liposomes, Vol. 1: Preparation & Chemical Applications",
+        "journal": "Citus Books",
+        "year": 1999,
+        "doi": "[uncertain]"
+      },
+      {
+        "author": "Abbott, S.; Hansen, C.M.",
+        "title": "Hansen Solubility Parameters in Practice (HSPiP) software documentation",
+        "journal": "HSPiP, 5th Edition eBook",
+        "year": 2013,
+        "doi": "N/A"
+      }
+    ],
+    "first_reported_year": "[uncertain]",
+    "regulatory_relevance": "Encapsulated fragrances in consumer products must comply with IFRA (International Fragrance Association) guidelines and EU Cosmetics Regulation (EC) No 1223/2009. HSP-based wall material selection supports compliance by predicting retention and minimizing unintended release of allergens. Microplastic concerns under EU REACH restriction proposals may affect polymer wall material choices."
+  },
+  "industry_application": {
+    "industry_sectors": [
+      "Household detergents and fabric care",
+      "Personal care and cosmetics",
+      "Fine perfumery",
+      "Air fresheners and home fragrance",
+      "Textile finishing (scented fabrics)"
+    ],
+    "commercial_tools": [
+      "HSPiP (Hansen Solubility Parameters in Practice)",
+      "COSMOtherm (COSMO-RS based solubility prediction)",
+      "Encapsys (proprietary encapsulation design tools)",
+      "Givaudan, Firmenich, IFF proprietary formulation platforms"
+    ]
+  },
+  "uncertain": [
+    "literature.key_references[3].doi",
+    "literature.first_reported_year"
+  ]
+}

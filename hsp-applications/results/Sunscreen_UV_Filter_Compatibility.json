@@ -1,0 +1,134 @@
+{
+  "basic_info": {
+    "name": "Sunscreen UV Filter Compatibility",
+    "name_ja": "日焼け止めUVフィルター適合性",
+    "category": "Food/Cosmetics",
+    "description": "HSP distance between organic UV filters (chemical sunscreen actives) and the cosmetic vehicle (emollients, oils, emulsion phases) determines the solubility limit of the UV filter in the formulation, directly affecting achievable SPF, photostability, and product aesthetics. Poor HSP matching leads to UV filter crystallization, reduced SPF, whitening, and instability. Rational HSP-based selection of emollients and co-solvents maximizes UV filter loading and uniform distribution in the film on skin.",
+    "maturity_level": "established"
+  },
+  "hsp_principle": {
+    "hsp_principle": "Organic UV filters must be dissolved in the cosmetic vehicle at concentrations high enough to achieve the target SPF. The solubility of a UV filter in an emollient or oil phase is governed by the HSP distance between them: a smaller Ra (or RED < 1) indicates the UV filter is within the solubility sphere of the vehicle, predicting good dissolution. When the RED exceeds 1, the UV filter approaches or exceeds its solubility limit, risking crystallization during storage or upon application to skin as volatile components evaporate. For combination sunscreens using multiple UV filters, each filter must be individually soluble in the vehicle. Furthermore, the HSP of the dried film on skin (after volatile components evaporate) determines long-term photostability, as UV filter migration and phase separation in the film reduce effective UV absorption. HSP matching also predicts interactions between UV filters themselves, which can affect photostability through energy transfer mechanisms.",
+    "key_equation": "Ra = sqrt(4*(dD_filter-dD_vehicle)^2 + (dP_filter-dP_vehicle)^2 + (dH_filter-dH_vehicle)^2); RED = Ra/R0_filter; Solubility limit correlates with RED: higher loading possible at lower RED",
+    "red_direction": "low_is_good",
+    "typical_red_threshold": "RED < 1.0 for adequate solubility; RED < 0.7 for high UV filter loading and long-term stability",
+    "sensitivity_to_hbond_split": "medium",
+    "temperature_pressure_sensitivity": "medium"
+  },
+  "input_data": {
+    "required_inputs": [
+      "UV filter HSP (dD, dP, dH) for each active ingredient",
+      "UV filter interaction radius R0",
+      "Emollient/oil phase HSP (dD, dP, dH)",
+      "Target UV filter concentration (wt%)",
+      "Storage temperature range"
+    ],
+    "data_sources": [
+      "HSPiP database for common solvents and some UV filters",
+      "Published UV filter HSP from cosmetic science literature",
+      "Group contribution methods for UV filter HSP estimation",
+      "Emollient supplier technical literature (Evonik, BASF, Ashland)",
+      "Experimental solubility screening in emollient series"
+    ],
+    "data_availability_score": 3,
+    "complementary_parameters": [
+      "UV filter molar absorptivity and absorption spectrum",
+      "UV filter photostability (photodegradation rate)",
+      "Emollient viscosity and spreading coefficient",
+      "Melting point of UV filter (crystallization tendency)",
+      "Water resistance requirements (for W/O or water-resistant formulations)",
+      "SPF and UVA-PF targets",
+      "Film thickness on skin"
+    ]
+  },
+  "accuracy": {
+    "accuracy_level": "semi-quantitative",
+    "limitations": [
+      "HSP predicts thermodynamic solubility but not crystallization kinetics, which depend on nucleation and supersaturation conditions",
+      "Skin interaction (sebum, sweat, temperature) alters the effective vehicle HSP after application",
+      "Volatile silicones and solvents evaporate after application, changing the film HSP and potentially causing UV filter precipitation",
+      "Photodegradation products of UV filters have different HSP, potentially causing phase separation during UV exposure",
+      "Emulsion systems add complexity: UV filter partitioning between oil and water phases is not fully captured by simple HSP matching",
+      "Polymeric film formers used in water-resistant sunscreens modify the effective HSP environment unpredictably"
+    ],
+    "known_failure_modes": [
+      "Avobenzone (butyl methoxydibenzoylmethane) crystallization in low-polarity emollients despite apparently adequate RED values, due to strong self-association",
+      "UV filter precipitation upon volatile silicone evaporation in spray sunscreens, where the residual film HSP shifts dramatically",
+      "Incompatibility between certain UV filter combinations (e.g., avobenzone + octinoxate) driven by photochemical rather than HSP interactions",
+      "High-SPF formulations where UV filter concentrations exceed thermodynamic solubility limits even at optimal HSP matching"
+    ],
+    "validation_method": [
+      "Accelerated stability testing at elevated temperature (40-45C) and freeze-thaw cycling",
+      "Polarized light microscopy for UV filter crystal detection",
+      "In vitro SPF measurement (ISO 24443, Diffey-Robillard method)",
+      "UV filter dissolution rate and concentration monitoring by HPLC",
+      "Sensory evaluation (whitening, greasiness, spreadability)"
+    ]
+  },
+  "implementation": {
+    "complexity": "medium",
+    "ui_pattern": "screening",
+    "existing_modules_reusable": [
+      "calculateRa",
+      "calculateRed",
+      "classifyRisk",
+      "optimizeBlend"
+    ],
+    "multi_component_complexity": "multi",
+    "scale_of_application": "design"
+  },
+  "literature": {
+    "key_references": [
+      {
+        "author": "Hansen, C.M.",
+        "title": "Hansen Solubility Parameters: A User's Handbook, 2nd Edition",
+        "journal": "CRC Press",
+        "year": 2007,
+        "doi": "10.1201/9781420006834"
+      },
+      {
+        "author": "Binks, B.P.; Fletcher, P.D.I.; Johnson, A.J.; Marinopoulos, I.; Sherwood, J.M.; Sherwood, J.",
+        "title": "Solubility of UV filter molecules in organic solvents and emollient esters: a Hansen solubility parameter approach",
+        "journal": "Journal of Cosmetic Science",
+        "year": 2017,
+        "doi": "[uncertain]"
+      },
+      {
+        "author": "Abbott, S.",
+        "title": "Practical Solubility - Hansen Solubility Parameters for cosmetic formulation",
+        "journal": "HSPiP documentation and Cosmetics & Toiletries articles",
+        "year": 2015,
+        "doi": "N/A"
+      },
+      {
+        "author": "Chatelain, E.; Gabard, B.",
+        "title": "Photostabilization of butyl methoxydibenzoylmethane (Avobenzone) and ethylhexyl methoxycinnamate by bis-ethylhexyloxyphenol methoxyphenyl triazine (Tinosorb S)",
+        "journal": "Photochemistry and Photobiology",
+        "year": 2001,
+        "doi": "10.1562/0031-8655(2001)074<0401:POBMAA>2.0.CO;2"
+      }
+    ],
+    "first_reported_year": "[uncertain]",
+    "regulatory_relevance": "UV filter solubility in the vehicle directly impacts regulatory compliance: FDA OTC Monograph (21 CFR 352) and EU Cosmetics Regulation (EC 1223/2009) specify maximum allowed concentrations for each UV filter. HSP-based formulation ensures filters remain dissolved at permitted levels. Stability requirements (ICH-like accelerated stability for cosmetics) demand that UV filters stay in solution throughout product shelf life. COLIPA/COSMETICS EUROPE in vitro SPF methods require uniform UV filter distribution."
+  },
+  "industry_application": {
+    "industry_sectors": [
+      "Cosmetics and personal care (sunscreen formulation)",
+      "Pharmaceutical (photoprotective dermatological products)",
+      "Raw material/emollient suppliers",
+      "Contract cosmetic manufacturing",
+      "UV filter active ingredient manufacturers"
+    ],
+    "commercial_tools": [
+      "HSPiP (Hansen Solubility Parameters in Practice)",
+      "COSMOtherm",
+      "BASF Sunscreen Simulator",
+      "DSM Personal Care UV filter formulation tools",
+      "Hallstar SunSolve (UV filter photostability/SPF prediction)"
+    ]
+  },
+  "uncertain": [
+    "hsp_principle.typical_red_threshold",
+    "literature.key_references[1].doi",
+    "literature.first_reported_year"
+  ]
+}

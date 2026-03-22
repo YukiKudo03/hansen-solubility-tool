@@ -1,0 +1,118 @@
+{
+  "basic_info": {
+    "name": "Fiber Dyeability Prediction",
+    "name_ja": "繊維染色性予測",
+    "category": "Polymer/Materials",
+    "description": "Hansen Solubility Parameters (HSP) are used to predict the dyeing affinity, uptake rate, and wash fastness of dye-fiber systems. The HSP distance (Ra) between a dye molecule and a fiber polymer quantifies thermodynamic compatibility: smaller Ra indicates higher dye solubility within the fiber matrix, leading to greater dye uptake and improved fastness. This approach enables rational dye selection for specific fiber types (polyester, nylon, cellulose acetate, etc.) and helps optimize dyeing conditions. The method is particularly effective for disperse dyes on hydrophobic fibers where thermodynamic partitioning dominates over ionic interactions.",
+    "maturity_level": "established"
+  },
+  "hsp_principle": {
+    "hsp_principle": "The dye molecule and the fiber polymer are each characterized by three HSP components (delta_d, delta_p, delta_h). The HSP distance Ra between the dye and fiber predicts thermodynamic affinity: a small Ra means the dye is soluble in the fiber matrix and will partition favorably from the dye bath into the fiber. The Flory-Huggins interaction parameter chi can be estimated from Ra, linking HSP distance to the free energy of mixing. For disperse dyes on polyester, the dye partitions from an aqueous phase into the polymer; if Ra(dye-fiber) is small, the dye-fiber interaction is energetically favorable, producing high exhaustion and good wash fastness. Conversely, large Ra indicates poor compatibility, leading to surface deposition rather than true dyeing, and poor fastness.",
+    "key_equation": "Ra = sqrt(4*(dD_dye - dD_fiber)^2 + (dP_dye - dP_fiber)^2 + (dH_dye - dH_fiber)^2); chi = V_dye * Ra^2 / (6 * R * T)",
+    "red_direction": "low_is_good",
+    "typical_red_threshold": "RED < 1.0 for good dye-fiber affinity; Ra < 5-8 MPa^0.5 for acceptable dyeing performance",
+    "sensitivity_to_hbond_split": "medium",
+    "temperature_pressure_sensitivity": "high"
+  },
+  "input_data": {
+    "required_inputs": [
+      "HSP of dye molecule (delta_d, delta_p, delta_h)",
+      "HSP of fiber polymer (delta_d, delta_p, delta_h)",
+      "Interaction radius R0 of fiber polymer (if using RED)",
+      "Molar volume of dye molecule",
+      "Dyeing temperature"
+    ],
+    "data_sources": [
+      "HSPiP database for common polymers (PET, PA6, cellulose acetate)",
+      "Group contribution methods (Van Krevelen, Hoftyzer) for dye molecules",
+      "Inverse gas chromatography (IGC) for fiber HSP measurement",
+      "Published literature values for commercial dye classes",
+      "Computational methods (COSMO-RS, molecular simulation) for novel dyes"
+    ],
+    "data_availability_score": 3,
+    "complementary_parameters": [
+      "Dye molecular weight and molecular size",
+      "Fiber crystallinity and glass transition temperature (Tg)",
+      "Dyeing temperature and time",
+      "Dye bath pH and auxiliary chemicals",
+      "Fiber surface area and porosity",
+      "Dye aqueous solubility"
+    ]
+  },
+  "accuracy": {
+    "accuracy_level": "semi-quantitative",
+    "limitations": "HSP-based prediction primarily captures thermodynamic compatibility and does not account for kinetic factors such as diffusion rate through the fiber matrix, which depends on fiber crystallinity, orientation, and free volume. Ionic dyes (acid, basic, reactive dyes) involve electrostatic interactions not captured by standard 3-parameter HSP. The approach works best for disperse dyes on hydrophobic fibers (PET, triacetate) where van der Waals and polar interactions dominate. For natural fibers (cotton, wool) with complex hierarchical structures and reactive sites, HSP alone provides incomplete prediction. Temperature dependence of HSP parameters is significant since industrial dyeing occurs at 80-130 degrees C, but most HSP data is measured at 25 degrees C. Fiber morphology (amorphous/crystalline ratio, draw ratio) strongly affects accessibility but is not captured by HSP.",
+    "known_failure_modes": [
+      "Ionic dye-fiber systems (acid dyes on nylon, reactive dyes on cotton) where electrostatic and covalent interactions dominate",
+      "Highly crystalline fibers where dye penetration is kinetically limited despite favorable HSP match",
+      "Dye aggregation in the bath reducing effective dye activity",
+      "Carrier-assisted dyeing where a third component modifies fiber HSP in situ",
+      "Fiber blends where preferential partitioning between fiber types complicates prediction"
+    ],
+    "validation_method": "Dye exhaustion measurement (spectrophotometric analysis of dye bath before/after), color strength (K/S values), wash fastness testing (ISO 105-C06), rubbing fastness (ISO 105-X12), dye diffusion coefficient measurement via thin-film or sectioning techniques"
+  },
+  "implementation": {
+    "complexity": "medium",
+    "ui_pattern": "screening",
+    "existing_modules_reusable": [
+      "calculateRa",
+      "calculateRed",
+      "classifyRisk"
+    ],
+    "multi_component_complexity": "binary",
+    "scale_of_application": "screening"
+  },
+  "literature": {
+    "key_references": [
+      {
+        "author": "Hansen, C.M.",
+        "title": "Hansen Solubility Parameters: A User's Handbook (Chapter on Fibers and Dyes)",
+        "journal": "CRC Press",
+        "year": 2007,
+        "doi": "10.1201/9781420006834"
+      },
+      {
+        "author": "Yao, L.; Lio, A.; et al.",
+        "title": "Application of Hansen solubility parameters to predict compatibility of dye-fiber systems",
+        "journal": "Textile Research Journal",
+        "year": 2015,
+        "doi": "[uncertain]"
+      },
+      {
+        "author": "Abbot, S.; Hansen, C.M.",
+        "title": "Hansen Solubility Parameters in Practice (HSPiP) - Textile Applications",
+        "journal": "HSPiP Software Documentation",
+        "year": 2013,
+        "doi": "N/A"
+      },
+      {
+        "author": "Burkinshaw, S.M.",
+        "title": "Chemical Principles of Synthetic Fibre Dyeing",
+        "journal": "Springer",
+        "year": 1995,
+        "doi": "[uncertain]"
+      }
+    ],
+    "first_reported_year": "[uncertain]",
+    "regulatory_relevance": "No direct regulatory requirement, but HSP-based dye selection supports compliance with REACH restrictions on certain dye chemistries by enabling substitution screening. Relevant to OEKO-TEX and ZDHC (Zero Discharge of Hazardous Chemicals) initiatives for identifying safer dye alternatives."
+  },
+  "industry_application": {
+    "industry_sectors": [
+      "Textile manufacturing",
+      "Technical textiles",
+      "Automotive interior fabrics",
+      "Apparel and fashion",
+      "Home furnishing textiles"
+    ],
+    "commercial_tools": [
+      "HSPiP (Hansen Solubility Parameters in Practice)",
+      "COSMOtherm (dye HSP estimation via COSMO-RS)",
+      "Materials Studio (molecular simulation for dye-fiber interactions)"
+    ]
+  },
+  "uncertain": [
+    "literature.key_references[1].doi",
+    "literature.key_references[3].doi",
+    "literature.first_reported_year"
+  ]
+}

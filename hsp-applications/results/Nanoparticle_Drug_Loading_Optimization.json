@@ -1,0 +1,133 @@
+{
+  "basic_info": {
+    "name": "Nanoparticle Drug Loading Optimization",
+    "name_ja": "ナノ粒子薬物充填最適化",
+    "category": "Pharmaceutical",
+    "description": "HSP matching between a drug molecule and a nanocarrier polymer (such as PLGA, PCL, chitosan, or lipid-based systems) predicts encapsulation efficiency and drug loading capacity. When the HSP distance between API and carrier is small, favorable thermodynamic mixing drives higher drug incorporation into the nanoparticle matrix. This approach enables rational selection of carrier materials and prediction of maximum achievable drug loading without extensive trial-and-error experimentation, significantly accelerating nanoformulation development for injectable, oral, and inhalation nanoparticle drug delivery systems.",
+    "maturity_level": "established"
+  },
+  "hsp_principle": {
+    "hsp_principle": "Drug encapsulation in polymeric nanoparticles is governed by the thermodynamic compatibility between the drug and the carrier matrix. The Flory-Huggins interaction parameter (chi), estimable from the HSP distance (Ra) between drug and polymer, determines the enthalpic driving force for mixing. A low Ra value indicates that the drug and polymer share similar dispersion, polar, and hydrogen bonding characteristics, resulting in favorable drug-polymer miscibility and high encapsulation efficiency. During nanoprecipitation or emulsion-solvent evaporation, the drug preferentially partitions into the polymer phase when their HSP values are closely matched. The approach maps candidate carrier polymers in Hansen space relative to the drug target and ranks them by Ra or chi to predict optimal drug-carrier combinations.",
+    "key_equation": "chi = V_drug * (Ra)^2 / (6 * R * T); Ra = sqrt(4*(dD_drug - dD_polymer)^2 + (dP_drug - dP_polymer)^2 + (dH_drug - dH_polymer)^2); Encapsulation efficiency correlates inversely with Ra",
+    "red_direction": "low_is_good",
+    "typical_red_threshold": "Ra < 5 MPa^0.5 predicts high encapsulation efficiency (>70%); Ra 5-10 MPa^0.5 moderate loading; Ra > 10 MPa^0.5 poor encapsulation expected",
+    "sensitivity_to_hbond_split": "high",
+    "temperature_pressure_sensitivity": "medium"
+  },
+  "input_data": {
+    "required_inputs": [
+      "Drug HSP values (dD, dP, dH)",
+      "Carrier polymer HSP values (dD, dP, dH)",
+      "Molar volume of the drug",
+      "Process solvent HSP values",
+      "Target drug loading ratio",
+      "Processing temperature"
+    ],
+    "data_sources": [
+      "HSPiP database for common biodegradable polymers (PLGA, PLA, PCL)",
+      "Group contribution methods for novel drug molecules",
+      "COSMOtherm calculations for API HSP estimation",
+      "Published literature values for chitosan, lipid excipients, and PEG derivatives",
+      "Experimental solubility screening for HSP sphere fitting"
+    ],
+    "data_availability_score": 3,
+    "complementary_parameters": [
+      "Molecular weight and end-group chemistry of carrier polymer",
+      "Polymer crystallinity and glass transition temperature",
+      "Drug aqueous solubility and log P",
+      "Process solvent properties (boiling point, miscibility with water)",
+      "Surfactant type and concentration",
+      "Nanoparticle preparation method parameters"
+    ]
+  },
+  "accuracy": {
+    "accuracy_level": "semi-quantitative",
+    "limitations": [
+      "HSP predicts thermodynamic affinity but actual loading depends on kinetics of nanoparticle formation (solvent removal rate, mixing intensity)",
+      "Surface localization vs. core encapsulation cannot be distinguished by HSP alone",
+      "Drug crystallization within nanoparticles is a kinetic phenomenon not captured by equilibrium HSP matching",
+      "Polymer molecular weight and chain end effects alter effective HSP values",
+      "Multi-component systems (drug + polymer + surfactant + solvent) create complex partitioning not fully described by binary HSP comparison",
+      "Drug-drug interactions at high loading concentrations can override drug-polymer affinity predictions"
+    ],
+    "known_failure_modes": [
+      "Drugs with strong self-association tendency (pi-pi stacking, H-bond dimers) that crystallize within nanoparticles despite good HSP match",
+      "Polymer degradation products (e.g., acidic PLGA oligomers) interacting with base-sensitive drugs",
+      "Surfactant-drug competition for polymer surface sites not predicted by bulk HSP",
+      "Burst release due to surface-adsorbed drug despite favorable bulk HSP matching"
+    ],
+    "validation_method": [
+      "Encapsulation efficiency measurement by UV-Vis or HPLC after nanoparticle separation",
+      "Drug loading quantification by dissolving nanoparticles and assaying drug content",
+      "DSC and XRPD for characterizing drug physical state within nanoparticles",
+      "In vitro drug release profiling",
+      "TEM/SEM for nanoparticle morphology assessment",
+      "Dynamic light scattering (DLS) for particle size and stability"
+    ]
+  },
+  "implementation": {
+    "complexity": "medium",
+    "ui_pattern": "screening",
+    "existing_modules_reusable": [
+      "calculateRa",
+      "calculateRed",
+      "classifyRisk",
+      "optimizeBlend"
+    ],
+    "multi_component_complexity": "ternary",
+    "scale_of_application": "screening"
+  },
+  "literature": {
+    "key_references": [
+      {
+        "author": "Ghitman, J. et al.",
+        "journal": "European Journal of Pharmaceutics and Biopharmaceutics",
+        "year": 2020,
+        "title": "Predicting the encapsulation properties of polymer nanoparticles using Hansen solubility parameters",
+        "doi": "[uncertain]"
+      },
+      {
+        "author": "Madsen, C.G. et al.",
+        "journal": "International Journal of Pharmaceutics",
+        "year": 2015,
+        "title": "Simple measurements for prediction of drug loading of polymer nanoparticles using Hansen solubility parameters",
+        "doi": "10.1016/j.ijpharm.2015.08.049"
+      },
+      {
+        "author": "Yoo, J. and Won, Y.-Y.",
+        "journal": "ACS Nano",
+        "year": 2018,
+        "title": "Phenomenology of the initial burst release of drugs from PLGA microparticles",
+        "doi": "10.1021/acsnano.8b01861"
+      },
+      {
+        "author": "Shen, S. et al.",
+        "journal": "Molecular Pharmaceutics",
+        "year": 2015,
+        "title": "Solubility parameter-based drug loading prediction for polymeric nanoparticle drug delivery",
+        "doi": "[uncertain]"
+      }
+    ],
+    "first_reported_year": 2010,
+    "regulatory_relevance": "Nanoparticle formulations are reviewed under FDA guidance for nanotechnology-based drug products. HSP-based carrier selection rationale is accepted as part of the Quality by Design (QbD) framework in CMC submissions. EMA reflection papers on nanomedicines encourage mechanistic understanding of drug-carrier interactions."
+  },
+  "industry_application": {
+    "industry_sectors": [
+      "Pharmaceutical (nanomedicine and advanced drug delivery)",
+      "Biotechnology",
+      "Contract research organizations (CRO) specializing in nanoformulation",
+      "Academic translational research centers"
+    ],
+    "commercial_tools": [
+      "HSPiP (Hansen Solubility Parameters in Practice)",
+      "COSMOtherm (Dassault Systemes / SCM)",
+      "Materials Studio (Dassault Systemes BIOVIA)",
+      "Scienomics MAPS platform"
+    ]
+  },
+  "uncertain": [
+    "typical_red_threshold",
+    "first_reported_year",
+    "key_references"
+  ]
+}

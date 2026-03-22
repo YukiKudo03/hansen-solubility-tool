@@ -1,0 +1,119 @@
+{
+  "basic_info": {
+    "name": "Membrane Separation Selectivity",
+    "name_ja": "膜分離選択性予測",
+    "category": "Energy/Environment",
+    "description": "HSP distance differences between a target permeate, an impurity (or rejected species), and the membrane material are used to predict separation selectivity factors in liquid-phase membrane processes. By calculating Ra values for target-membrane and impurity-membrane pairs, the relative affinity of each species for the membrane matrix can be quantified. A membrane material with low Ra to the target permeate and high Ra to the impurity will preferentially dissolve and transport the target, yielding high separation factors. This approach is applied in pervaporation, organic solvent nanofiltration (OSN), and liquid membrane processes for applications including solvent dehydration, organic-organic separation, and wastewater treatment.",
+    "maturity_level": "established"
+  },
+  "hsp_principle": {
+    "hsp_principle": "Membrane separation selectivity in solution-diffusion membranes depends on differential solubility and diffusivity of components in the membrane material. HSP distance Ra between each permeating species and the membrane polymer quantifies thermodynamic affinity: smaller Ra means higher solubility in the membrane phase. The selectivity factor alpha is approximated by the ratio of solubility coefficients, which correlate inversely with Ra values. For pervaporation and OSN, the solubility selectivity component often dominates, making HSP-based screening particularly effective. The difference Delta_Ra = Ra(impurity-membrane) - Ra(target-membrane) serves as a selectivity predictor: larger positive Delta_Ra indicates better separation. For swelling-controlled transport, RED values help identify membranes that resist excessive swelling by the feed mixture while maintaining adequate permeability for the target.",
+    "key_equation": "Ra_i = sqrt(4*(dD_i - dD_membrane)^2 + (dP_i - dP_membrane)^2 + (dH_i - dH_membrane)^2); Selectivity predictor: Delta_Ra = Ra_impurity - Ra_target; Separation factor alpha ~ exp((Ra_impurity^2 - Ra_target^2) * V_m / (R * T))",
+    "red_direction": "threshold_specific",
+    "typical_red_threshold": "RED(target-membrane) < 1.0 for adequate permeability; RED(impurity-membrane) > 1.2 for good rejection; Delta_Ra > 3 MPa^0.5 for meaningful selectivity",
+    "sensitivity_to_hbond_split": "high",
+    "temperature_pressure_sensitivity": "high"
+  },
+  "input_data": {
+    "required_inputs": [
+      "HSP of target permeate (delta_d, delta_p, delta_h)",
+      "HSP of impurity/rejected species (delta_d, delta_p, delta_h)",
+      "HSP and interaction radius R0 of membrane polymer",
+      "Molar volumes of permeating species",
+      "Operating temperature"
+    ],
+    "data_sources": [
+      "HSPiP database for common solvents and polymers",
+      "Published pervaporation membrane HSP data",
+      "Group contribution methods for novel polymers (Van Krevelen, Hoftyzer)",
+      "Experimental swelling tests to determine membrane HSP and R0",
+      "Literature compilations of organic solvent HSP"
+    ],
+    "data_availability_score": 3,
+    "complementary_parameters": [
+      "Membrane thickness and morphology",
+      "Polymer degree of crosslinking",
+      "Feed composition and activity coefficients",
+      "Molecular size and shape of permeants (for diffusivity selectivity)",
+      "Membrane swelling degree",
+      "Operating pressure (for pressure-driven processes)"
+    ]
+  },
+  "accuracy": {
+    "accuracy_level": "semi-quantitative",
+    "limitations": "HSP-based selectivity prediction primarily captures solubility selectivity and does not account for diffusivity selectivity, which depends on molecular size, shape, and membrane free volume distribution. For rigid glassy polymer membranes, size-sieving can dominate selectivity, reducing HSP predictive accuracy. Membrane swelling by feed mixtures changes the polymer matrix HSP in situ, creating a coupling effect not captured by static HSP values. Crosslinked membranes have modified HSP compared to their linear precursors, and crosslink density effects are not directly modeled. Multi-component feed interactions (coupling effects, competitive sorption) can cause deviations from binary HSP predictions. Concentration polarization and boundary layer effects at the membrane surface are not addressed by thermodynamic HSP analysis.",
+    "known_failure_modes": [
+      "Size-sieving dominated separations in tight nanofiltration membranes where diffusivity selectivity overrides solubility selectivity",
+      "Highly swollen membranes where in-situ HSP deviate significantly from dry membrane values",
+      "Azeotropic or close-boiling mixtures where both components have similar HSP to the membrane",
+      "Mixed feed effects with strong non-ideal solution behavior in the membrane phase",
+      "Ceramic or inorganic membranes where surface adsorption rather than bulk dissolution controls selectivity"
+    ],
+    "validation_method": "Pervaporation or nanofiltration experiments measuring flux and separation factor for target/impurity mixtures, sorption-desorption experiments for individual component uptake, swelling degree measurements in pure and mixed solvents"
+  },
+  "implementation": {
+    "complexity": "medium",
+    "ui_pattern": "matrix",
+    "existing_modules_reusable": [
+      "calculateRa",
+      "calculateRed",
+      "classifyRisk"
+    ],
+    "multi_component_complexity": "ternary",
+    "scale_of_application": "screening"
+  },
+  "literature": {
+    "key_references": [
+      {
+        "author": "Mulder, M.H.V.; Smolders, C.A.",
+        "title": "On the mechanism of separation of ethanol/water mixtures by pervaporation",
+        "journal": "Journal of Membrane Science",
+        "year": 1986,
+        "doi": "10.1016/S0376-7388(00)80300-5"
+      },
+      {
+        "author": "Jonquières, A.; Clément, R.; Lochon, P.; Néel, J.; Dresch, M.; Chrétien, B.",
+        "title": "Industrial state-of-the-art of pervaporation and vapour permeation in the western countries",
+        "journal": "Journal of Membrane Science",
+        "year": 2002,
+        "doi": "10.1016/S0376-7388(01)00588-5"
+      },
+      {
+        "author": "Mathias, P.M.; Cheng, Y.; Coleman, S.",
+        "title": "Solubility parameters and polymer membrane selection for pervaporation",
+        "journal": "Journal of Membrane Science",
+        "year": 2010,
+        "doi": "[uncertain]"
+      },
+      {
+        "author": "Hansen, C.M.",
+        "title": "Hansen Solubility Parameters: A User's Handbook, 2nd Edition",
+        "journal": "CRC Press",
+        "year": 2007,
+        "doi": "10.1201/9781420006834"
+      }
+    ],
+    "first_reported_year": 1986,
+    "regulatory_relevance": "No direct regulatory mandate for HSP-based membrane selection, but pervaporation membranes for solvent dehydration in pharmaceutical manufacturing must comply with GMP requirements. HSP screening supports solvent selection under REACH and ICH Q3C guidelines for residual solvent control. EU and EPA water treatment regulations drive membrane development where HSP screening aids material selection."
+  },
+  "industry_application": {
+    "industry_sectors": [
+      "Water treatment and desalination",
+      "Pharmaceutical solvent recovery",
+      "Petrochemical separation",
+      "Biofuel purification (bioethanol dehydration)",
+      "Food and beverage processing",
+      "Organic solvent nanofiltration"
+    ],
+    "commercial_tools": [
+      "HSPiP (Hansen Solubility Parameters in Practice)",
+      "COSMOtherm (COSMO-RS based membrane screening)",
+      "Aspen Plus (process simulation with membrane modules)",
+      "MATLAB/Python custom scripts for multi-component HSP optimization"
+    ]
+  },
+  "uncertain": [
+    "literature.key_references[2].doi",
+    "hsp_principle.typical_red_threshold"
+  ]
+}

@@ -1,0 +1,136 @@
+{
+  "basic_info": {
+    "name": "CO2 Absorbent Selection",
+    "name_ja": "CO2吸収剤選定",
+    "category": "Energy/Environment",
+    "description": "HSP distance between CO2 and candidate absorbent solvents predicts absorption capacity for carbon capture applications. By comparing the HSP of CO2 under process conditions with the HSP of physical absorbents (ionic liquids, deep eutectic solvents, organic solvents, amine solutions), rapid screening of absorbent candidates is enabled. This HSP-based approach complements traditional thermodynamic models (equation of state, activity coefficient models) by providing an intuitive framework for initial solvent selection in carbon capture and utilization (CCU) processes.",
+    "maturity_level": "emerging"
+  },
+  "hsp_principle": {
+    "hsp_principle": "CO2 absorption in physical solvents follows the 'like dissolves like' principle: solvents whose HSP closely match those of CO2 exhibit higher physical absorption capacities (Henry's law constants). CO2 has distinct HSP values (dD ~15.6, dP ~5.2, dH ~5.8 MPa^0.5 at standard conditions) with moderate dispersion, low-moderate polarity, and moderate hydrogen bonding due to its quadrupole moment and Lewis acid character. The Ra distance between CO2 HSP and absorbent HSP correlates inversely with physical CO2 solubility. For chemical absorbents (amines, carbonate solutions), HSP provides partial guidance but the dominant absorption mechanism is chemical reaction (carbamate/bicarbonate formation), which is not directly captured by HSP. However, even for chemical absorbents, the physical solubility component (governed by HSP matching) affects the overall absorption rate by determining CO2 availability at the reaction site. For ionic liquids and deep eutectic solvents as novel CO2 absorbents, HSP screening is particularly valuable because their tunable structure allows systematic HSP optimization.",
+    "key_equation": "Ra = sqrt(4*(dD_CO2-dD_absorbent)^2 + (dP_CO2-dP_absorbent)^2 + (dH_CO2-dH_absorbent)^2); Henry's constant H inversely correlates with 1/Ra^2; Physical solubility ~ exp(-V_CO2 * Ra^2 / (6RT))",
+    "red_direction": "low_is_good",
+    "typical_red_threshold": "Ra < 5 MPa^0.5 for high physical absorption capacity; Ra < 8 MPa^0.5 for moderate absorption [uncertain]",
+    "sensitivity_to_hbond_split": "high",
+    "temperature_pressure_sensitivity": "high"
+  },
+  "input_data": {
+    "required_inputs": [
+      "CO2 HSP at process temperature and pressure (dD, dP, dH)",
+      "Absorbent HSP (dD, dP, dH) for each candidate",
+      "Process temperature and pressure",
+      "CO2 partial pressure in feed gas",
+      "Absorbent molar volume"
+    ],
+    "data_sources": [
+      "HSPiP database for common organic solvents",
+      "Published CO2 HSP values (temperature and pressure dependent)",
+      "Published ionic liquid HSP from group contribution or COSMO-RS",
+      "Experimental Henry's law constants for validation",
+      "COSMO-RS calculations for novel absorbent HSP estimation"
+    ],
+    "data_availability_score": 3,
+    "complementary_parameters": [
+      "CO2 partial pressure and total pressure",
+      "Absorbent viscosity (affects mass transfer rate)",
+      "Absorbent thermal stability and degradation temperature",
+      "Absorbent vapor pressure (determines solvent losses)",
+      "Heat of absorption (energy cost for regeneration)",
+      "Absorbent water content (for aqueous systems)",
+      "Chemical reactivity with CO2 (for chemical absorbents)",
+      "Absorbent cost and availability"
+    ]
+  },
+  "accuracy": {
+    "accuracy_level": "semi-quantitative",
+    "limitations": [
+      "CO2 HSP are strongly temperature and pressure dependent, requiring T/P corrections that introduce uncertainty",
+      "Chemical absorption (amine-CO2 reactions) dominates in many practical systems and is not captured by HSP distance",
+      "HSP treats CO2 as a simple molecule, ignoring its Lewis acid character and specific interactions with basic solvents",
+      "Ionic liquids have complex solvation mechanisms (cavity formation, specific anion-CO2 interactions) beyond simple HSP matching",
+      "Multi-component gas mixtures (flue gas containing N2, O2, H2O, SOx, NOx) have selectivity requirements not addressed by CO2 HSP alone",
+      "Absorption kinetics (mass transfer coefficients, interfacial area) are equally important as thermodynamic capacity but not predicted by HSP"
+    ],
+    "known_failure_modes": [
+      "Chemical absorbents (MEA, DEA, MDEA) where chemical reaction enthalpy dominates and HSP distance poorly predicts capacity",
+      "Functionalized ionic liquids (task-specific ILs with amine groups) where chemical and physical absorption coexist",
+      "High-pressure CO2 systems (supercritical conditions) where CO2 HSP change dramatically and standard correlations fail",
+      "Water-lean solvents where the absence of water fundamentally changes the absorption mechanism compared to aqueous systems"
+    ],
+    "validation_method": [
+      "Gravimetric or volumetric CO2 absorption measurement",
+      "Henry's law constant determination via gas-liquid equilibrium",
+      "Vapor-liquid equilibrium (VLE) measurements for CO2-solvent systems",
+      "CO2 loading measurement (mol CO2/mol absorbent) at various T and P",
+      "Absorption rate measurement in wetted-wall column or stirred cell",
+      "Correlation analysis: Ra vs. measured Henry's constant across solvent series"
+    ]
+  },
+  "implementation": {
+    "complexity": "medium",
+    "ui_pattern": "screening",
+    "existing_modules_reusable": [
+      "calculateRa",
+      "calculateRed",
+      "classifyRisk"
+    ],
+    "multi_component_complexity": "binary",
+    "scale_of_application": "screening"
+  },
+  "literature": {
+    "key_references": [
+      {
+        "author": "Venkatraman, V.; Evjen, S.; Lethesh, K.C.; Raj, J.J.; Knuutila, H.K.; Fiksdahl, A.",
+        "title": "Rapid, comprehensive screening of ionic liquids towards sustainable applications",
+        "journal": "Sustainable Energy & Fuels",
+        "year": 2019,
+        "doi": "10.1039/C8SE00543E"
+      },
+      {
+        "author": "Moganty, S.S.; Baltus, R.E.",
+        "title": "Regular solution theory for low pressure carbon dioxide solubility in room temperature ionic liquids: ionic liquid solubility parameter from activation energy of viscosity",
+        "journal": "Industrial & Engineering Chemistry Research",
+        "year": 2010,
+        "doi": "10.1021/ie901837k"
+      },
+      {
+        "author": "Hansen, C.M.",
+        "title": "Hansen Solubility Parameters: A User's Handbook, 2nd Edition",
+        "journal": "CRC Press",
+        "year": 2007,
+        "doi": "10.1201/9781420006834"
+      },
+      {
+        "author": "Williams, L.L.; Rubin, J.B.; Edwards, H.W.",
+        "title": "Calculation of Hansen solubility parameter values for a range of pressure and temperature conditions, including the supercritical fluid region",
+        "journal": "Industrial & Engineering Chemistry Research",
+        "year": 2004,
+        "doi": "10.1021/ie0497543"
+      }
+    ],
+    "first_reported_year": "[uncertain]",
+    "regulatory_relevance": "HSP-based absorbent screening supports CCS/CCU regulatory frameworks including EU ETS (Emissions Trading System) compliance, EPA Clean Air Act greenhouse gas regulations, and Paris Agreement NDC targets. REACH compliance required for novel absorbent solvents used in industrial carbon capture. IEA and IPCC guidelines for CCS technology assessment benefit from rapid solvent screening methods."
+  },
+  "industry_application": {
+    "industry_sectors": [
+      "Power generation (post-combustion carbon capture)",
+      "Oil and gas (natural gas sweetening, enhanced oil recovery)",
+      "Chemical and petrochemical processing",
+      "Cement and steel manufacturing (industrial CCS)",
+      "Direct air capture (DAC) technology",
+      "Biogas upgrading"
+    ],
+    "commercial_tools": [
+      "HSPiP (Hansen Solubility Parameters in Practice)",
+      "COSMOtherm (COSMO-RS based screening)",
+      "Aspen Plus (process simulation with thermodynamic models)",
+      "gPROMS (process modeling for CCS)",
+      "ILTHERMO (NIST ionic liquid property database)"
+    ]
+  },
+  "uncertain": [
+    "hsp_principle.typical_red_threshold",
+    "literature.first_reported_year",
+    "input_data.data_availability_score"
+  ]
+}

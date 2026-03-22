@@ -1,0 +1,130 @@
+# Field definitions for HSP Application Research
+# Each item will be evaluated against all fields below
+
+basic_info:
+  name:
+    description: "Application name in English"
+    detail_level: brief
+
+  name_ja:
+    description: "Application name in Japanese"
+    detail_level: brief
+
+  category:
+    description: "Category classification (Polymer/Materials, Coatings/Inks, Pharmaceutical, Food/Cosmetics, Energy/Environment, Electronics/Advanced, Computational, Adhesion/Surface)"
+    detail_level: brief
+
+  description:
+    description: "One-paragraph description of the HSP application"
+    detail_level: moderate
+
+  maturity_level:
+    description: "State of validation: 'mature' (decades of industrial use), 'established' (published validation studies), or 'emerging' (limited validation, active research)"
+    detail_level: brief
+
+hsp_principle:
+  hsp_principle:
+    description: "Core HSP-based principle or mechanism underlying the prediction"
+    detail_level: detailed
+
+  key_equation:
+    description: "Primary mathematical relationship (e.g., Ra = sqrt(4*dD^2 + dP^2 + dH^2), RED = Ra/R0, chi = V*(Ra)^2/(6*RT))"
+    detail_level: moderate
+
+  red_direction:
+    description: "Interpretation of RED value: 'low_is_good' (RED<1 = compatible), 'high_is_good' (RED>1 = resistant), or 'threshold_specific'"
+    detail_level: brief
+
+  typical_red_threshold:
+    description: "Quantitative RED or Ra threshold separating good/bad outcomes (e.g., RED<1.0 for solubility, RED<0.8 for ESC onset)"
+    detail_level: brief
+
+  sensitivity_to_hbond_split:
+    description: "Whether the application requires donor/acceptor split of delta_h: 'low' (3-param sufficient), 'medium' (improves accuracy), 'high' (4-5 param needed)"
+    detail_level: brief
+
+  temperature_pressure_sensitivity:
+    description: "Degree to which results change with T/P: 'low', 'medium', or 'high'. Indicates need for T/P correction."
+    detail_level: brief
+
+input_data:
+  required_inputs:
+    description: "List of required input parameters (e.g., polymer HSP + R0, solvent HSP + physical properties, temperature)"
+    detail_level: moderate
+
+  data_sources:
+    description: "Where to obtain input HSP data (e.g., HSPiP database, group contribution, IGC measurement, literature)"
+    detail_level: moderate
+
+  data_availability_score:
+    description: "Rated 1-5: availability of HSP data for materials involved. 5=well-tabulated solvents, 4=common polymers, 3=APIs, 2=biological, 1=novel nanomaterials"
+    detail_level: brief
+
+  complementary_parameters:
+    description: "Other parameters needed alongside HSP for reliable prediction (e.g., Mw, Tg, surface energy, viscosity, particle size)"
+    detail_level: moderate
+
+accuracy:
+  accuracy_level:
+    description: "Overall prediction accuracy: 'quantitative' (numerical prediction reliable), 'semi-quantitative' (ranking/screening reliable), 'qualitative' (trend indication only)"
+    detail_level: brief
+
+  limitations:
+    description: "Known theoretical/practical limitations of the HSP-based approach for this application"
+    detail_level: detailed
+
+  known_failure_modes:
+    description: "Specific documented scenarios where HSP prediction fails (e.g., strong specific interactions, kinetic effects, entropy-dominated systems)"
+    detail_level: moderate
+
+  validation_method:
+    description: "How to experimentally validate the HSP-based prediction (e.g., dissolution test, DSC, tensile test, microscopy)"
+    detail_level: moderate
+
+implementation:
+  complexity:
+    description: "Implementation difficulty: 'low' (direct Ra/RED calculation), 'medium' (additional models needed), 'high' (multi-step optimization or external data)"
+    detail_level: brief
+
+  ui_pattern:
+    description: "Recommended UI pattern: 'screening' (one-vs-all ranking), 'pairwise' (A vs B evaluation), 'optimization' (target matching), 'matrix' (N x M comparison)"
+    detail_level: brief
+
+  existing_modules_reusable:
+    description: "Which existing app modules can be reused (e.g., calculateRa, calculateRed, classifyRisk, optimizeBlend, sphere fitting)"
+    detail_level: moderate
+
+  multi_component_complexity:
+    description: "Number of HSP interactions: 'binary' (2 components), 'ternary' (3), or 'multi' (4+ requiring optimization)"
+    detail_level: brief
+
+  scale_of_application:
+    description: "At what scale typically applied: 'screening' (lab-scale candidate selection), 'design' (formulation optimization), 'production' (process parameter control)"
+    detail_level: brief
+
+literature:
+  key_references:
+    description: "2-5 key academic references (author, journal, year, DOI if available)"
+    detail_level: detailed
+
+  first_reported_year:
+    description: "Approximate year when HSP was first applied to this specific application"
+    detail_level: brief
+
+  regulatory_relevance:
+    description: "Whether HSP-based screening is accepted in regulatory context (FDA, REACH, EFSA, etc.) and in what capacity"
+    detail_level: moderate
+
+industry_application:
+  industry_sectors:
+    description: "Primary industry sectors using this application (e.g., automotive, pharmaceutical, packaging, electronics)"
+    detail_level: moderate
+
+  commercial_tools:
+    description: "Commercial software/databases supporting this application (e.g., HSPiP, COSMOtherm, Materials Studio, proprietary tools)"
+    detail_level: moderate
+
+# Reserved field - auto-filled during deep research
+uncertain:
+  description: "List of field names where values are uncertain or could not be determined"
+  detail_level: brief
