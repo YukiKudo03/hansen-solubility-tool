@@ -15,7 +15,7 @@ export default function CocrystalScreeningView() {
   const { sortKey, sortDir, toggleSort } = useSortableTable<SortKey>('red');
 
   useEffect(() => {
-    (window as any).api.getAllSolvents().then((data: any[]) => setDrugs(data));
+    (window as any).api.getAllDrugs().then((data: any[]) => setDrugs(data));
   }, []);
 
   const canEvaluate = selectedDrug && !loading;

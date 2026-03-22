@@ -178,19 +178,19 @@ export interface ElectronAPI {
   setDispersantThresholds(thresholds: DispersantAffinityThresholds): Promise<DispersantAffinityThresholds>;
 
   // ESCパイプライン
-  screenESCRisk(polymerHSP: import('./core/types').HSPValues, r0: number, solventIds: number[]): Promise<import('./core/esc-pipeline').ESCScreeningResult[]>;
+  screenESCRisk(groupId: number): Promise<{ partsGroup: import('./core/types').PartsGroup; results: Array<import('./core/esc-pipeline').ESCScreeningResult & { riskLevel: import('./core/esc-classification').ESCRiskLevel }>; evaluatedAt: Date }>;
 
   // 共結晶スクリーニング
-  screenCocrystals(apiHSP: import('./core/types').HSPValues, r0: number, coformerIds: number[]): Promise<import('./core/cocrystal-screening').CocrystalScreeningResult[]>;
+  screenCocrystals(drugId: number): Promise<{ drug: import('./core/types').Drug; results: import('./core/cocrystal-screening').CocrystalScreeningResult[]; evaluatedAt: Date }>;
 
   // 3Dプリント溶剤平滑化
-  screen3DPrintingSolvents(filamentHSP: import('./core/types').HSPValues, r0: number, solventIds: number[]): Promise<import('./core/printing3d-smoothing').SmoothingScreeningResult[]>;
+  screen3DPrintingSolvents(groupId: number): Promise<{ partsGroup: import('./core/types').PartsGroup; results: Array<import('./core/printing3d-smoothing').SmoothingScreeningResult & { effectLevel: import('./core/printing3d-smoothing').SmoothingEffectLevel }>; evaluatedAt: Date }>;
 
   // 誘電体薄膜品質
-  screenDielectricSolvents(polymerHSP: import('./core/types').HSPValues, r0: number, solventIds: number[]): Promise<import('./core/dielectric-film').DielectricScreeningResult[]>;
+  screenDielectricSolvents(groupId: number): Promise<{ partsGroup: import('./core/types').PartsGroup; results: Array<import('./core/dielectric-film').DielectricScreeningResult & { qualityLevel: import('./core/dielectric-film').FilmQualityLevel }>; evaluatedAt: Date }>;
 
   // 賦形剤適合性
-  evaluateExcipientCompatibility(apiHSP: import('./core/types').HSPValues, r0: number, excipientIds: number[]): Promise<import('./core/excipient-compatibility').ExcipientResult[]>;
+  evaluateExcipientCompatibility(drugId: number): Promise<{ drug: import('./core/types').Drug; results: Array<import('./core/excipient-compatibility').ExcipientResult & { compatibilityLevel: import('./core/excipient-compatibility').CompatibilityLevel }>; evaluatedAt: Date }>;
 
   // ポリマーブレンド相溶性
   evaluatePolymerBlend(params: {
