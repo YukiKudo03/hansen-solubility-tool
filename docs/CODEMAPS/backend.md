@@ -1,4 +1,4 @@
-<!-- Generated: 2026-03-22 | Files scanned: 15 main/db | Token estimate: ~1200 -->
+<!-- Generated: 2026-03-24 | Files scanned: 15 main/db | Token estimate: ~1200 -->
 
 # Backend — Main Process & IPC Handlers
 
@@ -8,22 +8,22 @@
 electron app
   ↓
 main.ts → initDb() → Database initialization
-         → registerIpcHandlers() → 167 IPC method registration
+         → registerIpcHandlers() → 190+ IPC method registration
          → createWindow() → preload.js bridge
          → autoUpdater → electron-updater GitHub Releases
 ```
 
 ### Startup Sequence
 
-**main.ts** (91 lines)
+**main.ts** (124 lines)
 1. Parse `VITE_DEV_SERVER_URL` env var
-2. Initialize SQLite: `initDb()` → schema + migrations + 6 seed functions
+2. Initialize SQLite: `initDb()` → schema + migrations + 7 seed functions
 3. Create window with preload context isolation
-4. Register IPC handlers (all 167 routes)
+4. Register IPC handlers (all 190+ routes)
 5. Configure auto-updater (electron-updater)
 6. Load dev server or production HTML
 
-## IPC Handlers (src/main/ipc-handlers.ts — 1973 lines)
+## IPC Handlers (src/main/ipc-handlers.ts — 1990 lines)
 
 ### Pattern
 
@@ -40,7 +40,7 @@ All handlers:
 - No async (synchronous DB)
 - Return serializable objects
 
-### Handler Categories (167)
+### Handler Categories (190+)
 
 #### Parts Management (8)
 ```
@@ -156,16 +156,16 @@ groupContribution:estimateHSP(groups) → Van Krevelen-Hoftyzer HSP
 comparison:buildMatrix(groupIds, solventIds) → RED heatmap
 ```
 
-#### Extended Pipelines (60+ additional handlers)
+#### Extended Pipelines (80+ additional handlers)
 ```
-評価系 (31 pipelines): ESC, ブレンド相溶性, リサイクル相溶性, 添加剤移行,
+評価系 (33 pipelines): ESC, ブレンド相溶性, リサイクル相溶性, 添加剤移行,
   フレーバースカルピング, 包装材溶出, リポソーム透過性, インク-基材密着,
   多層コーティング密着, 粘着テープ剥離強度, 構造接着設計, ガス透過性,
   膜分離選択性, 吸入薬適合性, タンパク質凝集, 残留溶媒, コーティング欠陥,
   レジスト現像, 結晶溶解温度, ハイドロゲル膨潤, ゴム配合, 繊維染色性,
   多形リスク, 印刷電子濡れ性, 封止材適合, バイオ燃料適合, etc.
 
-選定系 (24 pipelines): 共結晶, 3D印刷平滑化, 誘電体膜, 賦形剤,
+選定系 (26 pipelines): 共結晶, 3D印刷平滑化, 誘電体膜, 賦形剤,
   相溶化剤, 香料カプセル化, 経皮吸収促進剤, 顔料分散, CNT/グラフェン,
   MXene, NP薬物ローディング, CO2吸収材, 水素貯蔵, UVフィルター, etc.
 
@@ -181,15 +181,13 @@ Each pipeline handler follows the same pattern:
   })
 ```
 
-#### Settings (7)
+#### Settings (22)
 ```
 settings:getThresholds() → all pipeline thresholds as JSON
 settings:setThresholds(dto) → validateThresholds()
 settings:getSetting(key) → value
 settings:setSetting(key, value)
-settings:getWettabilityThresholds()
-settings:setWettabilityThresholds(dto)
-settings:[other threshold setters]
+settings:get/set[Pipeline]Thresholds() × 9 pipeline types
 ```
 
 #### Bookmarks (3)
@@ -242,104 +240,17 @@ interface SolventRepository {
   deleteSolvent(id)
 }
 
-interface NanoParticleRepository {
-  getAll(): NanoParticle[]
-  getById(id): NanoParticle | null
-  getByCategory(cat): NanoParticle[]
-  search(query): NanoParticle[]
-  create(dto): NanoParticle
-  update(id, dto)
-  delete(id)
-}
-
-interface DrugRepository {
-  getAll(): Drug[]
-  getById(id): Drug | null
-  getByTherapeuticCategory(cat): Drug[]
-  search(query): Drug[]
-  create(dto): Drug
-  update(id, dto)
-  delete(id)
-}
-
-interface DispersantRepository {
-  getAll(): Dispersant[]
-  getById(id): Dispersant | null
-  create(dto): Dispersant
-  update(id, dto)
-  delete(id)
-}
-
-interface SettingsRepository {
-  getSetting(key): string | null
-  setSetting(key, value)
-  getThresholds(): ThresholdsConfig
-  setThresholds(dto)
-}
-
-interface BookmarkRepository {
-  list(): Bookmark[]
-  save(dto): Bookmark
-  delete(id)
-}
-
-interface HistoryRepository {
-  list(filters?): HistoryEntry[]
-  listFiltered(pipeline, status): HistoryEntry[]
-  save(entry): HistoryEntry
-  delete(id)
-  clear()
-}
+interface NanoParticleRepository { getAll, getById, getByCategory, search, create, update, delete }
+interface DrugRepository { getAll, getById, getByTherapeuticCategory, search, create, update, delete }
+interface DispersantRepository { getAll, getById, getByType, search, create, update, delete }
+interface SettingsRepository { getSetting, setSetting, getThresholds, setThresholds }
+interface BookmarkRepository { list, save, delete }
+interface HistoryRepository { list, listFiltered, save, delete, clear }
 ```
 
-### Implementation (sqlite-repository.ts)
-
-```typescript
-class SqlitePartsRepository { /* 150+ lines */ }
-class SqliteSolventRepository { /* 120+ lines */ }
-class SqliteNanoParticleRepository { /* 100+ lines */ }
-class SqliteDrugRepository { /* 100+ lines */ }
-class SqliteDispersantRepository { /* 100+ lines */ }
-class SqliteSettingsRepository { /* 80+ lines */ }
-class SqliteBookmarkRepository { /* 100+ lines */ }
-class SqliteHistoryRepository { /* 150+ lines */ }
-```
+### Implementation (sqlite-repository.ts — 550+ lines)
 
 All use `db.prepare(sql).run()` / `.get()` / `.all()`.
-
-## Database Schema (schema.ts)
-
-### 9 Tables
-
-| Table | Columns | Constraints | Seed |
-|-------|---------|-------------|------|
-| `parts_groups` | id, name, description, created_at, updated_at | PK id | ~10 groups |
-| `parts` | id, group_id, name, cas_number, hsp.*, r0, notes, created_at | PK id, FK group_id CASCADE | ~83 parts |
-| `solvents` | id, name, name_en, cas_number, hsp.*, molar_volume, boiling_point, viscosity, etc. | PK id | ~95 solvents + plasticizers |
-| `nano_particles` | id, name, category, core_material, hsp.*, r0, particle_size, created_at | PK id | 18 particles |
-| `drugs` | id, name, name_en, cas_number, hsp.*, r0, therapeutic_category, created_at | PK id | 16 drugs |
-| `dispersants` | id, name, anchor_d/p/h, solvation_d/p/h, solvation_r0, hlb, type, notes | PK id | ~10 dispersants |
-| `settings` | key, value | PK key | ~10 threshold configs |
-| `bookmarks` | id, pipeline, name, conditions (JSON), created_at, updated_at | PK id | (user-created) |
-| `evaluation_history` | id, pipeline, conditions (JSON), results (JSON), status, created_at | PK id, auto-prune ≤1000 | (auto-saved) |
-
-### Initialization (main.ts)
-
-```typescript
-initDb() {
-  const db = new Database(dbPath)
-  initializeDatabase(db)      // CREATE TABLE IF NOT EXISTS
-  migrateDatabase(db)         // ALTER TABLE for legacy columns
-  seedDatabase(db)            // Insert solvents + parts groups (if empty)
-  seedNanoParticles(db)       // Insert 18 nanoparticles
-  seedDrugs(db)               // Insert 16 drugs
-  seedCoatings(db)            // Insert coating PartsGroup
-  seedPlasticizers(db)        // Insert plasticizer Solvents (tagged)
-  seedCarriers(db)            // Insert DDS carrier PartsGroup
-  seedDispersants(db)         // Insert ~10 dispersants (if empty)
-  return db
-}
-```
 
 ## Validation Layer (src/core/validation.ts)
 
@@ -364,7 +275,7 @@ ipcMain.handle('parts:create', (_, dto) => {
 - `validateDispersantInput()` — name + anchor HSP + solvation HSP + solvation r0
 - `validateBlendOptimizationInput()` — target HSP + part IDs
 
-## Preload Bridge (preload.ts)
+## Preload Bridge (preload.ts — 10,757 lines)
 
 Context-isolated proxy to IPC:
 
@@ -373,7 +284,7 @@ window.api = {
   parts: { getAllGroups, getGroupById, ... },
   solvents: { getAll, getById, ... },
   evaluate: async (...) => ipcRenderer.invoke('evaluate', ...)
-  // All 167 methods mapped
+  // All 190+ methods mapped
 }
 ```
 
@@ -383,4 +294,4 @@ Whitelist pattern prevents arbitrary IPC calls.
 
 **Related:** See `architecture.md` for overview, `frontend.md` for UI components, `data.md` for repository interfaces.
 
-**Last Updated:** 2026-03-22
+**Last Updated:** 2026-03-24

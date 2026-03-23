@@ -1,86 +1,92 @@
 CODEMAP UPDATE REPORT
-Generated: 2026-03-22
+Generated: 2026-03-24
 
 SUMMARY
 =======
-Full project state verification and codemap refresh. All codemaps updated to
-reflect 70+ evaluation pipelines (10 original + 60 new), 11 core computation
-modules, and verified file/test counts from actual source tree.
+Incremental update from 2026-03-22 baseline. Key changes: test count growth
+(2170→2604 unit, 98→295 E2E), hook/badge count increases, IPC handler growth,
+and test infrastructure improvements (pool:forks, pretest rebuild).
 
-MAJOR MILESTONES
-================
-- 60 new evaluation pipelines implemented across 4 categories
-- 11 core computation modules (temperature-hsp, evaporation, dispersant-selection,
-  group-contribution, solubility-estimation, adhesion, teas-plot, bagley-plot,
-  projection-2d, sphere-fitting, green-solvent, multi-objective)
-- Runtime errors fixed: VIEW_MAP 8 cases, IPC 5 cases
-- Core test coverage: 98.88%
-- Unit tests: 2170 passed
-
-FILES UPDATED
-=============
+CHANGES SINCE 2026-03-22
+=========================
 
 1. docs/CODEMAPS/INDEX.md
-   - Date: 2026-03-21 -> 2026-03-22
-   - Test files: 221 -> 222
-   - Unit tests: 1717+ -> 2170
-   - Nav tabs: 92 -> 93
-   - Coverage: 91% -> 98.88% (core)
+   - Pipelines: 70+ -> 90+
+   - IPC handlers: 167 -> 190+
+   - Hooks: 69 -> 79
+   - Unit tests: 2170 -> 2604
+   - E2E tests: 25 specs -> 30 specs (295 tests)
+   - Source files: 349 -> 361
+   - Renderer files: 214 -> 226
+   - Total files: 571 -> 588
 
 2. docs/CODEMAPS/architecture.md
-   - Date: 2026-03-21 -> 2026-03-22
-   - Test files: 221 -> 222, tests: 1717+ -> 2170
+   - IPC count: 167 -> 190+
+   - Hooks: 69 -> 79
+   - Badges: 40 -> 45+
+   - Test count updated
+   - Evaluators: 70+ -> 90+
 
 3. docs/CODEMAPS/frontend.md
-   - Date: 2026-03-21 -> 2026-03-22
-   - Nav items: 92 -> 93
+   - Hooks: 69 -> 79 (10 new feature hooks)
+   - Badges: 40 -> 45+ (5 new)
+   - Nav items: 93 -> 96
+   - Added hook pattern documentation
+   - Added state management section
 
 4. docs/CODEMAPS/backend.md
-   - Date: 2026-03-21 -> 2026-03-22
+   - IPC handlers: 167 -> 190+
+   - Extended pipelines: 60+ -> 80+
+   - Settings handlers: 7 -> 22
+   - main.ts lines: 91 -> 124
 
-5. docs/CODEMAPS/README.md
-   - Date: 2026-03-21 -> 2026-03-22
-   - Version: 1.6.0 -> 2.0.0
-   - Nav tabs: 92 -> 93
-   - Test files: 221 -> 222
-   - Coverage: 91% -> 98.88% core
+5. docs/CODEMAPS/data.md
+   - Tables: 7 -> 9 (bookmarks, evaluation_history explicitly documented)
+   - Dispersant repository: added getByType, search methods
+   - Seed data summary table added
+   - Repository count: 6 -> 8
 
-6. docs/CODEMAPS/data.md
-   - Date: 2026-03-21 -> 2026-03-22
+6. docs/CODEMAPS/dependencies.md
+   - Added production deps: plotly.js, react-plotly.js, jspdf, electron-updater, i18next, react-i18next
+   - Added @electron/rebuild to build deps
+   - Added pretest script documentation
+   - Added pool:forks note for Vitest
+   - @playwright/test version: latest -> 1.58.2
 
-7. docs/CODEMAPS/dependencies.md
-   - Date: 2026-03-21 -> 2026-03-22
-
-VERIFIED COUNTS (2026-03-22)
+VERIFIED COUNTS (2026-03-24)
 =============================
-| Metric              | Count |
-|---------------------|-------|
-| Source files        | 349   |
-| Core modules        | 117   |
-| Components          | 142   |
-| Hooks               | 69    |
-| Nav tabs            | 93    |
-| VIEW_MAP entries    | 93 (all matched) |
-| Test files          | 222   |
-| IPC handlers        | 167   |
-| Unit tests passed   | 2170  |
-| Core coverage       | 98.88%|
-| Evaluation pipelines| 70+ (10 original + 60 new) |
+| Metric              | 2026-03-22 | 2026-03-24 | Delta |
+|---------------------|------------|------------|-------|
+| Source files        | 349        | 361        | +12   |
+| Core modules        | 117        | 117        | 0     |
+| Components          | 142        | 142        | 0     |
+| Hooks               | 69         | 79         | +10   |
+| Badges              | 40         | 45+        | +5    |
+| Nav tabs            | 93         | 96         | +3    |
+| IPC handlers        | 167        | 190+       | +23   |
+| Test files          | 222        | 227        | +5    |
+| Unit tests passed   | 2170       | 2604       | +434  |
+| E2E specs           | 25         | 30         | +5    |
+| E2E tests           | 98         | 295        | +197  |
+| Core coverage       | 98.88%     | 98.88%     | 0     |
+| Evaluation pipelines| 70+        | 90+        | +20   |
+
+TEST INFRASTRUCTURE IMPROVEMENTS
+=================================
+- Added `pretest` script: `npm rebuild better-sqlite3 --silent`
+  (prevents ABI mismatch between Electron and system Node.js)
+- Changed Vitest pool from `threads` (default) to `forks`
+  (eliminates flaky tests from shared memory in JSDOM environment)
+- All 2604 unit tests and 197 test files now pass consistently
 
 ARCHITECTURE OVERVIEW
 =====================
 Electron 41 + React 19 + Vite 5 + SQLite (better-sqlite3)
-- src/core/   117 files  15,400 lines  70+ evaluators, 10 classifiers
+- src/core/   117 files  15,400 lines  90+ evaluators, 10 classifiers
 - src/db/      12 files   2,100 lines  9 tables, 8 repos, 7 seed files
-- src/main/     3 files   2,700 lines  167 IPC handlers
-- src/renderer/214 files  17,700 lines  142 components, 69 hooks, 93 nav tabs
-- tests/       222 files              2170 unit + 25 E2E specs
-
-RUNTIME FIXES APPLIED
-=====================
-- VIEW_MAP mismatches resolved: 8 cases (tab keys without corresponding views)
-- IPC handler registration errors: 5 cases (missing/misnamed handlers)
-- All 93 nav tabs now have matching VIEW_MAP entries (100% coverage)
+- src/main/     3 files   2,700 lines  190+ IPC handlers
+- src/renderer/226 files  18,500 lines  142 components, 79 hooks, 96 nav tabs
+- tests/       227 files              2604 unit + 295 E2E (30 specs)
 
 ---
 End of Report

@@ -1,4 +1,4 @@
-<!-- Generated: 2026-03-22 | Files scanned: 214 renderer | Token estimate: ~1200 -->
+<!-- Generated: 2026-03-24 | Files scanned: 226 renderer | Token estimate: ~1200 -->
 
 # Frontend Component Architecture
 
@@ -13,12 +13,12 @@ Screen Width    Navigation Pattern       Component
 
 **Breakpoint detection:** `useMediaQuery()` hook → returns `'desktop' | 'tablet' | 'mobile'`
 
-## 6 Category Navigation (93 feature items)
+## 6 Category Navigation (96 feature items)
 
 | Category | Icon | Items |
 |----------|------|-------|
-| 評価 | 📊 | 31 items: 溶解性評価, 接触角推定, 膨潤度予測, 耐薬品性予測, 接着性予測, ESC, ブレンド相溶性, リサイクル相溶性, 添加剤移行, ガス透過性, 膜分離, etc. |
-| 選定 | 🔍 | 24 items: ナノ粒子分散, 分散剤選定, 可塑剤選定, キャリア選定, 共結晶, 顔料分散, CNT/グラフェン, MXene, CO2吸収材, etc. |
+| 評価 | 📊 | 33 items: 溶解性評価, 接触角推定, 膨潤度予測, 耐薬品性予測, 接着性予測, ESC, ブレンド相溶性, リサイクル相溶性, 添加剤移行, ガス透過性, 膜分離, etc. |
+| 選定 | 🔍 | 26 items: ナノ粒子分散, 分散剤選定, 可塑剤選定, キャリア選定, 共結晶, 顔料分散, CNT/グラフェン, MXene, CO2吸収材, etc. |
 | 最適化 | ⚡ | 17 items: ブレンド最適化, 薬物溶解性, 比較レポート, HSP球算出, グリーン溶媒, 多目的選定, ペロブスカイト, LiB電解液, etc. |
 | データ | 💾 | 3 items: データベース編集, 混合溶媒, 履歴 |
 | 分析 | 📈 | 16 items: 3D可視化, Teasプロット, Bagleyプロット, 2D射影, 族寄与法, コポリマーHSP, 温度/圧力補正, 逆HSP, ML予測, etc. |
@@ -33,14 +33,14 @@ App.tsx (MD3 responsive + useTheme() dark mode)
 ├── header (bg-md3-surface-container-low)
 ├── NavigationDrawer / NavigationRail (desktop/tablet)
 │   └── 6 categories → expandable sub-items → onSelect(tab)
-├── main (flex-1 overflow-y-auto) — 91 Feature Views total
-│   ├─ 評価Views (31):
+├── main (flex-1 overflow-y-auto) — 93 Feature Views total
+│   ├─ 評価Views (33):
 │   │  ├── ReportView → PartsGroupSelector + SolventSelector → ResultsTable + RiskBadge
 │   │  ├── ContactAngleView → 2 modes (group/screening) → WettabilityBadge + warnings
 │   │  ├── SwellingView → Group + Solvent + elastomer warning → SwellingBadge
 │   │  ├── ChemicalResistanceView → Group + Solvent → ChemicalResistanceBadge
 │   │  ├── AdhesionView → 接着強度評価
-│   │  └── 26 extended: EscPipelineView, PolymerBlendView, RecyclingView,
+│   │  └── 28 extended: EscPipelineView, PolymerBlendView, RecyclingView,
 │   │       AdditiveMigrationView, FlavorScalpingView, FoodPackagingView,
 │   │       LiposomeView, InkSubstrateView, MultilayerCoatingView,
 │   │       PsaPeelView, StructuralAdhesiveView, GasPermeabilityView,
@@ -48,18 +48,19 @@ App.tsx (MD3 responsive + useTheme() dark mode)
 │   │       ResidualSolventView, CoatingDefectView, PhotoresistView,
 │   │       CrystallineDissolutionView, HydrogelSwellingView, RubberCompoundingView,
 │   │       FiberDyeabilityView, PolymorphRiskView, PrintedElectronicsView,
-│   │       UnderfillEncapsulantView, BiofuelCompatibilityView
-│   ├─ 選定Views (24):
+│   │       UnderfillEncapsulantView, BiofuelCompatibilityView,
+│   │       SurfaceTreatmentQuantificationView, PSAPeelStrengthView
+│   ├─ 選定Views (26):
 │   │  ├── NanoDispersionView → Category + Particle → DispersibilityBadge
 │   │  ├── DispersantSelectionView → Particle + Solvent → DispersantBadge (dual-HSP)
 │   │  ├── PlasticizerView → Group + Part → PlasticizerBadge
 │   │  ├── CarrierSelectionView → Drug + CarrierGroup → CarrierBadge
-│   │  └── 20 extended: CocrystalView, Printing3dView, DielectricFilmView,
+│   │  └── 22 extended: CocrystalView, Printing3dView, DielectricFilmView,
 │   │       ExcipientView, CompatibilizerView, FragranceView, TransdermalView,
 │   │       PigmentDispersionView, CntGrapheneView, MxeneView, NpDrugLoadingView,
 │   │       Co2AbsorbentView, HydrogenStorageView, SunscreenUvView, BiologicBufferView,
 │   │       NaturalDyeView, EssentialOilView, SoilRemediationView, ThermosetView,
-│   │       QuantumDotView, PcmEncapsulationView
+│   │       QuantumDotView, PcmEncapsulationView, CleaningFormulationView
 │   ├─ 最適化Views (17):
 │   │  ├── BlendOptimizerView → Target HSP + checkboxes → Ranking
 │   │  ├── DrugSolubilityView → Drug + Solvent/screening → DrugSolubilityBadge
@@ -97,7 +98,7 @@ App.tsx (MD3 responsive + useTheme() dark mode)
 | `ResultsTable` | 汎用結果テーブル |
 | `ErrorBoundary` | React エラーバウンダリ |
 
-## Badges (40 components, MD3 Tonal style)
+## Badges (45+ components, MD3 Tonal style)
 
 All badges use `rounded-md3-sm text-md3-label-md`.
 
@@ -112,8 +113,9 @@ All badges use `rounded-md3-sm text-md3-label-md`.
 | PlasticizerBadge | 1-5 | L1=best | green | red |
 | CarrierBadge | 1-5 | L1=best | green | red |
 | DispersantBadge | 1-5 | L1=best | green | red |
+| + 36 specialized badges | varies | varies | varies | varies |
 
-## Hooks (69)
+## Hooks (79)
 
 | Hook | Purpose |
 |------|---------|
@@ -126,17 +128,25 @@ All badges use `rounded-md3-sm text-md3-label-md`.
 | usePartsGroups | Parts group data |
 | useSolvents | Solvent data + search |
 | useDrugs | Drug data |
-| useEvaluation | Polymer evaluation |
 | useNanoParticles | Nanoparticle data (category filter) |
-| useNanoDispersion | Dispersion screening |
-| useContactAngle | Contact angle estimation |
-| useBlendOptimizer | Blend optimization |
-| useSwelling | Swelling prediction |
-| useDrugSolubility | Drug solubility |
-| useChemicalResistance | Chemical resistance |
-| usePlasticizer | Plasticizer screening |
-| useCarrierSelection | Carrier selection |
-| useDispersantSelection | Dispersant screening (dual-HSP) |
+| useEvaluation | Polymer evaluation |
+| + 68 feature-specific hooks | 1 hook per evaluation view |
+
+### Hook Pattern
+```typescript
+export function useFeatureName() {
+  const [result, setResult] = useState<ResultType | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const evaluate = useCallback(async (params) => {
+    setLoading(true); setError(null);
+    try { setResult(await window.api.methodName(params)); }
+    catch (e) { setError(e instanceof Error ? e.message : 'エラー'); }
+    finally { setLoading(false); }
+  }, []);
+  return { result, loading, error, evaluate };
+}
+```
 
 ## Dark Mode & Theming
 
@@ -151,17 +161,25 @@ All badges use `rounded-md3-sm text-md3-label-md`.
 - 60+翻訳キー (ja/en)
 - localStorage で言語設定永続化
 
-## IPC Interface (window.api) — 167 Methods
+## State Management
+
+**No external state library** — pure React patterns:
+- `useState` for component state
+- `useCallback` / `useMemo` for memoization
+- Custom hooks for business logic encapsulation
+- Direct `window.api.*` calls (Electron IPC bridge)
+
+## IPC Interface (window.api) — 190+ Methods
 
 ```
 Parts CRUD (8), Solvents CRUD+Plasticizers (8), NanoParticles CRUD (7), Drugs CRUD (7), Dispersants CRUD (5)
-Core pipeline evaluation/screening (30), Extended pipeline handlers (60+)
-Settings get/set (18), Bookmarks (3), History (5), CSV Import (3), Export saveCsv (1)
-Advanced analytics handlers (8+)
+Core pipeline evaluation/screening (30), Extended pipeline handlers (80+)
+Settings get/set (22), Bookmarks (3), History (5), CSV Import (3), Export saveCsv (1)
+Advanced analytics handlers (12+)
 ```
 
 ---
 
 **Related:** See `architecture.md` for system overview, `backend.md` for IPC handlers, `data.md` for schema.
 
-**Last Updated:** 2026-03-22
+**Last Updated:** 2026-03-24

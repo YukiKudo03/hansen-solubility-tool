@@ -1,4 +1,4 @@
-<!-- Generated: 2026-03-22 | Updated: 2026-03-22 | Files scanned: 12 | Token estimate: ~900 -->
+<!-- Generated: 2026-03-24 | Updated: 2026-03-24 | Files scanned: 12 | Token estimate: ~900 -->
 
 # Database Schema & Data Layer
 
@@ -9,7 +9,7 @@
 - **Mode:** WAL, foreign_keys ON
 - **Init:** `schema.ts` → `migrateDatabase()` → 7 seed functions
 
-## Tables (7)
+## Tables (9)
 
 ### parts_groups → parts (1:N, CASCADE)
 Groups of polymer/coating/carrier materials.
@@ -44,14 +44,21 @@ Chemical solvents + plasticizers (identified by `[可塑剤]` tag in notes).
 
 ### drugs
 | Key Columns | name/name_en, cas_number, delta_d/p/h, r0, mol_weight, log_p, therapeutic_category |
-**Seed:** 15 drugs (鎮痛薬, 抗炎症薬, 降圧薬, 抗真菌薬, 抗菌薬, 抗てんかん薬, 気管支拡張薬, 中枢神経刺激薬)
+**Seed:** 16 drugs (鎮痛薬, 抗炎症薬, 降圧薬, 抗真菌薬, 抗菌薬, 抗てんかん薬, 気管支拡張薬, 中枢神経刺激薬)
 
 ### dispersants
-| Key Columns | name, anchor_delta_d/p/h (粒子親和HSP), solvation_delta_d/p/h (溶媒親和HSP), solvation_r0, hlb, type, notes |
-**Seed:** ~10 dispersants (oleylamine, PVP, SDS, Tween 80, etc.) — dual-HSP model for anchor+solvation evaluation
+| Key Columns | name, dispersant_type, anchor_delta_d/p/h/r0 (粒子親和HSP), solvation_delta_d/p/h/r0 (溶媒親和HSP), overall_delta_d/p/h, hlb, mol_weight, trade_name, manufacturer, notes |
+**Seed:** ~10 dispersants (BYK-163, oleylamine, PVP, SDS, Tween 80, etc.) — dual-HSP model for anchor+solvation evaluation
 
 ### settings (KV store)
-**Keys:** risk_thresholds, dispersibility_thresholds, wettability_thresholds, swelling_thresholds, drug_solubility_thresholds, chemical_resistance_thresholds, plasticizer_thresholds, carrier_thresholds
+**Keys:** risk_thresholds, dispersibility_thresholds, wettability_thresholds, swelling_thresholds, drug_solubility_thresholds, chemical_resistance_thresholds, plasticizer_thresholds, carrier_thresholds, adhesion_thresholds, dispersant_thresholds
+
+### bookmarks
+| Columns | id INTEGER PK, name TEXT, pipeline TEXT, params_json TEXT, created_at TEXT |
+
+### evaluation_history
+| Columns | id INTEGER PK, pipeline TEXT, params_json TEXT, result_json TEXT, thresholds_json TEXT, note TEXT, evaluated_at TEXT |
+Auto-prune at ≤1000 entries.
 
 ## Repository Pattern
 
@@ -63,28 +70,43 @@ Chemical solvents + plasticizers (identified by `[可塑剤]` tag in notes).
 | SolventRepository | getAllSolvents, getSolventById, searchSolvents, **getPlasticizers**, createSolvent, updateSolvent, deleteSolvent | CreateSolventDto |
 | NanoParticleRepository | getAll, getById, getByCategory, search, create, update, delete | CreateNanoParticleDto |
 | DrugRepository | getAll, getById, getByTherapeuticCategory, search, create, update, delete | CreateDrugDto |
-| **DispersantRepository** | getAll, getById, create, update, delete | CreateDispersantDto |
+| **DispersantRepository** | getAll, getById, **getByType**, **search**, create, update, delete | CreateDispersantDto |
 | SettingsRepository | getSetting, setSetting, getThresholds, setThresholds | — |
+| BookmarkRepository | list, save, delete | CreateBookmarkDto |
+| HistoryRepository | list, listFiltered, save, delete, clear | — |
 
-**Implementation:** `sqlite-repository.ts` — 6 classes (SqliteParts/Solvent/NanoParticle/Drug/Dispersant/Settings Repository)
+**Implementation:** `sqlite-repository.ts` — 8 classes (SqliteParts/Solvent/NanoParticle/Drug/Dispersant/Settings/Bookmark/History Repository)
 
 ## Seed Data Pipeline
 
 ```
 main.ts → initDb()
-  → initializeDatabase(db)    # CREATE TABLE IF NOT EXISTS (7 tables)
+  → initializeDatabase(db)    # CREATE TABLE IF NOT EXISTS (9 tables)
   → migrateDatabase(db)       # ALTER TABLE for legacy columns
   → seedDatabase(db)          # 85 solvents + 7 polymer groups (if empty)
   → seedNanoParticles(db)     # 18 nanoparticles (if empty)
-  → seedDrugs(db)             # 15 drugs (if empty)
+  → seedDrugs(db)             # 16 drugs (if empty)
   → seedCoatings(db)          # 12 coatings as PartsGroup (if group absent)
   → seedPlasticizers(db)      # 10 plasticizers as Solvents (if none tagged)
   → seedCarriers(db)          # 11 DDS carriers as PartsGroup (if group absent)
   → seedDispersants(db)       # ~10 dispersants (if empty)
 ```
 
+## Seed Data Summary
+
+| Entity | Count | Source File |
+|--------|-------|-------------|
+| Solvents | 135 | seed-data.ts |
+| Nanoparticles | 18 | seed-nano-particles.ts |
+| Drugs | 16 | seed-drugs.ts |
+| Polymers (groups + parts) | ~10 groups, ~83 parts | seed-data.ts |
+| Coatings | 12 parts | seed-coatings.ts |
+| Plasticizers | 10 | seed-plasticizers.ts |
+| Carriers | 11 parts | seed-carriers.ts |
+| Dispersants | ~10 | seed-dispersants.ts |
+
 ---
 
-**Last Updated:** 2026-03-22
+**Last Updated:** 2026-03-24
 
 **Related:** See `architecture.md` for overview, `backend.md` for repository implementation, `frontend.md` for UI interaction.

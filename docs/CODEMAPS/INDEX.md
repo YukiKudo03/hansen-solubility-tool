@@ -1,8 +1,8 @@
-<!-- Generated: 2026-03-22 | Files scanned: 349 src + 222 tests | Token estimate: ~980 -->
+<!-- Generated: 2026-03-24 | Files scanned: 361 src + 227 tests | Token estimate: ~980 -->
 
 # Hansen Solubility Project — Codemap Index
 
-A production-grade Electron desktop application for HSP-based material compatibility evaluation. **70+ evaluation pipelines** across 8 categories + comparison report + 3D visualization + advanced analytics + bookmarks + evaluation history.
+A production-grade Electron desktop application for HSP-based material compatibility evaluation. **90+ evaluation pipelines** across 6 categories + comparison report + 3D visualization + advanced analytics + bookmarks + evaluation history.
 
 ## Quick Navigation
 
@@ -10,8 +10,8 @@ A production-grade Electron desktop application for HSP-based material compatibi
 - **[architecture.md](./architecture.md)** — System diagram, pipelines, module boundaries
 
 ### Implementation Details
-- **[backend.md](./backend.md)** — IPC handlers (167), repository pattern, validation
-- **[frontend.md](./frontend.md)** — MD3 responsive layout, 93 tabs, 69 hooks, dark mode
+- **[backend.md](./backend.md)** — IPC handlers (190+), repository pattern, validation
+- **[frontend.md](./frontend.md)** — MD3 responsive layout, 96 tabs, 79 hooks, dark mode
 - **[data.md](./data.md)** — SQLite schema (9 tables), repositories (8), seed data
 - **[dependencies.md](./dependencies.md)** — External packages, build tools
 
@@ -25,10 +25,10 @@ A production-grade Electron desktop application for HSP-based material compatibi
 - **Auto-Update:** electron-updater via GitHub Releases
 - **Cross-Platform:** Win (NSIS) / macOS (dmg) / Linux (AppImage)
 
-### Evaluation Pipelines (70+ across 8 categories)
+### Evaluation Pipelines (90+ across 6 categories)
 
 ```
-評価 (31 pipelines):
+評価 (33 pipelines):
   溶解性評価, 接触角推定, 膨潤度予測, 耐薬品性予測, 接着性予測,
   環境応力亀裂(ESC), ブレンド相溶性, リサイクル相溶性,
   添加剤移行, フレーバースカルピング, 包装材溶出,
@@ -36,16 +36,17 @@ A production-grade Electron desktop application for HSP-based material compatibi
   粘着テープ剥離強度, 構造接着設計, ガス透過性, 膜分離選択性,
   吸入薬適合性, タンパク質凝集, 残留溶媒, コーティング欠陥,
   レジスト現像, 結晶溶解温度, ハイドロゲル膨潤, ゴム配合,
-  繊維染色性, 多形リスク, 印刷電子濡れ性, 封止材適合, バイオ燃料適合
+  繊維染色性, 多形リスク, 印刷電子濡れ性, 封止材適合,
+  バイオ燃料適合, 表面処理効果定量, PSA剥離強度
 
-選定 (24 pipelines):
+選定 (26 pipelines):
   ナノ粒子分散, 分散剤選定, 可塑剤選定, キャリア選定,
   共結晶スクリーニング, 3D印刷平滑化, 誘電体膜品質, 賦形剤適合性,
   相溶化剤選定, 香料カプセル化, 経皮吸収促進剤,
   顔料分散, CNT/グラフェン分散, MXene分散, NP薬物ローディング,
   CO2吸収材, 水素貯蔵材料, UVフィルター適合, バイオ製剤バッファー,
   天然色素抽出, 精油抽出, 土壌汚染抽出, 硬化剤選定,
-  QDリガンド交換, PCMカプセル化
+  QDリガンド交換, PCMカプセル化, 日焼け止めUVフィルター
 
 最適化 (17 pipelines):
   ブレンド最適化, 超臨界CO2, 洗浄剤配合, 薬物溶解性,
@@ -70,8 +71,9 @@ A production-grade Electron desktop application for HSP-based material compatibi
 - **Database:** SQLite (better-sqlite3 12.8), WAL mode
 - **Styling:** Tailwind CSS 3.4, MD3 design tokens, dark mode
 - **3D Plot:** Plotly.js (plotly.js-basic-dist-min)
+- **PDF:** jspdf 4.2
 - **i18n:** i18next + react-i18next
-- **Testing:** Vitest 2.1 (2170 unit) + Playwright 1.58 (98+ E2E)
+- **Testing:** Vitest 2.1 (2604 unit, pool:forks) + Playwright 1.58 (295 E2E, 30 specs)
 
 ## Module Tour
 
@@ -102,9 +104,9 @@ Pure domain logic (testable, no side effects)
 - `green-solvent.ts` — グリーン溶媒スコアリング
 - `multi-objective.ts` — Pareto最適化フロント計算
 
-**70+パイプライン計算モジュール:**
-- 評価系31種 (ESC, ブレンド相溶性, 添加剤移行, ガス透過性, 膜分離, etc.)
-- 選定系24種 (共結晶, 顔料分散, CNT/グラフェン, MXene, QDリガンド, etc.)
+**90+パイプライン計算モジュール:**
+- 評価系33種 (ESC, ブレンド相溶性, 添加剤移行, ガス透過性, 膜分離, etc.)
+- 選定系26種 (共結晶, 顔料分散, CNT/グラフェン, MXene, QDリガンド, etc.)
 - 最適化系17種 (超臨界CO2, ペロブスカイト, LiB電解液, etc.)
 - 分析系16種 (コポリマーHSP, 圧力補正, 逆HSP推定, IL/DES, ML予測, etc.)
 
@@ -121,29 +123,29 @@ Pure domain logic (testable, no side effects)
 
 ### src/db/ (12 files, ~1780 lines)
 - `schema.ts` — 9 tables + 2 indexes
-- `repository.ts` — 6 repository interfaces + DTOs
-- `sqlite-repository.ts` — 6 SQLite implementations
+- `repository.ts` — 8 repository interfaces + DTOs
+- `sqlite-repository.ts` — 8 SQLite implementations
 - `bookmark-repository.ts`, `history-repository.ts` — 新機能用repos
 - 7 seed files: solvents(135), nano-particles(18), drugs(16), coatings(12), plasticizers(10), carriers(11), dispersants(~10)
 
 ### src/main/ (3 files, ~2,700 lines)
 - `main.ts` — App startup, DB init, auto-updater
-- `ipc-handlers.ts` — **167 IPC handlers** (CRUD + 70+評価 + ブックマーク + 履歴 + インポート)
-- `preload.ts` — Context-isolated bridge
+- `ipc-handlers.ts` — **190+ IPC handlers** (CRUD + 90+評価 + ブックマーク + 履歴 + インポート)
+- `preload.ts` — Context-isolated bridge (10,757 lines)
 
-### src/renderer/ (214 files, ~17,700 lines)
-- `App.tsx` — MD3 responsive layout + `useTheme()`
-- `navigation.ts` — 6カテゴリ・93タブ (70+評価パイプライン)
-- `components/` — 142 components (91 Views, 40 Badges, 3 Nav, SortTableHeader, BookmarkButton, etc.)
-- `hooks/` — 69 hooks (useCsvExport, useSortableTable, useBookmarks, useTheme, useDispersantSelection, etc.)
+### src/renderer/ (226 files, ~18,500 lines)
+- `App.tsx` — MD3 responsive layout + `useTheme()` + VIEW_MAP (96 entries)
+- `navigation.ts` — 6カテゴリ・96タブ (90+評価パイプライン)
+- `components/` — 142 components (93 Views, 45+ Badges, 3 Nav, SortTableHeader, BookmarkButton, etc.)
+- `hooks/` — 79 hooks (useCsvExport, useSortableTable, useBookmarks, useTheme, useDispersantSelection, etc.)
 
 ### src/i18n/ (2 files)
 - `translations.ts` — ja/en 60+キー
 - `index.ts` — i18next初期化
 
-### tests/ (222 files, 2170 unit/renderer + 25 E2E specs)
+### tests/ (227 files, 2604 unit/renderer + 295 E2E)
 
-## Database Schema (8 tables)
+## Database Schema (9 tables)
 
 | Table | Rows | Purpose |
 |-------|------|---------|
@@ -161,13 +163,13 @@ Pure domain logic (testable, no side effects)
 
 | Category | Files | Lines | Key Contents |
 |----------|-------|-------|-------------|
-| **Core** | 117 | 15,400 | 70+評価エンジン, 10分類器, ユーティリティ |
+| **Core** | 117 | 15,400 | 90+評価エンジン, 10分類器, ユーティリティ |
 | **Database** | 12 | 2,100 | Schema, 8 repos, 7 seed files |
-| **Main** | 3 | 2,700 | Electron, IPC (167), preload |
-| **Renderer** | 214 | 17,700 | 142 components, 69 hooks, i18n |
-| **Tests** | 222 | — | 2170 unit/renderer + 25 E2E |
-| **Total** | 571 | 38,600+ | — |
+| **Main** | 3 | 2,700 | Electron, IPC (190+), preload |
+| **Renderer** | 226 | 18,500 | 142 components, 79 hooks, i18n |
+| **Tests** | 227 | — | 2604 unit/renderer + 295 E2E (30 specs) |
+| **Total** | 588 | 39,500+ | — |
 
 ---
 
-**Last Updated:** 2026-03-22 | **Status:** 70+ evaluation pipelines complete, core coverage 98.88%
+**Last Updated:** 2026-03-24 | **Status:** 90+ evaluation pipelines complete, core coverage 98.88%, all 2604 tests passing

@@ -1,4 +1,4 @@
-<!-- Generated: 2026-03-22 | Updated: 2026-03-22 | Files scanned: 2 | Token estimate: ~750 -->
+<!-- Generated: 2026-03-24 | Updated: 2026-03-24 | Files scanned: 2 | Token estimate: ~750 -->
 
 # External Dependencies & Build Tools
 
@@ -7,8 +7,14 @@
 | Package | Version | Purpose | Notes |
 |---------|---------|---------|-------|
 | **better-sqlite3** | 12.8.0 | SQLite database driver | Native module, synchronous API |
-| **react** | 19.2.4 | UI framework | Latest with hooks, RSC experimental |
+| **react** | 19.2.4 | UI framework | Latest with hooks |
 | **react-dom** | 19.2.4 | React rendering to DOM | Paired with react version |
+| **plotly.js-basic-dist-min** | 3.4.0 | Data visualization | 3D scatter, mesh, HSP spheres |
+| **react-plotly.js** | 2.6.0 | React Plotly wrapper | Declarative chart components |
+| **jspdf** | 4.2.1 | PDF generation | Evaluation report export |
+| **electron-updater** | 6.8.3 | Auto-update | GitHub Releases |
+| **i18next** | 25.8.18 | Internationalization | ja/en |
+| **react-i18next** | 16.5.8 | React i18n integration | useTranslation hook |
 
 ## Development Dependencies
 
@@ -33,7 +39,7 @@
 |---------|---------|---------|
 | **vitest** | 2.1.9 | Unit/integration test framework |
 | @vitest/coverage-v8 | 2.1.9 | Code coverage reporter (V8) |
-| **@playwright/test** | latest | E2E testing framework |
+| **@playwright/test** | 1.58.2 | E2E testing framework |
 | @testing-library/react | 16.3.2 | React component testing |
 | @testing-library/dom | 10.4.1 | DOM query helpers |
 | @testing-library/jest-dom | 6.9.1 | Custom matchers |
@@ -44,6 +50,7 @@
 | Package | Version | Purpose |
 |---------|---------|---------|
 | **electron-builder** | 26.8.1 | Package Electron to .exe/.dmg |
+| **@electron/rebuild** | 4.0.3 | Rebuild native modules for Electron |
 | **concurrently** | 9.2.1 | Run multiple npm scripts in parallel |
 
 ### CSS & Styling
@@ -65,6 +72,7 @@
   "build:renderer": "vite build --config vite.renderer.config.ts",
   "start": "electron .",
   "package": "npm run build && electron-builder --win",
+  "pretest": "npm rebuild better-sqlite3 --silent",
   "test": "vitest run",
   "test:watch": "vitest",
   "test:coverage": "vitest run --coverage",
@@ -75,30 +83,25 @@
 }
 ```
 
+**Note:** `pretest` script auto-rebuilds better-sqlite3 for system Node.js (avoids ABI mismatch with Electron-compiled native module). Vitest uses `pool: 'forks'` for process isolation.
+
 ## Configuration Files
 
 ### TypeScript
 - **tsconfig.json** — Main config (strict mode, ES2020 target)
 - **tsconfig.node.json** — Main process config (CommonJS, no JSX)
-- **vitest.config.ts** — Test runner config
 
 ### Vite
-- **vite.renderer.config.ts** — Renderer build config
-  - React plugin enabled
-  - Electron preload configured
-  - HTML entry point: `src/renderer/index.html`
+- **vite.config.ts** — Vitest config (pool: forks, coverage: v8)
+- **vite.renderer.config.ts** — Renderer build config (React plugin, preload)
 
 ### Tailwind CSS
-- **tailwind.config.js** — Theme customization
+- **tailwind.config.js** — Theme customization, MD3 design tokens
 - **postcss.config.js** — PostCSS with Tailwind + autoprefixer
 
 ### Electron
-- **electron-builder.yml** or config in package.json
-  - Target: Windows installer
-  - Output directory: `dist/`
-
-### ESLint/Prettier (if configured)
-- Not present in package.json (optional to add)
+- electron-builder config in package.json
+- Target: Windows (NSIS) / macOS (dmg) / Linux (AppImage)
 
 ## Installation & Runtime Requirements
 
@@ -108,12 +111,6 @@
   - Windows: Visual Studio Build Tools
   - macOS: Xcode CLI tools
   - Linux: build-essential
-
-**Install command:**
-```bash
-npm install
-# Builds better-sqlite3 native module during install
-```
 
 ## Build Artifacts
 
@@ -127,49 +124,11 @@ npm install
 - Renderer: `dist/renderer/index.html`, `dist/renderer/assets/` (Vite build)
 - Package: `.exe` installer in `dist/` (electron-builder)
 
-## Environment Variables
-
-**Vite Dev Server:**
-- `VITE_DEV_SERVER_URL` — Set by Vite, checked in main.ts to load dev server vs. production HTML
-
-**Database:**
-- None (hardcoded to `{userData}/hansen.db`)
-
 ## Docker Support (Optional)
 
-**Files detected:**
 - `docker-compose.yml` — Main dev environment
 - `docker-compose.test.yml` — Isolated test environment
-
-**Services:**
-- `docker:build` — Build application image
-- `docker:test` — Run all tests in container
-- `docker:test:unit` — Unit tests only
-- `docker:test:integration` — Integration tests only
-- `docker:dev` — Development server
-
-## Dependency Tree (Top-Level)
-
-```
-hansen-solubility
-├── runtime
-│   ├── better-sqlite3 (C++ native)
-│   ├── react
-│   └── react-dom
-├── dev: build tools
-│   ├── typescript (tsc)
-│   ├── vite + plugin-react
-│   ├── electron + electron-builder
-│   └── concurrently
-├── dev: testing
-│   ├── vitest + coverage-v8
-│   ├── @playwright/test (E2E)
-│   └── @testing-library/* (component tests)
-└── dev: styling
-    ├── tailwindcss
-    ├── postcss
-    └── autoprefixer
-```
+- Services: `docker:build`, `docker:test`, `docker:test:unit`, `docker:test:integration`, `docker:dev`
 
 ## Security Considerations
 
@@ -178,15 +137,8 @@ hansen-solubility
 - **Sandbox:** Disabled (required for native module access)
 - **Preload:** Validates IPC messages via whitelist in `preload.ts`
 
-## Performance Notes
-
-- **better-sqlite3:** Synchronous but fast (no event loop blocking concern)
-- **Tailwind:** Purges unused CSS in production build
-- **Electron:** 41.0.2 includes V8 snapshot for faster startup
-- **Vite:** ESM-based dev server, no bundle in dev mode
-
 ---
 
-**Last Updated:** 2026-03-22
+**Last Updated:** 2026-03-24
 
 **Related:** See `architecture.md` for system design, `backend.md` for main process, `data.md` for database.

@@ -3,6 +3,7 @@ import { defineConfig } from 'vitest/config';
 export default defineConfig({
   test: {
     globals: true,
+    pool: 'forks',
     setupFiles: ['./tests/renderer/setup.ts'],
     exclude: ['tests/e2e/**', 'node_modules/**'],
     coverage: {

@@ -1,4 +1,4 @@
-<!-- Generated: 2026-03-22 | Files scanned: 349 src | Token estimate: ~980 -->
+<!-- Generated: 2026-03-24 | Files scanned: 361 src | Token estimate: ~980 -->
 
 # Hansen Solubility System Architecture
 
@@ -11,18 +11,18 @@
 │  ┌──────────────────────┐          ┌────────────────────────┐   │
 │  │  MAIN PROCESS        │  IPC     │  RENDERER PROCESS      │   │
 │  │  (main.ts)           │◄────────►│  (React 19 App.tsx)    │   │
-│  │  + electron-updater  │ 167 API  │  MD3 responsive        │   │
+│  │  + electron-updater  │ 190+ API │  MD3 responsive        │   │
 │  │                      │          │  Dark mode (class)     │   │
 │  │ ┌──────────────────┐ │          │ ┌──────────────────┐   │   │
-│  │ │ IPC Handlers     │ │          │ │ 91 Feature Views │   │   │
-│  │ │ 167 handlers     │ │          │ │ + DB/Mix/History │   │   │
+│  │ │ IPC Handlers     │ │          │ │ 93 Feature Views │   │   │
+│  │ │ 190+ handlers    │ │          │ │ + DB/Mix/History │   │   │
 │  │ │ + CSV import     │ │          │ │ + Settings       │   │   │
 │  │ └──────────────────┘ │          │ └──────────────────┘   │   │
 │  │         ▼            │          │        ▲               │   │
-│  │ ┌──────────────────┐ │          │   69 Hooks             │   │
-│  │ │Core (117 modules)│ │          │   40 Badges            │   │
-│  │ │ 70+ evaluators   │ │          │   i18n (ja/en)         │   │
-│  │ │ Pure functions   │ │          │   i18n (ja/en)         │   │
+│  │ ┌──────────────────┐ │          │   79 Hooks             │   │
+│  │ │Core (117 modules)│ │          │   45+ Badges           │   │
+│  │ │ 90+ evaluators   │ │          │   i18n (ja/en)         │   │
+│  │ │ Pure functions   │ │          │   Plotly.js 3D charts  │   │
 │  │ └──────────────────┘ │          └────────────────────────┘   │
 │  │         ▼            │                                       │
 │  │ ┌──────────────────┐ │                                       │
@@ -38,9 +38,9 @@
 └─────────────────────────────────────────────────────────────────┘
 ```
 
-## Evaluation Pipelines (70+ total across 8 categories)
+## Evaluation Pipelines (90+ total across 6 categories)
 
-### Category 1: 評価 (31 pipelines)
+### Category 1: 評価 (33 pipelines)
 ```
 Core evaluators:
   溶解性評価         ReportView → evaluate() → Ra/RED → classifyRisk
@@ -49,16 +49,17 @@ Core evaluators:
   耐薬品性予測       ChemResistanceView → classifyChemResistance (RED大=耐性良 ※逆)
   接着性予測         AdhesionView → evaluateAdhesion() → 接着強度スコア
 
-Extended evaluators (26):
+Extended evaluators (28):
   環境応力亀裂(ESC), ブレンド相溶性, リサイクル相溶性, 添加剤移行,
   フレーバースカルピング, 包装材溶出, リポソーム透過性,
   インク-基材密着, 多層コーティング密着, 粘着テープ剥離強度, 構造接着設計,
   ガス透過性, 膜分離選択性, 吸入薬適合性, タンパク質凝集, 残留溶媒,
   コーティング欠陥, レジスト現像, 結晶溶解温度, ハイドロゲル膨潤,
-  ゴム配合, 繊維染色性, 多形リスク, 印刷電子濡れ性, 封止材適合, バイオ燃料適合
+  ゴム配合, 繊維染色性, 多形リスク, 印刷電子濡れ性, 封止材適合,
+  バイオ燃料適合, 表面処理効果定量, 粘着テープ剥離強度
 ```
 
-### Category 2: 選定 (24 pipelines)
+### Category 2: 選定 (26 pipelines)
 ```
 Core selectors:
   ナノ粒子分散       NanoDispersionView → screenAll() → classifyDispersibility
@@ -66,12 +67,13 @@ Core selectors:
   可塑剤選定         PlasticizerView → screenPlasticizers() → classifyCompatibility
   キャリア選定       CarrierSelectionView → screenCarriers() → classifyCompatibility
 
-Extended selectors (20):
+Extended selectors (22):
   共結晶スクリーニング, 3D印刷平滑化, 誘電体膜品質, 賦形剤適合性,
   相溶化剤選定, 香料カプセル化, 経皮吸収促進剤, 顔料分散,
   CNT/グラフェン分散, MXene分散, NP薬物ローディング, CO2吸収材,
   水素貯蔵材料, UVフィルター適合, バイオ製剤バッファー, 天然色素抽出,
-  精油抽出, 土壌汚染抽出, 硬化剤選定, QDリガンド交換, PCMカプセル化
+  精油抽出, 土壌汚染抽出, 硬化剤選定, QDリガンド交換, PCMカプセル化,
+  日焼け止めUVフィルター
 ```
 
 ### Category 3: 最適化 (17 pipelines)
@@ -144,20 +146,21 @@ Utilities:
   hsp-visualization.ts    3Dプロットデータ生成
   theme.ts                MD3 light/dark カラートークン
   pdf-report.ts           PDFレポートデータ生成
+  accuracy-warnings.ts    精度警告・信頼度表示
 ```
 
 ## Module Boundaries
 
 | Layer | Location | Files | Lines | Purpose |
 |-------|----------|-------|-------|---------|
-| **Domain** | `src/core/` | 117 | 15,400 | 70+ evaluators, 10 classifiers, utilities |
+| **Domain** | `src/core/` | 117 | 15,400 | 90+ evaluators, 10 classifiers, utilities |
 | **Data** | `src/db/` | 12 | 2,100 | Schema(9 tables), 8 repos, 7 seed files |
-| **Main** | `src/main/` | 3 | 2,700 | Electron, 167 IPC, auto-updater |
-| **UI** | `src/renderer/` | 214 | 17,700 | 142 components, 69 hooks, i18n |
-| **Tests** | `tests/` | 222 | — | 2170 unit/renderer + 25 E2E specs |
+| **Main** | `src/main/` | 3 | 2,700 | Electron, 190+ IPC, auto-updater |
+| **UI** | `src/renderer/` | 226 | 18,500 | 142 components, 79 hooks, i18n |
+| **Tests** | `tests/` | 227 | — | 2604 unit/renderer + 295 E2E (30 specs) |
 
 ---
 
-**Last Updated:** 2026-03-22
+**Last Updated:** 2026-03-24
 
 **Next:** See `backend.md` for IPC/handlers, `frontend.md` for components, `data.md` for schema.

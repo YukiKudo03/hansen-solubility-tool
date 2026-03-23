@@ -16,6 +16,7 @@
     "package:linux": "npm run build && electron-builder --linux",
     "package:all": "npm run build && electron-builder --win --mac --linux",
     "package:dir": "npm run build && electron-builder --win --dir",
+    "pretest": "npm rebuild better-sqlite3 --silent",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
