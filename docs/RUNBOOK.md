@@ -106,7 +106,7 @@ On first launch:
 
 ### Evaluation Pipelines
 
-70+ evaluation pipelines across 8 categories (evaluation, selection, optimization, data, analysis, settings, plus extended categories). Phase 1-15 added 60 new pipelines covering ESC, polymer blend miscibility, gas permeability, membrane separation, co-crystal screening, pigment dispersion, supercritical CO2, perovskite solvents, copolymer HSP estimation, and many more.
+90+ evaluation pipelines across 6 categories (評価 33, 選定 26, 最適化 17, 分析 16, データ 3, 設定 1). Phase 1-15 added 60+ new pipelines covering ESC, polymer blend miscibility, gas permeability, membrane separation, co-crystal screening, pigment dispersion, supercritical CO2, perovskite solvents, copolymer HSP estimation, and many more.
 
 ### Backup
 
@@ -156,7 +156,7 @@ npm start
 2. Delete `hansen.db-wal` and `hansen.db-shm` (not the main `.db` file)
 3. Restart the app
 
-### Native module version mismatch
+### Native module version mismatch (Electron runtime)
 
 **Cause:** `better-sqlite3` compiled for wrong Electron version.
 
@@ -164,6 +164,17 @@ npm start
 ```bash
 npx @electron/rebuild
 ```
+
+### Native module version mismatch (Vitest)
+
+**Cause:** `better-sqlite3` compiled for Electron (ABI 145) but Vitest runs on system Node.js (ABI 115). Error: `NODE_MODULE_VERSION 145 ... requires NODE_MODULE_VERSION 115`.
+
+**Fix:**
+```bash
+npm rebuild better-sqlite3
+```
+
+**Note:** The `pretest` script runs this automatically before `npm test`. If you see this error when running tests directly via `npx vitest`, run the rebuild manually first. Vitest is configured with `pool: 'forks'` to prevent flaky tests from shared memory in JSDOM environment.
 
 ### Vite dev server not connecting
 
@@ -190,17 +201,17 @@ npm run docker:test:integration  # Integration tests only
 
 ```bash
 npm run typecheck         # TypeScript type checking
-npm test                  # All test suites (2170+ tests across 222+ files)
+npm test                  # All test suites (2604+ tests across 197+ files)
 npm run test:coverage     # Coverage report (target: 98%+)
-npm run test:e2e          # E2E tests (98+ tests)
+npm run test:e2e          # E2E tests (295 tests, 30 specs)
 npm run test:literature   # Literature validation (147 cases)
 ```
 
 ### Pre-release Checklist
 
 - [ ] `npm run typecheck` passes
-- [ ] `npm test` — all tests green (2170+ unit/integration/component tests, coverage 98%+)
-- [ ] `npm run test:e2e` — 98+ E2E tests pass
+- [ ] `npm test` — all tests green (2604+ unit/integration/component tests, coverage 98%+)
+- [ ] `npm run test:e2e` — 295 E2E tests pass (30 specs)
 - [ ] `npm run package` — installer builds successfully
 - [ ] Install and run the packaged app
 - [ ] Verify polymer evaluation workflow (select group + solvent → evaluate → export CSV)

@@ -48,7 +48,7 @@ This runs two processes concurrently:
 | `npm run package:linux` | Build + package Linux installer (.AppImage/.deb) |
 | `npm run package:all` | Build + package all platforms |
 | `npm run package:dir` | Build + package to directory (no installer) |
-| `npm test` | Run all tests (unit + integration + renderer) |
+| `npm test` | Run all tests (pretest rebuild + unit + integration + renderer) |
 | `npm run test:watch` | Run tests in watch mode |
 | `npm run test:coverage` | Run tests with V8 coverage report |
 | `npm run test:e2e` | Run Playwright E2E tests |
@@ -62,6 +62,8 @@ This runs two processes concurrently:
 | `npm run docker:test:unit` | Run unit tests in Docker |
 | `npm run docker:test:integration` | Run integration tests in Docker |
 | `npm run docker:dev` | Start dev environment in Docker |
+
+**Note:** `pretest` script auto-runs `npm rebuild better-sqlite3` before each test to prevent ABI mismatch between Electron-compiled and Node.js-compiled native modules. Vitest uses `pool: 'forks'` for process isolation.
 <!-- END AUTO-GENERATED: scripts-table -->
 
 ## Testing
@@ -69,11 +71,11 @@ This runs two processes concurrently:
 ### Run Tests
 
 ```bash
-npm test                  # All tests (2170+ tests, 222+ files)
+npm test                  # All tests (2604+ tests, 197+ files)
 npm run test:unit        # Core logic (117 modules)
 npm run test:integration # Database operations
 npm run test:coverage    # With coverage report (target: 98%+)
-npm run test:e2e         # Playwright E2E (requires built app)
+npm run test:e2e         # Playwright E2E (295 tests, 30 specs)
 npm run test:literature  # Literature value validation (147 cases)
 ```
 
@@ -102,19 +104,19 @@ Use factories from `tests/renderer/factories.ts` for consistent test data.
 ```
 src/
 ├── core/       Pure domain logic (no I/O, 100% testable)
-│               117 modules: 70+ evaluation engines, 10 classifiers,
+│               117 modules: 90+ evaluation engines, 10 classifiers,
 │               base calculators (hsp, contact-angle, blend-optimizer, etc.),
 │               utilities (report, validation, csv-import, ghs-safety, etc.)
 ├── db/         SQLite data access layer (repository pattern)
 │               8 repos: Parts, Solvent, NanoParticle, Drug, Dispersant, Settings, Bookmark, History
 │               7 seed files: solvents, nano-particles, drugs, coatings, plasticizers, carriers, dispersants
 ├── i18n/       多言語対応 (i18next: 日本語/英語)
-├── main/       Electron main process (lifecycle, IPC, 167 handlers)
+├── main/       Electron main process (lifecycle, IPC, 190+ handlers)
 │               auto-updater (electron-updater)
 └── renderer/   MD3 responsive UI (960×680)
-                navigation.ts — 6カテゴリ・93タブ定義
-                142 components (91 Views, 40 Badges, 3 Nav, etc.)
-                69 hooks (incl. useTheme, useCsvExport, useSortableTable, useBookmarks, etc.)
+                navigation.ts — 6カテゴリ・96タブ定義
+                142 components (93 Views, 45+ Badges, 3 Nav, etc.)
+                79 hooks (incl. useTheme, useCsvExport, useSortableTable, useBookmarks, etc.)
 ```
 
 See `docs/CODEMAPS/INDEX.md` for detailed architecture.
@@ -130,7 +132,7 @@ See `docs/CODEMAPS/INDEX.md` for detailed architecture.
 
 ## PR Checklist
 
-- [ ] All tests pass (`npm test` — 2170+ tests, 222+ test files)
+- [ ] All tests pass (`npm test` — 2604+ tests, 197+ test files)
 - [ ] Type check passes (`npm run typecheck`)
 - [ ] New features have unit tests (TDD recommended)
 - [ ] UI changes have component tests
