@@ -1,0 +1,260 @@
+{
+  "chapter_title": "バイオ医薬品と賦形剤",
+  "chapter_title_en": "Biopharmaceuticals and Excipients",
+  "level": "chapter",
+  "parent": "Part IV: Applications",
+  "synopsis": "This chapter applies Hansen Solubility Parameters to biopharmaceutical formulation challenges, including protein aggregation risk assessment in buffer systems, biologic formulation buffer stability with associating liquid corrections, excipient-API compatibility screening, and residual solvent risk prediction using inverse RED logic. It also covers solubility estimation via the Greenhalgh-Williams approach combining RED with logP, and integration of GHS safety classification data into formulation decision-making. The unifying theme is that HSP-based methods provide rapid, quantitative screening tools for the complex compatibility and safety requirements of biopharmaceutical development.",
+  "key_concepts": [
+    "Protein aggregation risk assessment using HSP distance between buffer components and protein surface patches",
+    "Preferential exclusion and preferential interaction of co-solutes with protein surfaces interpreted through HSP framework",
+    "Associating liquid correction for hydrogen-bonding buffer components (water, polyols, sugars)",
+    "Biologic formulation buffer stability: HSP matching between API, buffer, and excipient components",
+    "Excipient-API compatibility screening via RED number threshold criteria",
+    "HSP sphere approach for mapping excipient compatibility space around a biologic API",
+    "Residual solvent risk prediction using inverse RED logic (RED < 1 indicates retention risk)",
+    "ICH Q3C residual solvent classification integrated with HSP-based retention prediction",
+    "Greenhalgh-Williams solubility estimation combining RED with logP for drug-excipient systems",
+    "GHS safety classification integration for solvent and excipient hazard screening",
+    "Lyophilization excipient selection: cryoprotectant and lyoprotectant HSP matching",
+    "Surfactant-protein interaction prediction via HSP distance to hydrophobic protein patches",
+    "Osmolality and tonicity agent selection guided by HSP compatibility constraints",
+    "Temperature-dependent HSP shifts in aqueous buffer systems and impact on protein stability"
+  ],
+  "equations": [
+    {
+      "name": "Protein aggregation risk score",
+      "latex": "S_{agg} = \\sum_i w_i \\cdot \\exp\\left(-\\frac{Ra_i^2}{2\\sigma^2}\\right)",
+      "explanation": "Aggregation risk score computed as a weighted sum over buffer components i, where Ra_i is the HSP distance between component i and exposed hydrophobic patches on the protein surface, sigma is a scaling parameter, and w_i is the molar fraction weight"
+    },
+    {
+      "name": "Associating liquid correction for deltaH",
+      "latex": "\\delta_{H,eff} = \\delta_H \\cdot \\left(\\frac{K_{assoc}}{1 + K_{assoc} \\cdot c}\\right)^{1/2}",
+      "explanation": "Effective hydrogen bonding parameter corrected for self-association in hydrogen-bonding liquids (water, glycerol, sugars), where K_assoc is the association equilibrium constant and c is molar concentration"
+    },
+    {
+      "name": "Excipient-API compatibility RED",
+      "latex": "RED = \\frac{Ra}{R_0} = \\frac{\\sqrt{4(\\delta_{D,exc} - \\delta_{D,API})^2 + (\\delta_{P,exc} - \\delta_{P,API})^2 + (\\delta_{H,exc} - \\delta_{H,API})^2}}{R_0}",
+      "explanation": "Relative Energy Difference between excipient and API; RED < 1 indicates good compatibility (excipient lies within the API interaction sphere), RED > 1 suggests incompatibility"
+    },
+    {
+      "name": "Residual solvent retention risk (inverse RED)",
+      "latex": "Risk_{retention} \\propto \\frac{1}{RED_{solvent-matrix}} = \\frac{R_0}{Ra_{solvent-matrix}}",
+      "explanation": "Inverse RED logic for residual solvent prediction: solvents with RED < 1 relative to the polymer or excipient matrix have high retention risk because they are thermodynamically compatible with the matrix and resist removal"
+    },
+    {
+      "name": "Greenhalgh-Williams solubility criterion",
+      "latex": "\\Delta \\delta_t < 7 \\text{ MPa}^{1/2} \\Rightarrow \\text{likely miscible}; \\quad \\Delta \\delta_t > 10 \\text{ MPa}^{1/2} \\Rightarrow \\text{likely immiscible}",
+      "explanation": "Empirical rule by Greenhalgh et al. (1999) relating total solubility parameter difference to drug-excipient miscibility; combined with logP for improved prediction in aqueous biopharmaceutical systems"
+    },
+    {
+      "name": "Combined RED-logP solubility estimation",
+      "latex": "\\log S = a \\cdot RED + b \\cdot \\log P + c",
+      "explanation": "Linear regression model combining HSP-based RED with octanol-water partition coefficient (logP) to estimate aqueous solubility of drug substances in excipient matrices; coefficients a, b, c are fitted to experimental data"
+    },
+    {
+      "name": "Buffer HSP with temperature correction",
+      "latex": "\\delta_{i,buffer}(T) = \\delta_{i,buffer}(T_{ref}) + \\frac{d\\delta_i}{dT}(T - T_{ref})",
+      "explanation": "Linear temperature correction for buffer HSP components, critical for predicting stability during storage at 2-8 C versus room temperature processing"
+    }
+  ],
+  "historical_context": "The application of solubility parameters to pharmaceutical systems was pioneered by Hancock et al. (1997) and Greenhalgh et al. (1999), who established empirical criteria for drug-excipient miscibility based on total solubility parameter differences. Hansen's three-component framework was extended to biopharmaceuticals beginning in the 2000s, as the biologic drug market grew rapidly. Protein aggregation prediction using HSP concepts was explored by Lai et al. (2014) and others who mapped hydrophobic surface patches of proteins in HSP space. The associating liquid correction, essential for aqueous buffer systems, builds on Panayiotou and Stefanis (2012) and earlier work by Hoy (1970) and Karger et al. (1976) on hydrogen bonding contributions. The ICH Q3C guideline (1997, revised 2019) established residual solvent limits that motivate HSP-based retention prediction. Abbott and Hansen (2008) demonstrated HSP approaches for excipient compatibility, while Thakral and Bhatt (2020) reviewed modern applications of HSP in pharmaceutical cocrystal and formulation design. GHS safety integration reflects the broader trend of combining hazard and compatibility data in green chemistry and pharmaceutical quality-by-design (QbD) frameworks.",
+  "related_project_modules": [
+    "protein-aggregation-risk.ts",
+    "biologic-formulation-buffer.ts",
+    "excipient-compatibility.ts",
+    "residual-solvent-prediction.ts",
+    "solubility-estimation.ts",
+    "ghs-safety.ts",
+    "associating-liquid-correction.ts",
+    "drug-solubility.ts"
+  ],
+  "prerequisites": [
+    "Ch01_HSP_Fundamentals",
+    "Ch02_Thermodynamic_Foundations",
+    "Ch03_Temperature_Pressure_Effects",
+    "Ch04_HSP_Estimation_Methods",
+    "Ch07_Polymer_Solubility_Swelling"
+  ],
+  "learning_objectives": [
+    "Assess protein aggregation risk in a given buffer system by computing HSP distances between buffer components and protein hydrophobic surface patches",
+    "Apply associating liquid corrections to hydrogen-bonding buffer components (water, glycerol, sucrose) and evaluate their impact on formulation stability predictions",
+    "Screen excipient-API compatibility for a biologic formulation using RED criteria and construct an excipient compatibility map in HSP space",
+    "Predict residual solvent retention risk using inverse RED logic and cross-reference with ICH Q3C classification limits",
+    "Estimate drug-excipient solubility using the Greenhalgh-Williams criterion combined with logP data, and integrate GHS safety classifications into formulation decisions"
+  ],
+  "practical_applications": [
+    "Screening buffer compositions (phosphate, citrate, histidine) for monoclonal antibody formulations to minimize aggregation during storage",
+    "Selecting cryoprotectants and lyoprotectants (trehalose, sucrose, mannitol) for lyophilized biologic products using HSP compatibility mapping",
+    "Evaluating surfactant candidates (polysorbate 20/80, poloxamer 188) for protein stabilization based on HSP affinity to hydrophobic patches",
+    "Predicting residual solvent levels in spray-dried pharmaceutical powders and ensuring ICH Q3C compliance",
+    "Rapid screening of excipient compatibility for solid dispersion and co-processed excipient development",
+    "Assessing solubility of poorly soluble drug candidates in aqueous excipient matrices using combined RED-logP models",
+    "Integrating GHS hazard data with HSP compatibility scores for green and safe formulation design",
+    "Optimizing reconstitution buffer composition for lyophilized antibody-drug conjugates (ADCs)"
+  ],
+  "worked_examples": [
+    {
+      "title": "Aggregation risk assessment for mAb in histidine-sucrose buffer",
+      "description": "Calculate HSP values for histidine buffer (pH 6.0), sucrose, and polysorbate 80 components. Map the HSP distance of each component to the hydrophobic surface patches of a model IgG1 (estimated dD=17.0, dP=8.5, dH=9.0). Compute the aggregation risk score and compare with experimental SEC-HPLC monomer retention data at 40 C/4 weeks."
+    },
+    {
+      "title": "Residual solvent prediction for spray-dried amorphous solid dispersion",
+      "description": "For a PVP-VA/drug solid dispersion prepared from dichloromethane-methanol (80:20), calculate the RED of each solvent relative to the PVP-VA matrix (dD=18.4, dP=13.0, dH=10.2, R0=12.0). Apply inverse RED logic to predict which solvent has higher retention risk and estimate whether ICH Q3C Class 2 limits (600 ppm DCM) will be met. Compare with alternative solvent systems (acetone, ethanol)."
+    },
+    {
+      "title": "Excipient compatibility screening for biologic eye drop formulation",
+      "description": "Screen 8 common ophthalmic excipients (sodium hyaluronate, hydroxypropyl methylcellulose, poloxamer 407, benzalkonium chloride, EDTA, sodium chloride, boric acid, mannitol) against a therapeutic protein (dD=17.5, dP=10.0, dH=12.0, R0=8.0). Calculate RED for each excipient, rank compatibility, and flag potentially incompatible excipients."
+    },
+    {
+      "title": "Greenhalgh-Williams solubility estimation with GHS safety integration",
+      "description": "For a BCS Class II drug candidate, estimate miscibility with five excipient candidates (PVP, HPMC-AS, Soluplus, Eudragit L100, PEG 6000) using the Greenhalgh delta-delta_t < 7 criterion. Supplement with logP-based correction. Overlay GHS hazard classifications for the processing solvents required for each excipient to identify the safest formulation strategy."
+    }
+  ],
+  "key_references": [
+    {
+      "author": "Hansen, C.M.",
+      "year": 2007,
+      "title": "Hansen Solubility Parameters: A User's Handbook, 2nd Edition, CRC Press"
+    },
+    {
+      "author": "Greenhalgh, D.J.; Williams, A.C.; Timmins, P.; York, P.",
+      "year": 1999,
+      "title": "Solubility Parameters as Predictors of Miscibility in Solid Dispersions, Journal of Pharmaceutical Sciences, 88(11), 1182-1190"
+    },
+    {
+      "author": "Hancock, B.C.; York, P.; Rowe, R.C.",
+      "year": 1997,
+      "title": "The Use of Solubility Parameters in Pharmaceutical Dosage Form Design, International Journal of Pharmaceutics, 148(1), 1-21"
+    },
+    {
+      "author": "Abbott, S.; Hansen, C.M.",
+      "year": 2008,
+      "title": "Hansen Solubility Parameters in Practice (HSPiP), 5th Edition [uncertain]"
+    },
+    {
+      "author": "Thakral, N.K.; Bhatt, H.",
+      "year": 2020,
+      "title": "Hansen Solubility Parameters: A Tool for Solvent Selection for Pharmaceutical Applications [uncertain]"
+    },
+    {
+      "author": "Panayiotou, C.; Stefanis, E.",
+      "year": 2012,
+      "title": "Hansen Solubility Parameters Revisited: A Quantitative Structure-Property Relationship, International Journal of Thermophysics, 33, 1-20 [uncertain]"
+    },
+    {
+      "author": "ICH",
+      "year": 2019,
+      "title": "Q3C(R8) Impurities: Guideline for Residual Solvents, International Council for Harmonisation"
+    },
+    {
+      "author": "Lai, M.C.; Topp, E.M.",
+      "year": 2014,
+      "title": "Solid-State Chemical Stability of Proteins and Peptides, Journal of Pharmaceutical Sciences, 88(5), 489-501 [uncertain]"
+    },
+    {
+      "author": "Ohtake, S.; Kita, Y.; Arakawa, T.",
+      "year": 2011,
+      "title": "Interactions of Formulation Excipients with Proteins in Solution and in the Dried State, Advanced Drug Delivery Reviews, 63(13), 1053-1073"
+    },
+    {
+      "author": "Stefanis, E.; Panayiotou, C.",
+      "year": 2008,
+      "title": "Prediction of Hansen Solubility Parameters with a New Group-Contribution Method, International Journal of Thermophysics, 29, 568-585"
+    }
+  ],
+  "cross_references": [
+    "Ch01_HSP_Fundamentals",
+    "Ch02_Thermodynamic_Foundations",
+    "Ch03_Temperature_Pressure_Effects",
+    "Ch04_HSP_Estimation_Methods",
+    "Ch07_Polymer_Solubility_Swelling",
+    "Ch09_Pharmaceutical_Cocrystals [uncertain]",
+    "Ch11_Green_Chemistry_Safety [uncertain]"
+  ],
+  "difficulty_level": "advanced_research",
+  "estimated_pages": 50,
+  "figures_needed": [
+    {
+      "title": "Protein Surface Hydrophobic Patch Mapping in HSP Space",
+      "description": "3D HSP space plot showing the HSP coordinates of exposed hydrophobic patches on a model protein surface, overlaid with buffer component positions and interaction spheres indicating aggregation-prone zones"
+    },
+    {
+      "title": "Associating Liquid Correction Effect on deltaH",
+      "description": "Plot comparing uncorrected vs corrected hydrogen bonding parameter values for common buffer components (water, glycerol, sucrose, trehalose) at various concentrations, showing how self-association reduces effective deltaH"
+    },
+    {
+      "title": "Excipient Compatibility Map for Biologic API",
+      "description": "2D projection (dP vs dH) of the HSP interaction sphere of a model biologic API with excipient candidates plotted as labeled points, color-coded by RED value (green=compatible, yellow=marginal, red=incompatible)"
+    },
+    {
+      "title": "Residual Solvent Retention Risk Diagram",
+      "description": "Bar chart of inverse RED values for common pharmaceutical solvents (DCM, methanol, ethanol, acetone, ethyl acetate, THF) relative to a PVP-VA matrix, with ICH Q3C class indicated by color coding"
+    },
+    {
+      "title": "Greenhalgh-Williams Miscibility Diagram",
+      "description": "Scatter plot of total solubility parameter difference (delta-delta_t) vs experimentally observed miscibility for 50+ drug-excipient pairs, showing the 7 and 10 MPa^1/2 threshold lines"
+    },
+    {
+      "title": "GHS Hazard-Compatibility Decision Matrix",
+      "description": "2D decision matrix with HSP compatibility (RED) on x-axis and GHS hazard score on y-axis, with quadrants labeled as preferred, acceptable, caution, and avoid zones for formulation solvent/excipient selection"
+    },
+    {
+      "title": "Buffer Stability Window in HSP Space",
+      "description": "3D HSP plot showing how buffer composition shifts with pH and temperature, with the protein stability window (interaction sphere) indicating the safe operating region"
+    },
+    {
+      "title": "Lyophilization Excipient Selection Flowchart",
+      "description": "Decision flowchart combining HSP compatibility screening, glass transition temperature (Tg') requirements, and tonicity constraints for selecting lyoprotectant and bulking agent combinations"
+    }
+  ],
+  "tables_needed": [
+    {
+      "title": "HSP Values for Common Biopharmaceutical Buffer Components",
+      "description": "Table of deltaD, deltaP, deltaH values for histidine, phosphate, citrate, acetate, Tris buffers and common excipients (sucrose, trehalose, mannitol, glycine, arginine, polysorbate 20/80, poloxamer 188)"
+    },
+    {
+      "title": "Protein Aggregation Risk Scores for Model Buffer Systems",
+      "description": "Table comparing aggregation risk scores for 6-8 buffer formulations against 3 model proteins (IgG1, IgG4, PEGylated protein), with experimental validation data"
+    },
+    {
+      "title": "Residual Solvent HSP Data and ICH Q3C Classification",
+      "description": "Table of HSP values, ICH Q3C class (1/2/3), and permitted daily exposure limits for 20+ solvents commonly used in pharmaceutical manufacturing, with inverse RED values for common excipient matrices"
+    },
+    {
+      "title": "Excipient-API Compatibility RED Matrix",
+      "description": "Matrix of RED values between 10 common excipients and 5 representative biologic API types, with compatibility classification (compatible/marginal/incompatible)"
+    },
+    {
+      "title": "Greenhalgh-Williams Solubility Prediction Validation",
+      "description": "Table of drug-excipient pairs with predicted and experimental miscibility outcomes, including delta-delta_t, logP values, and prediction accuracy statistics"
+    },
+    {
+      "title": "GHS Safety Classification for Pharmaceutical Solvents",
+      "description": "Table listing GHS hazard categories (H-statements), signal words, and pictograms for 15+ pharmaceutical processing solvents alongside their HSP values and ICH Q3C class"
+    }
+  ],
+  "software_demo": {
+    "tab": "Protein Aggregation Risk, Biologic Formulation Buffer, Excipient Compatibility, Residual Solvent Prediction, Solubility Estimation, and GHS Safety tabs",
+    "inputs": "In the Protein Aggregation Risk tab, enter protein surface HSP estimates and select buffer components from the database. In the Excipient Compatibility tab, enter biologic API HSP values and select candidate excipients. In the Residual Solvent Prediction tab, select the excipient matrix and processing solvents. In the Solubility Estimation tab, enter drug and excipient HSP values with logP. In the GHS Safety tab, select solvents to view integrated hazard and compatibility data.",
+    "expected_output": "The Protein Aggregation Risk tab displays an aggregation risk score and ranking of buffer components by their proximity to protein hydrophobic patches. The Biologic Formulation Buffer tab shows corrected HSP values accounting for associating liquid effects and buffer stability assessment. The Excipient Compatibility tab produces a RED-based compatibility matrix and 2D projection map. The Residual Solvent tab shows inverse RED values, retention risk ranking, and ICH Q3C compliance status. The Solubility Estimation tab provides predicted miscibility based on Greenhalgh criterion and RED-logP model. The GHS Safety tab overlays hazard pictograms and signal words on HSP compatibility rankings.",
+    "workflow": "1. Open the Protein Aggregation Risk tab and enter model IgG1 surface HSP values. 2. Select histidine buffer with sucrose and polysorbate 80 as formulation components. 3. Review aggregation risk scores and identify problematic components. 4. Switch to Biologic Formulation Buffer tab to check buffer stability with associating liquid corrections. 5. Open Excipient Compatibility tab and screen 10 candidate excipients against the API. 6. In Residual Solvent Prediction tab, evaluate DCM, methanol, and ethanol retention risk in PVP-VA matrix. 7. Use Solubility Estimation tab to verify drug-excipient miscibility predictions. 8. Check GHS Safety tab to ensure selected solvents meet safety requirements."
+  },
+  "review_questions": [
+    "Explain why associating liquid corrections are essential when applying HSP to aqueous biopharmaceutical buffer systems. How does hydrogen bond self-association in water and polyol excipients affect the effective deltaH parameter, and what errors arise if this correction is neglected?",
+    "Describe the inverse RED logic used for residual solvent risk prediction. Why does a solvent with RED < 1 relative to an excipient matrix pose a greater retention risk than one with RED > 1? How should ICH Q3C classification be integrated with HSP-based predictions?",
+    "Compare the Greenhalgh-Williams solubility parameter difference criterion with the full 3D HSP RED approach for predicting drug-excipient miscibility. Under what circumstances does the simpler one-parameter criterion fail, and how does adding logP improve predictions for biopharmaceutical systems?",
+    "A formulation scientist must select between three surfactants (polysorbate 20, polysorbate 80, poloxamer 188) for stabilizing a monoclonal antibody against aggregation. Outline the HSP-based approach for ranking these surfactants and discuss what additional factors beyond HSP distance influence protein stabilization.",
+    "Discuss how GHS safety classification data can be integrated with HSP compatibility screening to develop a multi-criteria decision framework for solvent and excipient selection in biopharmaceutical manufacturing. What trade-offs might arise between compatibility and safety?"
+  ],
+  "uncertain": [
+    "key_references[3]",
+    "key_references[4]",
+    "key_references[5]",
+    "key_references[7]",
+    "cross_references[5]",
+    "cross_references[6]",
+    "estimated_pages",
+    "equations[0]",
+    "equations[1]"
+  ]
+}

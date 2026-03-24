@@ -1,0 +1,276 @@
+{
+  "chapter_title": "コーティングと薄膜",
+  "chapter_title_en": "Coatings and Thin Films",
+  "level": "chapter",
+  "parent": "Part IV: Applications",
+  "synopsis": "This chapter covers the application of Hansen Solubility Parameters to the formulation, processing, and quality control of coatings and thin films. Topics range from coating defect prediction (combining adhesion failure with Marangoni-driven flow instabilities), photoresist developer compatibility via dissolution contrast curves, organic semiconductor thin film formation by solvent engineering, and dielectric film quality screening. The chapter also addresses anti-graffiti coating design using inverse RED logic, 3D printing solvent smoothing with an optimal RED band of 0.5-1.5, encapsulant and underfill material selection, and plasticizer compatibility screening for flexible coatings.",
+  "key_concepts": [
+    "Coating adhesion prediction via HSP distance between substrate and coating resin",
+    "Marangoni effect in coatings: surface tension gradients driven by local solvent composition differences",
+    "Coating defect classification: cratering, orange peel, Benard cells, and edge withdrawal linked to HSP mismatch",
+    "Photoresist dissolution contrast: developer-resist HSP affinity controlling dissolution rate selectivity",
+    "Dissolution contrast curves: log(dissolution rate) vs developer composition parameterized by HSP distance",
+    "Organic semiconductor thin film morphology control via solvent HSP and evaporation rate",
+    "Solvent additive strategy for bulk heterojunction morphology in organic photovoltaics",
+    "Dielectric film defect screening: pinhole and dewetting risk from substrate-film HSP incompatibility",
+    "Anti-graffiti coating design using inverse RED logic (graffiti material should have RED >> 1 to the coating surface)",
+    "3D printing solvent smoothing: optimal RED band 0.5-1.5 for controlled surface dissolution without structural damage",
+    "Encapsulant and underfill selection for electronic packaging based on HSP matching to die and substrate surfaces",
+    "Plasticizer-polymer HSP compatibility for flexible coating and film formulations",
+    "Solvent blend optimization for uniform film formation using HSP-based evaporation trajectory modeling",
+    "Surface energy and wettability prediction from HSP components for coating leveling"
+  ],
+  "equations": [
+    {
+      "name": "HSP distance (Ra) for coating-substrate adhesion",
+      "latex": "Ra = \\sqrt{4(\\delta_{D,coat} - \\delta_{D,sub})^2 + (\\delta_{P,coat} - \\delta_{P,sub})^2 + (\\delta_{H,coat} - \\delta_{H,sub})^2}",
+      "explanation": "Hansen distance between coating resin and substrate surface; smaller Ra indicates stronger thermodynamic affinity and better adhesion"
+    },
+    {
+      "name": "Relative Energy Difference (RED)",
+      "latex": "RED = \\frac{Ra}{R_0}",
+      "explanation": "Ratio of HSP distance to the interaction radius of the target material; RED < 1 indicates compatibility, RED > 1 indicates incompatibility"
+    },
+    {
+      "name": "Marangoni number for coating flow",
+      "latex": "Ma = \\frac{\\partial \\gamma / \\partial c \\cdot \\Delta c \\cdot h}{\\eta D}",
+      "explanation": "Dimensionless number governing Marangoni convection in drying coatings, where gamma is surface tension, c is solvent concentration, h is film thickness, eta is viscosity, and D is diffusivity; high Ma leads to Benard cell defects"
+    },
+    {
+      "name": "Surface tension gradient from HSP components",
+      "latex": "\\gamma \\approx 0.0715 V_m^{1/3} \\left( \\delta_D^2 + 0.632 \\delta_P^2 + 0.632 \\delta_H^2 \\right)^{0.43} \\quad [\\text{Koenhen-Smolders correlation, approximate}]",
+      "explanation": "Empirical correlation relating surface tension to HSP components and molar volume, used to predict surface tension gradients during drying [uncertain]"
+    },
+    {
+      "name": "Dissolution rate dependence on HSP distance (photoresist)",
+      "latex": "\\log R_{diss} = A - B \\cdot Ra_{resist-developer}",
+      "explanation": "Semi-empirical relationship where dissolution rate decreases exponentially with increasing HSP distance between photoresist and developer; A and B are material-specific constants"
+    },
+    {
+      "name": "Dissolution contrast ratio",
+      "latex": "C_{contrast} = \\frac{R_{diss,exposed}}{R_{diss,unexposed}} = \\frac{10^{A - B \\cdot Ra_{exp}}}{10^{A - B \\cdot Ra_{unexp}}}",
+      "explanation": "Ratio of dissolution rates of exposed vs unexposed photoresist regions; high contrast is essential for pattern fidelity"
+    },
+    {
+      "name": "Anti-graffiti RED criterion (inverse logic)",
+      "latex": "RED_{graffiti \\to coating} = \\frac{Ra_{graffiti-coating}}{R_{0,graffiti}} > 1",
+      "explanation": "For anti-graffiti effectiveness, the coating surface HSP should be far from the graffiti material HSP sphere, ensuring poor adhesion of graffiti to the surface"
+    },
+    {
+      "name": "3D print smoothing RED band",
+      "latex": "0.5 \\leq RED_{solvent \\to polymer} \\leq 1.5",
+      "explanation": "Optimal RED range for 3D printing solvent vapor smoothing; too low RED causes structural dissolution, too high RED provides no smoothing effect"
+    },
+    {
+      "name": "Plasticizer compatibility criterion",
+      "latex": "Ra_{plast-polymer} < R_{0,polymer} \\quad \\Leftrightarrow \\quad RED < 1",
+      "explanation": "A plasticizer is compatible with the polymer matrix when its HSP falls within the polymer's interaction sphere"
+    }
+  ],
+  "historical_context": "The application of solubility parameters to coatings dates back to Hildebrand and Hansen's original work in the 1960s-1970s, as coatings were among the first industrial fields to adopt HSP for solvent selection. Hansen himself worked extensively in the coatings industry (Scandinavian Paint and Printing Ink Research Institute), publishing foundational studies on paint formulation and adhesion in the 1960s-1970s. The Marangoni effect in coatings was described by Scriven and Sternling (1960), and its connection to solvent HSP and surface tension gradients was elaborated by Patton (1979) and Wicks et al. (1992). Photoresist dissolution in the microelectronics context was linked to solubility parameters by Ito and Willson (1983) in the context of chemically amplified resists, with dissolution contrast modeling advancing through the 1990s-2000s. Organic semiconductor film formation via solvent engineering using HSP became prominent after the mid-2000s with the rise of organic photovoltaics and OLEDs, notably through the work of Liao et al. (2013) and Machui et al. (2012) who systematically mapped solvent HSP to film morphology. Anti-graffiti coatings based on low-surface-energy fluoropolymers and silicones were developed using HSP reasoning in the 2000s. The 3D printing solvent smoothing concept with optimal RED band emerged in the 2010s with the FDM/FFF printing community.",
+  "related_project_modules": [
+    "coating-defect-prediction.ts",
+    "photoresist-developer.ts",
+    "dissolution-contrast.ts",
+    "organic-semiconductor-film.ts",
+    "dielectric-film.ts",
+    "anti-graffiti-coating.ts",
+    "printing3d-smoothing.ts",
+    "underfill-encapsulant.ts",
+    "plasticizer.ts"
+  ],
+  "prerequisites": [
+    "Ch01_HSP_Fundamentals",
+    "Ch02_Thermodynamic_Foundations",
+    "Ch05_Contact_Angle_Wettability",
+    "Ch06_Adhesion_Engineering"
+  ],
+  "learning_objectives": [
+    "Predict coating defects (cratering, Benard cells, orange peel) from HSP-derived Marangoni number calculations and formulate corrective solvent blend adjustments",
+    "Calculate dissolution contrast curves for photoresist-developer systems using HSP distance and select developers that maximize pattern fidelity",
+    "Design solvent systems for organic semiconductor thin film deposition that control morphology through HSP matching and evaporation rate",
+    "Apply inverse RED logic to design anti-graffiti coatings and evaluate 3D printing solvent smoothing within the optimal RED 0.5-1.5 band",
+    "Screen encapsulant, underfill, and plasticizer candidates for coatings and electronic packaging applications using HSP compatibility criteria"
+  ],
+  "practical_applications": [
+    "Predicting and preventing coating defects (cratering, orange peel, Benard cells) in automotive and industrial paint formulations",
+    "Selecting photoresist developers with optimal dissolution contrast for semiconductor lithography and MEMS fabrication",
+    "Optimizing solvent systems for organic photovoltaic and OLED thin film deposition to control bulk heterojunction morphology",
+    "Screening dielectric film formulations for pinhole-free spin-coated or slot-die coated films in electronic device manufacturing",
+    "Designing anti-graffiti and easy-clean coatings for architectural, transportation, and public infrastructure surfaces",
+    "Selecting solvents for FDM/FFF 3D printed part surface smoothing within the controlled dissolution RED band",
+    "Choosing underfill and encapsulant materials for flip-chip and BGA electronic packages based on HSP compatibility with die and substrate",
+    "Formulating flexible coatings and films with appropriate plasticizers that resist migration and blooming"
+  ],
+  "worked_examples": [
+    {
+      "title": "Coating defect diagnosis for a two-solvent automotive clearcoat",
+      "description": "Analyze a clearcoat formulation containing a fast-evaporating solvent (butyl acetate) and a slow retarder (diisobutyl ketone). Calculate surface tension gradients from HSP components during drying, estimate the Marangoni number, and predict whether Benard cells will form. Propose a solvent replacement strategy to reduce Ma below the critical threshold while maintaining resin solubility (RED < 1)."
+    },
+    {
+      "title": "Photoresist developer selection for positive-tone resist patterning",
+      "description": "Given HSP values for a novolac-based positive photoresist (exposed and unexposed states), calculate dissolution rates in three candidate developers (TMAH aqueous, butyl acetate, PGMEA). Construct dissolution contrast curves and identify the developer that maximizes the exposed/unexposed dissolution rate ratio for optimal pattern fidelity."
+    },
+    {
+      "title": "Anti-graffiti coating design using inverse RED screening",
+      "description": "Evaluate five candidate low-surface-energy coating materials (PTFE, PDMS, fluorosilicone, polyurethane, epoxy) against common graffiti paints (alkyd spray paint, acrylic marker, permanent marker ink). Calculate RED values for each graffiti-coating pair and select coatings where all graffiti types have RED > 1.5, ensuring easy removal."
+    },
+    {
+      "title": "3D printing solvent vapor smoothing for ABS and PLA parts",
+      "description": "Screen 10 common solvents (acetone, dichloromethane, ethyl acetate, THF, MEK, limonene, etc.) against ABS and PLA. Calculate RED for each solvent-polymer pair and identify solvents in the optimal 0.5-1.5 RED band. Predict exposure time ranges for surface smoothing without structural compromise."
+    }
+  ],
+  "key_references": [
+    {
+      "author": "Hansen, C.M.",
+      "year": 2007,
+      "title": "Hansen Solubility Parameters: A User's Handbook, 2nd Edition, CRC Press, Chapters 11-12: Coatings and Surface Applications"
+    },
+    {
+      "author": "Wicks, Z.W.; Jones, F.N.; Pappas, S.P.; Wicks, D.A.",
+      "year": 2007,
+      "title": "Organic Coatings: Science and Technology, 3rd Edition, Wiley-Interscience"
+    },
+    {
+      "author": "Patton, T.C.",
+      "year": 1979,
+      "title": "Paint Flow and Pigment Dispersion, 2nd Edition, Wiley-Interscience"
+    },
+    {
+      "author": "Scriven, L.E.; Sternling, C.V.",
+      "year": 1960,
+      "title": "The Marangoni Effects, Nature, 187, 186-188"
+    },
+    {
+      "author": "Machui, F.; Langner, S.; Zhu, X.; Abbott, S.; Brabec, C.J.",
+      "year": 2012,
+      "title": "Determination of the P3HT:PCBM Solubility Parameters via a Binary Solvent Gradient Method: Impact of Solubility on the Photovoltaic Performance, Solar Energy Materials and Solar Cells, 100, 138-146"
+    },
+    {
+      "author": "Liao, H.-C.; Ho, C.-C.; Chang, C.-Y.; Jao, M.-H.; Darber, S.B.; Su, W.-F.",
+      "year": 2013,
+      "title": "Additives for Morphology Control in High-Efficiency Organic Solar Cells, Materials Today, 16(9), 326-336"
+    },
+    {
+      "author": "Ito, H.; Willson, C.G.",
+      "year": 1983,
+      "title": "Chemical Amplification in the Design of Dry Developing Resist Materials, Polymer Engineering and Science, 23(18), 1012-1018"
+    },
+    {
+      "author": "Abbott, S.; Hansen, C.M.",
+      "year": 2020,
+      "title": "Hansen Solubility Parameters in Practice (HSPiP), 5th Edition, www.hansen-solubility.com [uncertain]"
+    },
+    {
+      "author": "Wypych, G.",
+      "year": 2004,
+      "title": "Handbook of Plasticizers, ChemTec Publishing"
+    },
+    {
+      "author": "Satas, D.",
+      "year": 1999,
+      "title": "Coatings Technology Handbook, 2nd Edition, Marcel Dekker [uncertain]"
+    }
+  ],
+  "cross_references": [
+    "Ch01_HSP_Fundamentals",
+    "Ch02_Thermodynamic_Foundations",
+    "Ch05_Contact_Angle_Wettability",
+    "Ch06_Adhesion_Engineering",
+    "Ch07_Polymer_Solubility_Swelling",
+    "Ch08_Polymer_Blends_Recycling"
+  ],
+  "difficulty_level": "graduate",
+  "estimated_pages": 60,
+  "figures_needed": [
+    {
+      "title": "Coating Defect Map in HSP Space",
+      "description": "3D HSP plot showing the coating resin at the center with solvent trajectories during drying; regions are color-coded by defect type (cratering, Benard cells, orange peel, good film) based on Marangoni number thresholds"
+    },
+    {
+      "title": "Marangoni Convection Cell Formation During Coating Drying",
+      "description": "Schematic cross-section of a drying coating film showing surface tension gradients, convection cells, and resulting surface defect morphologies (hexagonal Benard cells and craters)"
+    },
+    {
+      "title": "Photoresist Dissolution Contrast Curves",
+      "description": "Plot of log(dissolution rate) vs HSP distance for exposed and unexposed photoresist in various developers, with the contrast ratio highlighted as the vertical gap between curves"
+    },
+    {
+      "title": "Organic Semiconductor Solvent Selection Map",
+      "description": "2D HSP projection showing the solubility sphere of P3HT:PCBM blend with solvents and solvent additives positioned to illustrate morphology control strategy (good vs poor film morphology regions)"
+    },
+    {
+      "title": "Anti-Graffiti Inverse RED Diagram",
+      "description": "HSP space diagram showing the coating surface position relative to graffiti material spheres, illustrating the inverse RED logic where the coating lies outside all graffiti spheres"
+    },
+    {
+      "title": "3D Print Smoothing RED Band Diagram",
+      "description": "Bar chart or radial plot showing RED values of various solvents relative to ABS and PLA, with the optimal 0.5-1.5 band highlighted in green, under-smoothing (RED > 1.5) in yellow, and over-dissolution (RED < 0.5) in red"
+    },
+    {
+      "title": "Encapsulant/Underfill HSP Compatibility Screening",
+      "description": "HSP space plot showing die surface, substrate surface, and various encapsulant candidates with compatibility spheres, illustrating dual-compatibility requirements for underfill selection"
+    },
+    {
+      "title": "Plasticizer Migration Risk vs HSP Distance",
+      "description": "Scatter plot of experimentally measured plasticizer migration rate vs HSP distance (Ra) between plasticizer and polymer, showing the correlation and threshold for acceptable migration"
+    },
+    {
+      "title": "Solvent Evaporation Trajectory in HSP Space",
+      "description": "3D HSP trajectory showing how the solvent blend composition evolves during drying of a multi-solvent coating, with critical points where the trajectory exits the resin solubility sphere marked"
+    }
+  ],
+  "tables_needed": [
+    {
+      "title": "HSP Values for Common Coating Resins",
+      "description": "Table of deltaD, deltaP, deltaH, and R0 for 15+ coating resins including alkyd, acrylic, epoxy, polyurethane, polyester, fluoropolymer, silicone, novolac, and vinyl resins"
+    },
+    {
+      "title": "Coating Defect Classification by Marangoni Number Range",
+      "description": "Table mapping Marangoni number ranges to defect types (no defect, mild orange peel, Benard cells, craters) with corresponding solvent HSP and surface tension data"
+    },
+    {
+      "title": "Photoresist-Developer HSP Compatibility Matrix",
+      "description": "Table of HSP distances and dissolution rates for common photoresist types (novolac, PMMA, SU-8) in various developers (TMAH, PGMEA, NMP, cyclopentanone)"
+    },
+    {
+      "title": "Organic Semiconductor Solvent HSP and Film Quality Correlation",
+      "description": "Table listing common processing solvents for organic semiconductors (chlorobenzene, o-dichlorobenzene, chloroform, toluene) with HSP values, boiling points, and resulting film morphology quality ratings"
+    },
+    {
+      "title": "Anti-Graffiti Coating RED Matrix",
+      "description": "Matrix of RED values between low-surface-energy coating materials and common graffiti paint types, with pass/fail classification for anti-graffiti effectiveness"
+    },
+    {
+      "title": "3D Print Smoothing Solvent Screening Results",
+      "description": "Table of candidate solvents for ABS, PLA, and PETG smoothing with RED values, vapor pressure, recommended exposure times, and smoothing quality ratings"
+    },
+    {
+      "title": "Underfill and Encapsulant HSP Compatibility for Common Die/Substrate Combinations",
+      "description": "Table of underfill materials with HSP values and compatibility (Ra, RED) to silicon die, FR-4 substrate, solder mask, and copper pad surfaces"
+    },
+    {
+      "title": "Plasticizer HSP Values and Compatibility Ranges",
+      "description": "Table of common plasticizers (DOP, DINP, TOTM, DOA, ATBC, epoxidized soybean oil) with HSP values, compatible polymer types, and migration resistance ratings"
+    }
+  ],
+  "software_demo": {
+    "tab": "Coating Defect Prediction (コーティング欠陥予測) tab, Anti-Graffiti Coating (防落書きコーティング) tab, 3D Print Smoothing (3D印刷スムージング) tab, and Plasticizer Selection (可塑剤選定) tab",
+    "inputs": "In the Coating Defect Prediction tab, enter coating resin HSP and select solvents from the database to compose a solvent blend; input film thickness and drying conditions. In the Anti-Graffiti tab, enter candidate coating HSP values and select graffiti material types. In the 3D Print Smoothing tab, select polymer type (ABS/PLA/PETG) and candidate smoothing solvents. In the Plasticizer tab, enter polymer HSP and select plasticizer candidates.",
+    "expected_output": "The Coating Defect tab displays a Marangoni number estimate, defect risk classification (low/medium/high), and a solvent evaporation trajectory plot in HSP space. The Anti-Graffiti tab shows a RED matrix with pass/fail per graffiti type. The 3D Print Smoothing tab shows a RED bar chart with the 0.5-1.5 optimal band highlighted. The Plasticizer tab shows Ra and RED for each candidate with compatibility verdicts.",
+    "workflow": "1. Open Coating Defect Prediction and enter an acrylic resin with a butyl acetate / xylene blend. Observe the Marangoni risk assessment. 2. Adjust the slow solvent ratio and see how the defect risk changes. 3. Switch to Anti-Graffiti Coating tab, enter a PTFE-based coating, and check RED against spray paint and marker inks. 4. Open 3D Print Smoothing tab, select ABS, and screen acetone, MEK, and ethyl acetate for the optimal RED band. 5. Open Plasticizer tab, enter PVC HSP, and compare DOP, DINP, and ATBC for compatibility."
+  },
+  "review_questions": [
+    "Explain how Marangoni convection causes Benard cell defects in drying coatings. How can the solvent blend HSP be adjusted to minimize the Marangoni number without sacrificing resin solubility?",
+    "Describe the concept of dissolution contrast in photoresist development. How does the HSP distance between developer and resist control the dissolution rate, and what characteristics make an ideal developer from the HSP perspective?",
+    "Why is the optimal RED band for 3D printing solvent smoothing 0.5-1.5 rather than simply RED < 1? Discuss the trade-off between surface smoothing effectiveness and structural integrity in terms of the degree of polymer dissolution.",
+    "Explain the inverse RED logic used in anti-graffiti coating design. How does this differ from the conventional RED < 1 compatibility criterion, and what HSP characteristics should an ideal anti-graffiti surface possess?",
+    "Discuss the dual-compatibility challenge in underfill/encapsulant selection for electronic packaging. The material must simultaneously wet the die surface and the substrate. How can HSP analysis guide the selection of materials that satisfy both requirements?"
+  ],
+  "uncertain": [
+    "equations[3]",
+    "estimated_pages",
+    "key_references[7]",
+    "key_references[9]"
+  ]
+}

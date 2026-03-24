@@ -1,0 +1,266 @@
+{
+  "chapter_title": "産業特殊応用",
+  "chapter_title_en": "Industrial Specialty Applications",
+  "level": "chapter",
+  "parent": "Part IV: Applications",
+  "synopsis": "This chapter covers five specialized industrial applications of Hansen Solubility Parameters: cleaning product formulation for soil removal, soil contamination remediation solvent selection, perovskite solar cell solvent engineering (good solvent/anti-solvent classification), UV-curable ink monomer selection, and phase change material (PCM) encapsulation stability. Each application demonstrates how HSP distance, RED criteria, and solubility sphere analysis guide practical material and solvent selection in distinct industrial sectors.",
+  "key_concepts": [
+    "Cleaning agent formulation using HSP matching between cleaning solvent and target soil (grease, particulate, organic residue)",
+    "Soil-solvent HSP affinity and the role of RED in predicting cleaning efficiency for different soil types",
+    "Surfactant HLD-HSP bridging: connecting hydrophilic-lipophilic deviation with Hansen parameters for cleaning formulations",
+    "Soil contamination remediation: selecting extraction solvents that maximize contaminant solubility while minimizing environmental impact",
+    "Partitioning coefficient estimation from HSP distance for contaminant extraction from soil matrices",
+    "Green solvent screening for soil remediation using combined HSP compatibility and environmental/toxicity criteria",
+    "Perovskite precursor solubility classification: good solvents (RED < 1) vs anti-solvents (RED >> 1) for perovskite film formation",
+    "Anti-solvent engineering for perovskite crystallization: controlling nucleation and grain size via HSP distance to precursor",
+    "Solvent-additive strategies for perovskite defect passivation guided by selective HSP component matching",
+    "UV-curable ink monomer selection: matching monomer HSP to pigment dispersion stability and substrate adhesion requirements",
+    "Reactive diluent screening for UV inks using HSP compatibility with oligomer and pigment",
+    "PCM microencapsulation shell-core compatibility: HSP matching between phase change material and encapsulant polymer shell",
+    "PCM leakage prediction via RED criterion: shell permeability to molten PCM correlated with HSP distance",
+    "Supercooling suppression in PCM capsules through nucleating agent HSP affinity screening"
+  ],
+  "equations": [
+    {
+      "name": "HSP distance (Ra) for cleaning efficiency",
+      "latex": "Ra_{clean} = \\sqrt{4(\\delta_{D,solvent} - \\delta_{D,soil})^2 + (\\delta_{P,solvent} - \\delta_{P,soil})^2 + (\\delta_{H,solvent} - \\delta_{H,soil})^2}",
+      "explanation": "Hansen distance between cleaning solvent and target soil; smaller Ra indicates greater thermodynamic affinity and higher cleaning power"
+    },
+    {
+      "name": "Cleaning efficiency RED criterion",
+      "latex": "RED_{clean} = \\frac{Ra_{solvent-soil}}{R_{0,soil}} < 1 \\implies \\text{effective cleaning}",
+      "explanation": "When the RED of the cleaning solvent relative to the soil is less than 1, the solvent can effectively dissolve or displace the soil from the surface"
+    },
+    {
+      "name": "Soil-water partition coefficient from HSP",
+      "latex": "\\log K_{sw} \\approx \\alpha + \\beta \\cdot Ra_{contaminant-water} - \\gamma \\cdot Ra_{contaminant-solvent}",
+      "explanation": "Semi-empirical correlation relating the soil-water partition coefficient to HSP distances; used to predict extraction efficiency of contaminants from soil [uncertain]"
+    },
+    {
+      "name": "Perovskite good solvent criterion",
+      "latex": "RED_{precursor} = \\frac{Ra_{solvent-precursor}}{R_{0,precursor}} < 1 \\quad (\\text{good solvent})",
+      "explanation": "Solvents within the precursor solubility sphere dissolve perovskite precursors effectively for solution processing"
+    },
+    {
+      "name": "Perovskite anti-solvent criterion",
+      "latex": "RED_{anti} = \\frac{Ra_{anti-precursor}}{R_{0,precursor}} > 2 \\quad (\\text{anti-solvent})",
+      "explanation": "Anti-solvents with RED significantly greater than 1 (typically > 2) induce rapid supersaturation and crystallization of the perovskite film upon dripping"
+    },
+    {
+      "name": "Anti-solvent miscibility with processing solvent",
+      "latex": "RED_{anti-proc} = \\frac{Ra_{anti-processing}}{R_{0,processing}} < 1",
+      "explanation": "The anti-solvent must be miscible with the processing solvent (RED < 1) to enable rapid solvent exchange and uniform crystallization"
+    },
+    {
+      "name": "UV ink pigment dispersion stability",
+      "latex": "Ra_{pigment-monomer} < R_{0,pigment} \\quad \\Leftrightarrow \\quad RED < 1",
+      "explanation": "Pigment dispersion in UV-curable ink monomers is stable when the monomer HSP falls within the pigment's interaction sphere"
+    },
+    {
+      "name": "PCM encapsulation leakage risk",
+      "latex": "RED_{PCM-shell} = \\frac{Ra_{PCM-shell}}{R_{0,shell}} > 1 \\implies \\text{low leakage risk}",
+      "explanation": "For PCM microencapsulation, the shell polymer should be incompatible (RED > 1) with the molten PCM to prevent leakage through the shell wall"
+    },
+    {
+      "name": "PCM-shell permeability correlation",
+      "latex": "\\ln P_{shell} \\approx A - B \\cdot Ra_{PCM-shell}",
+      "explanation": "Shell permeability to PCM decreases with increasing HSP distance between the PCM core and shell polymer; A and B are empirically fitted constants [uncertain]"
+    }
+  ],
+  "historical_context": "Cleaning product formulation using solubility parameters has roots in Hansen's original 1967 work on paint and coating solvents, with systematic application to industrial cleaning emerging in the 1990s-2000s through the work of Abbott and Hansen (HSPiP software). Soil contamination remediation using solubility parameters was developed in the environmental engineering community in the 1990s-2000s, with researchers like Yalkowsky and Banerjee applying partition coefficient models incorporating solubility parameters. Perovskite solvent engineering became a major research focus after 2012, when Miyasaka, Snaith, and Gratzel groups demonstrated high-efficiency perovskite solar cells; systematic HSP-based solvent classification for perovskites was advanced by Ke et al. (2015) and Noel et al. (2017), who mapped precursor solubility spheres and anti-solvent windows. UV-curable ink formulation using HSP for monomer/oligomer/pigment compatibility screening has been practiced in the printing industry since the 2000s, building on earlier solubility parameter work for conventional inks. PCM encapsulation stability analysis using HSP emerged in the 2010s with the growing interest in thermal energy storage, with researchers like Sari, Karaipekli, and others applying HSP compatibility criteria to predict shell-core interactions and leakage behavior.",
+  "related_project_modules": [
+    "cleaning-product-formulation.ts",
+    "soil-contaminant-extraction.ts",
+    "perovskite-solvent-engineering.ts",
+    "uv-curable-ink-monomer.ts",
+    "pcm-encapsulation.ts"
+  ],
+  "prerequisites": [
+    "Ch01_HSP_Fundamentals",
+    "Ch02_Thermodynamic_Foundations",
+    "Ch07_Polymer_Solubility_Swelling",
+    "Ch11_Nanomaterials_Dispersion"
+  ],
+  "learning_objectives": [
+    "Formulate cleaning products by matching solvent HSP to target soil HSP and evaluate cleaning efficiency using RED criteria for different soil types (grease, particulate, polymeric residue)",
+    "Select environmentally acceptable extraction solvents for soil contamination remediation by combining HSP compatibility screening with green chemistry constraints",
+    "Classify solvents as good solvents or anti-solvents for perovskite precursors using HSP sphere analysis, and design anti-solvent dripping protocols for high-quality perovskite film crystallization",
+    "Screen UV-curable ink monomers and reactive diluents for pigment dispersion stability and substrate adhesion using HSP matching criteria",
+    "Predict PCM encapsulation leakage risk and select shell polymers with appropriate HSP incompatibility to the PCM core material"
+  ],
+  "practical_applications": [
+    "Formulating industrial and household cleaning agents optimized for specific soil types (kitchen grease, machining oil, photoresist residue, biological soils)",
+    "Selecting extraction solvents for remediation of petroleum hydrocarbon, PAH, and chlorinated solvent contaminated soils",
+    "Designing solvent systems for perovskite solar cell fabrication with controlled crystallization and grain size",
+    "Screening anti-solvents for perovskite one-step deposition to maximize power conversion efficiency",
+    "Selecting monomers and reactive diluents for UV-curable inkjet inks with stable pigment dispersions",
+    "Designing PCM microcapsules for building thermal energy storage with minimal leakage over thermal cycling",
+    "Evaluating PCM-shell compatibility for textile-embedded thermal regulation materials",
+    "Optimizing cleaning solvent blends for electronics manufacturing (flux residue, solder paste cleaning)"
+  ],
+  "worked_examples": [
+    {
+      "title": "Cleaning agent formulation for machining oil removal",
+      "description": "Given HSP values for a mineral-based machining oil soil, screen 10 candidate cleaning solvents and surfactant-solvent blends. Calculate RED for each candidate against the oil soil, rank by cleaning efficacy, and apply environmental and safety constraints (VOC limits, flash point) to select the optimal formulation. Compare predicted RED rankings with experimental cleaning test results."
+    },
+    {
+      "title": "Perovskite anti-solvent selection for MAPbI3 film deposition",
+      "description": "Map the HSP solubility sphere of MAPbI3 precursor in DMF/DMSO processing solvent. Screen 15 candidate anti-solvents (chlorobenzene, toluene, diethyl ether, ethyl acetate, etc.) by computing RED relative to the precursor sphere and miscibility RED with the processing solvent. Identify anti-solvents that satisfy both criteria (RED_precursor > 2 and RED_processing_solvent < 1) and predict film quality ranking."
+    },
+    {
+      "title": "UV-curable inkjet ink monomer screening for carbon black dispersion",
+      "description": "Given HSP values for carbon black pigment and a urethane acrylate oligomer, evaluate 8 reactive diluent monomers (HDDA, TPGDA, IBOA, NVP, ACMO, etc.) for pigment dispersion stability (RED_pigment < 1) and oligomer compatibility (RED_oligomer < 1). Select monomers that satisfy both requirements and rank by viscosity contribution for inkjet printability."
+    },
+    {
+      "title": "PCM microcapsule shell selection for paraffin wax encapsulation",
+      "description": "Evaluate 5 shell polymer candidates (melamine-formaldehyde, polyurea, PMMA, polystyrene, polyurethane) for encapsulating n-octadecane PCM. Calculate RED between molten n-octadecane and each shell polymer. Select shells with RED > 1.5 to ensure low leakage risk. Validate against published thermal cycling leakage data."
+    }
+  ],
+  "key_references": [
+    {
+      "author": "Hansen, C.M.",
+      "year": 2007,
+      "title": "Hansen Solubility Parameters: A User's Handbook, 2nd Edition, CRC Press"
+    },
+    {
+      "author": "Abbott, S.; Hansen, C.M.",
+      "year": 2020,
+      "title": "Hansen Solubility Parameters in Practice (HSPiP), 5th Edition, www.hansen-solubility.com"
+    },
+    {
+      "author": "Noel, N.K.; Habisreutinger, S.N.; Wenger, B.; Klug, M.T.; Horantner, M.T.; Johnston, M.B.; Nicholas, R.J.; Moore, D.T.; Snaith, H.J.",
+      "year": 2017,
+      "title": "A Low Viscosity, Low Boiling Point, Clean Solvent System for the Rapid Crystallisation of Highly Specular Perovskite Films, Energy & Environmental Science, 10, 145-152"
+    },
+    {
+      "author": "Ke, W.; Fang, G.; Liu, Q.; Xiong, L.; Qin, P.; Tao, H.; Wang, J.; Lei, H.; Li, B.; Wan, J.; Yang, G.; Yan, Y.",
+      "year": 2015,
+      "title": "Low-Temperature Solution-Processed Tin Oxide as an Alternative Electron Transporting Layer for Efficient Perovskite Solar Cells, Journal of the American Chemical Society, 137(21), 6730-6733 [uncertain]"
+    },
+    {
+      "author": "Sari, A.; Alkan, C.; Karaipekli, A.",
+      "year": 2010,
+      "title": "Preparation, Characterization and Thermal Properties of PMMA/n-Heptadecane Microcapsules as Novel Solid-Liquid MicroPCM for Thermal Energy Storage, Applied Energy, 87(5), 1529-1534 [uncertain]"
+    },
+    {
+      "author": "Jansen, K.M.B.; Zhang, M.F.",
+      "year": 2014,
+      "title": "Hansen Solubility Parameters for Selection of Encapsulation Shell Materials for Phase Change Materials, Journal of Microencapsulation, 31(6), 583-592 [uncertain]"
+    },
+    {
+      "author": "Burgues-Ceballos, I.; Machui, F.; Min, J.; Ameri, T.; Voigt, M.M.; Luber, S.; Brabec, C.J.",
+      "year": 2014,
+      "title": "Solubility Based Identification of Green Solvents for Small Molecule Organic Solar Cells, Advanced Functional Materials, 24(10), 1449-1457"
+    },
+    {
+      "author": "Abbott, S.",
+      "year": 2015,
+      "title": "Cleaning with Solvents: Science and Practice, in Handbook for Cleaning/Decontamination of Surfaces, Elsevier [uncertain]"
+    },
+    {
+      "author": "Wypych, G.",
+      "year": 2014,
+      "title": "Handbook of Solvents, Volume 2: Use, Health, and Environment, 2nd Edition, ChemTec Publishing"
+    },
+    {
+      "author": "Yalkowsky, S.H.; He, Y.; Jain, P.",
+      "year": 2010,
+      "title": "Handbook of Aqueous Solubility Data, 2nd Edition, CRC Press"
+    }
+  ],
+  "cross_references": [
+    "Ch01_HSP_Fundamentals",
+    "Ch02_Thermodynamic_Foundations",
+    "Ch07_Polymer_Solubility_Swelling",
+    "Ch11_Nanomaterials_Dispersion",
+    "Ch12_Coatings_Films"
+  ],
+  "difficulty_level": "graduate",
+  "estimated_pages": 55,
+  "figures_needed": [
+    {
+      "title": "Cleaning Solvent-Soil HSP Matching Diagram",
+      "description": "3D HSP plot showing soil types (grease, particulate, polymeric residue) as solubility spheres with candidate cleaning solvents positioned to illustrate RED-based efficacy ranking"
+    },
+    {
+      "title": "Soil Contamination Remediation Solvent Screening Map",
+      "description": "2D HSP projection showing common soil contaminants (PAHs, BTEX, chlorinated solvents) with their solubility spheres and green solvent candidates positioned for extraction efficiency comparison"
+    },
+    {
+      "title": "Perovskite Solvent Classification Map",
+      "description": "3D HSP plot showing the MAPbI3/FAPbI3 precursor solubility sphere with solvents classified as good solvents (inside sphere), marginal solvents (near boundary), and anti-solvents (far outside), color-coded by category"
+    },
+    {
+      "title": "Anti-Solvent Dripping Process Schematic with HSP Rationale",
+      "description": "Combined schematic and HSP diagram showing the anti-solvent dripping step in perovskite film deposition, with the dual HSP criteria (high RED to precursor, low RED to processing solvent) illustrated"
+    },
+    {
+      "title": "UV-Curable Ink Monomer-Pigment-Oligomer Compatibility Triangle",
+      "description": "HSP space diagram showing the three-way compatibility requirement for UV ink formulation: monomer must simultaneously be compatible with pigment (dispersion stability) and oligomer (miscibility)"
+    },
+    {
+      "title": "PCM Encapsulation Shell-Core HSP Incompatibility Diagram",
+      "description": "HSP plot showing the PCM core material (paraffin) with shell polymer candidates positioned to illustrate the inverse compatibility requirement: shell must be HSP-incompatible (RED > 1) with molten PCM"
+    },
+    {
+      "title": "PCM Leakage Rate vs Shell-Core Ra Correlation",
+      "description": "Scatter plot of experimentally measured PCM leakage rate (% mass loss per 100 cycles) vs Ra between PCM and shell polymer, showing the threshold Ra above which leakage becomes negligible"
+    },
+    {
+      "title": "Cleaning Efficiency vs RED for Different Soil Types",
+      "description": "Multi-panel plot showing cleaning efficiency (% soil removed) vs RED for grease soils, particulate soils, and polymeric residues, demonstrating the RED < 1 threshold for effective cleaning"
+    }
+  ],
+  "tables_needed": [
+    {
+      "title": "HSP Values for Common Industrial Soils",
+      "description": "Table of deltaD, deltaP, deltaH for typical soils: mineral oil, machining oil, grease, photoresist residue, flux residue, biological soil, soot/carbon, with R0 where available"
+    },
+    {
+      "title": "Cleaning Solvent HSP and RED Matrix for Industrial Soils",
+      "description": "Matrix of RED values between common cleaning solvents (d-limonene, NMP, DMSO, isopropanol, hydrocarbon blends, aqueous surfactant systems) and industrial soil types, with environmental/safety ratings"
+    },
+    {
+      "title": "Soil Contaminant HSP Values and Extraction Solvent Compatibility",
+      "description": "Table listing common soil contaminants (benzene, toluene, naphthalene, pyrene, TCE, PCBs) with HSP values and RED to candidate extraction solvents (ethanol, ethyl lactate, d-limonene, supercritical CO2)"
+    },
+    {
+      "title": "Perovskite Precursor Solvent Classification Table",
+      "description": "Table of common solvents (DMF, DMSO, NMP, GBL, 2-ME, chlorobenzene, toluene, diethyl ether, ethyl acetate, isopropanol) with HSP values, RED to MAPbI3 precursor, and classification as good/marginal/anti-solvent"
+    },
+    {
+      "title": "UV-Curable Ink Monomer HSP and Compatibility Screening",
+      "description": "Table of reactive diluent monomers (HDDA, TPGDA, IBOA, NVP, ACMO, ODA, DPGDA) with HSP values, viscosity, RED to common pigments (carbon black, TiO2, phthalocyanine blue), and printability ratings"
+    },
+    {
+      "title": "PCM Core Materials and Shell Polymer RED Matrix",
+      "description": "Matrix of RED values between PCM materials (n-octadecane, paraffin RT28, stearic acid, PEG 600) and shell polymers (melamine-formaldehyde, polyurea, PMMA, polystyrene, polyurethane) with leakage risk classification"
+    },
+    {
+      "title": "Environmental and Safety Comparison of Remediation Solvents",
+      "description": "Table comparing extraction solvents for soil remediation by HSP compatibility, biodegradability, toxicity (LC50), regulatory status, and cost per liter"
+    }
+  ],
+  "software_demo": {
+    "tab": "Cleaning Product Formulation tab, Soil Contaminant Extraction tab, Perovskite Solvent Engineering tab, UV-Curable Ink Monomer tab, and PCM Encapsulation tab",
+    "inputs": "In the Cleaning Product Formulation tab, select a target soil type from the database and choose candidate cleaning solvents. In Soil Contaminant Extraction, enter contaminant HSP and select green solvent candidates. In Perovskite Solvent Engineering, select perovskite type (MAPbI3, FAPbI3, CsPbI3) and screen solvents for good/anti-solvent classification. In UV-Curable Ink Monomer, enter pigment and oligomer HSP and screen monomer candidates. In PCM Encapsulation, select PCM type and shell polymer candidates.",
+    "expected_output": "The Cleaning tab displays RED rankings and cleaning efficiency predictions for each solvent-soil pair. The Soil Contaminant tab shows extraction efficiency estimates with green chemistry scores. The Perovskite tab shows a color-coded solvent map with good/marginal/anti-solvent classifications. The UV Ink tab shows a dual-compatibility matrix (pigment and oligomer RED). The PCM tab shows shell-core RED values with leakage risk ratings.",
+    "workflow": "1. Open Cleaning Product Formulation, select machining oil as target soil, and screen d-limonene, NMP, and isopropanol for RED. 2. Switch to Soil Contaminant Extraction, enter naphthalene contaminant HSP, and compare ethyl lactate vs d-limonene extraction efficiency. 3. Open Perovskite Solvent Engineering, select MAPbI3, and classify DMF, DMSO, chlorobenzene, toluene, and diethyl ether. 4. Open UV-Curable Ink Monomer, enter carbon black pigment HSP and urethane acrylate oligomer HSP, and screen IBOA, HDDA, and NVP. 5. Open PCM Encapsulation, select n-octadecane PCM and compare melamine-formaldehyde, polyurea, and PMMA shells for leakage risk."
+  },
+  "review_questions": [
+    "Explain how HSP matching between a cleaning solvent and a target soil predicts cleaning efficiency. What additional factors beyond RED must be considered for practical cleaning product formulation (e.g., substrate compatibility, environmental regulations)?",
+    "Compare the HSP requirements for a good solvent versus an anti-solvent in perovskite film deposition. Why must the anti-solvent simultaneously satisfy RED >> 1 relative to the precursor and RED < 1 relative to the processing solvent?",
+    "Discuss the inverse compatibility requirement in PCM encapsulation design. Why should the shell polymer be HSP-incompatible with the molten PCM, and how does this differ from typical polymer-solvent compatibility problems?",
+    "For UV-curable ink monomer selection, a reactive diluent must satisfy dual compatibility: with the pigment for dispersion stability and with the oligomer for miscibility. Describe how HSP analysis handles this multi-constraint optimization problem.",
+    "In soil contamination remediation, explain the trade-off between extraction efficiency (low RED to contaminant) and environmental acceptability. How can green solvent screening integrate HSP compatibility with toxicity and biodegradability criteria?"
+  ],
+  "uncertain": [
+    "equations[2]",
+    "equations[8]",
+    "estimated_pages",
+    "key_references[3]",
+    "key_references[4]",
+    "key_references[5]",
+    "key_references[7]"
+  ]
+}

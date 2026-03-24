@@ -1,0 +1,259 @@
+{
+  "chapter_title": "ナノ材料の分散科学",
+  "chapter_title_en": "Nanomaterials Dispersion Science",
+  "level": "chapter",
+  "parent": "Part IV: Applications",
+  "synopsis": "This chapter applies Hansen Solubility Parameters to the dispersion science of nanomaterials, covering RED-based screening for nanoparticle dispersion stability, solvent selection for carbon nanotubes, graphene, MXenes (Ti3C2Tx), and quantum dot ligand exchange. It introduces the Dual-HSP framework for dispersant evaluation, where anchor HSP describes the dispersant headgroup affinity to the particle surface and solvation HSP describes tail compatibility with the continuous phase. Pigment dispersion stability prediction completes the chapter, bridging fundamental HSP theory with industrial nanomaterial formulation.",
+  "key_concepts": [
+    "RED (Relative Energy Difference) screening for nanoparticle dispersion stability",
+    "Hansen solubility sphere determination for nanoparticles via solvent screening tests",
+    "CNT dispersion solvent selection using HSP matching to nanotube surface energy",
+    "Graphene exfoliation and stabilization in matched-HSP solvents (NMP, DMF, CHP)",
+    "Surface energy decomposition of 2D materials into dispersion, polar, and hydrogen bonding components",
+    "MXene (Ti3C2Tx) dispersion in aqueous and DMSO systems via surface termination-HSP matching",
+    "Quantum dot ligand exchange: solvent selection for colloidal stability during ligand swap",
+    "Dual-HSP dispersant model: anchor HSP (headgroup-particle affinity) and solvation HSP (tail-medium compatibility)",
+    "Pigment dispersion stability prediction using HSP distance between pigment surface and vehicle",
+    "Flocculation onset prediction from RED threshold in pigment/nanomaterial dispersions",
+    "Hamaker constant correlation with dispersion component (deltaD) for van der Waals attraction estimation",
+    "Steric vs electrostatic stabilization mechanisms and their HSP-based optimization",
+    "Hansen solubility sphere construction from binary good/bad solvent classification for nanoparticles",
+    "Solvent blending strategies to achieve target HSP for optimal nanomaterial dispersion"
+  ],
+  "equations": [
+    {
+      "name": "Hansen distance (Ra)",
+      "latex": "Ra = \\sqrt{4(\\delta_{D1} - \\delta_{D2})^2 + (\\delta_{P1} - \\delta_{P2})^2 + (\\delta_{H1} - \\delta_{H2})^2}",
+      "explanation": "Distance between a nanomaterial surface and a solvent in Hansen space; solvents with Ra < R0 are predicted to form stable dispersions"
+    },
+    {
+      "name": "Relative Energy Difference (RED)",
+      "latex": "RED = \\frac{Ra}{R_0}",
+      "explanation": "Ratio of Hansen distance to the interaction radius; RED < 1 indicates good dispersion, RED > 1 indicates poor dispersion or aggregation"
+    },
+    {
+      "name": "Surface energy from HSP (Beerbower correlation)",
+      "latex": "\\gamma = 0.0715 V_m^{1/3} \\delta^2",
+      "explanation": "Relates total surface energy to solubility parameter and molar volume; used to connect nanoparticle surface energy with HSP components"
+    },
+    {
+      "name": "Dispersive surface energy component",
+      "latex": "\\gamma_D = 0.0715 V_m^{1/3} \\delta_D^2",
+      "explanation": "The London dispersion contribution to surface energy, critical for estimating van der Waals interactions between nanoparticles"
+    },
+    {
+      "name": "Hamaker constant from surface energy",
+      "latex": "A_{11} = 24 \\pi D_0^2 \\gamma_D",
+      "explanation": "Relates the Hamaker constant for van der Waals attraction to the dispersive surface energy, where D0 is the equilibrium interparticle separation (~0.165 nm)"
+    },
+    {
+      "name": "Dual-HSP dispersant effectiveness criterion",
+      "latex": "\\text{Score} = w_a \\cdot (1 - RED_{anchor}) + w_s \\cdot (1 - RED_{solvation})",
+      "explanation": "Dispersant selection score combining anchor HSP affinity (headgroup to particle surface) and solvation HSP compatibility (tail to continuous medium), where w_a and w_s are weighting factors"
+    },
+    {
+      "name": "Enthalpy of mixing for nanoparticle dispersion",
+      "latex": "\\Delta H_{mix} \\approx \\frac{2}{d_{particle}} (\\delta_{particle} - \\delta_{solvent})^2 \\phi (1 - \\phi)",
+      "explanation": "Enthalpy of mixing per unit volume for nanoparticle dispersion where d_particle is the particle diameter; smaller particles increase the enthalpy penalty for HSP mismatch"
+    },
+    {
+      "name": "Optimum HSP for graphene dispersion",
+      "latex": "\\delta_D \\approx 18.0,\\; \\delta_P \\approx 9.3,\\; \\delta_H \\approx 7.7 \\;\\text{MPa}^{1/2}",
+      "explanation": "Experimentally determined center of the Hansen solubility sphere for graphene, from which solvent screening proceeds via RED calculation"
+    }
+  ],
+  "historical_context": "The application of HSP to nanomaterial dispersion began in earnest in the mid-2000s. Hernandez et al. (2008) and Coleman and co-workers at Trinity College Dublin pioneered HSP-based solvent selection for carbon nanotube and graphene exfoliation, demonstrating that stable dispersions form when solvent HSP matches the surface energy components of the nanomaterial. Bergin et al. (2009) mapped the Hansen solubility sphere for single-walled CNTs and graphene. The concept was extended to MXenes by Maleski et al. (2019) who showed that Ti3C2Tx surface terminations (OH, F, O) dictate the HSP coordinates and explain the effectiveness of water and DMSO. Quantum dot ligand exchange solvent selection using HSP was developed by Greaney et al. (2015) and others working on perovskite and chalcogenide nanocrystals. The Dual-HSP dispersant model, distinguishing anchor HSP (headgroup affinity to particle surface) and solvation HSP (tail compatibility with medium), was formalized by Abbott and Hansen (2008, HSPiP software documentation) building on earlier pigment dispersion work by Vanderhoff and El-Aasser. Hansen himself contributed extensively to pigment dispersion science throughout his career, and the 2007 second edition of his handbook devotes significant sections to nanoparticle and pigment dispersions.",
+  "related_project_modules": [
+    "cnt-graphene-dispersion.ts",
+    "mxene-dispersion.ts",
+    "quantum-dot-ligand-exchange.ts",
+    "dispersant-selection.ts",
+    "pigment-dispersion-stability.ts"
+  ],
+  "prerequisites": [
+    "Ch01_HSP_Fundamentals",
+    "Ch02_Thermodynamic_Foundations",
+    "Ch04_HSP_Estimation_Methods",
+    "Ch05_Contact_Angle_Wettability"
+  ],
+  "learning_objectives": [
+    "Construct a Hansen solubility sphere for a nanomaterial from binary solvent screening data and use RED to predict dispersion quality in untested solvents",
+    "Select optimal solvents and solvent blends for dispersing CNTs, graphene, and MXenes based on HSP matching criteria",
+    "Apply the Dual-HSP dispersant model to evaluate and rank dispersant candidates by their anchor and solvation HSP affinity scores",
+    "Design a quantum dot ligand exchange protocol by selecting intermediate and final solvents that maintain colloidal stability during the swap",
+    "Predict pigment dispersion stability and flocculation risk using RED values and correlate with industrial dispersion quality metrics"
+  ],
+  "practical_applications": [
+    "Solvent selection for scalable liquid-phase exfoliation of graphene and other 2D materials",
+    "CNT ink formulation for printed electronics, selecting solvents and co-solvents that maximize nanotube debundling",
+    "MXene dispersion optimization for electromagnetic interference shielding coatings and energy storage electrodes",
+    "Quantum dot ligand exchange solvent design for photovoltaic and LED applications",
+    "Dispersant screening for industrial pigment concentrates in paints, inks, and coatings",
+    "Nanoparticle dispersion quality control using HSP-based RED screening to replace costly trial-and-error",
+    "Formulation of nanocomposite masterbatches with optimized filler dispersion using HSP-matched carrier resins",
+    "Stability prediction for agrochemical and pharmaceutical nanoparticle suspensions"
+  ],
+  "worked_examples": [
+    {
+      "title": "Hansen solubility sphere for graphene from solvent screening",
+      "description": "Given dispersion stability data (good/bad classification) for graphene in 30 solvents, fit the HSP sphere center (deltaD, deltaP, deltaH) and radius R0. Predict dispersion quality in 5 untested solvents using the fitted sphere and calculate RED values."
+    },
+    {
+      "title": "Optimal solvent blend for CNT dispersion",
+      "description": "Starting from the known CNT HSP sphere (center: deltaD=17.8, deltaP=7.5, deltaH=7.6 MPa^1/2, R0=4.5), design a binary solvent blend of ethanol and cyclohexanone that achieves RED < 0.8 by calculating the volume-weighted average HSP."
+    },
+    {
+      "title": "Dual-HSP dispersant ranking for TiO2 nanoparticles in toluene",
+      "description": "Evaluate five dispersant candidates (polyester-polyamine, fatty acid ethoxylate, polyurethane-acrylate, silane coupling agent, phosphate ester) by computing anchor RED (headgroup vs TiO2 surface HSP) and solvation RED (tail vs toluene HSP). Rank by combined Dual-HSP score."
+    },
+    {
+      "title": "MXene Ti3C2Tx dispersion: water vs DMSO comparison",
+      "description": "Calculate Ra between Ti3C2Tx surface HSP (deltaD=16.2, deltaP=14.2, deltaH=18.0 MPa^1/2) and water, DMSO, ethanol, and acetone. Explain why water and DMSO provide superior dispersion stability based on the polar and hydrogen bonding term matching."
+    }
+  ],
+  "key_references": [
+    {
+      "author": "Hansen, C.M.",
+      "year": 2007,
+      "title": "Hansen Solubility Parameters: A User's Handbook, 2nd Edition, CRC Press"
+    },
+    {
+      "author": "Hernandez, Y.; Nicolosi, V.; Lotya, M.; et al.",
+      "year": 2008,
+      "title": "High-yield production of graphene by liquid-phase exfoliation of graphite, Nature Nanotechnology, 3(9), 563-568"
+    },
+    {
+      "author": "Bergin, S.D.; Nicolosi, V.; Streich, P.V.; et al.",
+      "year": 2009,
+      "title": "Towards Solutions of Single-Walled Carbon Nanotubes in Common Solvents, Advanced Materials, 20(10), 1876-1881"
+    },
+    {
+      "author": "Coleman, J.N.",
+      "year": 2013,
+      "title": "Liquid Exfoliation of Defect-Free Graphene, Accounts of Chemical Research, 46(1), 14-22"
+    },
+    {
+      "author": "Maleski, K.; Mochalin, V.N.; Gogotsi, Y.",
+      "year": 2017,
+      "title": "Dispersions of Two-Dimensional Titanium Carbide MXene in Organic Solvents, Chemistry of Materials, 29(4), 1632-1640"
+    },
+    {
+      "author": "Abbott, S.; Hansen, C.M.",
+      "year": 2008,
+      "title": "Hansen Solubility Parameters in Practice (HSPiP), 1st Edition, self-published [uncertain]"
+    },
+    {
+      "author": "Süß, S.; Sobisch, T.; Peukert, W.; Lerche, D.; Segets, D.",
+      "year": 2018,
+      "title": "Determination of Hansen Parameters for Particles: A Standardized Routine Based on Analytical Centrifugation, Advanced Powder Technology, 29(7), 1550-1561 [uncertain]"
+    },
+    {
+      "author": "Luo, M.; Zhao, Y.; Zhang, M.; et al.",
+      "year": 2020,
+      "title": "Two-Dimensional Material-Based MXene Dispersions: Processing, Properties, and Applications [uncertain]"
+    },
+    {
+      "author": "Greaney, M.J.; Brutchey, R.L.",
+      "year": 2015,
+      "title": "Ligand Engineering in Hybrid Polymer:Nanocrystal Solar Cells, Materials Today, 18(1), 31-38 [uncertain]"
+    },
+    {
+      "author": "Beerbower, A.",
+      "year": 1971,
+      "title": "Surface Free Energy: A New Relationship to Bulk Energies, Journal of Colloid and Interface Science, 35(1), 126-132"
+    }
+  ],
+  "cross_references": [
+    "Ch01_HSP_Fundamentals",
+    "Ch02_Thermodynamic_Foundations",
+    "Ch04_HSP_Estimation_Methods",
+    "Ch05_Contact_Angle_Wettability",
+    "Ch06_Adhesion_Engineering",
+    "Ch07_Polymer_Solubility_Swelling",
+    "Ch10_Coatings_Inks [uncertain]"
+  ],
+  "difficulty_level": "graduate",
+  "estimated_pages": 50,
+  "figures_needed": [
+    {
+      "title": "Hansen Solubility Sphere for Graphene",
+      "description": "3D HSP space showing the fitted solubility sphere for graphene with good solvents (NMP, DMF, CHP, GBL) inside the sphere and poor solvents (water, hexane, methanol) outside, with data points color-coded by dispersion concentration"
+    },
+    {
+      "title": "RED Screening Map for CNT Dispersion",
+      "description": "Bar chart or 2D projection showing RED values for 20+ solvents tested against the CNT solubility sphere, with a horizontal threshold line at RED=1 separating good from poor dispersions"
+    },
+    {
+      "title": "MXene Ti3C2Tx Surface Termination and HSP",
+      "description": "Schematic of Ti3C2Tx surface with OH, F, and O terminations, alongside a HSP space diagram showing how different termination ratios shift the effective HSP coordinates toward aqueous or organic regimes"
+    },
+    {
+      "title": "Dual-HSP Dispersant Model Schematic",
+      "description": "Diagram of a dispersant molecule adsorbed on a nanoparticle surface, with the headgroup (anchor) region annotated with anchor HSP and the solvated tail annotated with solvation HSP, showing how each is matched to different targets"
+    },
+    {
+      "title": "Quantum Dot Ligand Exchange Solvent Path",
+      "description": "HSP space trajectory showing the colloidal stability window during ligand exchange: original ligand shell HSP, intermediate solvent HSP, and final ligand shell HSP, with the stability sphere for each intermediate state"
+    },
+    {
+      "title": "Pigment Dispersion Stability vs RED Correlation",
+      "description": "Scatter plot of measured dispersion stability (settling rate or turbidity) vs calculated RED for a pigment in 15+ solvent/vehicle systems, showing the sharp transition at RED approximately 1"
+    },
+    {
+      "title": "Solvent Blend Optimization Map",
+      "description": "Ternary or 2D contour plot showing how binary/ternary solvent blend compositions map to HSP coordinates relative to the target nanomaterial sphere center, with optimal blend composition highlighted"
+    },
+    {
+      "title": "Surface Energy Decomposition for 2D Materials",
+      "description": "Stacked bar chart comparing dispersion, polar, and hydrogen bonding components of surface energy for graphene, h-BN, MoS2, WS2, and Ti3C2Tx MXene"
+    }
+  ],
+  "tables_needed": [
+    {
+      "title": "HSP Values for Common Nanomaterials",
+      "description": "Table of deltaD, deltaP, deltaH, and R0 values for graphene, SWCNTs, MWCNTs, graphene oxide, reduced graphene oxide, Ti3C2Tx MXene, h-BN, MoS2, TiO2 nanoparticles, SiO2 nanoparticles, and carbon black"
+    },
+    {
+      "title": "Solvent Ranking for Graphene/CNT Exfoliation",
+      "description": "Table listing 20+ solvents with their HSP values, Ra to graphene, RED, measured dispersion concentration, and boiling point for process practicality"
+    },
+    {
+      "title": "MXene Dispersion Solvent Comparison",
+      "description": "Table comparing water, DMSO, DMF, NMP, ethanol, and isopropanol with Ra to Ti3C2Tx, RED, measured concentration, and stability notes"
+    },
+    {
+      "title": "Dual-HSP Dispersant Database",
+      "description": "Table of common industrial dispersants (polymeric, small molecule, silane) with anchor HSP, solvation HSP, recommended particle types, and recommended media"
+    },
+    {
+      "title": "Quantum Dot Ligand Exchange Solvent Guide",
+      "description": "Table of ligand types (oleic acid, oleylamine, mercaptopropionic acid, halide, etc.) with HSP of ligand shell, recommended exchange solvents, and RED values"
+    },
+    {
+      "title": "Pigment HSP Values and Dispersion Stability Ratings",
+      "description": "Table of common organic and inorganic pigments with HSP values, R0, and stability ratings in several standard vehicle systems"
+    }
+  ],
+  "software_demo": {
+    "tab": "Dispersant Selection (分散剤選定) tab, with related CNT/Graphene Dispersion and MXene Dispersion modules",
+    "inputs": "In the Dispersant Selection tab, select a target nanomaterial (e.g., graphene or TiO2) from the database, choose an evaluation mode (simple RED screening or Dual-HSP dispersant evaluation), and enter candidate solvents or dispersants. For CNT/Graphene mode, input solvent candidates to rank. For MXene mode, select Ti3C2Tx and compare aqueous vs organic systems.",
+    "expected_output": "The tool displays Ra and RED values for each solvent/dispersant candidate against the selected nanomaterial, color-coded as good (RED<1, green) or poor (RED>1, red). In Dual-HSP mode, anchor RED and solvation RED are shown separately alongside the combined dispersant effectiveness score. A ranked recommendation list is produced.",
+    "workflow": "1. Open the Dispersant Selection tab and select graphene as the target material. 2. Choose simple evaluation mode to screen 10 solvents by RED. 3. Review the ranked results table showing Ra, RED, and dispersion prediction. 4. Switch to Dual-HSP mode, enter a dispersant with separate anchor and solvation HSP values. 5. Compare dispersant candidates and identify the best option. 6. Export results as structured JSON for further analysis."
+  },
+  "review_questions": [
+    "Explain why solvents with surface tension near 40 mJ/m2 tend to produce stable graphene dispersions. How does this surface energy criterion relate to the HSP matching approach, and what additional information does the three-component HSP framework provide?",
+    "Describe the Dual-HSP dispersant model. Why is a single HSP value insufficient to evaluate a polymeric dispersant, and how do the anchor HSP and solvation HSP concepts separately address adsorption and steric stabilization?",
+    "MXene Ti3C2Tx disperses well in water and DMSO but poorly in most non-polar organic solvents. Explain this behavior using HSP theory, considering the role of surface termination groups (OH, F, O) in determining the effective particle HSP.",
+    "During quantum dot ligand exchange from oleic acid to mercaptopropionic acid, colloidal stability must be maintained throughout the process. Design a solvent strategy using HSP principles that keeps the nanocrystals dispersed as the surface chemistry changes.",
+    "Compare the RED-based screening approach for nanomaterial dispersion with the chi-parameter approach used for polymer blend miscibility (Chapter 8). What are the advantages and limitations of each method when applied to nanoparticle systems?"
+  ],
+  "uncertain": [
+    "key_references[5]",
+    "key_references[6]",
+    "key_references[7]",
+    "key_references[8]",
+    "cross_references[6]",
+    "estimated_pages",
+    "equations[7]"
+  ]
+}

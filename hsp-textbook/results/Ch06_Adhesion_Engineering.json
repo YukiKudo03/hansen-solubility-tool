@@ -1,0 +1,242 @@
+{
+  "chapter_title": "接着設計工学",
+  "chapter_title_en": "Adhesion Engineering",
+  "level": "chapter",
+  "parent": "Part II: Surface Science",
+  "synopsis": "This chapter covers the engineering application of Hansen Solubility Parameters to adhesion design. It presents Ra-distance-based adhesion strength prediction, combined Wa (work of adhesion) and Ra evaluation for ink-substrate adhesion, weakest-link analysis of multilayer coating interfaces, dual-Wa threshold structural adhesive joint design, primerless adhesion optimization via intermediate HSP proposals, PSA (pressure-sensitive adhesive) peel strength correlation with Wa, and wettability evaluation for printed electronics devices using Wa and contact angle criteria.",
+  "key_concepts": [
+    "HSP distance (Ra) as a predictor of adhesion quality between materials",
+    "Work of adhesion (Wa) calculated from HSP via surface energy conversion (Owens-Wendt-Kaelble model)",
+    "HSP-to-surface-energy conversion using Panayiotou-Stefanis/Toyota empirical coefficients",
+    "Extended Owens-Wendt model with three components (dispersion, polar, hydrogen bonding)",
+    "Composite Wa + Ra evaluation for ink-substrate adhesion classification",
+    "Multilayer coating interface analysis with weakest-link identification",
+    "Structural adhesive joint design using dual-Wa threshold on adhesive-adherend pairs",
+    "Bottleneck interface identification in multi-adherend joints",
+    "Primerless adhesion design by proposing optimal adhesive HSP (midpoint or matching strategy)",
+    "PSA peel strength estimation via empirical Wa-to-peel-force correlation (F_peel = k * Wa)",
+    "Printed electronics wetting evaluation combining Wa and contact angle criteria",
+    "Adhesion level classification systems (Excellent/Good/Fair/Poor/Failed) with threshold engineering",
+    "Young-Dupre equation relating contact angle to work of adhesion"
+  ],
+  "equations": [
+    {
+      "name": "HSP distance (Ra)",
+      "latex": "R_a = \\sqrt{4(\\delta_{D1} - \\delta_{D2})^2 + (\\delta_{P1} - \\delta_{P2})^2 + (\\delta_{H1} - \\delta_{H2})^2}",
+      "explanation": "Modified Euclidean distance in Hansen space with factor-of-4 weighting on dispersion component; smaller Ra indicates better HSP compatibility and stronger adhesion"
+    },
+    {
+      "name": "HSP to surface energy conversion",
+      "latex": "\\gamma_D = 0.0947 \\, \\delta_D^2, \\quad \\gamma_P = 0.0315 \\, \\delta_P^2, \\quad \\gamma_H = 0.0238 \\, \\delta_H^2",
+      "explanation": "Panayiotou-Stefanis/Toyota empirical proportionality constants converting HSP components (MPa^0.5) to surface energy components (mJ/m^2)"
+    },
+    {
+      "name": "Extended Owens-Wendt work of adhesion (3-component)",
+      "latex": "W_a = 2 \\left( \\sqrt{\\gamma_D^1 \\gamma_D^2} + \\sqrt{\\gamma_P^1 \\gamma_P^2} + \\sqrt{\\gamma_H^1 \\gamma_H^2} \\right)",
+      "explanation": "Work of adhesion from geometric mean mixing of dispersion, polar, and hydrogen bonding surface energy components of two materials"
+    },
+    {
+      "name": "Young-Dupre equation",
+      "latex": "W_a = \\gamma_{LV}(1 + \\cos\\theta)",
+      "explanation": "Relates work of adhesion to liquid surface tension and equilibrium contact angle; used for wetting evaluation in printed electronics"
+    },
+    {
+      "name": "PSA peel force correlation",
+      "latex": "F_{\\text{peel}} = k \\cdot W_a",
+      "explanation": "Empirical linear correlation between work of adhesion and peel force per unit width, with k as an empirical constant (default 0.25 N/m per mJ/m^2)"
+    },
+    {
+      "name": "Structural joint bottleneck",
+      "latex": "W_{a,\\text{joint}} = \\min(W_{a1}, W_{a2})",
+      "explanation": "Overall joint strength governed by the weaker adhesive-adherend interface (weakest-link principle applied to dual-interface joints)"
+    },
+    {
+      "name": "Multilayer weakest interface",
+      "latex": "W_{a,\\text{weakest}} = \\min_{i} \\left\\{ W_{a}(\\text{layer}_i, \\text{layer}_{i+1}) \\right\\}",
+      "explanation": "In multilayer coatings, the interface with the lowest Wa determines overall system adhesion integrity"
+    }
+  ],
+  "historical_context": "The application of solubility parameters to adhesion prediction dates to the work of Hildebrand and later Hansen (1967), who demonstrated that smaller HSP distances correlate with better adhesion. Owens and Wendt (1969) developed the geometric mean approach for work of adhesion from surface energy components, later extended by Kaelble. Panayiotou (2002) and the Toyota research group established empirical coefficients linking HSP values to surface energy components, enabling direct Wa calculation from HSP data. Abbott and Hansen (2008, HSPiP software) popularized practical adhesion design using HSP distance and work of adhesion. The application to pressure-sensitive adhesives, multilayer coatings, and printed electronics emerged in the 2010s as HSP databases expanded and computational tools became widely available.",
+  "related_project_modules": [
+    "adhesion.ts",
+    "work-of-adhesion.ts",
+    "ink-substrate-adhesion.ts",
+    "multilayer-coating-adhesion.ts",
+    "structural-adhesive-joint.ts",
+    "primerless-adhesion.ts",
+    "psa-peel-strength.ts",
+    "printed-electronics-wetting.ts"
+  ],
+  "prerequisites": [
+    "Ch01_HSP_Fundamentals",
+    "Ch02_Thermodynamic_Foundations",
+    "Ch05_HSP_Sphere_and_RED"
+  ],
+  "learning_objectives": [
+    "Calculate work of adhesion (Wa) between two materials from their HSP values using the extended Owens-Wendt model with HSP-to-surface-energy conversion",
+    "Predict adhesion quality between materials using Ra distance thresholds and composite Wa + Ra criteria",
+    "Identify the weakest interface in multilayer coating systems and propose design improvements",
+    "Apply the dual-Wa threshold approach to structural adhesive joint design and identify bottleneck interfaces",
+    "Design primerless adhesion systems by computing optimal adhesive HSP for a given substrate"
+  ],
+  "practical_applications": [
+    "Predicting ink-substrate adhesion quality in printing and coating industries using combined Wa and Ra evaluation",
+    "Designing multilayer automotive and architectural coatings with optimized inter-layer adhesion",
+    "Selecting structural adhesives for dissimilar material joining (metal-polymer, composite-composite)",
+    "Eliminating primer layers in industrial coating processes by matching adhesive HSP to substrate HSP",
+    "Estimating peel strength of pressure-sensitive adhesive tapes for packaging and electronics assembly",
+    "Evaluating wettability of conductive inks on flexible substrates for printed electronics manufacturing",
+    "Quality control screening of adhesive-substrate combinations before physical testing",
+    "Optimizing surface treatment processes by targeting specific HSP modifications to improve Wa"
+  ],
+  "worked_examples": [
+    {
+      "title": "Ink-substrate adhesion evaluation for flexographic printing",
+      "description": "Given HSP values for a UV-curable ink (dD=17.5, dP=8.2, dH=6.1) and PET film substrate (dD=19.5, dP=6.5, dH=7.0), compute Wa and Ra, classify adhesion level using the composite Wa > 80 AND Ra < 5 criterion, and discuss whether surface treatment is needed."
+    },
+    {
+      "title": "Weakest-link analysis of a 4-layer automotive coating system",
+      "description": "Analyze a coating stack consisting of steel substrate, epoxy primer, polyurethane basecoat, and acrylic clearcoat. Compute Wa for each of the 3 interfaces, identify the weakest interface, and propose an HSP modification to improve the overall system adhesion."
+    },
+    {
+      "title": "Primerless adhesion design for polypropylene bonding",
+      "description": "For a polypropylene substrate (dD=18.0, dP=0.0, dH=1.0) and an epoxy adhesive (dD=20.0, dP=12.0, dH=11.5), evaluate current adhesion quality, compute the optimal adhesive HSP, and quantify the improvement potential percentage."
+    },
+    {
+      "title": "PSA tape peel strength prediction for electronics assembly",
+      "description": "Estimate the peel force of an acrylic PSA tape on a glass substrate using HSP-derived Wa values and the empirical F_peel = k * Wa correlation with k = 0.25. Compare predicted values against experimental 90-degree peel test data."
+    }
+  ],
+  "key_references": [
+    {
+      "author": "Hansen, C.M.",
+      "year": 2007,
+      "title": "Hansen Solubility Parameters: A User's Handbook, 2nd Edition, CRC Press, Chapter 8: Adhesion"
+    },
+    {
+      "author": "Owens, D.K.; Wendt, R.C.",
+      "year": 1969,
+      "title": "Estimation of the Surface Free Energy of Polymers, Journal of Applied Polymer Science, 13(8), 1741-1747"
+    },
+    {
+      "author": "Abbott, S.; Hansen, C.M.",
+      "year": 2020,
+      "title": "HSPiP User's e-Book, Chapter 15: Adhesion"
+    },
+    {
+      "author": "Panayiotou, C.",
+      "year": 2002,
+      "title": "Interfacial Tension and Surface Thermodynamics from Solubility Parameters, Journal of Chemical Thermodynamics, 34, 733-748 [uncertain]"
+    },
+    {
+      "author": "Kaelble, D.H.",
+      "year": 1970,
+      "title": "Dispersion-Polar Surface Tension Properties of Organic Solids, Journal of Adhesion, 2(2), 66-81"
+    },
+    {
+      "author": "Kinloch, A.J.",
+      "year": 1987,
+      "title": "Adhesion and Adhesives: Science and Technology, Chapman and Hall"
+    },
+    {
+      "author": "Packham, D.E.",
+      "year": 2005,
+      "title": "Handbook of Adhesion, 2nd Edition, John Wiley & Sons"
+    },
+    {
+      "author": "Creton, C.; Leibler, L.",
+      "year": 1996,
+      "title": "How Does Tack Depend on Time of Contact and Contact Pressure?, Journal of Polymer Science Part B, 34(3), 545-554 [uncertain]"
+    }
+  ],
+  "cross_references": [
+    "Ch01_HSP_Fundamentals",
+    "Ch02_Thermodynamic_Foundations",
+    "Ch04_HSP_Estimation_Methods",
+    "Ch05_HSP_Sphere_and_RED",
+    "Ch07_Coating_Formulation",
+    "Ch10_Surface_HSP"
+  ],
+  "difficulty_level": "graduate",
+  "estimated_pages": 50,
+  "figures_needed": [
+    {
+      "title": "Ra Distance and Adhesion Level Classification",
+      "description": "Schematic showing the Ra distance scale with threshold boundaries for Excellent (<2), Good (<4), Fair (<6), Poor (<8), and Failed (>=8) adhesion levels, annotated with color bands"
+    },
+    {
+      "title": "HSP-to-Surface-Energy-to-Wa Calculation Pipeline",
+      "description": "Flowchart showing the computation path from HSP values through Panayiotou-Stefanis coefficients to surface energy components, then through geometric mean mixing to work of adhesion Wa"
+    },
+    {
+      "title": "Ink-Substrate Adhesion Phase Diagram",
+      "description": "2D plot with Wa on x-axis and Ra on y-axis, showing the composite classification regions (Excellent: Wa > 80 AND Ra < 5, Good, Fair, Poor) with example ink-substrate pairs plotted"
+    },
+    {
+      "title": "Multilayer Coating Weakest-Link Analysis",
+      "description": "Stacked layer diagram of a multilayer coating system with Wa values annotated at each interface, highlighting the weakest interface with a red indicator"
+    },
+    {
+      "title": "Structural Adhesive Joint Dual-Wa Evaluation",
+      "description": "Diagram of an adhesive joint between two adherends, showing Wa1 and Wa2 at each interface, with the bottleneck interface marked and the min(Wa1, Wa2) threshold system"
+    },
+    {
+      "title": "Primerless Adhesion HSP Optimization",
+      "description": "3D Hansen space plot showing substrate HSP, current adhesive HSP, and proposed optimal adhesive HSP (matching substrate), with Ra vectors and improvement potential annotated"
+    },
+    {
+      "title": "PSA Peel Force vs Work of Adhesion Correlation",
+      "description": "Scatter plot of experimental peel force vs Wa for various PSA-adherend combinations, with the linear regression line F_peel = k * Wa and the empirical constant k"
+    },
+    {
+      "title": "Printed Electronics Wetting Level Classification",
+      "description": "2D classification plot with Wa on x-axis and contact angle on y-axis, showing the four wetting level regions (Excellent, Good, Moderate, Poor) with boundary lines"
+    }
+  ],
+  "tables_needed": [
+    {
+      "title": "Ra-Based Adhesion Classification Thresholds",
+      "description": "Table of default Ra threshold values and corresponding adhesion levels (Excellent, Good, Fair, Poor, Failed) with typical industrial applications for each level"
+    },
+    {
+      "title": "HSP-to-Surface-Energy Conversion Coefficients",
+      "description": "Table listing the Panayiotou-Stefanis/Toyota empirical coefficients (0.0947, 0.0315, 0.0238) for dD, dP, dH to gammaD, gammaP, gammaH conversion with units and valid ranges"
+    },
+    {
+      "title": "Ink-Substrate Adhesion Evaluation Criteria",
+      "description": "Decision matrix showing the combined Wa and Ra thresholds for Excellent, Good, Fair, and Poor ink-substrate adhesion classification"
+    },
+    {
+      "title": "Structural Joint Quality Levels",
+      "description": "Table of min(Wa1, Wa2) threshold values for Excellent (>80), Good (>60), Fair (>40), and Poor joint levels with recommended actions"
+    },
+    {
+      "title": "PSA Peel Strength Classification",
+      "description": "Table showing Wa ranges, corresponding peel force estimates (with k=0.25), and Strong/Medium/Weak classifications for PSA tape applications"
+    },
+    {
+      "title": "Printed Electronics Wetting Evaluation Criteria",
+      "description": "Table of combined Wa and contact angle thresholds for Excellent, Good, Moderate, and Poor wetting levels in printed electronics applications"
+    }
+  ],
+  "software_demo": {
+    "tab": "Adhesion evaluation tabs (接着性予測, インク-基材密着性, 多層コーティング, 構造接着, プライマーレス接着, PSA剥離強度, 印刷電子デバイス濡れ性)",
+    "inputs": "Enter HSP values (deltaD, deltaP, deltaH) for each material pair. For multilayer coating, define 2+ coating layers with names and HSP values. For structural joints, provide adhesive and two adherend HSP values. For PSA evaluation, optionally adjust the empirical constant k.",
+    "expected_output": "Each tab displays computed Ra, Wa (mJ/m^2), adhesion/wetting level classification with color-coded indicators. Multilayer coating tab shows all interface Wa values and highlights the weakest interface. Structural joint tab shows both Wa values and identifies the bottleneck adherend. Primerless adhesion tab shows current and optimal adhesive HSP with improvement potential percentage.",
+    "workflow": "1. Open the basic adhesion prediction tab and enter adhesive/substrate HSP to see Ra-based classification. 2. Switch to ink-substrate adhesion tab for combined Wa + Ra evaluation. 3. Use multilayer coating tab to stack multiple layers and identify the weakest interface. 4. Use structural joint tab for dual-adherend analysis. 5. Use primerless adhesion tab to get optimal adhesive HSP recommendations. 6. Use PSA tab for peel force estimation. 7. Use printed electronics tab for combined Wa + contact angle wetting assessment."
+  },
+  "review_questions": [
+    "Explain why the Ra distance uses a factor-of-4 weighting on the dispersion component. How does this affect adhesion predictions for materials with large differences in deltaD vs deltaP or deltaH?",
+    "A multilayer coating system shows adequate Wa at all interfaces except between the primer and basecoat. Propose two strategies to improve the weakest interface Wa without changing the topcoat or substrate.",
+    "Compare the composite Wa + Ra evaluation used in ink-substrate adhesion with the single-metric Ra-only evaluation. Under what circumstances might they give conflicting predictions, and which would you trust more?",
+    "Describe the limitations of the empirical F_peel = k * Wa correlation for PSA peel strength prediction. What additional factors influence actual peel strength that are not captured by this model?",
+    "For primerless adhesion design, the optimal adhesive HSP is proposed as matching the substrate HSP. Discuss why this may not always be achievable in practice and what constraints (glass transition temperature, mechanical properties, curing chemistry) must be balanced against HSP matching."
+  ],
+  "uncertain": [
+    "prerequisites",
+    "cross_references",
+    "estimated_pages",
+    "key_references[3]",
+    "key_references[7]"
+  ]
+}

@@ -1,0 +1,229 @@
+{
+  "chapter_title": "HSP空間の可視化と解析",
+  "chapter_title_en": "Visualization and Analysis of HSP Space",
+  "level": "chapter",
+  "parent": "Part V: Advanced Methods",
+  "synopsis": "This chapter covers the visualization methods used to represent Hansen Solubility Parameter data in two and three dimensions. It presents 3D scatter plots with Hansen sphere wireframes for direct spatial analysis, Teas plots using ternary (fd-fp-fh) fractional coordinates for simplified group comparison, Bagley plots that reduce HSP to a 2D deltaV-deltaH representation, and three orthogonal 2D projection planes (deltaD-deltaP, deltaP-deltaH, deltaD-deltaH) with interaction circles. The chapter emphasizes how each visualization method highlights different aspects of solubility data and supports formulation decision-making.",
+  "key_concepts": [
+    "3D Hansen space: three-dimensional coordinate system with axes deltaD (dispersion), deltaP (polar), and deltaH (hydrogen bonding)",
+    "Hansen solubility sphere: a sphere in 3D HSP space centered on a material's HSP with radius R0 defining the boundary between good and poor solvents",
+    "Wireframe sphere generation: discretizing a sphere surface using latitude-longitude (phi-theta) parametrization at a configurable resolution",
+    "RED-to-color mapping: continuous color gradient from green (RED<0.5, good solvent) through yellow (RED=1.0, borderline) to red (RED>1.5, poor solvent) for data point visualization",
+    "Teas fractional coordinates: normalizing HSP components to dimensionless fractions fd=deltaD/(deltaD+deltaP+deltaH), fp=deltaP/(deltaD+deltaP+deltaH), fh=deltaH/(deltaD+deltaP+deltaH) that sum to unity",
+    "Ternary (triangular) plot: equilateral triangle representation where each vertex corresponds to a pure component fraction (fd, fp, or fh), enabling visual clustering of similar materials",
+    "Cartesian conversion from ternary coordinates: mapping (fd, fp, fh) to 2D (x, y) using the equilateral triangle geometry x=fp+fh/2, y=fh*sqrt(3)/2",
+    "Bagley plot: 2D reduction of HSP space using deltaV=sqrt(deltaD^2+deltaP^2) as the combined volume solubility parameter plotted against deltaH",
+    "Orthogonal 2D projections: three complementary views (deltaD-deltaP, deltaP-deltaH, deltaD-deltaH) obtained by projecting 3D HSP data onto coordinate planes",
+    "Interaction circles in 2D projections: circular regions of radius R0 centered on material HSP coordinates in each projection plane, representing the cross-section of the solubility sphere",
+    "Data interpretation heuristics: using visual proximity, cluster separation, and sphere overlap to guide solvent selection and formulation decisions",
+    "Complementary visualization strategy: combining multiple plot types to overcome information loss inherent in any single dimensional reduction"
+  ],
+  "equations": [
+    {
+      "name": "Hansen distance (Ra)",
+      "latex": "Ra = \\sqrt{4(\\delta_{D1} - \\delta_{D2})^2 + (\\delta_{P1} - \\delta_{P2})^2 + (\\delta_{H1} - \\delta_{H2})^2}",
+      "explanation": "Distance metric in HSP space with the factor of 4 on the dispersion term; determines whether a point lies inside or outside the solubility sphere"
+    },
+    {
+      "name": "Relative Energy Difference (RED)",
+      "latex": "RED = \\frac{Ra}{R_0}",
+      "explanation": "Dimensionless ratio used for color-coded visualization; RED<1 indicates compatibility (inside sphere), RED>1 indicates incompatibility (outside sphere)"
+    },
+    {
+      "name": "Teas fractional coordinates",
+      "latex": "f_d = \\frac{\\delta_D}{\\delta_D + \\delta_P + \\delta_H}, \\quad f_p = \\frac{\\delta_P}{\\delta_D + \\delta_P + \\delta_H}, \\quad f_h = \\frac{\\delta_H}{\\delta_D + \\delta_P + \\delta_H}",
+      "explanation": "Dimensionless fractional parameters that map 3D HSP values onto a ternary diagram; they satisfy fd+fp+fh=1 by construction"
+    },
+    {
+      "name": "Ternary to Cartesian coordinate transformation",
+      "latex": "x = f_p + \\frac{f_h}{2}, \\quad y = f_h \\cdot \\frac{\\sqrt{3}}{2}",
+      "explanation": "Maps ternary (fd, fp, fh) coordinates to 2D Cartesian (x, y) for plotting on an equilateral triangle with vertices at fd=(0,0), fp=(1,0), fh=(0.5, sqrt(3)/2)"
+    },
+    {
+      "name": "Bagley volume solubility parameter",
+      "latex": "\\delta_V = \\sqrt{\\delta_D^2 + \\delta_P^2}",
+      "explanation": "Combined dispersion and polar contribution used as one axis in the Bagley plot; reduces three HSP dimensions to two by merging deltaD and deltaP"
+    },
+    {
+      "name": "Sphere surface parametrization",
+      "latex": "\\begin{cases} x = c_x + R_0 \\sin\\phi \\cos\\theta \\\\ y = c_y + R_0 \\sin\\phi \\sin\\theta \\\\ z = c_z + R_0 \\cos\\phi \\end{cases} \\quad \\phi \\in [0, \\pi], \\; \\theta \\in [0, 2\\pi]",
+      "explanation": "Parametric equations for generating wireframe vertices of the Hansen sphere at center (cx, cy, cz) with radius R0 using spherical coordinates"
+    },
+    {
+      "name": "RED-to-color gradient function",
+      "latex": "\\text{color}(RED) = \\begin{cases} \\text{rgb}(255 \\cdot t, 200, 50) & t \\leq 1 \\\\ \\text{rgb}(255, 200(2-t), 50) & t > 1 \\end{cases}, \\quad t = \\text{clamp}(RED, 0, 2)",
+      "explanation": "Piecewise linear color mapping: green at RED=0, yellow at RED=1, red at RED=2; provides intuitive visual encoding of solvent compatibility"
+    }
+  ],
+  "historical_context": "The visualization of solubility parameter data has evolved alongside Hansen's three-component framework. Charles M. Hansen introduced the 3D solubility sphere concept in his 1967 doctoral thesis at the Danish Technical University, representing materials as points and solubility regions as spheres in (deltaD, deltaP, deltaH) space. Jean P. Teas proposed the ternary fractional coordinate system in 1968, simplifying HSP visualization into a triangular diagram that became popular in the coatings industry for quick visual comparisons. E.B. Bagley introduced the deltaV-deltaH two-dimensional representation in 1971, combining the dispersion and polar components into a single volume parameter to enable straightforward 2D plotting. The 2D orthogonal projection approach (three coordinate plane views) emerged as a practical compromise in the 1980s-1990s when computer graphics capabilities were limited. The HSPiP software (Abbott and Hansen, 2008+) popularized interactive 3D visualization with rotatable sphere displays. Modern implementations use WebGL-based 3D rendering (e.g., Plotly.js, Three.js) and SVG-based 2D plots to provide real-time interactive exploration of HSP space in browser environments.",
+  "related_project_modules": [
+    "hsp-visualization.ts",
+    "teas-plot.ts",
+    "bagley-plot.ts",
+    "projection-2d.ts",
+    "sphere-fitting.ts",
+    "hsp.ts"
+  ],
+  "prerequisites": [
+    "Ch01_HSP_Fundamentals",
+    "Ch02_Thermodynamic_Foundations"
+  ],
+  "learning_objectives": [
+    "Construct and interpret 3D scatter plots with Hansen solubility spheres, understanding the significance of the 4:1:1 weighting in the Ra distance formula for sphere geometry",
+    "Convert HSP values to Teas fractional coordinates and plot them on a ternary diagram, using cluster positions to identify material families",
+    "Apply the Bagley deltaV-deltaH reduction to visualize solvent-material compatibility in two dimensions and understand what information is lost compared to the full 3D representation",
+    "Generate and interpret three orthogonal 2D projection planes (deltaD-deltaP, deltaP-deltaH, deltaD-deltaH) with interaction circles to assess compatibility from multiple viewpoints",
+    "Select the appropriate visualization method based on the analysis goal: 3D for complete spatial relationships, Teas for group comparison, Bagley for quick 2D screening, projections for detailed pairwise parameter analysis"
+  ],
+  "practical_applications": [
+    "Coating formulation: using Teas plots to visually group solvents and resins and identify compatible blending candidates in the coatings industry",
+    "Polymer dissolution screening: 3D sphere visualization to determine which solvents fall inside the polymer's solubility sphere and predict dissolution behavior",
+    "Quality control in paint manufacturing: Bagley plots for rapid 2D assessment of incoming solvent batches against specification regions",
+    "Adhesive design: 2D projection views to systematically evaluate how changes in deltaP or deltaH independently affect adhesive-substrate compatibility",
+    "Pharmaceutical excipient selection: ternary Teas diagrams to compare drug substance and excipient HSP clusters for formulation optimization",
+    "Technical presentations and reports: selecting the most informative visualization type for communicating HSP analysis results to different audiences (R&D, production, management)",
+    "Solvent substitution visual analysis: overlaying candidate replacement solvents on existing Teas or Bagley plots to visually assess proximity to the original solvent"
+  ],
+  "worked_examples": [
+    {
+      "title": "3D Hansen sphere visualization for an epoxy resin system",
+      "description": "Given an epoxy resin with HSP (deltaD=20.0, deltaP=12.0, deltaH=10.0, R0=8.0) and 15 candidate solvents, generate a 3D scatter plot with the solubility sphere wireframe. Color each solvent point using the RED-to-color gradient. Identify which solvents are inside the sphere (RED<1), on the boundary (RED~1), and outside (RED>1). Rotate the view to observe how spatial distribution differs from simple distance ranking."
+    },
+    {
+      "title": "Teas ternary plot comparison of polymer families",
+      "description": "Calculate Teas fractional coordinates for 10 common polymers (polyethylene, PVC, PMMA, nylon-6, PET, polystyrene, polycarbonate, PVDF, cellulose acetate, natural rubber) and 10 common solvents. Plot on a ternary diagram and identify distinct clusters. Discuss why polymers with similar fd values but different fp/fh ratios may still be incompatible, highlighting the limitation of Teas plots in distinguishing polar and hydrogen bonding contributions."
+    },
+    {
+      "title": "Bagley plot for solvent screening in a nanoparticle dispersion",
+      "description": "For a carbon nanotube (HSP: deltaD=17.8, deltaP=7.0, deltaH=7.6), compute deltaV for 12 candidate solvents and plot them on a Bagley (deltaV vs deltaH) diagram. Draw the target region as an ellipse. Compare the Bagley ranking with the full 3D Ra ranking and identify cases where the Bagley plot incorrectly predicts compatibility due to information loss in the deltaD-deltaP merger."
+    },
+    {
+      "title": "Three-plane orthogonal projection analysis",
+      "description": "For a PMMA-based coating (HSP: deltaD=18.6, deltaP=10.5, deltaH=7.5, R0=5.5) and 8 solvents, generate all three 2D projections (deltaD-deltaP, deltaP-deltaH, deltaD-deltaH) with interaction circles. Identify a solvent that appears inside the circle in two projections but outside in the third, demonstrating why all three views are needed for reliable compatibility assessment."
+    }
+  ],
+  "key_references": [
+    {
+      "author": "Hansen, C.M.",
+      "year": 2007,
+      "title": "Hansen Solubility Parameters: A User's Handbook, 2nd Edition, CRC Press, Chapter 1: Solubility Parameters - An Introduction, and Chapter 2: The Three-Dimensional Solubility Parameter"
+    },
+    {
+      "author": "Abbott, S.; Hansen, C.M.",
+      "year": 2013,
+      "title": "Hansen Solubility Parameters in Practice (HSPiP), 4th Edition, www.hansen-solubility.com, Chapters on Visualization and Sphere Fitting"
+    },
+    {
+      "author": "Teas, J.P.",
+      "year": 1968,
+      "title": "Graphic Analysis of Resin Solubilities, Journal of Paint Technology, 40(516), 19-25"
+    },
+    {
+      "author": "Bagley, E.B.; Nelson, T.P.; Scigliano, J.M.",
+      "year": 1971,
+      "title": "Three-Dimensional Solubility Parameters and Their Relationship to Internal Pressure Measurements in Polar and Hydrogen Bonding Solvents, Journal of Paint Technology, 43(555), 35-42"
+    },
+    {
+      "author": "Barton, A.F.M.",
+      "year": 1991,
+      "title": "CRC Handbook of Solubility Parameters and Other Cohesion Parameters, 2nd Edition, CRC Press"
+    },
+    {
+      "author": "Burke, J.",
+      "year": 1984,
+      "title": "Solubility Parameters: Theory and Application, AIC Book and Paper Group Annual, 3, 13-58"
+    },
+    {
+      "author": "Van Krevelen, D.W.; te Nijenhuis, K.",
+      "year": 2009,
+      "title": "Properties of Polymers, 4th Edition, Elsevier, Chapter 7: Cohesive Properties and Solubility"
+    },
+    {
+      "author": "Hansen, C.M.; Abbott, S.",
+      "year": 2009,
+      "title": "Hansen Solubility Parameters: Comparing and Progressing, Journal of Coatings Technology and Research, 6(3), 321-332"
+    }
+  ],
+  "cross_references": [
+    "Ch01_HSP_Fundamentals",
+    "Ch02_Thermodynamic_Foundations",
+    "Ch04_HSP_Estimation_Methods",
+    "Ch07_Polymer_Solubility_Swelling",
+    "Ch12_Coatings_Films",
+    "Ch16_Solvent_Selection_Optimization"
+  ],
+  "difficulty_level": "undergraduate",
+  "estimated_pages": 40,
+  "figures_needed": [
+    {
+      "title": "3D Hansen Space Scatter Plot with Solubility Sphere",
+      "description": "Interactive 3D scatter plot showing solvent data points colored by RED value (green-yellow-red gradient) with a wireframe sphere centered on the target material's HSP. Axes labeled deltaD, deltaP, deltaH in MPa^0.5. Includes rotatable view controls."
+    },
+    {
+      "title": "Sphere Wireframe Generation Diagram",
+      "description": "Illustration of the latitude-longitude parametrization (phi, theta) used to generate sphere surface vertices, showing the resolution parameter's effect on mesh density"
+    },
+    {
+      "title": "RED-to-Color Gradient Scale",
+      "description": "Color bar showing the continuous mapping from RED=0 (green) through RED=1 (yellow) to RED=2 (red), with labeled threshold values and corresponding rgb formulas"
+    },
+    {
+      "title": "Teas Ternary Plot with Solvent and Polymer Clusters",
+      "description": "Equilateral triangle plot with vertices labeled fd, fp, fh showing solvent data points as circles and polymer targets as squares, with distinct clusters highlighted and labeled by material family"
+    },
+    {
+      "title": "Ternary Coordinate System Geometry",
+      "description": "Geometric construction diagram showing the mapping from (fd, fp, fh) ternary coordinates to (x, y) Cartesian coordinates on an equilateral triangle, with the transformation equations annotated"
+    },
+    {
+      "title": "Bagley Plot (deltaV vs deltaH)",
+      "description": "2D scatter plot with deltaV on the x-axis and deltaH on the y-axis, showing solvents as circles and target material as a star, with an interaction ellipse around the target. Grid lines and axis labels in MPa^0.5"
+    },
+    {
+      "title": "Three Orthogonal 2D Projection Panels",
+      "description": "Side-by-side panel of three 2D plots (deltaD-deltaP, deltaP-deltaH, deltaD-deltaH) each showing the same dataset with interaction circles. A highlighted solvent appears inside the circle in two views but outside in the third to demonstrate the need for all three projections"
+    },
+    {
+      "title": "Comparison of Four Visualization Methods",
+      "description": "Four-panel figure showing the same 10-solvent dataset visualized as (a) 3D scatter with sphere, (b) Teas ternary plot, (c) Bagley plot, and (d) three 2D projections, annotated with pros and cons of each method"
+    },
+    {
+      "title": "Information Loss in Dimensional Reduction",
+      "description": "Schematic diagram showing how 3D HSP space information is reduced in each visualization method: Teas loses magnitude, Bagley merges deltaD and deltaP, and 2D projections lose one axis per view. Venn-like diagram showing overlapping and unique information preserved by each method"
+    }
+  ],
+  "tables_needed": [
+    {
+      "title": "Comparison of HSP Visualization Methods",
+      "description": "Summary table comparing 3D scatter, Teas plot, Bagley plot, and 2D projections across dimensions: number of dimensions displayed, information preserved, information lost, best use case, computational complexity, and interactivity requirements"
+    },
+    {
+      "title": "Teas Fractional Coordinates for Common Solvents",
+      "description": "Table of 15-20 common solvents with columns: name, deltaD, deltaP, deltaH, fd, fp, fh, Cartesian x, Cartesian y for Teas plotting"
+    },
+    {
+      "title": "Bagley Coordinates for Common Solvents",
+      "description": "Table of 15-20 common solvents with columns: name, deltaD, deltaP, deltaH, deltaV, deltaH(Bagley), showing the dimensional reduction from three to two parameters"
+    },
+    {
+      "title": "Visualization Method Selection Guide",
+      "description": "Decision matrix showing which visualization method to use based on analysis goal (screening, clustering, presentation, detailed analysis), audience (technical, managerial), data size (few vs many materials), and available tools (2D printer, screen, interactive 3D)"
+    }
+  ],
+  "software_demo": {
+    "tab": "3D Visualization (3D可視化) tab, Teas Plot (Teasプロット) tab, Bagley Plot (Bagleyプロット) tab, and 2D Projection (2D射影) tab",
+    "inputs": "In the 3D Visualization tab, select a target material (part) from the parts list and a set of solvents from the solvent database. The sphere is automatically generated from the part's HSP center and R0. In the Teas Plot tab, the same solvent and part selections are converted to ternary coordinates. In the Bagley Plot tab, deltaV is computed automatically from deltaD and deltaP for all selected materials. In the 2D Projection tab, all three orthogonal projection planes are generated simultaneously from the selected data.",
+    "expected_output": "The 3D tab shows an interactive scatter plot with a wireframe sphere and color-coded solvent points (green/yellow/red by RED). The Teas tab shows an equilateral triangle with solvent and part markers positioned by (fd, fp, fh). The Bagley tab shows a 2D scatter of deltaV vs deltaH with solvent and part markers. The 2D Projection tab shows three side-by-side panels (deltaD-deltaP, deltaP-deltaH, deltaD-deltaH) with interaction circles around each part.",
+    "workflow": "1. Open the 3D Visualization tab, select a polymer target and 10+ solvents, rotate the sphere to identify spatial clustering of good solvents. 2. Switch to the Teas Plot tab with the same selection to see how the same data appears in ternary coordinates; note which solvents cluster near the target. 3. Open the Bagley Plot tab and observe the deltaV-deltaH distribution; compare rankings with the 3D view. 4. Finally, open the 2D Projection tab and examine all three orthogonal views; find a solvent that appears compatible in two views but incompatible in the third, demonstrating the value of multiple perspectives."
+  },
+  "review_questions": [
+    "Why does the Hansen distance formula use a factor of 4 on the dispersion term (deltaD), and how does this affect the shape of the solubility sphere when projected onto 2D planes? What would the sphere look like in 2D if the weighting were 1:1:1?",
+    "Teas fractional coordinates normalize HSP values so that fd+fp+fh=1. What information is lost in this normalization, and give an example of two materials that would occupy the same point on a Teas plot but have very different solubility behavior.",
+    "The Bagley plot combines deltaD and deltaP into a single deltaV parameter. Under what circumstances is this simplification most valid, and when might it lead to misleading conclusions about solvent compatibility?",
+    "A solvent appears inside the interaction circle in the deltaD-deltaP and deltaD-deltaH projection planes but outside the circle in the deltaP-deltaH plane. Is this solvent compatible with the target material? Explain your reasoning using the 3D geometry of the solubility sphere.",
+    "Compare the four visualization methods (3D scatter, Teas, Bagley, 2D projections) for presenting HSP data to a non-technical audience. Which would you recommend for a production quality control report and why?"
+  ],
+  "uncertain": [
+    "estimated_pages"
+  ]
+}

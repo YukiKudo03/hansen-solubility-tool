@@ -1,0 +1,278 @@
+{
+  "chapter_title": "溶媒選定と最適化",
+  "chapter_title_en": "Solvent Selection and Optimization",
+  "level": "chapter",
+  "parent": "Part V: Advanced Methods",
+  "synopsis": "This chapter presents systematic computational methods for solvent selection and optimization using Hansen Solubility Parameters. It covers solvent screening and filtering by HSP distance, green solvent substitution under REACH regulations using composite Ra-safety scoring, binary/ternary blend optimization via grid search, multicomponent (4+) blend optimization using differential evolution, and multi-objective optimization that balances HSP compatibility with physical properties and safety constraints through weighted scoring and Pareto-optimal analysis.",
+  "key_concepts": [
+    "Solvent screening by RED ranking: sorting candidate solvents by Ra distance to a target material's HSP center",
+    "Physical property filtering: constraining solvent candidates by boiling point, viscosity, and surface tension thresholds",
+    "Green solvent substitution: replacing regulated solvents with REACH/CHEM21-compliant alternatives ranked by Ra distance",
+    "Composite substitution score: weighted combination of HSP distance, environmental score, and health score (0.6*Ra/10 + 0.2*(1-env/10) + 0.2*(1-health/10))",
+    "Safety rating classification: recommended, acceptable, problematic, hazardous, and banned categories based on CHEM21 guidelines",
+    "Linear blend HSP mixing rule: volume-fraction-weighted average of component HSP values (deltaD_blend = sum(phi_i * deltaD_i))",
+    "Grid search blend optimization: exhaustive enumeration of 2- and 3-component blends at fixed step size to minimize Ra",
+    "Differential evolution (DE/rand/1/bin) for multicomponent optimization: mutation, crossover, and greedy selection in fraction space",
+    "Fraction normalization: projecting unconstrained DE trial vectors onto the simplex (sum=1, non-negative) constraint",
+    "Multi-objective solvent screening: simultaneous optimization of HSP match, boiling point, viscosity, surface tension, and safety",
+    "Weighted scoring function: converting heterogeneous objectives into a single composite score with user-adjustable weights",
+    "Pareto optimality concept: identifying non-dominated solvent solutions in multi-dimensional objective space",
+    "Solvent database architecture: CAS-number-keyed safety lookup with environmental and health scores on 1-10 scales",
+    "Combinatorial explosion management: transitioning from grid search (2-3 components) to metaheuristic algorithms (4+ components)"
+  ],
+  "equations": [
+    {
+      "name": "HSP distance (Ra) for solvent screening",
+      "latex": "Ra = \\sqrt{4(\\delta_{D,target} - \\delta_{D,solvent})^2 + (\\delta_{P,target} - \\delta_{P,solvent})^2 + (\\delta_{H,target} - \\delta_{H,solvent})^2}",
+      "explanation": "Hansen distance between target material and candidate solvent; used as primary ranking criterion in solvent screening"
+    },
+    {
+      "name": "Relative Energy Difference (RED)",
+      "latex": "RED = \\frac{Ra}{R_0}",
+      "explanation": "Dimensionless ratio of Ra to interaction radius; RED < 1 indicates the solvent lies within the target's solubility sphere"
+    },
+    {
+      "name": "Linear HSP mixing rule for blends",
+      "latex": "\\delta_{k,blend} = \\sum_{i=1}^{n} \\phi_i \\, \\delta_{k,i} \\quad (k = D, P, H)",
+      "explanation": "Volume-fraction-weighted linear combination of component HSP values; valid assumption for ideal mixing without specific interactions"
+    },
+    {
+      "name": "Green substitution composite score",
+      "latex": "S_{overall} = 0.6 \\cdot \\frac{Ra}{10} + 0.2 \\cdot \\left(1 - \\frac{S_{env}}{10}\\right) + 0.2 \\cdot \\left(1 - \\frac{S_{health}}{10}\\right)",
+      "explanation": "Weighted composite score combining HSP proximity (60%) with environmental penalty (20%) and health penalty (20%); lower is better"
+    },
+    {
+      "name": "Differential evolution mutation (DE/rand/1)",
+      "latex": "\\mathbf{v}_i = \\mathbf{x}_{r_1} + F \\cdot (\\mathbf{x}_{r_2} - \\mathbf{x}_{r_3})",
+      "explanation": "Mutation vector formed by adding a scaled difference of two random population members to a third; F is the mutation factor (typically 0.5-1.0)"
+    },
+    {
+      "name": "Differential evolution binomial crossover",
+      "latex": "u_{i,j} = \\begin{cases} v_{i,j} & \\text{if } rand_j < CR \\text{ or } j = j_{rand} \\\\ x_{i,j} & \\text{otherwise} \\end{cases}",
+      "explanation": "Trial vector formed by mixing mutant and parent components; CR is crossover rate, j_rand ensures at least one mutant component"
+    },
+    {
+      "name": "Simplex normalization (fraction constraint)",
+      "latex": "\\hat{\\phi}_i = \\frac{\\max(\\phi_i, 0)}{\\sum_{k=1}^{n} \\max(\\phi_k, 0)} \\quad \\text{s.t.} \\sum_{i=1}^{n} \\hat{\\phi}_i = 1",
+      "explanation": "Projection of unconstrained DE vectors onto the probability simplex by clipping negatives and renormalizing to unit sum"
+    },
+    {
+      "name": "Multi-objective weighted composite score",
+      "latex": "S = w_{HSP} \\cdot s_{HSP} + w_{bp} \\cdot s_{bp} + w_{\\eta} \\cdot s_{\\eta} + w_{\\gamma} \\cdot s_{\\gamma} + w_{safe} \\cdot s_{safe} + w_{cost} \\cdot s_{cost}",
+      "explanation": "Linear scalarization of multiple objectives with user-adjustable weights; each sub-score is normalized to [0,1] where 1 is optimal"
+    },
+    {
+      "name": "HSP match sub-score",
+      "latex": "s_{HSP} = 1 - \\min\\left(\\frac{RED}{3}, 1\\right)",
+      "explanation": "Converts RED to a 0-1 score where RED=0 gives 1.0 (perfect match) and RED>=3 gives 0.0 (no match)"
+    },
+    {
+      "name": "Blend optimization objective function",
+      "latex": "\\min_{\\boldsymbol{\\phi}} Ra\\left(\\sum_{i=1}^{n} \\phi_i \\boldsymbol{\\delta}_i, \\boldsymbol{\\delta}_{target}\\right) \\quad \\text{s.t.} \\sum \\phi_i = 1, \\; \\phi_i \\geq 0",
+      "explanation": "Constrained optimization problem: find volume fractions that minimize the HSP distance between the blend and the target"
+    }
+  ],
+  "historical_context": "Solvent selection using solubility parameters originated with Hildebrand's single-parameter approach in the 1950s-1960s and was dramatically improved by Hansen's three-parameter decomposition (1967). Early solvent selection was largely empirical and based on technician experience. The first systematic computational approaches to HSP-based solvent screening appeared in the 1980s with the development of solvent databases by Hansen and collaborators at the Scandinavian Paint and Printing Ink Research Institute. The concept of green solvent substitution gained momentum in the 2000s with the EU REACH regulation (2006), which restricted many traditional solvents. The CHEM21 guide (Prat et al., 2016) provided a systematic solvent selection framework combining safety, health, and environmental criteria. Blend optimization using grid search was implemented in the HSPiP software (Abbott and Hansen, 2008+). Differential evolution, introduced by Storn and Price (1997), became a standard metaheuristic for continuous optimization problems and was applied to solvent blend design for multicomponent systems. Multi-objective optimization in solvent selection, combining HSP with multiple physical and regulatory constraints, represents the current frontier, drawing on Pareto optimization concepts from Deb et al. (2002) NSGA-II and weighted scalarization methods.",
+  "related_project_modules": [
+    "solvent-finder.ts",
+    "solvent-substitution-design.ts",
+    "green-solvent.ts",
+    "blend-optimizer.ts",
+    "multicomponent-optimizer.ts",
+    "multi-objective.ts"
+  ],
+  "prerequisites": [
+    "Ch01_HSP_Fundamentals",
+    "Ch02_Thermodynamic_Foundations",
+    "Ch04_HSP_Estimation_Methods"
+  ],
+  "learning_objectives": [
+    "Screen and rank candidate solvents using Ra and RED criteria with physical property constraints (boiling point, viscosity, surface tension)",
+    "Apply green solvent substitution methodology to replace REACH-regulated solvents using composite scores that balance HSP proximity with environmental and health safety",
+    "Optimize binary and ternary solvent blends via grid search to minimize Ra distance to a target HSP, understanding the trade-off between step size and computational cost",
+    "Implement differential evolution (DE/rand/1/bin) for multicomponent (4+) blend optimization, including simplex normalization of fraction vectors",
+    "Construct multi-objective solvent selection frameworks with adjustable weights for HSP match, physical properties, safety, and cost, and interpret Pareto-optimal solution sets"
+  ],
+  "practical_applications": [
+    "Rapid solvent screening for polymer dissolution: identifying the best solvents from databases of hundreds of candidates using RED ranking",
+    "REACH-compliant solvent replacement: finding drop-in green alternatives for banned or restricted solvents (e.g., replacing NMP, DMF, or DCM) in industrial processes",
+    "Coating formulation: optimizing solvent blends to match target resin HSP while meeting evaporation rate and viscosity requirements",
+    "Pharmaceutical process development: selecting solvent systems for API crystallization, extraction, and purification that balance solubility with safety and environmental constraints",
+    "Ink and adhesive formulation: designing multicomponent solvent blends that achieve target HSP with controlled drying profiles",
+    "Nanoparticle dispersion media selection: screening solvents for stable nanoparticle dispersions using RED thresholds combined with surface tension constraints",
+    "Regulatory compliance planning: proactively identifying substitutes before upcoming REACH restrictions take effect, using composite Ra-safety scoring",
+    "Cost-optimized formulation: multi-objective screening that includes solvent cost alongside HSP and safety to minimize formulation expense"
+  ],
+  "worked_examples": [
+    {
+      "title": "Solvent screening for a nanoparticle dispersion system",
+      "description": "Given a carbon nanotube with HSP (deltaD=17.8, deltaP=7.0, deltaH=7.6, R0=5.0), screen 30 candidate solvents from the database. Filter by boiling point (60-150 C) and viscosity (<2 mPa.s). Rank by RED and identify the top 5 compatible solvents. Demonstrate how changing the boiling point constraint shifts the ranking."
+    },
+    {
+      "title": "Green solvent substitution for NMP in polymer processing",
+      "description": "NMP (CAS 872-50-4, HSP: deltaD=18.0, deltaP=12.3, deltaH=7.2) is a REACH substance of very high concern. Find green alternatives by computing the composite substitution score (0.6*Ra/10 + 0.2*(1-env/10) + 0.2*(1-health/10)) for 14 recommended solvents. Compare DMSO, gamma-valerolactone, and dimethyl carbonate as candidates and discuss the Ra-safety trade-off."
+    },
+    {
+      "title": "Ternary blend optimization for an epoxy resin target",
+      "description": "An epoxy resin requires a solvent blend matching HSP (deltaD=20.0, deltaP=12.0, deltaH=10.0). From 6 candidate solvents (ethanol, acetone, ethyl acetate, butyl acetate, MEK, toluene), perform grid search at 0.05 step size for all 2- and 3-component combinations. Report the top 5 blends with their Ra values and compositions. Analyze how reducing step size from 0.1 to 0.05 improves the best Ra."
+    },
+    {
+      "title": "Multi-objective solvent selection for pharmaceutical crystallization",
+      "description": "Select solvents for an API crystallization where the target HSP is (deltaD=18.5, deltaP=10.0, deltaH=8.0, R0=6.0). Use multi-objective screening with weights: HSP match 0.4, boiling point 0.15, viscosity 0.10, surface tension 0.10, safety 0.15, cost 0.10. Set preferred boiling point range 60-100 C and max viscosity 1.5 mPa.s. Evaluate 20 solvents and identify the Pareto-optimal subset. Demonstrate how shifting the safety weight from 0.15 to 0.30 changes the top-ranked solvent."
+    }
+  ],
+  "key_references": [
+    {
+      "author": "Hansen, C.M.",
+      "year": 2007,
+      "title": "Hansen Solubility Parameters: A User's Handbook, 2nd Edition, CRC Press, Chapters 1-2 and Appendix: Solvent Selection Methodology"
+    },
+    {
+      "author": "Abbott, S.; Hansen, C.M.",
+      "year": 2013,
+      "title": "Hansen Solubility Parameters in Practice (HSPiP), 4th Edition, www.hansen-solubility.com"
+    },
+    {
+      "author": "Storn, R.; Price, K.",
+      "year": 1997,
+      "title": "Differential Evolution - A Simple and Efficient Heuristic for Global Optimization over Continuous Spaces, Journal of Global Optimization, 11, 341-359"
+    },
+    {
+      "author": "Prat, D.; Wells, A.; Hayler, J.; Sneddon, H.; McElroy, C.R.; Abou-Shehada, S.; Dunn, P.J.",
+      "year": 2016,
+      "title": "CHEM21 Selection Guide of Classical- and Less Classical-Solvents, Green Chemistry, 18, 288-296"
+    },
+    {
+      "author": "Byrne, F.P.; Jin, S.; Paggiola, G.; Petchey, T.H.M.; Clark, J.H.; Farmer, T.J.; Hunt, A.J.; McElroy, C.R.; Sherwood, J.",
+      "year": 2016,
+      "title": "Tools and Techniques for Solvent Selection: Green Solvent Selection Guides, Sustainable Chemical Processes, 4, 7"
+    },
+    {
+      "author": "Deb, K.; Pratap, A.; Agarwal, S.; Meyarivan, T.",
+      "year": 2002,
+      "title": "A Fast and Elitist Multiobjective Genetic Algorithm: NSGA-II, IEEE Transactions on Evolutionary Computation, 6(2), 182-197"
+    },
+    {
+      "author": "European Chemicals Agency (ECHA)",
+      "year": 2006,
+      "title": "REACH Regulation (EC) No 1907/2006 on Registration, Evaluation, Authorisation and Restriction of Chemicals"
+    },
+    {
+      "author": "Jessop, P.G.",
+      "year": 2011,
+      "title": "Searching for Green Solvents, Green Chemistry, 13, 1391-1398"
+    },
+    {
+      "author": "Alfonsi, K.; Colberg, J.; Dunn, P.J.; Fevig, T.; Jennings, S.; Johnson, T.A.; Kleine, H.P.; Knight, C.; Nagy, M.A.; Perry, D.A.; Stefaniak, M.",
+      "year": 2008,
+      "title": "Green Chemistry Tools to Influence a Medicinal Chemistry and Research Chemistry Based Organisation, Green Chemistry, 10, 31-36"
+    }
+  ],
+  "cross_references": [
+    "Ch01_HSP_Fundamentals",
+    "Ch02_Thermodynamic_Foundations",
+    "Ch04_HSP_Estimation_Methods",
+    "Ch07_Polymer_Solubility_Swelling",
+    "Ch11_Nanomaterials_Dispersion",
+    "Ch12_Coatings_Films"
+  ],
+  "difficulty_level": "graduate",
+  "estimated_pages": 55,
+  "figures_needed": [
+    {
+      "title": "Solvent Screening Workflow Diagram",
+      "description": "Flowchart showing the sequential pipeline: database query -> RED calculation -> physical property filtering -> ranking output, with decision nodes for constraint satisfaction"
+    },
+    {
+      "title": "RED-Ranked Solvent Bar Chart",
+      "description": "Horizontal bar chart showing 20+ candidate solvents sorted by RED value with color coding (green for RED<1, yellow for 1<RED<2, red for RED>2) and a vertical line at RED=1"
+    },
+    {
+      "title": "Green Solvent Substitution Score Scatter Plot",
+      "description": "2D scatter plot with Ra distance on x-axis and safety score on y-axis, showing candidate solvents as points colored by CHEM21 rating (recommended/acceptable/problematic/hazardous), with iso-composite-score contour lines"
+    },
+    {
+      "title": "REACH Regulation Impact on Solvent Selection",
+      "description": "Before/after comparison showing HSP space with restricted solvents grayed out and green alternatives highlighted, illustrating how the available solvent space shrinks under regulation"
+    },
+    {
+      "title": "Grid Search Blend Optimization: 2-Component Ternary Diagram",
+      "description": "Contour plot of Ra as a function of volume fraction for a 2-component blend, showing the grid points evaluated and the minimum Ra location"
+    },
+    {
+      "title": "Grid Search Blend Optimization: 3-Component Ternary Diagram",
+      "description": "Ternary contour plot (triangular coordinates) of Ra for a 3-component blend showing the optimal composition region and grid resolution effect"
+    },
+    {
+      "title": "Differential Evolution Convergence Plot",
+      "description": "Plot of best Ra vs iteration number for the DE/rand/1/bin algorithm on a 6-component blend problem, showing rapid initial improvement and convergence plateau"
+    },
+    {
+      "title": "Multicomponent Blend Composition Pie Charts",
+      "description": "Series of pie charts showing the optimal blend composition for 2, 3, 4, and 6 component optimizations of the same target HSP, illustrating how more components allow finer HSP tuning"
+    },
+    {
+      "title": "Multi-Objective Radar Chart",
+      "description": "Radar (spider) charts comparing the top 5 solvents across 6 objectives (HSP match, boiling point, viscosity, surface tension, safety, cost), showing trade-off profiles"
+    },
+    {
+      "title": "Pareto Front in HSP-Safety Objective Space",
+      "description": "2D plot with composite HSP score on x-axis and safety score on y-axis, showing the Pareto front connecting non-dominated solutions with dominated solutions grayed out"
+    },
+    {
+      "title": "Weight Sensitivity Analysis Heat Map",
+      "description": "Heat map showing how the top-ranked solvent changes as the HSP weight and safety weight are varied from 0 to 1, revealing the tipping points between different optimal solvents"
+    }
+  ],
+  "tables_needed": [
+    {
+      "title": "Solvent Screening Results for a Representative Target Material",
+      "description": "Table showing 15-20 solvents with columns: name, CAS number, deltaD, deltaP, deltaH, Ra, RED, boiling point, viscosity, surface tension, and pass/fail for each constraint"
+    },
+    {
+      "title": "CHEM21 Green Solvent Safety Database Extract",
+      "description": "Table of 30 common solvents with CAS number, safety rating (recommended/acceptable/problematic/hazardous/banned), environmental score (1-10), health score (1-10), and isGreenAlternative flag"
+    },
+    {
+      "title": "Green Substitution Candidates for NMP, DMF, and DCM",
+      "description": "Table showing top 5 green alternatives for each restricted solvent, with Ra, environmental score, health score, composite score, and suitability notes"
+    },
+    {
+      "title": "Grid Search Blend Optimization Results (2-Component)",
+      "description": "Table of top 10 binary blend results with component names, volume fractions, blend HSP values, and Ra to target"
+    },
+    {
+      "title": "Grid Search Blend Optimization Results (3-Component)",
+      "description": "Table of top 10 ternary blend results with component names, volume fractions, blend HSP values, and Ra to target; comparison with best binary result"
+    },
+    {
+      "title": "Differential Evolution Parameters and Performance",
+      "description": "Table comparing DE optimization runs with different parameters (F, CR, population size, max iterations) showing convergence speed and final Ra for a 6-component problem"
+    },
+    {
+      "title": "Multi-Objective Screening Results with Default Weights",
+      "description": "Table of top 10 solvents with sub-scores for each objective (HSP match, boiling point, viscosity, surface tension, safety) and overall weighted score"
+    },
+    {
+      "title": "Weight Sensitivity Comparison",
+      "description": "Table showing the top 3 solvents under four different weight configurations (HSP-heavy, safety-heavy, balanced, cost-heavy) to illustrate how priorities change rankings"
+    }
+  ],
+  "software_demo": {
+    "tab": "Solvent Screening (溶媒スクリーニング) tab, Green Solvent Substitution (グリーン溶媒代替) tab, Blend Optimization (ブレンド最適化) tab, and Multi-Objective Screening (多目的スクリーニング) tab",
+    "inputs": "In the Solvent Screening tab, enter target material HSP (deltaD, deltaP, deltaH) and R0, then set physical property constraints (boiling point range, max viscosity, max surface tension). In the Green Solvent Substitution tab, enter the banned solvent's HSP and optionally its CAS number, set maxRa and onlyGreen filters. In the Blend Optimization tab, enter target HSP, select 4-8 candidate solvents, choose max components (2 or 3) and step size. In the Multi-Objective Screening tab, enter target HSP and R0, set physical property targets, and adjust the 6 objective weights using sliders.",
+    "expected_output": "The Solvent Screening tab displays a ranked table of solvents sorted by RED with pass/fail indicators for each constraint. The Green Substitution tab shows ranked alternatives with Ra, safety rating, composite score, and color-coded safety badges. The Blend Optimization tab shows the top N blends with compositions, blend HSP, and Ra, plus a ternary diagram visualization. The Multi-Objective tab shows a radar chart for top candidates and a ranked table with sub-scores and overall score.",
+    "workflow": "1. Open Solvent Screening, enter a polymer HSP target, and observe the RED-ranked list. Apply a boiling point filter and see how the ranking changes. 2. Switch to Green Substitution, enter NMP's HSP, and view recommended alternatives sorted by composite score. Toggle the 'onlyGreen' filter. 3. Open Blend Optimization, enter an epoxy resin target HSP, select 6 solvents, and run a 3-component grid search at step size 0.05. Compare the best blend Ra with single-solvent Ra. 4. Open Multi-Objective Screening, enter the same target, adjust the safety weight upward, and observe how the ranking shifts toward greener solvents."
+  },
+  "review_questions": [
+    "Explain the difference between Ra-based ranking and RED-based ranking in solvent screening. Under what circumstances would the two methods produce different rankings, and which is more appropriate for comparing solvents against different target materials?",
+    "The green substitution composite score uses weights of 0.6 for Ra, 0.2 for environmental, and 0.2 for health. Discuss how changing these weights would affect the substitution recommendations, and propose a scenario where safety should be weighted more heavily than HSP proximity.",
+    "Why does the grid search approach for blend optimization become impractical for 4+ components? Calculate the number of grid points required for a 5-component blend at step size 0.05 and compare with the 50*dim population size used in differential evolution.",
+    "Describe the DE/rand/1/bin algorithm steps (mutation, crossover, selection) and explain why simplex normalization is needed after mutation. What would happen if negative fractions were not clipped?",
+    "In multi-objective solvent selection, explain the concept of Pareto optimality. Why might a decision-maker prefer a Pareto-dominated solution over a Pareto-optimal one in practical formulation work?"
+  ],
+  "uncertain": [
+    "estimated_pages",
+    "key_references[1]"
+  ]
+}

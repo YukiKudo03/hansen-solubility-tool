@@ -1,0 +1,256 @@
+{
+  "chapter_title": "Temperature and Pressure Effects on Hansen Solubility Parameters",
+  "chapter_title_en": "Temperature and Pressure Effects on Hansen Solubility Parameters",
+  "level": "chapter",
+  "parent": "Part I: Fundamentals",
+  "synopsis": "This chapter addresses how HSP values change with temperature and pressure, two critical process variables in industrial applications. It covers the Barton method for temperature correction using thermal expansion coefficients, pressure corrections via the Tait equation for liquids and the Giddings equation for supercritical CO2, evaporation simulation using the Antoine equation and Raoult's law, and HSP estimation methods for ionic liquids and deep eutectic solvents (DES) through cation-anion composition averaging.",
+  "key_concepts": [
+    "Barton method for HSP temperature correction (density-ratio power-law for dD and dP, exponential decay for dH)",
+    "Thermal expansion coefficient (volumetric expansion coefficient alpha) and its role in density estimation",
+    "Density ratio estimation from thermal expansion: rho(T)/rho(T0) = 1/(1 + alpha * deltaT)",
+    "Temperature exponents for HSP components: dD ~ rho^1.25, dP ~ rho^0.5, dH ~ exp(-1.22e-3 * deltaT)",
+    "Associating liquid correction for hydrogen-bonding solvents (water, alcohols, glycols)",
+    "Isothermal compressibility and the Tait equation for pressure-dependent molar volume",
+    "Giddings equation for supercritical CO2 solubility parameter estimation",
+    "Span-Wagner EOS approximation for CO2 density at supercritical conditions",
+    "HSP component decomposition of scCO2 (dD:dP:dH ratio from Williams-Martin 2002)",
+    "Antoine equation for vapor pressure calculation",
+    "Raoult's law for ideal mixture evaporation rates",
+    "Time-dependent HSP drift during solvent evaporation from mixed systems",
+    "Cation-anion composition method for ionic liquid and DES HSP estimation",
+    "Temperature correction of dH in ionic liquids using associating liquid models"
+  ],
+  "equations": [
+    {
+      "name": "Density ratio from thermal expansion",
+      "latex": "\\frac{\\rho(T)}{\\rho(T_0)} = \\frac{1}{1 + \\alpha \\Delta T}",
+      "explanation": "Estimates the ratio of density at target temperature T to reference temperature T0 using the volumetric thermal expansion coefficient alpha."
+    },
+    {
+      "name": "Barton correction for dispersion parameter",
+      "latex": "\\delta_D(T) = \\delta_D(T_0) \\left(\\frac{\\rho(T)}{\\rho(T_0)}\\right)^{1.25}",
+      "explanation": "Temperature correction of the dispersion HSP component using density ratio raised to the 1.25 power."
+    },
+    {
+      "name": "Barton correction for polar parameter",
+      "latex": "\\delta_P(T) = \\delta_P(T_0) \\left(\\frac{\\rho(T)}{\\rho(T_0)}\\right)^{0.5}",
+      "explanation": "Temperature correction of the polar HSP component using density ratio raised to the 0.5 power."
+    },
+    {
+      "name": "Barton correction for hydrogen-bonding parameter",
+      "latex": "\\delta_H(T) = \\delta_H(T_0) \\exp\\left(-1.22 \\times 10^{-3} \\Delta T\\right)",
+      "explanation": "Exponential decay model for the hydrogen-bonding HSP component with temperature, reflecting weakening of hydrogen bonds at higher temperatures."
+    },
+    {
+      "name": "Associating liquid dH correction",
+      "latex": "\\delta_H^2(T) = \\delta_H^2(T_{\\mathrm{ref}}) \\left(1 - \\alpha_{\\mathrm{assoc}} \\frac{T - T_{\\mathrm{ref}}}{T_{\\mathrm{ref}}}\\right)",
+      "explanation": "For associating liquids (water, alcohols), a steeper dH decay model accounting for hydrogen-bond network disruption with an association parameter alpha_assoc."
+    },
+    {
+      "name": "Tait equation (simplified) for molar volume under pressure",
+      "latex": "V_m(P) = V_m(P_0) \\left(1 - \\beta_T (P - P_0)\\right)",
+      "explanation": "Simplified Tait equation relating molar volume change under pressure using isothermal compressibility beta_T."
+    },
+    {
+      "name": "Pressure correction of HSP",
+      "latex": "\\delta(P) = \\delta(P_0) \\sqrt{\\frac{V_m(P_0)}{V_m(P)}}",
+      "explanation": "General pressure correction for HSP values based on inverse square root of the molar volume ratio."
+    },
+    {
+      "name": "Giddings equation for scCO2 total solubility parameter",
+      "latex": "\\delta_t = 1.25 \\, P_c^{0.5} \\frac{\\rho}{\\rho_{\\mathrm{liq,eff}}}",
+      "explanation": "Giddings equation estimating the total solubility parameter of supercritical CO2 from its critical pressure, current density, and an effective liquid reference density."
+    },
+    {
+      "name": "Antoine equation for vapor pressure",
+      "latex": "\\log_{10}(P / \\mathrm{kPa}) = A - \\frac{B}{C + T}",
+      "explanation": "Three-parameter Antoine equation relating vapor pressure to temperature, fundamental for evaporation rate estimation."
+    },
+    {
+      "name": "Raoult's law for partial pressure",
+      "latex": "P_i = x_i \\, P_i^{\\mathrm{sat}}(T)",
+      "explanation": "Ideal solution model relating the partial pressure of component i to its mole fraction and saturated vapor pressure."
+    }
+  ],
+  "historical_context": "The temperature dependence of solubility parameters was first systematically treated by Allan Barton in his 1983 'Handbook of Solubility Parameters and Other Cohesion Parameters' (2nd edition 1991), where he proposed the density-ratio power-law corrections for dD and dP, and the exponential decay for dH. The Giddings equation for supercritical fluid solubility parameters was introduced by J.C. Giddings, M.N. Myers, and J.W. King in their 1968 Science paper. Williams and Martin (2002) refined the HSP component decomposition for scCO2 using chromatographic data. The Tait equation for liquid compressibility dates back to P.G. Tait's work in 1888. Ionic liquid HSP estimation methods emerged in the 2010s, with researchers such as Marciniak (2010) and Paduszynski and Domanska (2012) applying group contribution and composition-averaging approaches to these novel solvents.",
+  "related_project_modules": [
+    "temperature-hsp.ts",
+    "thermal-expansion-data.ts",
+    "pressure-hsp.ts",
+    "evaporation.ts",
+    "ionic-liquid-des-hsp.ts",
+    "associating-liquid-correction.ts"
+  ],
+  "prerequisites": [
+    "Ch01_Introduction_to_HSP",
+    "Ch02_Three_Component_Theory"
+  ],
+  "learning_objectives": [
+    "Apply the Barton method to correct HSP values for temperature using thermal expansion coefficients, understanding the different exponents for dD (1.25), dP (0.5), and the exponential decay for dH",
+    "Calculate pressure-corrected HSP values for liquids using the simplified Tait equation and isothermal compressibility",
+    "Estimate HSP values for supercritical CO2 at given temperature and pressure conditions using the Giddings equation and density estimation",
+    "Simulate time-dependent HSP evolution during mixed-solvent evaporation using Antoine equation vapor pressures and Raoult's law",
+    "Estimate HSP values for ionic liquids and deep eutectic solvents using the cation-anion composition averaging method with optional temperature correction"
+  ],
+  "practical_applications": [
+    "Predicting solvent-polymer compatibility at elevated processing temperatures (e.g., coating, extrusion)",
+    "Designing supercritical CO2 extraction processes by matching scCO2 HSP to target solute",
+    "Optimizing paint and coating drying processes by understanding HSP drift during solvent evaporation",
+    "Selecting ionic liquid solvents for green chemistry processes at various operating temperatures",
+    "High-pressure polymer processing (injection molding, extrusion) where pressure affects solvent-polymer interactions",
+    "Formulating deep eutectic solvents with tailored HSP for specific dissolution or extraction tasks",
+    "Quality control of thin-film coating processes where temperature gradients cause compositional HSP drift",
+    "Designing supercritical fluid chromatography (SFC) mobile phases with known HSP values"
+  ],
+  "worked_examples": [
+    {
+      "title": "Temperature correction of toluene HSP from 25C to 80C",
+      "description": "Given toluene HSP at 25C (dD=18.0, dP=1.4, dH=2.0) and thermal expansion coefficient alpha=1.08e-3 K^-1, calculate the corrected HSP at 80C using Barton's method. Demonstrates density ratio calculation and application of the three correction formulas."
+    },
+    {
+      "title": "scCO2 HSP estimation at 20 MPa and 40C",
+      "description": "Using the Giddings equation and CO2 critical constants, estimate the density of supercritical CO2 at 20 MPa/313 K, then compute total and component HSP values. Compare with literature values (delta_t approx 15.8 MPa^0.5)."
+    },
+    {
+      "title": "Evaporation HSP trajectory of acetone-toluene mixture",
+      "description": "Simulate a 50:50 mole fraction mixture of acetone and toluene evaporating at 25C. Track the time evolution of mixture HSP as the more volatile acetone preferentially evaporates, shifting the HSP toward pure toluene values."
+    },
+    {
+      "title": "Ionic liquid HSP estimation for [BMIM][BF4]",
+      "description": "Estimate the HSP of 1-butyl-3-methylimidazolium tetrafluoroborate by applying the cation-anion composition averaging method with a 1:1 molar ratio, then apply temperature correction for operation at 353 K."
+    }
+  ],
+  "key_references": [
+    {
+      "author": "Barton, A.F.M.",
+      "year": 1991,
+      "title": "Handbook of Solubility Parameters and Other Cohesion Parameters, 2nd Edition, CRC Press"
+    },
+    {
+      "author": "Hansen, C.M.",
+      "year": 2007,
+      "title": "Hansen Solubility Parameters: A User's Handbook, 2nd Edition, Chapter 5 (Temperature effects), CRC Press"
+    },
+    {
+      "author": "Giddings, J.C.; Myers, M.N.; King, J.W.",
+      "year": 1968,
+      "title": "Dense-Gas Chromatography at Pressures to 2000 Atmospheres, Science, 162(3849):67-73"
+    },
+    {
+      "author": "Williams, L.L.; Rubin, J.B.; Edwards, H.W.",
+      "year": 2004,
+      "title": "Calculation of Hansen Solubility Parameter Values for a Range of Pressure and Temperature Conditions, Including the Supercritical Fluid Region, Industrial & Engineering Chemistry Research, 43:4967-4972"
+    },
+    {
+      "author": "Span, R.; Wagner, W.",
+      "year": 1996,
+      "title": "A New Equation of State for Carbon Dioxide Covering the Fluid Region from the Triple-Point Temperature to 1100 K at Pressures up to 800 MPa, Journal of Physical and Chemical Reference Data, 25(6):1509-1596"
+    },
+    {
+      "author": "Marciniak, A.",
+      "year": 2010,
+      "title": "The Solubility Parameters of Ionic Liquids, International Journal of Molecular Sciences, 11(5):1973-1990"
+    },
+    {
+      "author": "Paduszynski, K.; Domanska, U.",
+      "year": 2012,
+      "title": "Solubility Parameters of Ionic Liquids: An Alternative Assessment, Journal of Physical Chemistry B, 116(17):5002-5018 [uncertain]"
+    },
+    {
+      "author": "Tait, P.G.",
+      "year": 1888,
+      "title": "Report on Some of the Physical Properties of Fresh Water and of Sea Water, Physics and Chemistry of the Voyage of HMS Challenger, Vol. 2, Part 4"
+    },
+    {
+      "author": "Abbott, S.; Hansen, C.M.",
+      "year": 2013,
+      "title": "Hansen Solubility Parameters in Practice (HSPiP), 4th Edition, e-book"
+    }
+  ],
+  "cross_references": [
+    "Ch01_Introduction_to_HSP",
+    "Ch02_Three_Component_Theory",
+    "Ch04_Group_Contribution_Methods",
+    "Ch06_Polymer_Solubility",
+    "Ch10_Supercritical_Fluid_Applications",
+    "Ch12_Green_Solvents_and_Ionic_Liquids"
+  ],
+  "difficulty_level": "graduate",
+  "estimated_pages": 35,
+  "figures_needed": [
+    {
+      "title": "HSP temperature dependence plot for common solvents",
+      "description": "Line plots showing dD, dP, and dH as functions of temperature (0-150C) for representative solvents (toluene, ethanol, water), illustrating the different rates of change for each component."
+    },
+    {
+      "title": "Density ratio vs temperature for various thermal expansion coefficients",
+      "description": "Graph showing rho(T)/rho(T0) curves for alpha values ranging from 0.2e-3 (water) to 1.6e-3 (diethyl ether), demonstrating the spread in density behavior."
+    },
+    {
+      "title": "scCO2 HSP as a function of pressure at constant temperature",
+      "description": "Plot of delta_t and component HSP (dD, dP, dH) for supercritical CO2 at 313K as pressure varies from 7.5 to 40 MPa, showing the rapid increase near the critical point."
+    },
+    {
+      "title": "scCO2 density phase diagram",
+      "description": "Contour plot or 3D surface of CO2 density as a function of temperature and pressure, highlighting the supercritical region and the critical point."
+    },
+    {
+      "title": "Evaporation HSP trajectory in Hansen space",
+      "description": "3D trajectory plot showing how the HSP of a ternary solvent mixture evolves over time as volatile components preferentially evaporate, traced through dD-dP-dH space."
+    },
+    {
+      "title": "Antoine equation vapor pressure curves",
+      "description": "Semi-log plot of vapor pressure vs temperature for 8-10 common solvents using Antoine equation constants from the project database."
+    },
+    {
+      "title": "Associating vs non-associating dH temperature correction comparison",
+      "description": "Comparison plot showing dH(T) for water and ethanol using both the standard Barton exponential decay and the associating-liquid model, highlighting the difference at high temperatures."
+    },
+    {
+      "title": "Cation-anion HSP composition diagram for ionic liquids",
+      "description": "Schematic diagram showing how cation and anion HSP values are weighted to produce the composite ionic liquid HSP, with example data for common IL families."
+    }
+  ],
+  "tables_needed": [
+    {
+      "title": "Thermal expansion coefficients for common solvents",
+      "description": "Table listing CAS number, solvent name, and volumetric thermal expansion coefficient alpha (K^-1) for all solvents in the thermal-expansion-data.ts database, organized by chemical class."
+    },
+    {
+      "title": "Antoine equation constants for common solvents",
+      "description": "Table of Antoine constants (A, B, C) for solvents in the evaporation module database, with valid temperature range and boiling point."
+    },
+    {
+      "title": "CO2 critical constants and Giddings equation parameters",
+      "description": "Table summarizing CO2 critical temperature, pressure, density, molecular weight, and the effective reference density used in the modified Giddings equation."
+    },
+    {
+      "title": "Associating liquid parameters",
+      "description": "Table of associating liquid model parameters (deltaH_ref, reference temperature, association parameter alpha) for water, methanol, ethanol, ethylene glycol, acetic acid, and formamide."
+    },
+    {
+      "title": "HSP temperature correction comparison at selected temperatures",
+      "description": "Comparative table showing HSP values of 5 representative solvents at 25C, 50C, 80C, and 120C calculated using the Barton method."
+    },
+    {
+      "title": "scCO2 HSP at representative extraction conditions",
+      "description": "Table of estimated scCO2 HSP values (dD, dP, dH, delta_t) and density at common extraction conditions (e.g., 10/20/30 MPa at 313K and 333K)."
+    }
+  ],
+  "software_demo": {
+    "tab": "Temperature/Pressure HSP Correction",
+    "inputs": "Select a solvent (e.g., toluene, CAS 108-88-3) from the database. Enter reference HSP values (dD=18.0, dP=1.4, dH=2.0 at 25C). Set target temperature to 80C. The thermal expansion coefficient is auto-populated from the built-in database. For pressure correction, enter target pressure (e.g., 50 MPa) and isothermal compressibility. For scCO2 mode, enter pressure (20 MPa) and temperature (313 K).",
+    "expected_output": "Temperature-corrected HSP values at the target temperature with all three components recalculated. For scCO2 mode, estimated density, reduced density, total solubility parameter, and HSP components (dD, dP, dH). Evaporation simulation produces a time-series chart of HSP drift and composition change for mixed-solvent systems."
+  },
+  "review_questions": [
+    "Why does the Barton method use different power-law exponents for dD (1.25) and dP (0.5)? What physical reasoning underlies the exponential decay model for dH?",
+    "Explain why the standard Barton exponential decay for dH is inadequate for associating liquids like water. How does the associating-liquid model improve the prediction?",
+    "A coating formulation uses a 70:30 (mole fraction) mixture of MEK and xylene at 60C. Using the Barton method and thermal expansion data, estimate the mixture HSP at this temperature and explain how it differs from the 25C values.",
+    "Describe the Giddings equation for supercritical CO2 and explain why scCO2 solvent power increases dramatically near the critical point. How does the HSP component ratio (dD:dP:dH) for scCO2 compare to conventional organic solvents?",
+    "During the drying of a ternary solvent coating, the fastest-evaporating component leaves first. Using Antoine equation vapor pressures and Raoult's law, explain qualitatively how the film's HSP changes over time and what practical consequences this can have for coating defects."
+  ],
+  "uncertain": [
+    "cross_references",
+    "key_references[6]"
+  ]
+}

@@ -1,0 +1,277 @@
+{
+  "chapter_title": "Energy and Environmental Applications",
+  "chapter_title_en": "Energy and Environmental Applications",
+  "level": "chapter",
+  "parent": "Part IV: Applications",
+  "synopsis": "This chapter covers the application of Hansen Solubility Parameters to energy and environmental technologies. Topics include lithium-ion battery electrolyte solvent screening using RED combined with dielectric constant estimation, hydrogen storage material solvent compatibility, CO2 absorbent selection, supercritical CO2 cosolvent selection with pressure-corrected HSP, membrane separation selectivity via dual-Ra analysis, biofuel material compatibility assessment, and a gas HSP database covering CO2, O2, N2, H2, and other industrially important gases. The chapter bridges fundamental HSP theory with the growing demands of clean energy, carbon capture, and sustainable fuel technologies.",
+  "key_concepts": [
+    "Lithium-ion battery electrolyte solvent screening: combining RED criterion with dielectric constant estimation for ion solvation",
+    "Dielectric constant estimation from HSP polar component (deltaP) using Bottcher-Kirkwood correlation",
+    "Electrochemical stability window estimation: relating solvent HSP to oxidation/reduction potential thresholds",
+    "Hydrogen storage material solvent compatibility: screening carrier liquids for metal hydride and chemical hydrogen storage systems",
+    "CO2 absorbent selection using HSP affinity: physical absorption solvents ranked by Ra distance to CO2",
+    "Chemical vs physical CO2 absorption: HSP as a pre-screening tool for physical solvents before detailed thermodynamic modeling",
+    "Supercritical CO2 (scCO2) as a tunable solvent: pressure-dependent HSP values shifting with density changes",
+    "Pressure-corrected HSP for supercritical fluids: density-based correlations for deltaD, deltaP, deltaH under varying pressure and temperature",
+    "Cosolvent selection for scCO2 processes: small additions of polar cosolvents to expand the solubility window in HSP space",
+    "Membrane separation selectivity via dual-Ra squared analysis: preferential permeation governed by relative HSP affinity of two permeants to the membrane material",
+    "Solution-diffusion model for polymer membranes: solubility selectivity from HSP and diffusivity selectivity from molecular size",
+    "Biofuel material compatibility: screening fuel blends (ethanol-gasoline, biodiesel) against elastomers, seals, and tank materials",
+    "Gas HSP database: assigning deltaD, deltaP, deltaH to permanent gases (CO2, O2, N2, H2, CH4, H2S, SO2, NH3) based on condensed-phase extrapolation and molecular simulation",
+    "Gas solubility prediction in polymers and liquids using HSP distance: Henry's law coefficient correlation with Ra",
+    "Polymer membrane gas permeability: correlating permeability coefficients with gas-polymer HSP affinity"
+  ],
+  "equations": [
+    {
+      "name": "RED criterion for electrolyte solvent screening",
+      "latex": "RED = \\frac{Ra}{R_0} = \\frac{\\sqrt{4(\\delta_{D,solv} - \\delta_{D,poly})^2 + (\\delta_{P,solv} - \\delta_{P,poly})^2 + (\\delta_{H,solv} - \\delta_{H,poly})^2}}{R_{0,poly}}",
+      "explanation": "RED < 1 indicates the solvent dissolves or swells the binder/separator polymer; for electrolyte screening, the solvent must have RED > 1 to the separator and RED < 1 to the lithium salt solvation target"
+    },
+    {
+      "name": "Dielectric constant estimation from deltaP (Bottcher-Kirkwood approximation)",
+      "latex": "\\delta_P^2 \\approx \\frac{\\epsilon - 1}{2\\epsilon + 1} \\cdot \\frac{\\mu^2 N_A}{9 \\epsilon_0 V_m k_B T}",
+      "explanation": "Relates the polar HSP component to the static dielectric constant via molecular dipole moment and molar volume; used to estimate whether a candidate electrolyte solvent has sufficient dielectric constant (typically epsilon > 20) for lithium salt dissociation [uncertain]"
+    },
+    {
+      "name": "Pressure-corrected HSP for supercritical CO2",
+      "latex": "\\delta_i(P,T) = \\delta_i^{ref} \\cdot \\left( \\frac{\\rho(P,T)}{\\rho^{ref}} \\right)^{n_i}",
+      "explanation": "HSP components of supercritical CO2 scale with density raised to an empirical exponent n_i; deltaD typically scales with n ~ 1.0-1.25, while deltaP and deltaH have different scaling exponents reflecting changes in intermolecular interactions with density"
+    },
+    {
+      "name": "Gas HSP from condensed-phase extrapolation",
+      "latex": "\\delta_T^{gas} = \\sqrt{\\frac{\\Delta H_{vap}(T_b) - R T_b}{V_m(T_b)}}",
+      "explanation": "Total solubility parameter for a gas estimated at its normal boiling point using the enthalpy of vaporization and liquid molar volume; individual components (deltaD, deltaP, deltaH) are then partitioned using standard HSP decomposition methods"
+    },
+    {
+      "name": "Membrane selectivity from dual-Ra squared",
+      "latex": "\\alpha_{A/B}^{sol} \\approx \\exp\\left( -\\frac{V_A \\cdot Ra_{A-mem}^2 - V_B \\cdot Ra_{B-mem}^2}{R T} \\cdot k \\right)",
+      "explanation": "Solubility selectivity of membrane for gas A over gas B is related to the difference in Ra-squared weighted by molar volumes; gas with smaller Ra to membrane has higher solubility and preferential permeation [uncertain]"
+    },
+    {
+      "name": "Henry's law coefficient correlation with HSP distance",
+      "latex": "\\ln K_H \\approx a + b \\cdot Ra_{gas-solvent}^2",
+      "explanation": "Semi-empirical correlation where the Henry's law constant for gas dissolution increases (lower solubility) with increasing HSP distance squared between the gas and the solvent; a and b are system-specific constants [uncertain]"
+    },
+    {
+      "name": "Permeability-selectivity relationship (Robeson upper bound context)",
+      "latex": "P_i = S_i \\cdot D_i = S_i^0 \\exp\\left(-\\frac{\\Delta H_s}{RT}\\right) \\cdot D_i^0 \\exp\\left(-\\frac{E_D}{RT}\\right)",
+      "explanation": "Gas permeability through a polymer membrane is the product of solubility coefficient (correlated with HSP affinity) and diffusion coefficient (governed by molecular size and polymer free volume); HSP analysis primarily informs the solubility selectivity term"
+    },
+    {
+      "name": "Biofuel-elastomer swelling prediction",
+      "latex": "\\Delta V / V_0 \\approx f(RED_{fuel-elastomer}) \\quad \\text{where} \\quad RED < 1 \\Rightarrow \\text{swelling risk}",
+      "explanation": "Volume swelling of elastomer seals and gaskets in biofuel blends correlates with RED; fuels with RED < 1 relative to the elastomer are predicted to cause significant swelling and mechanical degradation"
+    }
+  ],
+  "historical_context": "The application of solubility parameters to energy systems began gaining traction in the 2000s alongside the rapid growth of lithium-ion battery technology. Xu (2004) provided a comprehensive review of nonaqueous electrolytes for Li-ion batteries, where solvent selection criteria implicitly relied on solubility parameter concepts. Hansen himself discussed gas solubility parameters in his 2007 handbook, providing HSP values for CO2, N2, and other gases extrapolated from condensed-phase data at the boiling point. Williams et al. (2004) pioneered the systematic use of HSP for supercritical CO2 cosolvent selection, building on earlier work by Giddings et al. (1968) who first proposed that supercritical fluid solvent strength scales with density. Membrane separation selectivity using solubility parameters was explored by Mulder (1996) and Freeman (1999), with Freeman establishing the theoretical framework connecting permeability-selectivity trade-offs to polymer-gas thermodynamic interactions. Biofuel compatibility with automotive materials became a major concern with the expansion of ethanol and biodiesel blending mandates in the 2000s-2010s, with Miyata et al. (2008) and Haseeb et al. (2011) using HSP to predict elastomer degradation in biofuel blends. The concept of a comprehensive gas HSP database was advanced by Abbott and Hansen in HSPiP editions from 2008 onward, incorporating both experimental extrapolation and molecular simulation values.",
+  "related_project_modules": [
+    "li-ion-battery-electrolyte.ts",
+    "hydrogen-storage-material.ts",
+    "co2-absorbent-selection.ts",
+    "supercritical-co2-cosolvent.ts",
+    "membrane-separation-selectivity.ts",
+    "biofuel-material-compatibility.ts",
+    "gas-solubility.ts",
+    "polymer-membrane-gas-permeability.ts"
+  ],
+  "prerequisites": [
+    "Ch01_HSP_Fundamentals",
+    "Ch02_Thermodynamic_Foundations",
+    "Ch03_Temperature_Pressure_Effects",
+    "Ch07_Polymer_Solubility_Swelling"
+  ],
+  "learning_objectives": [
+    "Screen lithium-ion battery electrolyte solvents by combining RED analysis with dielectric constant estimation to identify candidates that dissolve lithium salts while remaining compatible with separator and electrode binder materials",
+    "Apply pressure-corrected HSP to supercritical CO2 systems and select cosolvents that shift the scCO2 solubility sphere to encompass target solutes",
+    "Use dual-Ra squared analysis to predict and optimize membrane separation selectivity for gas pairs and liquid mixtures",
+    "Evaluate biofuel blend compatibility with elastomers, seals, and tank materials using HSP-based swelling predictions",
+    "Construct and utilize a gas HSP database to predict gas solubility in polymers and liquids for applications including CO2 capture, hydrogen storage, and gas separation membranes"
+  ],
+  "practical_applications": [
+    "Screening electrolyte solvents for lithium-ion batteries that combine high dielectric constant, electrochemical stability, and compatibility with separator and binder polymers",
+    "Selecting physical absorption solvents for post-combustion CO2 capture by ranking candidates by HSP affinity to CO2",
+    "Choosing cosolvents for supercritical CO2 extraction and cleaning processes in pharmaceutical and food industries",
+    "Designing polymer membranes for CO2/N2 and CO2/CH4 gas separation using HSP-guided material selection",
+    "Evaluating hydrogen storage carrier liquids and containment material compatibility using HSP distance analysis",
+    "Assessing biofuel (E85, B100, biodiesel blends) compatibility with automotive fuel system elastomers, gaskets, and tank liners",
+    "Predicting gas permeability through packaging films for food preservation and modified atmosphere packaging",
+    "Selecting scrubbing solvents for H2S and SO2 removal in natural gas processing and flue gas treatment"
+  ],
+  "worked_examples": [
+    {
+      "title": "Lithium-ion battery electrolyte solvent screening with RED and dielectric constant",
+      "description": "Screen 12 candidate solvents (EC, DMC, DEC, EMC, PC, GBL, ACN, DME, DOL, DMSO, sulfolane, FEC) for a Li-ion electrolyte. Calculate RED against PVDF binder (must be > 1 to avoid binder dissolution), RED against PE separator (must be > 1), and estimate dielectric constant from deltaP. Rank solvents that satisfy all criteria simultaneously and propose a binary solvent blend (high-epsilon + low-viscosity) optimized by HSP mixing rules."
+    },
+    {
+      "title": "CO2 absorbent solvent selection for post-combustion capture",
+      "description": "Given HSP values for CO2 gas (deltaD=15.6, deltaP=5.2, deltaH=5.8 MPa^0.5), calculate Ra distances to 10 candidate physical absorption solvents (Selexol/DEPG, NMP, methanol, Rectisol, propylene carbonate, sulfolane, ionic liquids, etc.). Rank solvents by Ra to CO2, cross-check with known Henry's law constants, and identify the top three candidates. Discuss limitations of the HSP approach for chemical absorbents like MEA and DEA."
+    },
+    {
+      "title": "Supercritical CO2 cosolvent selection for natural product extraction",
+      "description": "Calculate the pressure-dependent HSP of scCO2 at 40C and pressures of 100, 200, and 300 bar using density-scaling correlations. Plot the scCO2 position in HSP space at each pressure. Identify that pure scCO2 cannot dissolve a polar target compound (e.g., caffeine). Select and optimize a cosolvent (ethanol, methanol, or ethyl acetate) addition at 1-10 mol% to shift the mixture HSP into the target's solubility sphere."
+    },
+    {
+      "title": "Biofuel compatibility assessment for automotive fuel system elastomers",
+      "description": "Evaluate the compatibility of four elastomer types (NBR, FKM/Viton, HNBR, EPDM) with fuel blends ranging from E0 (pure gasoline) to E85 (85% ethanol). Calculate blend HSP at each ethanol fraction using volume-weighted mixing, then compute RED for each elastomer-fuel combination. Identify critical ethanol fractions where RED transitions from > 1 (safe) to < 1 (swelling risk) for each elastomer material."
+    }
+  ],
+  "key_references": [
+    {
+      "author": "Hansen, C.M.",
+      "year": 2007,
+      "title": "Hansen Solubility Parameters: A User's Handbook, 2nd Edition, CRC Press, Chapter 7: Methods of Characterization - Gases, Chapter 16: Environment and Energy"
+    },
+    {
+      "author": "Xu, K.",
+      "year": 2004,
+      "title": "Nonaqueous Liquid Electrolytes for Lithium-Based Rechargeable Batteries, Chemical Reviews, 104(10), 4303-4418"
+    },
+    {
+      "author": "Freeman, B.D.",
+      "year": 1999,
+      "title": "Basis of Permeability/Selectivity Tradeoff Relations in Polymeric Gas Separation Membranes, Macromolecules, 32(2), 375-380"
+    },
+    {
+      "author": "Giddings, J.C.; Myers, M.N.; McLaren, L.; Keller, R.A.",
+      "year": 1968,
+      "title": "High Pressure Gas Chromatography of Nonvolatile Species, Science, 162(3849), 67-73"
+    },
+    {
+      "author": "Williams, L.L.; Rubin, J.B.; Edwards, H.W.",
+      "year": 2004,
+      "title": "Calculation of Hansen Solubility Parameter Values for a Range of Pressure and Temperature Conditions, Including the Supercritical Fluid Region, Industrial & Engineering Chemistry Research, 43(16), 4967-4972"
+    },
+    {
+      "author": "Mulder, M.",
+      "year": 1996,
+      "title": "Basic Principles of Membrane Technology, 2nd Edition, Kluwer Academic Publishers"
+    },
+    {
+      "author": "Abbott, S.; Hansen, C.M.",
+      "year": 2020,
+      "title": "Hansen Solubility Parameters in Practice (HSPiP), 5th Edition, www.hansen-solubility.com [uncertain]"
+    },
+    {
+      "author": "Haseeb, A.S.M.A.; Fazal, M.A.; Jahirul, M.I.; Masjuki, H.H.",
+      "year": 2011,
+      "title": "Compatibility of Automotive Materials in Biodiesel: A Review, Fuel, 90(3), 922-931"
+    },
+    {
+      "author": "Robeson, L.M.",
+      "year": 2008,
+      "title": "The Upper Bound Revisited, Journal of Membrane Science, 320(1-2), 390-400"
+    },
+    {
+      "author": "Yampolskii, Y.; Pinnau, I.; Freeman, B.D.",
+      "year": 2006,
+      "title": "Materials Science of Membranes for Gas and Vapor Separation, Wiley [uncertain]"
+    }
+  ],
+  "cross_references": [
+    "Ch01_HSP_Fundamentals",
+    "Ch02_Thermodynamic_Foundations",
+    "Ch03_Temperature_Pressure_Effects",
+    "Ch07_Polymer_Solubility_Swelling",
+    "Ch08_Polymer_Blends_Recycling",
+    "Ch11_Nanomaterials_Dispersion"
+  ],
+  "difficulty_level": "graduate",
+  "estimated_pages": 65,
+  "figures_needed": [
+    {
+      "title": "Li-ion Electrolyte Solvent Screening Map in HSP Space",
+      "description": "3D HSP plot showing the PVDF binder sphere, PE separator sphere, and lithium salt solvation target region. Candidate solvents are plotted as points color-coded by dielectric constant magnitude, with acceptable solvents falling outside binder/separator spheres while near the solvation target."
+    },
+    {
+      "title": "Dielectric Constant vs deltaP Correlation for Electrolyte Solvents",
+      "description": "Scatter plot of experimentally measured dielectric constant versus deltaP for 20+ common solvents, showing the correlation used to estimate whether candidate electrolyte solvents meet the epsilon > 20 threshold for Li salt dissociation."
+    },
+    {
+      "title": "CO2 Absorbent Selection Ranked by Ra Distance",
+      "description": "Bar chart showing Ra distances from CO2 HSP to various physical absorbent solvents, ranked from smallest (best affinity) to largest, with known Henry's law constants overlaid as a secondary axis for validation."
+    },
+    {
+      "title": "Pressure-Temperature Dependence of Supercritical CO2 HSP",
+      "description": "Three-panel plot showing deltaD, deltaP, and deltaH of CO2 as functions of pressure at several isotherms (35, 50, 80 C), illustrating how the HSP shifts from gas-like to liquid-like values across the critical region."
+    },
+    {
+      "title": "scCO2 Cosolvent Effect in HSP Space",
+      "description": "HSP space diagram showing pure scCO2 position at a given P,T, the target solute's solubility sphere, and vectors showing how addition of ethanol, methanol, or acetone cosolvents shifts the mixture HSP toward the target."
+    },
+    {
+      "title": "Membrane Selectivity Map: Dual-Ra Squared Analysis",
+      "description": "2D plot of Ra-squared(gas A - membrane) vs Ra-squared(gas B - membrane) for various polymer membrane materials, with iso-selectivity contour lines; membranes in the lower-left corner show high CO2/N2 selectivity."
+    },
+    {
+      "title": "Biofuel-Elastomer Swelling Phase Diagram",
+      "description": "Plot of RED vs ethanol volume fraction (0-85%) for four elastomer types (NBR, FKM, HNBR, EPDM) in gasoline-ethanol blends, with the RED = 1 threshold line marking the onset of swelling risk."
+    },
+    {
+      "title": "Gas HSP Database Visualization",
+      "description": "3D HSP space plot showing the positions of permanent gases (CO2, O2, N2, H2, CH4, H2S, SO2, NH3, H2O vapor) with labels and size scaled to molar volume, illustrating the clustering of nonpolar gases near the origin and polar/hydrogen-bonding gases displaced along deltaP and deltaH axes."
+    },
+    {
+      "title": "Polymer Membrane Permeability vs Gas-Polymer Ra",
+      "description": "Log-log scatter plot of gas permeability coefficient vs Ra distance between gas and polymer for multiple gas-polymer pairs, demonstrating the negative correlation between HSP distance and permeability."
+    },
+    {
+      "title": "Hydrogen Storage Material Solvent Compatibility Map",
+      "description": "HSP space diagram showing hydrogen storage materials (metal hydrides, liquid organic hydrogen carriers like methylcyclohexane, decalin, dibenzyltoluene) and carrier liquid candidates positioned relative to compatibility spheres."
+    }
+  ],
+  "tables_needed": [
+    {
+      "title": "Li-ion Battery Electrolyte Solvent HSP and Properties",
+      "description": "Table of 15+ candidate solvents (EC, DMC, DEC, EMC, PC, GBL, ACN, DME, DOL, DMSO, sulfolane, FEC, etc.) with deltaD, deltaP, deltaH, dielectric constant, viscosity, electrochemical window, and RED values to PVDF and PE separator"
+    },
+    {
+      "title": "Gas HSP Database",
+      "description": "Comprehensive table of HSP values (deltaD, deltaP, deltaH) for 15+ gases including CO2, O2, N2, H2, CH4, C2H6, H2S, SO2, NH3, CO, Ar, He, NO2, with estimation method (boiling point extrapolation or molecular simulation) and confidence level noted"
+    },
+    {
+      "title": "CO2 Physical Absorbent Solvent Ranking",
+      "description": "Table of 10+ physical absorbent solvents with HSP values, Ra to CO2, Henry's law constant (literature values), operating temperature range, and regeneration energy for CO2 capture applications"
+    },
+    {
+      "title": "Supercritical CO2 HSP at Various Pressure-Temperature Conditions",
+      "description": "Table of deltaD, deltaP, deltaH, and density for scCO2 at pressures from 75-400 bar and temperatures from 35-100 C, showing the tunability of solvent properties"
+    },
+    {
+      "title": "Cosolvent Effects on scCO2 Mixture HSP",
+      "description": "Table showing how 1%, 3%, 5%, and 10% molar additions of ethanol, methanol, acetone, and ethyl acetate shift the mixture HSP of scCO2 at 200 bar and 50 C"
+    },
+    {
+      "title": "Membrane Material HSP and Gas Pair Selectivity",
+      "description": "Table of polymer membrane materials (PDMS, polysulfone, polyimide, PIM-1, PTMSP, cellulose acetate) with HSP values, and selectivity data for CO2/N2, CO2/CH4, O2/N2, and H2/N2 gas pairs correlated with Ra differences"
+    },
+    {
+      "title": "Biofuel Blend HSP at Various Ethanol/Biodiesel Fractions",
+      "description": "Table of HSP values for gasoline-ethanol blends (E0, E10, E20, E50, E85) and diesel-biodiesel blends (B0, B5, B20, B100) calculated by volume-weighted mixing rules"
+    },
+    {
+      "title": "Elastomer Compatibility with Biofuel Blends",
+      "description": "Matrix of RED values for common fuel system elastomers (NBR, FKM, HNBR, EPDM, silicone, neoprene) against fuel blends (E0-E85, B0-B100) with pass/fail swelling thresholds"
+    }
+  ],
+  "software_demo": {
+    "tab": "Li-ion Battery Electrolyte (リチウムイオン電池電解液) tab, CO2 Absorbent Selection (CO2吸収材選定) tab, Supercritical CO2 Cosolvent (超臨界CO2共溶媒) tab, Membrane Separation (膜分離選択性) tab, and Biofuel Compatibility (バイオ燃料適合性) tab",
+    "inputs": "In the Li-ion Battery Electrolyte tab, enter PVDF binder HSP and PE separator HSP, then select candidate solvents from the database. In the CO2 Absorbent tab, load CO2 gas HSP and enter candidate absorbent solvent HSP values. In the Supercritical CO2 tab, set pressure and temperature to calculate scCO2 HSP, then add cosolvent type and concentration. In the Membrane Separation tab, enter polymer membrane HSP and select gas pairs for selectivity analysis. In the Biofuel Compatibility tab, select fuel blend type and ethanol fraction, then enter elastomer HSP values.",
+    "expected_output": "The Li-ion Battery tab displays a ranked table of solvents with RED to binder, RED to separator, estimated dielectric constant, and pass/fail classification. The CO2 Absorbent tab shows Ra-ranked absorbent list with a bar chart. The Supercritical CO2 tab displays pressure-dependent HSP values and a cosolvent vector diagram in HSP space. The Membrane Separation tab shows dual-Ra analysis with predicted selectivity ratios. The Biofuel tab shows RED vs ethanol fraction curves for each elastomer with swelling risk zones highlighted.",
+    "workflow": "1. Open Li-ion Battery Electrolyte tab and screen EC, DMC, EMC, and PC against PVDF binder and PE separator. Identify that EC+DMC blend is optimal. 2. Switch to CO2 Absorbent Selection tab and rank Selexol, NMP, methanol, and propylene carbonate by Ra to CO2. 3. Open Supercritical CO2 tab, set 200 bar / 50C, observe HSP values, then add 5% ethanol cosolvent and see the HSP shift toward a target polar compound. 4. Use Membrane Separation tab to compare PDMS, polyimide, and PIM-1 for CO2/N2 selectivity. 5. Open Biofuel Compatibility tab, sweep ethanol fraction from 0-85% and observe the RED transition for NBR and FKM elastomers."
+  },
+  "review_questions": [
+    "Explain why lithium-ion battery electrolyte solvent selection requires simultaneous consideration of RED values against multiple polymeric components (binder, separator) and dielectric constant. How does HSP analysis streamline this multi-constraint optimization compared to purely experimental screening?",
+    "Describe how the HSP of supercritical CO2 changes with pressure and temperature. Why is pure scCO2 limited to dissolving nonpolar, low-molecular-weight compounds, and how does cosolvent addition expand its capability in HSP terms?",
+    "Compare the use of HSP for selecting physical CO2 absorbents versus chemical absorbents (amines). What are the fundamental limitations of applying HSP to reactive absorption systems, and how can HSP still serve as a useful pre-screening tool?",
+    "Explain the dual-Ra squared analysis for membrane separation selectivity. How does the difference in HSP affinity between two gas species and the membrane material determine the solubility selectivity, and what role does the diffusivity selectivity play in the overall separation?",
+    "Discuss the challenges of assigning HSP values to permanent gases. What experimental and computational methods are used, and how reliable are these gas HSP values for predicting solubility in polymers and liquids?"
+  ],
+  "uncertain": [
+    "equations[1]",
+    "equations[4]",
+    "equations[5]",
+    "estimated_pages",
+    "key_references[6]",
+    "key_references[9]"
+  ]
+}

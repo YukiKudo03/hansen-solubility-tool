@@ -1,0 +1,206 @@
+{
+  "chapter_title": "ソフトウェアアーキテクチャと設計原則",
+  "chapter_title_en": "Software Architecture and Design Principles for HSP Computation Tools",
+  "level": "chapter",
+  "parent": "Part V: Advanced Methods",
+  "synopsis": "This chapter presents the software architecture and design principles underlying a production-grade HSP evaluation tool built with Electron, React, and TypeScript. It covers the separation of pure-function domain logic (117 core modules) from infrastructure, the repository pattern for SQLite data access, Electron IPC communication design via contextBridge, and a comprehensive test-driven development methodology achieving 98.88% unit test coverage (2604 tests) with 295 E2E tests using Playwright.",
+  "key_concepts": [
+    "Three-layer architecture: Main process (Electron), Renderer process (React), Core domain logic (pure TypeScript functions)",
+    "Pure function domain logic: 117 stateless modules in src/core/ with no side effects, enabling deterministic testing",
+    "Repository pattern: interface-based data access abstraction (PartsRepository, SolventRepository, SettingsRepository, NanoParticleRepository, DrugRepository, DispersantRepository)",
+    "SQLite persistence via better-sqlite3 with schema migration and seed data management",
+    "Electron IPC communication: ipcMain.handle/ipcRenderer.invoke pattern with contextBridge preload isolation",
+    "Type-driven design: TypeScript strict mode with comprehensive domain type definitions (HSPValues, Part, Solvent, RiskLevel, etc.)",
+    "Validation as pure functions: every input validated by composable validator functions returning error strings or null",
+    "React hooks architecture: custom hooks (80+ hooks) encapsulating IPC calls and state management per evaluation pipeline",
+    "Component-per-view pattern: each of 93+ evaluation tabs has a dedicated View component backed by a custom hook",
+    "Navigation system: category-based tab routing with 93 tabs organized into evaluation, screening, visualization, and data management categories",
+    "Test-driven development: 2604 unit/integration tests (Vitest) at 98.88% coverage plus 295 E2E tests (Playwright)",
+    "Seed data architecture: domain-specific seed modules for solvents, nanoparticles, drugs, coatings, plasticizers, carriers, and dispersants",
+    "Error boundary pattern: React ErrorBoundary components for graceful UI failure handling",
+    "Path alias configuration: @core/* and @db/* TypeScript path aliases for clean imports"
+  ],
+  "equations": [
+    {
+      "name": "Cyclomatic Complexity",
+      "latex": "M = E - N + 2P",
+      "explanation": "McCabe cyclomatic complexity measuring the number of linearly independent paths through a program's source code, where E = edges, N = nodes, P = connected components. Used to evaluate module complexity in pure-function domain logic."
+    },
+    {
+      "name": "Code Coverage",
+      "latex": "C = \\frac{L_{executed}}{L_{total}} \\times 100\\%",
+      "explanation": "Line coverage metric representing the percentage of source code lines exercised by the test suite. This project achieves 98.88% coverage across 2604 tests."
+    },
+    {
+      "name": "Coupling Factor",
+      "latex": "CF = \\frac{\\sum_{i} d_{out}(i)}{N(N-1)}",
+      "explanation": "Ratio of actual module dependencies to maximum possible dependencies, measuring how tightly coupled the architecture is. Lower values indicate better separation of concerns."
+    }
+  ],
+  "historical_context": "The architecture of scientific computing tools has evolved significantly since the 1990s. Early HSP software (e.g., Hansen's own HSPiP, first released ~2001) used monolithic desktop architectures. The Electron framework (GitHub, 2013) enabled cross-platform desktop apps using web technologies. React (Facebook, 2013) introduced component-based UI architecture. TypeScript (Microsoft, 2012) added static typing to JavaScript. The repository pattern originates from Eric Evans' Domain-Driven Design (2003) and Martin Fowler's Patterns of Enterprise Application Architecture (2002). Test-driven development was popularized by Kent Beck (2002). The combination of these patterns applied to scientific computation tools represents a modern approach to making domain-specific calculation software maintainable, testable, and extensible.",
+  "related_project_modules": [
+    "hsp.ts",
+    "types.ts",
+    "validation.ts",
+    "risk.ts",
+    "mixture.ts",
+    "solvent-finder.ts",
+    "sphere-fitting.ts",
+    "group-contribution.ts",
+    "blend-optimizer.ts",
+    "dispersibility.ts",
+    "contact-angle.ts",
+    "report.ts",
+    "theme.ts",
+    "csv-import.ts",
+    "evaluation-history.ts",
+    "bookmark.ts",
+    "comparison.ts",
+    "accuracy-warnings.ts"
+  ],
+  "prerequisites": [
+    "Ch01_HSP_Fundamentals",
+    "Ch04_HSP_Estimation_Methods",
+    "Ch16_Solvent_Selection_Optimization"
+  ],
+  "learning_objectives": [
+    "Understand the three-layer Electron architecture separating main process, renderer process, and pure domain logic",
+    "Apply the repository pattern to decouple domain logic from database implementation details",
+    "Design pure-function modules for scientific calculations that are deterministic and independently testable",
+    "Implement secure IPC communication between Electron main and renderer processes using contextBridge",
+    "Establish comprehensive testing strategies combining unit tests, integration tests, and E2E tests for scientific software"
+  ],
+  "practical_applications": [
+    "Building maintainable desktop tools for chemical engineering calculations with Electron + React + TypeScript",
+    "Designing testable scientific computation libraries as pure-function modules without side effects",
+    "Implementing repository-pattern data access for materials databases with SQLite",
+    "Creating extensible evaluation pipelines where new HSP-based analyses can be added as independent modules",
+    "Applying test-driven development to ensure correctness of scientific calculations against literature values",
+    "Developing cross-platform desktop applications for laboratory and industrial HSP evaluation workflows",
+    "Scaling software architecture to support 90+ distinct evaluation pipelines without code duplication"
+  ],
+  "worked_examples": [
+    {
+      "title": "Adding a New Evaluation Pipeline End-to-End",
+      "description": "Walk through adding a complete new HSP evaluation feature: (1) create a pure-function core module with typed input/output, (2) add validation functions, (3) register IPC handlers in the main process, (4) expose the API via preload contextBridge, (5) create a custom React hook, (6) build the View component, (7) register in navigation, and (8) write unit + E2E tests."
+    },
+    {
+      "title": "Implementing the Repository Pattern for a New Entity",
+      "description": "Demonstrate creating a new data entity: define the TypeScript interface in types.ts, create the repository interface with CRUD methods, implement the SQLite repository with row-to-domain mapping functions, add schema migration SQL, create seed data, and write integration tests."
+    },
+    {
+      "title": "Pure Function Design for Ra/RED Calculation",
+      "description": "Analyze the hsp.ts module as a canonical example of pure-function design: calculateRa and calculateRed take immutable HSPValues inputs, produce deterministic outputs, throw on invalid inputs, and are tested with boundary cases and literature validation data."
+    },
+    {
+      "title": "Test Pyramid Strategy for Scientific Software",
+      "description": "Demonstrate the test pyramid: unit tests for core calculation correctness (Vitest, 2604 tests), integration tests for repository + seed data consistency, renderer component tests with mock IPC, and E2E tests (Playwright, 295 tests) validating complete user workflows across 93 tabs."
+    }
+  ],
+  "key_references": [
+    {
+      "author": "Martin Fowler",
+      "year": 2002,
+      "title": "Patterns of Enterprise Application Architecture (Repository Pattern, Service Layer)"
+    },
+    {
+      "author": "Eric Evans",
+      "year": 2003,
+      "title": "Domain-Driven Design: Tackling Complexity in the Heart of Software"
+    },
+    {
+      "author": "Kent Beck",
+      "year": 2002,
+      "title": "Test Driven Development: By Example"
+    },
+    {
+      "author": "Robert C. Martin",
+      "year": 2017,
+      "title": "Clean Architecture: A Craftsman's Guide to Software Structure and Design"
+    },
+    {
+      "author": "Steve McConnell",
+      "year": 2004,
+      "title": "Code Complete: A Practical Handbook of Software Construction, 2nd Edition"
+    },
+    {
+      "author": "Electron Contributors",
+      "year": 2013,
+      "title": "Electron Documentation: Process Model and Context Isolation (https://www.electronjs.org/docs)"
+    },
+    {
+      "author": "Hansen, C.M.",
+      "year": 2007,
+      "title": "Hansen Solubility Parameters: A User's Handbook, 2nd Edition (CRC Press) - Chapter on HSPiP software design"
+    },
+    {
+      "author": "Michael Feathers",
+      "year": 2004,
+      "title": "Working Effectively with Legacy Code"
+    }
+  ],
+  "cross_references": [
+    "Ch01_HSP_Fundamentals",
+    "Ch04_HSP_Estimation_Methods",
+    "Ch16_Solvent_Selection_Optimization"
+  ],
+  "difficulty_level": "graduate",
+  "estimated_pages": 35,
+  "figures_needed": [
+    {
+      "title": "Three-Layer Architecture Diagram",
+      "description": "Block diagram showing the Electron main process (Node.js, SQLite, IPC handlers), renderer process (React, custom hooks, View components), and core domain logic layer (117 pure-function modules). Arrows indicate IPC communication via contextBridge and direct imports from core."
+    },
+    {
+      "title": "IPC Communication Flow",
+      "description": "Sequence diagram showing a complete evaluation request: User action in React View -> custom hook calls window.api method -> preload contextBridge -> ipcRenderer.invoke -> ipcMain.handle -> core pure function -> repository data access -> response back through the chain."
+    },
+    {
+      "title": "Repository Pattern Class Diagram",
+      "description": "UML class diagram showing repository interfaces (PartsRepository, SolventRepository, etc.) and their SQLite implementations, with DTO types for create/update operations and domain entity types (Part, Solvent, NanoParticle, Drug, Dispersant)."
+    },
+    {
+      "title": "Module Dependency Graph",
+      "description": "Directed graph showing how 117 core modules depend on types.ts and hsp.ts as foundational modules, with validation.ts as a cross-cutting concern. Shows the fan-out pattern where ipc-handlers.ts imports from all core modules."
+    },
+    {
+      "title": "Test Pyramid for Scientific Software",
+      "description": "Pyramid diagram with three layers: bottom layer showing 2604 unit tests (Vitest) covering core calculations and validations, middle layer showing integration tests for repository + seed data, top layer showing 295 E2E tests (Playwright) covering user workflows across 93 tabs."
+    },
+    {
+      "title": "Navigation Architecture",
+      "description": "Tree diagram showing the category-based navigation system: 93 tabs organized into categories (Evaluation, Screening, Visualization, Data Management, etc.), each mapping to a View component backed by a custom hook."
+    }
+  ],
+  "tables_needed": [
+    {
+      "title": "Source Code Module Statistics",
+      "description": "Table listing each architectural layer with module counts and responsibilities: Core (117 .ts modules, pure domain logic), Main (3 modules: main.ts, ipc-handlers.ts, preload.ts), Renderer (93+ View components, 80+ custom hooks), DB (12 modules: schema, repositories, seed data)."
+    },
+    {
+      "title": "Repository Interface Summary",
+      "description": "Table of all repository interfaces with their entity types, CRUD methods, and specialized query methods (e.g., searchSolvents, getPlasticizers, getNanoParticlesByCategory)."
+    },
+    {
+      "title": "Test Coverage Summary by Layer",
+      "description": "Table showing test counts and coverage percentages broken down by architectural layer: core unit tests, validation tests, integration tests, renderer component tests, hook tests, and E2E tests."
+    },
+    {
+      "title": "Technology Stack Overview",
+      "description": "Table listing each technology with its role: Electron (desktop runtime), React (UI framework), TypeScript strict mode (type safety), Vite (build tool), better-sqlite3 (database), Vitest (unit testing), Playwright (E2E testing), electron-builder (packaging)."
+    }
+  ],
+  "software_demo": {
+    "tab": "All tabs (architecture overview)",
+    "inputs": "Navigate through multiple tabs to observe the consistent architecture: (1) Open 'Solubility Evaluation' tab to see the core Ra/RED calculation pipeline, (2) Open 'Database' tab to see repository pattern in action with CRUD operations on solvents and parts, (3) Open 'Group Contribution' tab to see a pure-function estimation module, (4) Open 'Settings' tab to see threshold configuration persisted via repository pattern, (5) Open 'Evaluation History' tab to see cross-cutting bookmark and history features.",
+    "expected_output": "Each tab demonstrates the same architectural pattern: a React View component backed by a custom hook that calls the IPC API, which delegates to a pure-function core module and repository for data access. The consistent behavior across 93 tabs validates the extensible architecture."
+  },
+  "review_questions": [
+    "Why is it important to implement HSP calculation functions (such as Ra and RED) as pure functions with no side effects, and how does this design decision impact testability and reliability?",
+    "Explain the role of the contextBridge preload script in Electron's security model. What would happen if the renderer process had direct access to Node.js APIs?",
+    "Compare the repository pattern used in this project (interface + SQLite implementation) with alternative data access patterns. What are the advantages when the underlying database technology might change?",
+    "The project achieves 98.88% code coverage with 2604 unit tests. Discuss the trade-offs between high coverage targets and development velocity in scientific software. When might 100% coverage be counterproductive?",
+    "Describe how a new evaluation pipeline (e.g., a novel polymer compatibility assessment) would be added to this architecture. Which files must be created or modified, and how does the modular design minimize the impact on existing code?"
+  ],
+  "uncertain": []
+}

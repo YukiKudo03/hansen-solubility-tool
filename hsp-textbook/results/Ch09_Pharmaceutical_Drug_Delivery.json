@@ -1,0 +1,259 @@
+{
+  "chapter_title": "医薬品とドラッグデリバリー",
+  "chapter_title_en": "Pharmaceutical Drug Delivery",
+  "level": "chapter",
+  "parent": "Part IV: Applications",
+  "synopsis": "This chapter applies Hansen Solubility Parameters to pharmaceutical formulation and drug delivery, covering drug solubility classification via RED, transdermal permeation enhancer selection using a three-component drug-skin-enhancer HSP system, liposome membrane permeability prediction, nanoparticle drug loading optimization, cocrystal screening for API-coformer pairs, polymorph and solvate risk assessment in the RED band 0.5-1.5, carrier excipient selection, and inhalation drug-propellant compatibility. The HSP framework provides a unified thermodynamic basis for rational formulation design, reducing the need for extensive experimental screening in each of these pharmaceutical applications.",
+  "key_concepts": [
+    "Drug solubility classification using RED (Relative Energy Difference) in HSP space",
+    "HSP sphere construction for active pharmaceutical ingredients (APIs) from solubility data",
+    "Transdermal drug delivery: three-component HSP system (drug-skin-enhancer)",
+    "Chemical permeation enhancer (CPE) selection via HSP distance minimization to skin lipid domain",
+    "Liposome bilayer permeability prediction from drug-phospholipid HSP affinity",
+    "Nanoparticle drug loading: polymer-drug HSP matching for encapsulation efficiency optimization",
+    "Cocrystal screening: API-coformer HSP distance as predictor of cocrystal formation likelihood",
+    "Polymorph and solvate risk assessment in the RED transition zone (0.5-1.5)",
+    "Carrier excipient selection for solid dispersions using HSP miscibility criteria",
+    "Inhalation drug formulation: propellant-drug HSP compatibility for metered-dose inhalers (MDIs)",
+    "Biopharmaceutics Classification System (BCS) correlation with HSP solubility predictions",
+    "Amorphous solid dispersion (ASD) stability prediction from polymer-drug HSP distance",
+    "Hansen solubility sphere methodology applied to pharmaceutical solvent screening",
+    "Supersaturation and nucleation tendency related to solvent HSP proximity to API"
+  ],
+  "equations": [
+    {
+      "name": "HSP distance (Ra) for drug-solvent pair",
+      "latex": "Ra = \\sqrt{4(\\delta_{D,drug} - \\delta_{D,solvent})^2 + (\\delta_{P,drug} - \\delta_{P,solvent})^2 + (\\delta_{H,drug} - \\delta_{H,solvent})^2}",
+      "explanation": "Hansen distance between a drug molecule and a solvent in 3D HSP space, used to predict drug solubility; smaller Ra indicates higher expected solubility"
+    },
+    {
+      "name": "Relative Energy Difference (RED) for drug solubility classification",
+      "latex": "RED = \\frac{Ra}{R_0}",
+      "explanation": "RED ratio classifying drug-solvent compatibility: RED < 1 indicates likely solubility (good solvent), RED > 1 indicates likely insolubility, and RED = 1 is the boundary of the solubility sphere"
+    },
+    {
+      "name": "Flory-Huggins interaction parameter for drug-polymer compatibility",
+      "latex": "\\chi_{drug-polymer} = \\frac{V_{drug}}{RT} \\left[ (\\delta_{D,drug} - \\delta_{D,poly})^2 + 0.25(\\delta_{P,drug} - \\delta_{P,poly})^2 + 0.25(\\delta_{H,drug} - \\delta_{H,poly})^2 \\right]",
+      "explanation": "Estimation of the Flory-Huggins chi parameter for drug-polymer pairs, critical for predicting miscibility in amorphous solid dispersions and nanoparticle drug loading"
+    },
+    {
+      "name": "Transdermal flux enhancement factor",
+      "latex": "\\ln EF \\propto -(Ra_{enhancer-skin})^2 + (Ra_{drug-skin})^2 - (Ra_{drug-enhancer})^2",
+      "explanation": "Semi-empirical relationship linking the flux enhancement factor to HSP distances among the drug, skin lipid barrier, and chemical permeation enhancer in a three-component system [uncertain]"
+    },
+    {
+      "name": "Drug loading capacity in nanoparticles",
+      "latex": "DLC \\propto \\exp\\left(-\\frac{V_{drug} \\cdot (Ra_{drug-polymer})^2}{RT}\\right)",
+      "explanation": "Drug loading capacity of a polymeric nanoparticle scales inversely with the squared HSP distance between drug and carrier polymer, reflecting thermodynamic miscibility [uncertain]"
+    },
+    {
+      "name": "Cocrystal formation likelihood from HSP",
+      "latex": "\\Delta HSP_{API-coformer} = \\sqrt{(\\delta_{D,API} - \\delta_{D,cof})^2 + (\\delta_{P,API} - \\delta_{P,cof})^2 + (\\delta_{H,API} - \\delta_{H,cof})^2}",
+      "explanation": "Partial solubility parameter distance between API and coformer; empirically, cocrystal formation is more likely when this distance falls within an intermediate range, indicating complementary but not identical intermolecular interactions"
+    },
+    {
+      "name": "Polymorph/solvate risk zone criterion",
+      "latex": "0.5 \\leq RED_{solvent-API} \\leq 1.5",
+      "explanation": "Solvents with RED values in the transition zone (0.5 to 1.5) relative to the API present elevated risk of forming solvates or inducing polymorphic transformations during crystallization"
+    }
+  ],
+  "historical_context": "The application of solubility parameters to pharmaceutical systems traces back to Hildebrand's original solubility parameter and early work by Hancock et al. (1997) on predicting drug solubility in excipient matrices. Hansen's three-component extension was adopted for pharmaceutical use notably by Archer (1992) and later systematized by Gharagheizi (2008) and Mohammad et al. (2011). Transdermal enhancer selection using HSP was explored by Fang et al. (2003) and Minghetti et al. (2007), who demonstrated the three-component drug-skin-enhancer approach. Abbott and Hansen (2008) formalized the HSP sphere methodology for pharmaceutical solvent selection and emphasized the RED classification for drug solubility screening. Cocrystal screening using HSP was advanced by Mohammad et al. (2011) and Greenhalgh et al. (1999), who showed that HSP distance between API and coformer correlates with cocrystal formation propensity. The polymorph/solvate risk zone concept (RED 0.5-1.5) derives from observations that partial solubility creates conditions favoring crystal form diversity, as discussed by Threlfall (2000) and Bernstein (2002). Nanoparticle drug loading optimization via HSP matching emerged from work by Letchford and Burt (2007) and was further developed by Duong et al. (2015). The field continues to evolve with computational HSP prediction methods enabling virtual screening of drug formulation candidates.",
+  "related_project_modules": [
+    "drug-solubility.ts",
+    "transdermal-enhancer.ts",
+    "liposome-permeability.ts",
+    "nanoparticle-drug-loading.ts",
+    "cocrystal-screening.ts",
+    "polymorph-solvate-risk.ts",
+    "carrier-selection.ts",
+    "inhalation-drug-propellant.ts"
+  ],
+  "prerequisites": [
+    "Ch01_HSP_Fundamentals",
+    "Ch02_Thermodynamic_Foundations",
+    "Ch04_HSP_Estimation_Methods"
+  ],
+  "learning_objectives": [
+    "Apply the RED classification to predict drug solubility in pharmaceutical solvents and rank candidate solvents for API dissolution",
+    "Design a transdermal drug delivery formulation by selecting chemical permeation enhancers using three-component HSP analysis (drug-skin-enhancer)",
+    "Predict nanoparticle drug loading efficiency from HSP matching between the drug and carrier polymer, and optimize encapsulation",
+    "Screen API-coformer pairs for cocrystal formation potential using HSP distance criteria and identify promising candidates",
+    "Assess polymorph and solvate risk during crystallization by identifying solvents in the RED transition zone (0.5-1.5)"
+  ],
+  "practical_applications": [
+    "Pharmaceutical solvent screening for drug purification and crystallization using HSP-based RED classification",
+    "Selection of chemical permeation enhancers for transdermal drug delivery patches",
+    "Formulation of polymeric nanoparticles with maximized drug loading through HSP-guided polymer selection",
+    "Cocrystal engineering to improve aqueous solubility and bioavailability of poorly soluble BCS Class II drugs",
+    "Polymorph risk assessment during process development to avoid undesired crystal form changes",
+    "Carrier and excipient selection for amorphous solid dispersions (ASDs) with long-term stability",
+    "Propellant compatibility screening for metered-dose inhaler (MDI) formulations",
+    "Liposome formulation optimization for encapsulation of hydrophobic and amphiphilic drugs"
+  ],
+  "worked_examples": [
+    {
+      "title": "Drug solubility screening for ibuprofen in 20 common solvents",
+      "description": "Determine the HSP sphere of ibuprofen (dD=17.4, dP=4.0, dH=9.6, R0=10.2) from experimental solubility data. Calculate Ra and RED for 20 pharmaceutical solvents, classify each as good/partial/poor solvent, and compare predictions with experimental solubility values to validate the HSP sphere."
+    },
+    {
+      "title": "Transdermal enhancer selection for caffeine delivery",
+      "description": "Using HSP values for caffeine (drug), stratum corneum lipid domain (skin), and five candidate enhancers (oleic acid, propylene glycol, DMSO, Azone, ethanol), compute the three-component HSP distances. Rank enhancers by predicted flux enhancement and identify the optimal enhancer or binary enhancer combination."
+    },
+    {
+      "title": "Cocrystal screening for carbamazepine",
+      "description": "Calculate HSP distances between carbamazepine (API) and 10 candidate coformers (saccharin, nicotinamide, glutaric acid, succinic acid, etc.). Apply the empirical HSP distance criterion for cocrystal formation likelihood. Compare predictions with known experimental cocrystal data from the Cambridge Structural Database."
+    },
+    {
+      "title": "Polymorph risk assessment for paracetamol crystallization",
+      "description": "Compute RED values for paracetamol in 15 crystallization solvents. Identify solvents in the RED 0.5-1.5 risk zone and correlate with known polymorphic outcomes (Form I vs Form II). Recommend a solvent system that minimizes solvate and polymorph risk."
+    }
+  ],
+  "key_references": [
+    {
+      "author": "Hansen, C.M.",
+      "year": 2007,
+      "title": "Hansen Solubility Parameters: A User's Handbook, 2nd Edition, CRC Press, Chapter 18: Biological Materials"
+    },
+    {
+      "author": "Abbott, S.; Hansen, C.M.",
+      "year": 2008,
+      "title": "Hansen Solubility Parameters in Practice (HSPiP), 5th Edition [uncertain]"
+    },
+    {
+      "author": "Greenhalgh, D.J.; Williams, A.C.; Timmins, P.; York, P.",
+      "year": 1999,
+      "title": "Solubility Parameters as Predictors of Miscibility in Solid Dispersions, Journal of Pharmaceutical Sciences, 88(11), 1182-1190"
+    },
+    {
+      "author": "Mohammad, M.A.; Alhalaweh, A.; Velaga, S.P.",
+      "year": 2011,
+      "title": "Hansen Solubility Parameter as a Tool to Predict Cocrystal Formation, International Journal of Pharmaceutics, 407(1-2), 63-71"
+    },
+    {
+      "author": "Hancock, B.C.; York, P.; Rowe, R.C.",
+      "year": 1997,
+      "title": "The Use of Solubility Parameters in Pharmaceutical Dosage Form Design, International Journal of Pharmaceutics, 148(1), 1-21"
+    },
+    {
+      "author": "Letchford, K.; Burt, H.",
+      "year": 2007,
+      "title": "A Review of the Formation and Classification of Amphiphilic Block Copolymer Nanoparticulate Structures: Micelles, Nanospheres, Nanocapsules and Polymersomes, European Journal of Pharmaceutics and Biopharmaceutics, 65(3), 259-269"
+    },
+    {
+      "author": "Threlfall, T.L.",
+      "year": 2000,
+      "title": "Analysis of Organic Polymorphs: A Review, Analyst, 125, 1369-1382 [uncertain]"
+    },
+    {
+      "author": "Bernstein, J.",
+      "year": 2002,
+      "title": "Polymorphism in Molecular Crystals, Oxford University Press"
+    },
+    {
+      "author": "Duong, A.D.; Sharma, S.; Peine, K.J.; et al.",
+      "year": 2015,
+      "title": "Nanoparticle Drug Loading via Hansen Solubility Parameters: Prediction and Optimization [uncertain]"
+    },
+    {
+      "author": "Forster, A.; Hempenstall, J.; Tucker, I.; Rades, T.",
+      "year": 2001,
+      "title": "Selection of Excipients for Melt Extrusion with Two Poorly Water-Soluble Drugs by Solubility Parameter Calculation and Thermal Analysis, International Journal of Pharmaceutics, 226(1-2), 147-161"
+    }
+  ],
+  "cross_references": [
+    "Ch01_HSP_Fundamentals",
+    "Ch02_Thermodynamic_Foundations",
+    "Ch03_Temperature_Pressure_Effects",
+    "Ch04_HSP_Estimation_Methods",
+    "Ch07_Polymer_Solubility_Swelling",
+    "Ch08_Polymer_Blends_Recycling"
+  ],
+  "difficulty_level": "graduate",
+  "estimated_pages": 60,
+  "figures_needed": [
+    {
+      "title": "Drug Solubility Sphere in HSP Space",
+      "description": "3D Hansen space plot showing the solubility sphere of a model drug (e.g., ibuprofen) with good solvents plotted inside the sphere and poor solvents outside, illustrating RED-based classification"
+    },
+    {
+      "title": "Three-Component Transdermal HSP Diagram",
+      "description": "3D HSP plot showing the drug, skin lipid domain, and multiple candidate permeation enhancers, with arrows indicating the enhancer's ability to bridge the drug-skin HSP gap"
+    },
+    {
+      "title": "Nanoparticle Drug Loading vs HSP Distance",
+      "description": "Scatter plot of experimental drug loading capacity (%) versus Ra between drug and carrier polymer for multiple drug-polymer pairs, showing the inverse correlation"
+    },
+    {
+      "title": "Cocrystal Formation Map in HSP Space",
+      "description": "2D projection of HSP space showing an API at the center with coformers plotted by HSP distance; successful cocrystals marked distinctly from failed attempts, revealing the optimal distance range"
+    },
+    {
+      "title": "Polymorph/Solvate Risk Zone Diagram",
+      "description": "Radial diagram centered on an API showing concentric RED zones (0-0.5 dissolution zone, 0.5-1.5 risk zone, >1.5 safe zone) with crystallization solvents plotted and color-coded by observed polymorphic outcome"
+    },
+    {
+      "title": "Amorphous Solid Dispersion Stability Map",
+      "description": "Plot of drug-polymer HSP distance versus physical stability (time to crystallization onset) for multiple ASD formulations, demonstrating the stability advantage of HSP-matched systems"
+    },
+    {
+      "title": "Liposome Permeability vs Drug HSP",
+      "description": "Plot showing drug permeability through liposome bilayers as a function of drug-phospholipid HSP distance, illustrating the optimal range for encapsulation and controlled release"
+    },
+    {
+      "title": "MDI Propellant-Drug Compatibility Chart",
+      "description": "Bar chart comparing HSP distances between common inhaled drugs and propellants (HFA-134a, HFA-227ea), with solubility/suspension stability outcomes annotated"
+    }
+  ],
+  "tables_needed": [
+    {
+      "title": "HSP Values for Common Active Pharmaceutical Ingredients",
+      "description": "Table of deltaD, deltaP, deltaH, and R0 values for 15-20 common drugs including ibuprofen, paracetamol, carbamazepine, indomethacin, caffeine, aspirin, and others"
+    },
+    {
+      "title": "RED Classification for Drug-Solvent Pairs",
+      "description": "Matrix of RED values for 5 model drugs against 15 pharmaceutical solvents with solubility classification (good/partial/poor)"
+    },
+    {
+      "title": "Chemical Permeation Enhancer HSP Values",
+      "description": "Table listing CPEs (oleic acid, DMSO, Azone, terpenes, fatty acids, propylene glycol, etc.) with HSP values and Ra to stratum corneum lipid domain"
+    },
+    {
+      "title": "Cocrystal Formation: HSP Distance vs Experimental Outcome",
+      "description": "Table comparing computed API-coformer HSP distances with experimental cocrystal screening results (yes/no) for 20+ API-coformer pairs"
+    },
+    {
+      "title": "Polymer Carriers for Nanoparticle Drug Loading",
+      "description": "Table of common pharmaceutical polymers (PLGA, PLA, PCL, PEG-PLA, chitosan) with HSP values, and drug loading data for model drugs"
+    },
+    {
+      "title": "Polymorph/Solvate Risk Classification by Solvent RED",
+      "description": "Table mapping crystallization solvents to RED values for a model API, with observed crystal forms and solvate occurrence annotated"
+    },
+    {
+      "title": "Propellant HSP Values and Drug Compatibility",
+      "description": "Table of HFA propellants and legacy CFC propellants with HSP values, and compatibility ratings for common inhaled drug substances"
+    }
+  ],
+  "software_demo": {
+    "tab": "Drug Solubility (薬物溶解性) tab, Dispersant Selection (分散剤選定) tab for transdermal enhancer mode, and Cocrystal Screening (共結晶スクリーニング) tab",
+    "inputs": "In the Drug Solubility tab, enter HSP values for a target drug (e.g., ibuprofen: dD=17.4, dP=4.0, dH=9.6) and R0. In the Dispersant Selection tab, enter the three-component system: drug HSP, skin HSP (dD=16.0, dP=3.5, dH=6.0), and candidate enhancer HSPs. In the Cocrystal Screening tab, enter the API HSP and a list of candidate coformer HSP values.",
+    "expected_output": "The Drug Solubility tab displays RED values for each solvent, ranked from best to worst, with color-coded classification. The Dispersant Selection tab ranks enhancers by predicted transdermal enhancement. The Cocrystal Screening tab shows API-coformer HSP distances with cocrystal formation likelihood scores.",
+    "workflow": "1. Open the Drug Solubility tab and enter ibuprofen HSP values. 2. Review the ranked solvent list and verify against known solubility data. 3. Switch to the Dispersant Selection tab and configure a transdermal system with caffeine as drug and stratum corneum as target. 4. Evaluate enhancer candidates and select the top-ranked option. 5. Open the Cocrystal Screening tab and enter carbamazepine with 10 coformer candidates to identify promising cocrystal pairs."
+  },
+  "review_questions": [
+    "Explain how the RED classification system is applied to predict drug solubility in pharmaceutical solvents. What are the limitations of using a single sphere to represent drug solubility behavior, especially for drugs with multiple functional groups?",
+    "Describe the three-component HSP framework for transdermal permeation enhancer selection. How does the enhancer modify the HSP distance between the drug and the skin lipid barrier, and what practical considerations beyond HSP affect transdermal delivery?",
+    "Why does the RED zone of 0.5-1.5 present elevated polymorph and solvate risk during crystallization? Propose a crystallization development strategy that uses HSP analysis to minimize the risk of undesired crystal forms.",
+    "Compare the HSP-based approach to cocrystal screening with other computational methods (e.g., COSMO-RS, molecular complementarity). What are the advantages and limitations of using HSP distances to predict API-coformer cocrystal formation?",
+    "Discuss how HSP matching between drug and polymer carrier influences nanoparticle drug loading efficiency and release kinetics. What role does the chi parameter play in predicting long-term stability of drug-loaded nanoparticles?"
+  ],
+  "uncertain": [
+    "equations[3]",
+    "equations[4]",
+    "key_references[1]",
+    "key_references[6]",
+    "key_references[8]",
+    "estimated_pages",
+    "historical_context"
+  ]
+}

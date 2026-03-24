@@ -1,0 +1,234 @@
+{
+  "chapter_title": "高分子の溶解性と膨潤 — RED値による多軸リスク評価とFlory-Rehner自動化",
+  "chapter_title_en": "Polymer Solubility and Swelling: Multi-Axis Risk Assessment via RED and Flory-Rehner Automation",
+  "level": "chapter",
+  "parent": "Part III: Polymer Science",
+  "synopsis": "This chapter covers the application of Hansen Solubility Parameters to polymer solubility and swelling phenomena. It presents a five-level RED-based risk classification for general polymer-solvent compatibility, an inverse-logic swelling classification for elastomers and rubbers (where lower RED means greater swelling), chemical resistance prediction (where higher RED indicates better resistance), environmental stress cracking (ESC) band-type risk assessment with the critical 0.7-1.3 RED danger zone, rubber compounding design combining filler dispersion and solvent swelling evaluation, and automated hydrogel equilibrium swelling prediction through HSP-to-chi-to-Flory-Rehner pipeline integration.",
+  "key_concepts": [
+    "Polymer solubility prediction using RED (Relative Energy Difference) thresholds",
+    "Five-level risk classification for polymer-solvent compatibility: Dangerous, Warning, Caution, Hold, Safe",
+    "Elastomer/rubber swelling degree classification with inverse RED logic (low RED = severe swelling)",
+    "Swelling level thresholds: Severe (RED < 0.5), High (RED < 0.8), Moderate (RED < 1.0), Low (RED < 1.5), Negligible (RED >= 1.5)",
+    "Chemical resistance prediction with direct RED logic (high RED = excellent resistance)",
+    "Chemical resistance thresholds: NoResistance (RED < 0.5), Poor (RED < 0.8), Moderate (RED < 1.2), Good (RED < 2.0), Excellent (RED >= 2.0)",
+    "Environmental Stress Cracking (ESC) as a band-type phenomenon in the RED = 0.7-1.3 danger zone",
+    "ESC three-zone classification: Dissolution (RED < 0.7), High Risk (0.7-1.3), Safe (RED > 1.3)",
+    "Distinction between dissolution (RED << 1) and ESC (RED near 1) failure modes",
+    "Rubber compounding design: filler dispersion via chi parameter and solvent resistance screening",
+    "Flory-Huggins chi parameter calculation from HSP distance for crosslinked systems",
+    "Flory-Rehner equation for equilibrium swelling: relating chi and crosslink density to polymer volume fraction",
+    "Volume swelling ratio Q = 1/phiP as the primary swelling metric",
+    "Hydrogel equilibrium swelling automation: HSP -> chi -> Flory-Rehner pipeline",
+    "Filler-rubber compatibility classification based on chi: Excellent (< 0.5), Good (< 1.0), Fair (< 2.0), Poor (>= 2.0)"
+  ],
+  "equations": [
+    {
+      "name": "Flory-Rehner Equation",
+      "latex": "\\ln(1 - \\phi_p) + \\phi_p + \\chi \\phi_p^2 = -V_s \\nu_e \\left(\\phi_p^{1/3} - \\frac{\\phi_p}{2}\\right)",
+      "explanation": "Relates the equilibrium polymer volume fraction (phiP) in a swollen crosslinked network to the Flory-Huggins interaction parameter (chi), solvent molar volume (Vs), and crosslink density (nue). Solved numerically for phiP."
+    },
+    {
+      "name": "Flory-Huggins Chi from HSP Distance",
+      "latex": "\\chi = \\frac{V_s}{RT} \\left[ 4(\\delta_{D1} - \\delta_{D2})^2 + (\\delta_{P1} - \\delta_{P2})^2 + (\\delta_{H1} - \\delta_{H2})^2 \\right]",
+      "explanation": "Estimates the Flory-Huggins interaction parameter from HSP distance, using the solvent molar volume and temperature. This bridges HSP theory with classical polymer thermodynamics."
+    },
+    {
+      "name": "Volume Swelling Ratio",
+      "latex": "Q = \\frac{1}{\\phi_p}",
+      "explanation": "The volume swelling ratio is the reciprocal of the equilibrium polymer volume fraction. Q > 5 indicates high swelling, Q near 1 indicates negligible swelling."
+    },
+    {
+      "name": "RED-Based Swelling Classification (Elastomers)",
+      "latex": "\\text{Swelling Level} = f(RED); \\quad RED < 0.5 \\Rightarrow \\text{Severe}, \\quad RED < 0.8 \\Rightarrow \\text{High}, \\quad RED < 1.0 \\Rightarrow \\text{Moderate}, \\quad RED < 1.5 \\Rightarrow \\text{Low}, \\quad RED \\geq 1.5 \\Rightarrow \\text{Negligible}",
+      "explanation": "For elastomers/rubbers, lower RED means the solvent is closer in HSP space, leading to greater swelling. This is the inverse of chemical resistance logic."
+    },
+    {
+      "name": "ESC Band Classification",
+      "latex": "\\text{ESC Risk} = \\begin{cases} \\text{Dissolution} & RED < 0.7 \\\\ \\text{High Risk} & 0.7 \\leq RED \\leq 1.3 \\\\ \\text{Safe} & RED > 1.3 \\end{cases}",
+      "explanation": "Environmental stress cracking occurs preferentially in a mid-range RED band where the solvent partially penetrates the polymer without fully dissolving it, creating localized plasticization that promotes crack initiation under mechanical stress."
+    },
+    {
+      "name": "Chemical Resistance Classification",
+      "latex": "\\text{Resistance} = g(RED); \\quad RED < 0.5 \\Rightarrow \\text{No Resistance}, \\quad RED \\geq 2.0 \\Rightarrow \\text{Excellent}",
+      "explanation": "For chemical resistance prediction, higher RED means greater HSP distance between polymer and chemical, hence better resistance. This is the direct RED logic."
+    }
+  ],
+  "historical_context": "The thermodynamic theory of polymer swelling was established by Paul Flory and John Rehner in 1943 with their seminal paper in the Journal of Chemical Physics (11:521), which derived the equilibrium swelling equation for crosslinked networks. The Flory-Huggins lattice theory (Flory 1941, Huggins 1941) provided the chi interaction parameter framework. Charles Hansen extended HSP theory to polymer applications throughout the 1970s-2000s, demonstrating that HSP distance could predict both dissolution and swelling behavior. Hansen's 2000 paper in Industrial & Engineering Chemistry Research (39:4422-4426) specifically addressed environmental stress cracking prediction using HSP, identifying the critical mid-range RED band where ESC risk is maximized. The connection between HSP distance and Flory-Huggins chi was formalized as chi = Vs * Ra^2 / RT, enabling automated swelling prediction pipelines. Rubber compounding applications were developed drawing on work by Kraus (1963) on filler-rubber interactions and Mark and Erman (2007) on rubberlike elasticity.",
+  "related_project_modules": [
+    "swelling.ts",
+    "chemical-resistance.ts",
+    "esc-classification.ts",
+    "esc-pipeline.ts",
+    "rubber-compounding-design.ts",
+    "hydrogel-swelling-equilibrium.ts",
+    "flory-rehner.ts",
+    "flory-huggins.ts",
+    "hsp.ts",
+    "risk.ts"
+  ],
+  "prerequisites": [
+    "Ch01_HSP_Fundamentals",
+    "Ch02_Thermodynamic_Foundations"
+  ],
+  "learning_objectives": [
+    "Distinguish between the direct and inverse RED logic used for chemical resistance versus swelling classification, and explain the physical rationale for each",
+    "Apply the Flory-Rehner equation with HSP-derived chi to predict equilibrium swelling ratios of crosslinked elastomers and hydrogels",
+    "Classify environmental stress cracking risk using the three-zone ESC band model and explain why the mid-range RED zone (0.7-1.3) is most dangerous",
+    "Evaluate rubber compound formulations by combining filler dispersion compatibility (chi-based) with solvent swelling resistance screening",
+    "Use the automated HSP-to-chi-to-Flory-Rehner pipeline to predict hydrogel swelling behavior for given polymer-solvent-crosslink density combinations"
+  ],
+  "practical_applications": [
+    "Selecting elastomer seal materials (NBR, EPDM, FKM, silicone) resistant to specific industrial fluids based on swelling classification",
+    "Predicting chemical resistance of protective coatings and linings against process chemicals",
+    "Screening polymeric piping and tank materials for environmental stress cracking risk from transported chemicals",
+    "Designing rubber compounds with optimal filler dispersion and solvent resistance for automotive applications",
+    "Predicting hydrogel equilibrium swelling for drug delivery system design and controlled release applications",
+    "Assessing polymer degradation risk in chemical storage and transport containers",
+    "Selecting compatible plastic materials for medical devices exposed to sterilization chemicals and body fluids",
+    "Evaluating polymer safety in food contact applications against migration of solvents and additives"
+  ],
+  "worked_examples": [
+    {
+      "title": "Elastomer Swelling Classification for O-Ring Material Selection",
+      "description": "Given NBR rubber (deltaD=18.0, deltaP=8.0, deltaH=4.0, R0=7.5) and four industrial fluids (toluene, ethanol, diesel, MEK), calculate RED for each fluid, classify swelling level using inverse RED thresholds, and rank materials from most to least resistant."
+    },
+    {
+      "title": "ESC Risk Screening for HDPE Pipe Against Chemical Inventory",
+      "description": "Screen 10 common chemicals against HDPE pipe material using the ESC band classification. Identify which chemicals fall in the dissolution zone (RED < 0.7), the dangerous ESC band (0.7-1.3), and the safe zone (RED > 1.3). Discuss why detergents and certain organic solvents appear in the ESC danger band."
+    },
+    {
+      "title": "Rubber Compound Design: SBR with Carbon Black and Solvent Resistance",
+      "description": "Evaluate an SBR rubber compound with carbon black filler (chi-based dispersion compatibility) and screen against 5 solvents (hexane, toluene, acetone, ethanol, water) using Flory-Rehner swelling prediction. Determine crosslink density needed to limit maximum swelling ratio Q below 3."
+    },
+    {
+      "title": "Hydrogel Swelling Equilibrium for Drug Delivery Application",
+      "description": "Calculate the equilibrium swelling ratio of a PEG-based hydrogel in water and ethanol-water mixtures at different crosslink densities using the automated HSP-chi-Flory-Rehner pipeline. Plot Q versus crosslink density and identify the target crosslink density for desired swelling behavior."
+    }
+  ],
+  "key_references": [
+    {
+      "author": "Flory, P. J.; Rehner, J.",
+      "year": 1943,
+      "title": "Statistical Mechanics of Cross-Linked Polymer Networks II. Swelling, Journal of Chemical Physics, 11, 521-526"
+    },
+    {
+      "author": "Hansen, C. M.",
+      "year": 2000,
+      "title": "Prediction of Environmental Stress Cracking in Polymers with Hansen Solubility Parameters, Industrial & Engineering Chemistry Research, 39, 4422-4426"
+    },
+    {
+      "author": "Hansen, C. M.",
+      "year": 2007,
+      "title": "Hansen Solubility Parameters: A User's Handbook, 2nd Edition, CRC Press (Chapters on Polymers and Swelling)"
+    },
+    {
+      "author": "Flory, P. J.",
+      "year": 1953,
+      "title": "Principles of Polymer Chemistry, Cornell University Press"
+    },
+    {
+      "author": "Mark, J. E.; Erman, B.",
+      "year": 2007,
+      "title": "Rubberlike Elasticity: A Molecular Primer, 2nd Edition, Cambridge University Press"
+    },
+    {
+      "author": "Kraus, G.",
+      "year": 1963,
+      "title": "Swelling of Filler-Reinforced Vulcanizates, Journal of Applied Polymer Science, 7, 861-871"
+    },
+    {
+      "author": "Peppas, N. A.; Bures, P.; Leobandung, W.; Ichikawa, H.",
+      "year": 2000,
+      "title": "Hydrogels in Pharmaceutical Formulations, European Journal of Pharmaceutics and Biopharmaceutics, 50, 27-46"
+    },
+    {
+      "author": "Van Krevelen, D. W.; Te Nijenhuis, K.",
+      "year": 2009,
+      "title": "Properties of Polymers, 4th Edition, Elsevier (Chapter 7: Cohesive Properties and Solubility)"
+    },
+    {
+      "author": "Abbott, S.; Hansen, C. M.; Yamamoto, H.",
+      "year": 2015,
+      "title": "Hansen Solubility Parameters in Practice (HSPiP), 5th Edition, www.hansen-solubility.com"
+    },
+    {
+      "author": "Wright, D. C.",
+      "year": 1996,
+      "title": "Environmental Stress Cracking of Plastics, RAPRA Technology Ltd"
+    }
+  ],
+  "cross_references": [
+    "Ch01_HSP_Fundamentals",
+    "Ch02_Thermodynamic_Foundations",
+    "Ch03_Temperature_Pressure_Effects",
+    "Ch04_HSP_Estimation_Methods"
+  ],
+  "difficulty_level": "graduate",
+  "estimated_pages": 45,
+  "figures_needed": [
+    {
+      "title": "Swelling Classification vs. Chemical Resistance: Inverse RED Logic",
+      "description": "Side-by-side bar charts or threshold diagrams comparing the swelling classification (low RED = severe swelling) and chemical resistance classification (low RED = no resistance), highlighting that the same RED value maps to opposite physical interpretations depending on the application context."
+    },
+    {
+      "title": "ESC Band Risk Diagram",
+      "description": "Number line or zone diagram showing the three ESC risk regions along the RED axis: Dissolution zone (RED < 0.7), ESC High Risk band (0.7-1.3, highlighted in red), and Safe zone (RED > 1.3). Annotated with physical mechanisms for each zone."
+    },
+    {
+      "title": "Flory-Rehner Swelling Equilibrium Curves",
+      "description": "Plot of equilibrium swelling ratio Q versus Flory-Huggins chi for several crosslink densities, showing how increasing crosslink density reduces swelling at any given chi value. Includes overlay of HSP-derived chi values for common solvents."
+    },
+    {
+      "title": "Rubber Compound Design Workflow Diagram",
+      "description": "Flowchart showing the dual evaluation pipeline: (1) filler-rubber HSP distance -> chi -> compatibility classification, and (2) solvent-rubber HSP distance -> chi -> Flory-Rehner -> swelling ratio -> swelling level classification."
+    },
+    {
+      "title": "Hansen Sphere with ESC Annular Shell",
+      "description": "3D HSP space visualization showing a polymer at the center with three concentric regions: inner sphere (dissolution), annular shell at sphere boundary (ESC danger zone, RED 0.7-1.3), and exterior (safe zone). Solvent points color-coded by their ESC risk classification."
+    },
+    {
+      "title": "Hydrogel Swelling Pipeline Diagram",
+      "description": "Block diagram showing the automated pipeline: HSP inputs -> Ra calculation -> chi estimation via Vs/RT*Ra^2 -> Flory-Rehner numerical solver -> phiP and Q output. Each block annotated with the corresponding module (hsp.ts, flory-huggins.ts, flory-rehner.ts)."
+    }
+  ],
+  "tables_needed": [
+    {
+      "title": "Five-Level Swelling Classification Thresholds for Elastomers",
+      "description": "Table showing SwellingLevel (Severe, High, Moderate, Low, Negligible), RED threshold ranges, Japanese labels, descriptions, and color codes as implemented in swelling.ts."
+    },
+    {
+      "title": "Five-Level Chemical Resistance Classification Thresholds",
+      "description": "Table showing ChemicalResistanceLevel (NoResistance, Poor, Moderate, Good, Excellent), RED threshold ranges, descriptions, and color codes as implemented in chemical-resistance.ts."
+    },
+    {
+      "title": "ESC Risk Classification Zones",
+      "description": "Table with three rows (Dissolution, HighRisk, Safe) showing RED ranges, physical mechanism, risk level description, and recommended actions."
+    },
+    {
+      "title": "Filler-Rubber Compatibility Classification",
+      "description": "Table showing chi ranges and corresponding compatibility levels (Excellent < 0.5, Good < 1.0, Fair < 2.0, Poor >= 2.0) for filler dispersion evaluation in rubber compounding."
+    },
+    {
+      "title": "Common Elastomer HSP Values and Swelling Behavior",
+      "description": "Table listing 8-10 common elastomers (NBR, EPDM, FKM, silicone, SBR, NR, CR, IIR) with their HSP values, R0, and swelling classification against representative solvents (toluene, hexane, ethanol, water)."
+    },
+    {
+      "title": "ESC-Susceptible Polymer-Solvent Combinations",
+      "description": "Table of known ESC-prone combinations (e.g., HDPE + detergents, PC + acetone, ABS + isopropanol) with their calculated RED values showing they fall within the 0.7-1.3 danger band."
+    }
+  ],
+  "software_demo": {
+    "tab": "Swelling / Chemical Resistance / ESC Evaluation",
+    "inputs": "Select a polymer material (e.g., NBR rubber or HDPE) and a set of solvents from the database. For swelling evaluation, use default thresholds (Severe < 0.5, High < 0.8, Moderate < 1.0, Low < 1.5). For ESC evaluation, use Hansen 2000 defaults (dissolutionMax = 0.7, escMax = 1.3). For rubber compounding, input rubber HSP, filler HSP, crosslink density (e.g., 1e-4 mol/cm3), and solvent list with molar volumes.",
+    "expected_output": "Color-coded tables showing: (1) swelling classification for each solvent with inverse RED logic color coding, (2) chemical resistance ratings with direct RED logic, (3) ESC risk band classification highlighting the 0.7-1.3 danger zone solvents in red. For rubber compounding: filler compatibility rating and per-solvent swelling ratios Q with Flory-Rehner results. For hydrogel: equilibrium phiP and Q values at specified crosslink densities.",
+    "learning_value": "Demonstrates how the same RED value is interpreted differently depending on the physical context (swelling vs. resistance vs. ESC), reinforcing the importance of domain-specific classification logic. Shows the complete HSP-to-swelling prediction pipeline from raw parameters to actionable engineering decisions."
+  },
+  "review_questions": [
+    "Explain why the swelling classification for elastomers uses inverse RED logic (low RED = high swelling) while chemical resistance uses direct RED logic (low RED = low resistance). Are these physically consistent?",
+    "An HDPE pipe material has R0 = 4.0. A cleaning solvent has RED = 1.1 against this polymer. Using the ESC band model, what is the risk classification? What physical mechanism makes this RED range particularly dangerous under mechanical stress?",
+    "A crosslinked SBR rubber (chi = 0.8 against toluene, Vs = 106.8 cm3/mol, crosslink density = 2e-4 mol/cm3) is immersed in toluene. Using the Flory-Rehner equation, estimate whether the swelling ratio Q will be above or below 3. How would doubling the crosslink density affect Q?",
+    "Compare the five-level swelling classification (threshold-based on RED) with the Flory-Rehner quantitative swelling prediction (based on chi and crosslink density). When would you use each approach, and what are the trade-offs in accuracy versus simplicity?",
+    "A rubber compound uses carbon black filler with chi = 0.45 against the rubber matrix. Classify the filler-rubber compatibility. If you switched to silica filler with chi = 1.8, how would this affect dispersion quality and what processing changes might be needed?"
+  ],
+  "uncertain": []
+}

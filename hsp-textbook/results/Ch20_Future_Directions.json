@@ -1,0 +1,225 @@
+{
+  "chapter_title": "HSP研究の将来展望",
+  "chapter_title_en": "Future Directions in Hansen Solubility Parameter Research",
+  "level": "chapter",
+  "parent": "Part V: Advanced Methods",
+  "synopsis": "This chapter surveys emerging frontiers in HSP research, including machine learning approaches for predicting HSP values from molecular structure, integration with molecular dynamics simulations for first-principles HSP derivation, quantum chemical methods for computing cohesive energy densities, and uncertainty quantification frameworks. It also examines trends toward cloud-based collaborative HSP databases, real-time experimental data integration, high-dimensional parameter space exploration beyond the classical three-component model, and the convergence of HSP methods with sustainability and green chemistry metrics.",
+  "key_concepts": [
+    "Machine learning (ML) and QSPR models for HSP prediction: using molecular descriptors (logP, H-bond donor/acceptor counts, aromatic ring counts, molar volume) to train regression models that predict deltaD, deltaP, deltaH",
+    "Deep learning on molecular graphs: graph neural networks (GNN) that learn HSP directly from SMILES or molecular graph representations without hand-crafted descriptors",
+    "Molecular dynamics (MD) simulation of cohesive energy density: computing CED components (dispersion, polar, hydrogen bonding) from atomistic force fields and converting to HSP via delta_i = sqrt(CED_i)",
+    "Quantum chemical calculation of HSP: using DFT (density functional theory) and COSMO-RS solvation models to derive HSP from first-principles electronic structure calculations",
+    "Bootstrap uncertainty quantification: resampling solvent classification datasets to produce 95% confidence intervals on HSP center coordinates and interaction radius R0",
+    "High-dimensional solubility parameter spaces: extending beyond 3D HSP to include additional interaction terms (acid-base, pi-pi stacking, charge-transfer) as 4th and 5th parameters",
+    "Cloud-based collaborative HSP databases: web-accessible repositories with version control, provenance tracking, and community curation of experimental HSP values",
+    "Real-time experimental data integration: coupling automated solubility testing (high-throughput screening) with live HSP sphere fitting and model updating",
+    "Transfer learning for HSP prediction: pre-training ML models on large molecular property datasets and fine-tuning on smaller HSP-specific datasets",
+    "Active learning and Bayesian optimization: intelligently selecting the next experiment to maximize information gain about a material's HSP sphere",
+    "Sustainability index integration: combining HSP-based solvent selection with environmental, health, and safety (EHS) metrics, life-cycle assessment (LCA) scores, and REACH compliance data",
+    "Multi-fidelity modeling: hierarchically combining group contribution estimates, QSPR predictions, MD simulations, and experimental data with appropriate uncertainty weighting",
+    "Digital twin concept for formulations: continuously updated HSP models that reflect real-time process conditions (temperature, pressure, composition) in manufacturing"
+  ],
+  "equations": [
+    {
+      "name": "CED-to-HSP conversion from MD simulation",
+      "latex": "\\delta_i = \\sqrt{\\frac{CED_i}{V_m}} \\quad (i = D, P, H)",
+      "explanation": "Converts cohesive energy density components obtained from molecular dynamics simulation into Hansen solubility parameter components, where V_m is the molar volume"
+    },
+    {
+      "name": "QSPR regression model for HSP prediction",
+      "latex": "\\delta_k = \\beta_0 + \\sum_{j=1}^{p} \\beta_j \\, X_j + \\epsilon \\quad (k = D, P, H)",
+      "explanation": "General linear QSPR model where X_j are molecular descriptors, beta_j are regression coefficients, and epsilon is the prediction error; separate models are trained for each HSP component"
+    },
+    {
+      "name": "Bootstrap 95% confidence interval for HSP center",
+      "latex": "CI_{95} = \\left[ \\hat{\\delta}_{(0.025)}, \\; \\hat{\\delta}_{(0.975)} \\right]",
+      "explanation": "The 2.5th and 97.5th percentiles of the bootstrap distribution of fitted HSP center coordinates, providing a non-parametric confidence interval"
+    },
+    {
+      "name": "Bayesian model averaging for multi-fidelity HSP",
+      "latex": "\\delta_{k}^{BMA} = \\sum_{m=1}^{M} w_m \\, \\delta_{k}^{(m)}, \\quad w_m = \\frac{\\exp(-\\frac{1}{2} BIC_m)}{\\sum_{m'} \\exp(-\\frac{1}{2} BIC_{m'})}",
+      "explanation": "Weighted average of HSP estimates from M different methods (group contribution, QSPR, MD, experiment), with weights determined by the Bayesian Information Criterion of each model"
+    },
+    {
+      "name": "COSMO-RS sigma profile to HSP mapping",
+      "latex": "\\delta_D = f_D(\\bar{\\sigma}), \\quad \\delta_P = f_P(\\sigma_{hb}^{+}, \\sigma_{hb}^{-}), \\quad \\delta_H = f_H(\\mu_{hb})",
+      "explanation": "Empirical mapping functions that convert COSMO-RS sigma profile statistics (mean charge density, hydrogen bond donor/acceptor thresholds) into HSP components [uncertain]"
+    },
+    {
+      "name": "Graph neural network HSP prediction",
+      "latex": "\\hat{\\boldsymbol{\\delta}} = \\text{MLP}\\left( \\text{READOUT}\\left( \\{ \\mathbf{h}_v^{(L)} \\}_{v \\in G} \\right) \\right)",
+      "explanation": "A graph neural network processes molecular graph G through L message-passing layers to produce node embeddings h_v, which are aggregated via a readout function and passed through a multi-layer perceptron to predict the HSP vector"
+    }
+  ],
+  "historical_context": "The foundation of computational HSP prediction began with group contribution methods by Van Krevelen and Hoftyzer (1976) and was extended by Stefanis and Panayiotou (2008) to second-order groups. QSPR approaches emerged in the 2000s with work by Gharagheizi et al. (2011) applying neural networks to HSP prediction. MD-based HSP calculation was pioneered by Belmares et al. (2004) and refined by Gupta et al. (2011). The COSMO-RS approach to solubility parameters was developed by Klamt (1995, 2005). Machine learning acceleration of HSP prediction gained momentum in the 2010s-2020s with graph neural networks and transfer learning from large molecular databases. Cloud-based HSP databases emerged from projects like HSPiP (Hansen, Abbott, and Yamamoto) and open-data initiatives. Uncertainty quantification for HSP became formalized through bootstrap and Bayesian methods in the 2010s, driven by the need for reliable confidence intervals in regulatory and industrial applications.",
+  "related_project_modules": [
+    "ml-hsp-prediction.ts",
+    "md-hsp-import.ts",
+    "hsp-uncertainty-quantification.ts",
+    "group-contribution.ts",
+    "sphere-fitting.ts",
+    "green-solvent.ts",
+    "multi-objective.ts",
+    "temperature-hsp.ts"
+  ],
+  "prerequisites": [
+    "Ch01_HSP_Fundamentals",
+    "Ch02_Thermodynamic_Foundations",
+    "Ch04_HSP_Estimation_Methods",
+    "Ch16_Solvent_Selection_Optimization"
+  ],
+  "learning_objectives": [
+    "Understand how machine learning models (QSPR, GNN) can predict HSP values from molecular structure and assess their accuracy relative to experimental data",
+    "Explain how molecular dynamics simulations compute cohesive energy density components and convert them to HSP values",
+    "Describe the bootstrap uncertainty quantification framework for HSP sphere fitting and interpret 95% confidence intervals",
+    "Evaluate the potential of quantum chemical methods (DFT, COSMO-RS) for first-principles HSP derivation and their current limitations",
+    "Identify how sustainability metrics, cloud databases, and real-time data integration are shaping the future of HSP-based formulation design"
+  ],
+  "practical_applications": [
+    "Rapid HSP screening of novel drug candidates using ML-predicted HSP values before synthesis, reducing experimental burden in pharmaceutical development",
+    "Virtual solvent screening for green chemistry: using MD-derived HSP for bio-based solvents not yet in experimental databases",
+    "Automated formulation optimization with real-time HSP sphere fitting integrated into high-throughput experimentation platforms",
+    "Regulatory compliance: combining HSP solvent selection with sustainability indices (EHS scores, LCA data) for REACH and GHS compliance",
+    "Materials informatics: building predictive HSP models for novel polymers, ionic liquids, and deep eutectic solvents using transfer learning",
+    "Digital twin manufacturing: continuously updating HSP models in coating and ink-jet processes as temperature and composition change in real time",
+    "Collaborative research: contributing and validating HSP data through cloud-based repositories with provenance tracking"
+  ],
+  "worked_examples": [
+    {
+      "title": "ML-based HSP prediction for a novel bio-based solvent",
+      "description": "Given molecular descriptors (molar volume, logP, H-bond donors/acceptors, aromatic rings) for a new bio-derived ester, use the QSPR regression model to predict deltaD, deltaP, deltaH and assess prediction confidence. Compare against group contribution estimates and discuss when each method is preferred."
+    },
+    {
+      "title": "MD simulation CED-to-HSP conversion",
+      "description": "Import molecular dynamics simulation output (dispersion, polar, and hydrogen bonding CED components in J/cm3) for a deep eutectic solvent. Convert to HSP using the CED-to-HSP formula, check internal consistency (total delta vs component sum), and evaluate warnings for atypical values."
+    },
+    {
+      "title": "Bootstrap uncertainty analysis of a polymer HSP sphere",
+      "description": "Starting with a dataset of 30 solvents classified as good/bad for a target polymer, perform N=1000 bootstrap resamples of the sphere fitting procedure. Report the 95% confidence intervals for deltaD, deltaP, deltaH, and R0, and visualize the uncertainty ellipsoid in 3D HSP space."
+    },
+    {
+      "title": "Multi-fidelity HSP estimation combining group contribution and ML",
+      "description": "For a new copolymer, compute HSP estimates from (1) first-order group contribution, (2) second-order group contribution with corrections, and (3) ML QSPR prediction. Apply Bayesian model averaging to produce a consensus estimate with uncertainty bounds, and discuss how experimental validation data would update the weights."
+    }
+  ],
+  "key_references": [
+    {
+      "author": "Hansen, C.M.",
+      "year": 2007,
+      "title": "Hansen Solubility Parameters: A User's Handbook, 2nd Edition, CRC Press"
+    },
+    {
+      "author": "Gharagheizi, F., Eslamimanesh, A., Mohammadi, A.H., Richon, D.",
+      "year": 2011,
+      "title": "Determination of Hansen Solubility Parameters from Molecular Structure Using QSPR. Journal of Chemical & Engineering Data, 56(5), 2460-2470"
+    },
+    {
+      "author": "Belmares, M., Blanco, M., Goddard III, W.A., et al.",
+      "year": 2004,
+      "title": "Hildebrand and Hansen Solubility Parameters from Molecular Dynamics with Applications to Electronic Nose Polymer Sensors. Journal of Computational Chemistry, 25(15), 1814-1826"
+    },
+    {
+      "author": "Klamt, A.",
+      "year": 2005,
+      "title": "COSMO-RS: From Quantum Chemistry to Fluid Phase Thermodynamics and Drug Design. Elsevier"
+    },
+    {
+      "author": "Stefanis, E., Panayiotou, C.",
+      "year": 2008,
+      "title": "Prediction of Hansen Solubility Parameters with a New Group-Contribution Method. International Journal of Thermophysics, 29(2), 568-585"
+    },
+    {
+      "author": "Gupta, J., Nunes, C., Vyas, S., Jonnalagadda, S.",
+      "year": 2011,
+      "title": "Prediction of Solubility Parameters and Miscibility of Pharmaceutical Compounds by Molecular Dynamics Simulations. Journal of Physical Chemistry B, 115(9), 2014-2023"
+    },
+    {
+      "author": "Jurs, P.C., Bakken, G.A., McClelland, H.E.",
+      "year": 2000,
+      "title": "Computational Methods for the Analysis of Chemical Sensor Array Data from Volatile Analytes. Chemical Reviews, 100(7), 2649-2678"
+    },
+    {
+      "author": "Dunn, W.J., Koehler, M.G., Stahura, F.L.",
+      "year": 2020,
+      "title": "Machine Learning Approaches for Predicting Hansen Solubility Parameters: A Comparative Study. Molecular Informatics, 39(4), 1900107 [uncertain]"
+    },
+    {
+      "author": "Sanchez-Lengeling, B., Aspuru-Guzik, A.",
+      "year": 2018,
+      "title": "Inverse Molecular Design Using Machine Learning: Generative Models for Matter Engineering. Science, 361(6400), 360-365"
+    }
+  ],
+  "cross_references": [
+    "Ch01_HSP_Fundamentals",
+    "Ch02_Thermodynamic_Foundations",
+    "Ch04_HSP_Estimation_Methods",
+    "Ch13_Energy_Environment",
+    "Ch16_Solvent_Selection_Optimization"
+  ],
+  "difficulty_level": "advanced_research",
+  "estimated_pages": 35,
+  "figures_needed": [
+    {
+      "title": "ML HSP Prediction Pipeline",
+      "description": "Flowchart showing the workflow from molecular structure (SMILES) through descriptor calculation or graph encoding, ML model training/inference, to predicted HSP values with confidence scores"
+    },
+    {
+      "title": "MD-to-HSP Conversion Workflow",
+      "description": "Schematic illustrating the molecular dynamics simulation pipeline: force field setup, equilibration, CED component extraction, and conversion to HSP via sqrt(CED_i/Vm)"
+    },
+    {
+      "title": "Bootstrap Uncertainty Ellipsoid in 3D HSP Space",
+      "description": "3D scatter plot showing the distribution of bootstrap-resampled HSP center coordinates, with the 95% confidence ellipsoid overlaid on the nominal HSP sphere"
+    },
+    {
+      "title": "Multi-Fidelity HSP Estimation Hierarchy",
+      "description": "Pyramid diagram showing the hierarchy of HSP estimation methods from low-cost/low-accuracy (group contribution) through QSPR/ML, MD simulation, to high-cost/high-accuracy (experimental), with Bayesian model averaging combining all levels"
+    },
+    {
+      "title": "Graph Neural Network Architecture for HSP",
+      "description": "Network diagram showing molecular graph input, message-passing layers, readout aggregation, and MLP output producing three HSP component predictions"
+    },
+    {
+      "title": "Active Learning Loop for HSP Determination",
+      "description": "Cyclic diagram showing the iterative process: current HSP model -> Bayesian optimization selects next experiment -> experimental result -> model update -> refined HSP sphere with reduced uncertainty"
+    },
+    {
+      "title": "Sustainability-HSP Integration Dashboard",
+      "description": "Mock-up of a combined dashboard showing HSP distance ranking alongside EHS scores, LCA impact, REACH status, and composite green solvent score for candidate solvents"
+    }
+  ],
+  "tables_needed": [
+    {
+      "title": "Comparison of HSP Prediction Methods",
+      "description": "Table comparing group contribution, QSPR, MD simulation, COSMO-RS, and experimental methods across dimensions: accuracy (RMSE in MPa^0.5), computational cost, applicability domain, data requirements, and uncertainty estimation capability"
+    },
+    {
+      "title": "ML Model Performance Benchmarks for HSP Prediction",
+      "description": "Table listing published ML models for HSP prediction with their training set size, descriptor type, algorithm (linear, RF, GNN), and reported RMSE/R2 for each HSP component"
+    },
+    {
+      "title": "Cloud HSP Database Feature Comparison",
+      "description": "Comparison of existing and proposed HSP databases (HSPiP, open-source repositories) by number of compounds, data provenance tracking, API access, version control, and community contribution features"
+    },
+    {
+      "title": "Sustainability Metrics Integrated with HSP Selection",
+      "description": "Table showing sustainability indices (CHEM21, GSK green solvent guide, EHS scores) and how they map to weighted scoring functions alongside HSP distance in multi-objective solvent selection"
+    }
+  ],
+  "software_demo": {
+    "tab": "ML HSP Prediction tab and MD HSP Import tab",
+    "inputs": "For ML prediction: enter molecular descriptors (molar volume=120, logP=1.5, H-bond donors=1, H-bond acceptors=2, aromatic rings=1) for a sample molecule. For MD import: enter CED components (dispersionCED=250, polarCED=40, hbondCED=60 J/cm3) with molar volume=100 cm3/mol. For uncertainty quantification: use the HSP Sphere Fitting tab with a dataset of 25+ solvents and enable bootstrap analysis (N=500).",
+    "expected_output": "ML prediction returns predicted deltaD/deltaP/deltaH with confidence level (high/medium/low) and warnings for out-of-domain descriptors. MD import returns HSP values with consistency check (should be >95%). Bootstrap uncertainty returns 95% confidence intervals for all three HSP components and R0, displayed as error bars on the 3D HSP sphere visualization."
+  },
+  "review_questions": [
+    "What are the main advantages and limitations of using graph neural networks for HSP prediction compared to traditional group contribution methods? Under what circumstances would you prefer each approach?",
+    "Describe how molecular dynamics simulation can be used to compute HSP values from first principles. What are the key sources of error in this approach, and how do force field selection and simulation length affect the results?",
+    "Explain the bootstrap uncertainty quantification procedure for HSP sphere fitting. Why is it important to report confidence intervals alongside point estimates of HSP values in industrial applications?",
+    "How could active learning and Bayesian optimization reduce the number of experiments needed to determine a new material's HSP sphere? Outline the iterative workflow and the criteria for selecting the next solvent to test.",
+    "Discuss how sustainability metrics (EHS scores, LCA data, REACH compliance) can be formally integrated into HSP-based solvent selection frameworks. What are the challenges of combining incommensurable objectives?"
+  ],
+  "uncertain": [
+    "equations[4] (COSMO-RS sigma profile to HSP mapping - exact functional forms are empirical and vary by implementation)",
+    "key_references[7] (Dunn et al. 2020 ML HSP paper - exact authors, title, and publication details unverified)"
+  ]
+}

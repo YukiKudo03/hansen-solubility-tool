@@ -1,0 +1,108 @@
+# HSP Textbook Chapter Research Fields
+# Each research item (chapter/section) produces a JSON with these fields
+
+fields:
+  - name: chapter_title
+    type: string
+    description: "Chapter or section title in Japanese"
+    required: true
+
+  - name: chapter_title_en
+    type: string
+    description: "Chapter or section title in English"
+    required: true
+
+  - name: level
+    type: string
+    description: "Chapter hierarchy level: part, chapter, section"
+    required: true
+
+  - name: parent
+    type: string
+    description: "Parent chapter/part name (null for top-level parts)"
+    required: false
+
+  - name: synopsis
+    type: string
+    description: "2-3 sentence synopsis of what this chapter covers"
+    required: true
+
+  - name: key_concepts
+    type: array
+    description: "List of key scientific concepts covered (5-15 items)"
+    required: true
+
+  - name: equations
+    type: array
+    description: "Key equations covered in this chapter (LaTeX notation), with name and brief explanation"
+    required: true
+
+  - name: historical_context
+    type: string
+    description: "Brief history of when/who developed the theory (key researchers, year, seminal papers)"
+    required: true
+
+  - name: related_project_modules
+    type: array
+    description: "List of src/core/*.ts module filenames that implement concepts from this chapter"
+    required: true
+
+  - name: prerequisites
+    type: array
+    description: "List of other chapter names that should be read before this one"
+    required: true
+
+  - name: learning_objectives
+    type: array
+    description: "3-5 specific learning objectives for this chapter"
+    required: true
+
+  - name: practical_applications
+    type: array
+    description: "Real-world industrial applications of the concepts (3-8 items)"
+    required: true
+
+  - name: worked_examples
+    type: array
+    description: "Suggested worked example problems (2-4 items with title and brief description)"
+    required: true
+
+  - name: key_references
+    type: array
+    description: "5-10 authoritative references (textbooks, review papers, seminal papers) with author, year, title"
+    required: true
+
+  - name: cross_references
+    type: array
+    description: "Other chapters in this textbook that are closely related"
+    required: true
+
+  - name: difficulty_level
+    type: string
+    description: "undergraduate, graduate, or advanced_research"
+    required: true
+
+  - name: estimated_pages
+    type: integer
+    description: "Estimated number of pages for this chapter"
+    required: true
+
+  - name: figures_needed
+    type: array
+    description: "List of figures/diagrams needed (title + description)"
+    required: true
+
+  - name: tables_needed
+    type: array
+    description: "List of tables needed (title + description)"
+    required: true
+
+  - name: software_demo
+    type: object
+    description: "How to demonstrate concepts using this project's tool (which tab, what inputs, expected output)"
+    required: true
+
+  - name: review_questions
+    type: array
+    description: "3-5 review/discussion questions for end of chapter"
+    required: true

@@ -1,0 +1,202 @@
+{
+  "chapter_title": "データ管理と品質保証 — CSVインポート、データベース設計、レポート生成",
+  "chapter_title_en": "Data Management and Quality Assurance: CSV Import, Database Design, and Report Generation",
+  "level": "chapter",
+  "parent": "Part V: Advanced Methods",
+  "synopsis": "This chapter covers the practical data infrastructure required for reliable HSP-based evaluations, including CSV import/export with validation, SQLite database design using the repository pattern for persistent storage of solvents, polymers, nanoparticles, drugs, and dispersants, and seed data management for over 200 curated material entries. It also addresses bookmark and evaluation history systems for reproducibility, accuracy warning mechanisms that alert users to known estimation limitations, input validation strategies, and PDF/CSV report generation for documenting evaluation results.",
+  "key_concepts": [
+    "CSV import parsing with header mapping and row-level validation for solvents and parts",
+    "Input validation for HSP values (deltaD, deltaP, deltaH) and interaction radius R0",
+    "SQLite database with WAL journaling mode and foreign key constraints",
+    "Repository pattern separating data access interface from SQLite implementation",
+    "Database schema design for solvents, parts (polymers), nanoparticles, drugs, and dispersants",
+    "Seed data curation: approximately 130 solvents, 41 polymers (7 groups), 18 nanoparticles, 16 drugs, 12 dispersants",
+    "Bookmark system for saving and restoring evaluation parameters across 9 pipeline types",
+    "Evaluation history with serialized JSON storage and automatic pruning at 1000 entries",
+    "Accuracy warning system based on known systematic deviations from 147 literature validation tests",
+    "RED boundary warnings for results in the 0.8-1.2 ambiguous zone",
+    "Alcohol and polyol surface tension estimation bias alerts",
+    "Nanoparticle surface modification and quantum size effect warnings",
+    "BOM-prefixed UTF-8 CSV export for Excel compatibility",
+    "PDF report generation with pipeline-specific titles and disclaimer text",
+    "MD simulation CED-to-HSP import with consistency checking"
+  ],
+  "equations": [
+    {
+      "name": "CED to HSP Conversion",
+      "latex": "\\delta_i = \\sqrt{\\text{CED}_i}",
+      "explanation": "Converts cohesive energy density components from molecular dynamics simulations (in J/cm3 = MPa) directly to Hansen solubility parameter components (in MPa^0.5)."
+    },
+    {
+      "name": "CED Consistency Check",
+      "latex": "\\text{Consistency} = \\left(1 - \\frac{|\\delta_{\\text{total}} - \\sqrt{\\delta_D^2 + \\delta_P^2 + \\delta_H^2}|}{\\max(\\delta_{\\text{total}}, \\sqrt{\\delta_D^2 + \\delta_P^2 + \\delta_H^2})}\\right) \\times 100\\%",
+      "explanation": "Measures the agreement between the total solubility parameter from total CED and the vector sum of the three HSP components derived from component CEDs."
+    },
+    {
+      "name": "Volume Fraction Weighted HSP for Mixtures",
+      "latex": "\\delta_{\\text{mix},i} = \\sum_k \\phi_k \\, \\delta_{k,i}",
+      "explanation": "Linear mixing rule for calculating mixture HSP, used in CSV-imported solvent blend calculations."
+    }
+  ],
+  "historical_context": "Data management for HSP has evolved alongside the field itself. Charles Hansen's original 1967 work relied on hand-tabulated solvent parameters. The first comprehensive digital HSP database was published by Hansen and Beerbower in 1971, containing roughly 200 solvents. Abbott and Hansen later developed HSPiP (Hansen Solubility Parameters in Practice, first edition 2008), which established the modern standard for HSP databases with over 1200 solvents and introduced systematic CSV import/export workflows. The repository pattern used in database design follows Martin Fowler's Patterns of Enterprise Application Architecture (2002). Accuracy warning systems for HSP estimation draw on validation work by Belmares et al. (2004) for MD-based HSP and Nakamoto-Yamamoto equations for surface tension estimation. PDF reporting for chemical data management follows GLP (Good Laboratory Practice) documentation standards established by OECD in 1998.",
+  "related_project_modules": [
+    "csv-import.ts",
+    "bookmark.ts",
+    "evaluation-history.ts",
+    "accuracy-warnings.ts",
+    "pdf-report.ts",
+    "report.ts",
+    "md-hsp-import.ts"
+  ],
+  "prerequisites": [
+    "Ch01_HSP_Fundamentals",
+    "Ch04_HSP_Estimation_Methods"
+  ],
+  "learning_objectives": [
+    "Design and implement a CSV import pipeline with row-level validation for HSP data including name, deltaD, deltaP, deltaH, and optional physical properties",
+    "Understand SQLite database schema design for multi-entity HSP data (solvents, polymers, nanoparticles, drugs, dispersants) with repository pattern abstraction",
+    "Implement accuracy warning systems that communicate known systematic biases to users, such as alcohol surface tension overestimation and RED boundary ambiguity",
+    "Build bookmark and evaluation history systems that enable reproducibility of HSP evaluations with JSON serialization",
+    "Generate structured reports (CSV with BOM-UTF8 for Excel, PDF with disclaimers) from evaluation results for documentation and regulatory compliance"
+  ],
+  "practical_applications": [
+    "Corporate solvent database management: importing and maintaining proprietary HSP data from laboratory measurements via CSV files",
+    "Quality assurance in materials selection: automated warnings when HSP predictions fall in unreliable regions (e.g., polyol surface tension, RED boundary zone)",
+    "Regulatory documentation: generating PDF reports with evaluation parameters, results, timestamps, and disclaimers for GLP/GMP compliance",
+    "Research reproducibility: bookmark system allowing colleagues to reproduce exact evaluation conditions by restoring saved parameters",
+    "Evaluation audit trail: history repository tracking all evaluations with automatic pruning for long-running production deployments",
+    "MD simulation integration: importing molecular dynamics CED results with automatic consistency validation against component decomposition",
+    "Multi-site data synchronization: SQLite WAL mode enabling concurrent read access for shared database deployments"
+  ],
+  "worked_examples": [
+    {
+      "title": "CSV Import with Validation Error Handling",
+      "description": "Import a CSV file containing 20 custom solvents with some intentionally malformed rows (missing deltaD, empty name, non-numeric R0). Demonstrate how parseSolventCsv returns valid rows alongside row-specific error messages, and how validateSolventImportRow catches each type of error."
+    },
+    {
+      "title": "Accuracy Warning Generation for Contact Angle Evaluation",
+      "description": "Run a contact angle evaluation using ethanol (alcohol profile: deltaH=19.4, deltaP=8.8) against a hydrophilic polymer with water. Show the three categories of warnings generated: alcohol overestimation (+13 mN/m), polyol underestimation (-10 mN/m), and hydrophilic polymer water contact angle overestimation (+17 degrees)."
+    },
+    {
+      "title": "MD Simulation CED Import and Consistency Check",
+      "description": "Import CED components from an MD simulation of toluene (dispersionCED=324, polarCED=1.96, hbondCED=4.0, totalCED=330) and demonstrate the HSP calculation (deltaD=18.0, deltaP=1.4, deltaH=2.0), consistency check (>90%), and physical plausibility validation."
+    },
+    {
+      "title": "Bookmark and History Workflow for Reproducible Evaluation",
+      "description": "Create a bookmark for a nanoparticle dispersion evaluation, serialize the parameters to JSON, store in SQLite, retrieve and deserialize to reproduce the exact same evaluation. Then save the result to evaluation history with automatic pruning demonstration at the 1000-entry limit."
+    }
+  ],
+  "key_references": [
+    {
+      "author": "Hansen, C. M.",
+      "year": 2007,
+      "title": "Hansen Solubility Parameters: A User's Handbook, 2nd Edition, CRC Press"
+    },
+    {
+      "author": "Abbott, S.; Hansen, C. M.",
+      "year": 2008,
+      "title": "Hansen Solubility Parameters in Practice (HSPiP), 1st Edition"
+    },
+    {
+      "author": "Belmares, M.; Blanco, M.; Goddard, W. A. et al.",
+      "year": 2004,
+      "title": "Hildebrand and Hansen Solubility Parameters from Molecular Dynamics with Applications to Electronic Nose Polymer Sensors, J. Comput. Chem. 25:1814-1826"
+    },
+    {
+      "author": "Fowler, M.",
+      "year": 2002,
+      "title": "Patterns of Enterprise Application Architecture, Addison-Wesley (Repository Pattern)"
+    },
+    {
+      "author": "Gupta, J.; Nunes, C.; Vyas, S.; Jonnalagadda, S.",
+      "year": 2011,
+      "title": "Prediction of Solubility Parameters and Miscibility of Pharmaceutical Compounds by Molecular Dynamics Simulations, J. Phys. Chem. B 115:2014-2023"
+    },
+    {
+      "author": "OECD",
+      "year": 1998,
+      "title": "OECD Principles of Good Laboratory Practice (GLP), ENV/MC/CHEM(98)17"
+    },
+    {
+      "author": "Hansen, C. M.; Beerbower, A.",
+      "year": 1971,
+      "title": "Solubility Parameters, in Kirk-Othmer Encyclopedia of Chemical Technology, Suppl. Vol., 2nd ed., pp. 889-910"
+    },
+    {
+      "author": "Barton, A. F. M.",
+      "year": 1991,
+      "title": "CRC Handbook of Solubility Parameters and Other Cohesion Parameters, 2nd Edition, CRC Press"
+    }
+  ],
+  "cross_references": [
+    "Ch01_HSP_Fundamentals",
+    "Ch04_HSP_Estimation_Methods",
+    "Ch05_Contact_Angle_Wettability",
+    "Ch11_Nanomaterials_Dispersion",
+    "Ch09_Pharmaceutical_Drug_Delivery",
+    "Ch16_Solvent_Selection_Optimization"
+  ],
+  "difficulty_level": "graduate",
+  "estimated_pages": 32,
+  "figures_needed": [
+    {
+      "title": "Database Entity-Relationship Diagram",
+      "description": "ER diagram showing the SQLite schema with tables for solvents, parts/parts_groups, nano_particles, drugs, dispersants, bookmarks, evaluation_history, and settings, including foreign key relationships and index annotations."
+    },
+    {
+      "title": "CSV Import Validation Pipeline Flowchart",
+      "description": "Flowchart showing the CSV parsing pipeline: file read, header extraction, row iteration, field-level validation (name non-empty, deltaD/deltaP/deltaH numeric, R0 positive), error collection, and final ImportResult output with valid rows and error messages."
+    },
+    {
+      "title": "Accuracy Warning Decision Tree",
+      "description": "Decision tree diagram showing the conditional logic for generating accuracy warnings: alcohol profile detection (deltaH>14, deltaP>5), polyol profile (deltaH>20, deltaP>10), water detection (deltaH>35), hydrophilic polymer check, RED boundary zone (0.8-1.2), and nanoparticle surface modification/quantum size effects."
+    },
+    {
+      "title": "Repository Pattern Architecture Diagram",
+      "description": "UML-style class diagram showing the repository interfaces (PartsRepository, SolventRepository, NanoParticleRepository, DrugRepository, DispersantRepository) and their SQLite implementations, with DTO types for create/update operations."
+    },
+    {
+      "title": "Evaluation History and Bookmark Data Flow",
+      "description": "Sequence diagram showing the data flow from user evaluation through serialization (JSON.stringify), SQLite storage, retrieval, deserialization, and re-execution for bookmarks, and the automatic pruning mechanism for evaluation history at the 1000-entry limit."
+    },
+    {
+      "title": "MD CED-to-HSP Import Validation Diagram",
+      "description": "Diagram showing the CED component input, sqrt transformation to HSP values, consistency check between total CED and component sum, and physical plausibility range checks with warning generation thresholds."
+    }
+  ],
+  "tables_needed": [
+    {
+      "title": "Seed Data Summary by Entity Type",
+      "description": "Table listing all seed data categories with counts: solvents (~130 entries covering hydrocarbons, aromatics, halogenated, alcohols, ketones, esters, ethers, amides, glycols, green solvents), polymers (41 entries across 7 groups: general-purpose plastics, engineering plastics, super engineering plastics, thermosets, rubbers/elastomers, fluoropolymers, adhesives), nanoparticles (18 entries), drugs (16 entries), dispersants (12 entries)."
+    },
+    {
+      "title": "Accuracy Warning Thresholds and Magnitudes",
+      "description": "Table of known systematic estimation biases: alcohol surface tension overestimation (max +13 mN/m), polyol underestimation (max -10 mN/m), hydrophilic polymer water contact angle overestimation (max +17 degrees), RED boundary ambiguity zone (0.8-1.2), nanoparticle R0 literature scatter (plus/minus 1.0), quantum size effect threshold (<5 nm)."
+    },
+    {
+      "title": "CSV Column Mapping for Solvent and Part Import",
+      "description": "Table showing required and optional CSV columns for solvent import (name, deltaD, deltaP, deltaH required; nameEn, casNumber, boilingPoint, viscosity, specificGravity, surfaceTension, molarVolume, molWeight optional) and part import (name, deltaD, deltaP, deltaH, r0 required; materialType optional)."
+    },
+    {
+      "title": "Database Table Specifications",
+      "description": "Summary table of all SQLite tables with column names, types, constraints, and default values: solvents (15 columns), parts_groups (4 columns), parts (10 columns), nano_particles (12 columns), drugs (12 columns), dispersants (19 columns), bookmarks (5 columns), evaluation_history (7 columns with 2 indexes), settings (2 columns)."
+    },
+    {
+      "title": "Pipeline Report Titles and Types",
+      "description": "Table mapping pipeline identifiers to their Japanese report titles for PDF generation: risk (solubility evaluation), contactAngle (contact angle estimation), swelling (swelling prediction), chemicalResistance, nanoDispersion, plasticizer, carrierSelection, blendOptimizer, drugSolubility."
+    }
+  ],
+  "software_demo": {
+    "tab": "Data Management (CSV Import / Bookmark / History)",
+    "inputs": "1. Prepare a CSV file with columns: name, deltaD, deltaP, deltaH, boilingPoint (e.g., 5 custom solvents with one row containing an empty name for error demonstration). 2. Import the CSV using the CSV Import function and observe validated rows vs. error messages. 3. Run a solubility risk evaluation with the imported solvents. 4. Save a bookmark of the evaluation parameters. 5. Check the evaluation history list.",
+    "expected_output": "The CSV import should accept 4 valid rows and report 1 validation error for the empty-name row. The risk evaluation results should display with any applicable accuracy warnings (e.g., RED boundary warning if results fall in 0.8-1.2 range). The bookmark should appear in the bookmark list with the pipeline name and timestamp. The evaluation history should show the most recent evaluation with serialized parameters and results, confirming that evaluations are being tracked for reproducibility."
+  },
+  "review_questions": [
+    "Why does the CSV import module use row-level validation rather than rejecting the entire file when a single row has errors? What are the trade-offs of this approach for production HSP data management?",
+    "Explain the repository pattern as implemented in this system. How does separating the interface (PartsRepository, SolventRepository) from the SQLite implementation benefit testing and future database migration?",
+    "The accuracy warning system identifies alcohol profiles using deltaH > 14 and deltaP > 5. Discuss the physical basis for why Nakamoto-Yamamoto surface tension estimates systematically overestimate values for alcohols, and suggest how these thresholds could be refined.",
+    "The evaluation history repository enforces a maximum of 1000 entries with FIFO pruning. Discuss the implications for audit trail completeness in a regulatory (GLP/GMP) context, and propose alternative strategies that balance storage constraints with compliance requirements.",
+    "When importing MD simulation CED results, the consistency check flags cases where component CED sum deviates from total CED by more than 10%. What physical phenomena in molecular dynamics simulations could cause such inconsistencies, and how should users interpret warnings about low consistency?"
+  ],
+  "uncertain": []
+}

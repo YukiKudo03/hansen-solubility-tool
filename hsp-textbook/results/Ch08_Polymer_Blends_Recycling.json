@@ -1,0 +1,257 @@
+{
+  "chapter_title": "ポリマーブレンドとリサイクル",
+  "chapter_title_en": "Polymer Blends and Recycling",
+  "level": "chapter",
+  "parent": "Part III: Polymer Science",
+  "synopsis": "This chapter covers the application of Hansen Solubility Parameters to polymer blend miscibility prediction using Flory-Huggins theory, N-by-N recycling compatibility matrices for mixed plastic waste streams, and compatibilizer selection via block copolymers. It extends to crystalline polymer dissolution temperature prediction, additive blooming and migration risk assessment, thermoset curing agent selection, and fiber dyeability prediction. The unifying theme is that HSP-based interaction parameters enable quantitative prediction of polymer-polymer, polymer-solvent, and polymer-additive compatibility.",
+  "key_concepts": [
+    "Flory-Huggins lattice theory for binary polymer blend thermodynamics",
+    "Flory-Huggins interaction parameter (chi) estimation from HSP distance",
+    "Free energy of mixing for polymer blends: combinatorial entropy and enthalpic contributions",
+    "Spinodal and binodal phase diagrams for polymer blends",
+    "Critical chi parameter and critical composition for symmetric and asymmetric blends",
+    "N-by-N polymer recycling compatibility matrix construction from HSP distances",
+    "RED (Relative Energy Difference) as a miscibility screening criterion for polymer pairs",
+    "Block copolymer compatibilizer selection based on HSP affinity to each blend phase",
+    "Crystalline polymer dissolution: solubility parameter approach combined with melting point depression",
+    "Solvent selection for dissolving semi-crystalline polymers above and below Tm",
+    "Additive blooming and migration risk prediction from HSP mismatch between additive and polymer matrix",
+    "Thermoset curing agent selection: matching HSP for homogeneous mixing before crosslinking",
+    "Fiber dyeability prediction: dye-fiber HSP affinity and partition coefficient estimation",
+    "Temperature dependence of chi parameter and LCST/UCST behavior in polymer blends"
+  ],
+  "equations": [
+    {
+      "name": "Flory-Huggins free energy of mixing",
+      "latex": "\\frac{\\Delta G_{mix}}{RT} = \\frac{\\phi_1}{N_1} \\ln \\phi_1 + \\frac{\\phi_2}{N_2} \\ln \\phi_2 + \\chi_{12} \\phi_1 \\phi_2",
+      "explanation": "Free energy of mixing per lattice site for a binary polymer blend, where phi_i are volume fractions, N_i are degrees of polymerization, and chi_12 is the Flory-Huggins interaction parameter"
+    },
+    {
+      "name": "Chi parameter from HSP distance",
+      "latex": "\\chi_{12} = \\frac{V_{ref}}{RT} \\left[ (\\delta_{D1} - \\delta_{D2})^2 + 0.25(\\delta_{P1} - \\delta_{P2})^2 + 0.25(\\delta_{H1} - \\delta_{H2})^2 \\right]",
+      "explanation": "Estimation of the Flory-Huggins interaction parameter from the HSP distance between two polymers, using a reference molar volume Vref and empirical weighting factors for polar and hydrogen bonding terms"
+    },
+    {
+      "name": "Critical chi parameter for symmetric blend",
+      "latex": "\\chi_c = \\frac{2}{N} \\quad (\\text{symmetric, } N_1 = N_2 = N)",
+      "explanation": "Critical interaction parameter above which phase separation occurs for a symmetric polymer blend; inversely proportional to degree of polymerization"
+    },
+    {
+      "name": "General critical chi parameter",
+      "latex": "\\chi_c = \\frac{1}{2} \\left( \\frac{1}{\\sqrt{N_1}} + \\frac{1}{\\sqrt{N_2}} \\right)^2",
+      "explanation": "Critical chi parameter for an asymmetric blend where N1 and N2 differ; blends with chi > chi_c will phase separate"
+    },
+    {
+      "name": "Spinodal condition",
+      "latex": "\\frac{\\partial^2 \\Delta G_{mix}}{\\partial \\phi_1^2} = \\frac{1}{N_1 \\phi_1} + \\frac{1}{N_2 (1 - \\phi_1)} - 2\\chi_{12} = 0",
+      "explanation": "Second derivative of free energy with respect to composition defines the spinodal boundary separating metastable from unstable regions"
+    },
+    {
+      "name": "HSP distance (Ra) between two polymers",
+      "latex": "Ra = \\sqrt{4(\\delta_{D1} - \\delta_{D2})^2 + (\\delta_{P1} - \\delta_{P2})^2 + (\\delta_{H1} - \\delta_{H2})^2}",
+      "explanation": "Hansen distance between two polymers in 3D HSP space with the conventional factor of 4 on the dispersion term"
+    },
+    {
+      "name": "Melting point depression by solvent",
+      "latex": "\\frac{1}{T_m} - \\frac{1}{T_m^0} = \\frac{R V_u}{\\Delta H_f V_1} \\left[ \\phi_1 - \\chi_{12} \\phi_1^2 \\right]",
+      "explanation": "Depression of the equilibrium melting point of a crystalline polymer in the presence of a solvent, derived from Flory-Huggins theory combined with the Flory diluent equation"
+    },
+    {
+      "name": "Additive migration driving force",
+      "latex": "\\Delta \\mu_{add} \\propto (Ra_{add-polymer})^2 - (Ra_{add-surface})^2",
+      "explanation": "The thermodynamic driving force for additive migration is related to the difference in HSP affinity between the additive-polymer pair and the additive-surface/air pair"
+    }
+  ],
+  "historical_context": "Flory (1942) and Huggins (1942) independently developed the lattice theory for polymer solution thermodynamics, establishing the chi interaction parameter framework that remains central to polymer blend miscibility prediction. Hansen (1967) introduced the three-component solubility parameter concept, and its application to polymer blends was developed throughout the 1970s-1990s. The connection between chi and HSP distance was formalized by several groups, notably Lindvig et al. (2002) who proposed systematic correlations. Polymer recycling compatibility matrices using HSP emerged in the 2000s as mixed plastic waste recycling became industrially important, with Brandrup's Polymer Handbook providing foundational HSP data. The use of block copolymers as compatibilizers was pioneered by Paul and Newman (1978) and Leibler (1980), with HSP-based selection criteria developed later. Crystalline polymer dissolution theory combining HSP with melting point depression follows from the Flory diluent equation (Flory, 1953). Additive migration and blooming prediction using solubility parameters was advanced by Wypych (2004) and others in the plastics additives field.",
+  "related_project_modules": [
+    "polymer-blend-miscibility.ts",
+    "polymer-recycling-compatibility.ts",
+    "compatibilizer-selection.ts",
+    "crystalline-polymer-dissolution.ts",
+    "polymer-additive-migration.ts",
+    "thermoset-curing-agent.ts",
+    "fiber-dyeability.ts"
+  ],
+  "prerequisites": [
+    "Ch01_HSP_Fundamentals",
+    "Ch02_Thermodynamic_Foundations",
+    "Ch04_HSP_Estimation_Methods"
+  ],
+  "learning_objectives": [
+    "Derive the Flory-Huggins free energy of mixing and calculate the chi parameter from HSP distances for a given polymer pair",
+    "Construct an N-by-N recycling compatibility matrix for common commodity polymers and identify miscible pairs",
+    "Select appropriate block copolymer compatibilizers for immiscible polymer blends using HSP affinity analysis",
+    "Predict dissolution temperatures for semi-crystalline polymers using combined HSP and melting point depression theory",
+    "Assess additive blooming and migration risk from HSP mismatch between plasticizers/stabilizers and the polymer matrix"
+  ],
+  "practical_applications": [
+    "Screening polymer blend pairs for miscibility before melt compounding trials, reducing experimental cost",
+    "Designing recycling-compatible sorting protocols for mixed plastic waste using HSP compatibility matrices",
+    "Selecting block copolymer or graft copolymer compatibilizers to improve mechanical properties of immiscible blends",
+    "Choosing solvents for dissolving crystalline engineering plastics (e.g., PEEK, PPS) at optimal temperatures",
+    "Predicting and preventing plasticizer blooming in PVC products and food contact materials",
+    "Selecting epoxy and polyurethane curing agents that provide homogeneous mixing prior to crosslinking",
+    "Predicting dye uptake and wash fastness for textile fibers based on dye-fiber HSP affinity",
+    "Formulating multi-polymer alloys for automotive and electronic applications with controlled phase morphology"
+  ],
+  "worked_examples": [
+    {
+      "title": "Flory-Huggins miscibility prediction for PS/PMMA blend",
+      "description": "Calculate the chi parameter from HSP values of polystyrene (dD=18.5, dP=4.5, dH=2.9) and PMMA (dD=18.6, dP=10.5, dH=5.1) using Vref=100 cm3/mol. Compare chi with chi_c for typical molecular weights (Mw=100,000) to predict phase behavior. Construct the spinodal and binodal curves."
+    },
+    {
+      "title": "N-by-N recycling compatibility matrix for 6 commodity polymers",
+      "description": "Build a 6x6 compatibility matrix for PE, PP, PS, PET, PA6, and PVC using their HSP values. Calculate Ra and RED for each pair, classify as compatible (RED<1) or incompatible (RED>1), and identify which mixed streams can be recycled together."
+    },
+    {
+      "title": "Compatibilizer selection for PP/PA6 blend",
+      "description": "For an immiscible PP/PA6 blend, evaluate candidate compatibilizers (PP-g-MA, SEBS-g-MA, EPR-g-MA) by computing HSP distances of each block/segment to the PP and PA6 phases. Select the compatibilizer that minimizes the interfacial tension proxy."
+    },
+    {
+      "title": "Plasticizer migration risk assessment for PVC food packaging",
+      "description": "Compare HSP distances between DEHP, DINP, and TOTM plasticizers and the PVC matrix. Estimate the migration driving force for each plasticizer toward a fatty food simulant. Rank migration risk and recommend the safest plasticizer option."
+    }
+  ],
+  "key_references": [
+    {
+      "author": "Flory, P.J.",
+      "year": 1953,
+      "title": "Principles of Polymer Chemistry, Cornell University Press"
+    },
+    {
+      "author": "Huggins, M.L.",
+      "year": 1942,
+      "title": "Some Properties of Solutions of Long-Chain Compounds, Journal of Physical Chemistry, 46(1), 151-158"
+    },
+    {
+      "author": "Hansen, C.M.",
+      "year": 2007,
+      "title": "Hansen Solubility Parameters: A User's Handbook, 2nd Edition, CRC Press, Chapter 10: Polymer Blends"
+    },
+    {
+      "author": "Lindvig, T.; Michelsen, M.L.; Kontogeorgis, G.M.",
+      "year": 2002,
+      "title": "A Flory-Huggins Model Based on the Hansen Solubility Parameters, Fluid Phase Equilibria, 203, 247-260"
+    },
+    {
+      "author": "Paul, D.R.; Newman, S.",
+      "year": 1978,
+      "title": "Polymer Blends, Volumes 1-2, Academic Press"
+    },
+    {
+      "author": "Van Krevelen, D.W.; Te Nijenhuis, K.",
+      "year": 2009,
+      "title": "Properties of Polymers, 4th Edition, Chapter 7: Cohesive Properties and Solubility"
+    },
+    {
+      "author": "Wypych, G.",
+      "year": 2004,
+      "title": "Handbook of Plasticizers, ChemTec Publishing"
+    },
+    {
+      "author": "Brandrup, J.; Immergut, E.H.; Grulke, E.A.",
+      "year": 1999,
+      "title": "Polymer Handbook, 4th Edition, Wiley-Interscience"
+    },
+    {
+      "author": "Leibler, L.",
+      "year": 1980,
+      "title": "Theory of Microphase Separation in Block Copolymers, Macromolecules, 13(6), 1602-1617"
+    },
+    {
+      "author": "Zeng, W.; Du, Y.; Xue, Y.; Frisch, H.L.",
+      "year": 2007,
+      "title": "Solubility Parameters, in Physical Properties of Polymers Handbook, 2nd Edition, Springer [uncertain]"
+    }
+  ],
+  "cross_references": [
+    "Ch01_HSP_Fundamentals",
+    "Ch02_Thermodynamic_Foundations",
+    "Ch03_Temperature_Pressure_Effects",
+    "Ch04_HSP_Estimation_Methods",
+    "Ch07_Polymer_HSP [uncertain]",
+    "Ch09_Coatings_and_Adhesion [uncertain]"
+  ],
+  "difficulty_level": "graduate",
+  "estimated_pages": 55,
+  "figures_needed": [
+    {
+      "title": "Flory-Huggins Phase Diagram",
+      "description": "Free energy of mixing vs composition curves for various chi values, showing the transition from single-phase to two-phase behavior with spinodal and binodal boundaries marked"
+    },
+    {
+      "title": "N-by-N Polymer Recycling Compatibility Heatmap",
+      "description": "Color-coded matrix showing Ra or RED values for common commodity polymer pairs (PE, PP, PS, PET, PA6, PVC, ABS, PC), with green=compatible, red=incompatible"
+    },
+    {
+      "title": "3D HSP Space: Polymer Blend Partners",
+      "description": "3D Hansen space plot showing HSP positions of 10+ common polymers with interaction spheres, illustrating which pairs overlap (miscible) and which are far apart (immiscible)"
+    },
+    {
+      "title": "Block Copolymer Compatibilizer Mechanism",
+      "description": "Schematic showing a block copolymer at the interface between two immiscible polymer phases, with HSP vectors indicating affinity of each block to its respective phase"
+    },
+    {
+      "title": "Crystalline Polymer Dissolution Temperature Diagram",
+      "description": "Plot of dissolution temperature vs HSP distance for a semi-crystalline polymer in various solvents, showing the correlation between Ra and required dissolution temperature"
+    },
+    {
+      "title": "Additive Migration Risk Map",
+      "description": "2D projection plot showing polymer matrix, various additives, and potential migration targets (food simulant, air), with arrows indicating migration driving force direction"
+    },
+    {
+      "title": "Fiber-Dye HSP Affinity Diagram",
+      "description": "HSP space diagram showing fiber types (cotton, polyester, nylon) and dye classes (disperse, acid, reactive), illustrating affinity-based dye selection"
+    },
+    {
+      "title": "Thermoset Curing Agent Selection Chart",
+      "description": "Bar chart comparing HSP distances between an epoxy resin and various curing agents (amines, anhydrides, phenolics), correlated with pot life and final cure properties"
+    }
+  ],
+  "tables_needed": [
+    {
+      "title": "HSP Values for Common Commodity and Engineering Polymers",
+      "description": "Table of deltaD, deltaP, deltaH, and R0 values for 20+ polymers including PE, PP, PS, PVC, PET, PA6, PA66, PMMA, PC, ABS, PEEK, PPS, PVDF"
+    },
+    {
+      "title": "N-by-N Recycling Compatibility Matrix",
+      "description": "Numerical matrix of Ra and RED values for 8-10 commodity polymer pairs with miscibility classification"
+    },
+    {
+      "title": "Block Copolymer Compatibilizer Candidates",
+      "description": "Table listing common compatibilizers (PP-g-MA, PE-g-MA, SEBS-g-MA, SBS, etc.) with their block HSP values and target blend systems"
+    },
+    {
+      "title": "Crystalline Polymer Dissolution Solvents",
+      "description": "Table of semi-crystalline polymers with Tm, recommended solvents, dissolution temperatures, and HSP distances"
+    },
+    {
+      "title": "Plasticizer Migration Risk Assessment",
+      "description": "Table comparing common plasticizers (DEHP, DINP, TOTM, DOA, ATBC) with their HSP values, Ra to PVC, and relative migration risk ranking"
+    },
+    {
+      "title": "Dye-Fiber HSP Affinity Matrix",
+      "description": "Table showing HSP values of common fiber types and dye classes with calculated Ra and predicted dyeability rating"
+    }
+  ],
+  "software_demo": {
+    "tab": "Polymer Blend Miscibility (ポリマーブレンド相溶性) tab, Polymer Recycling Compatibility (リサイクル相溶性) tab, and Dispersant/Compatibilizer Selection (分散剤選定) tab",
+    "inputs": "In the Polymer Blend Miscibility tab, select two polymers from the database (e.g., PS and PMMA) or enter custom HSP values and molecular weights. In the Recycling Compatibility tab, select multiple polymers to generate the N-by-N matrix. In the Compatibilizer Selection tab, enter the two blend components and candidate compatibilizers.",
+    "expected_output": "The Blend Miscibility tab displays the calculated chi parameter, chi_c, miscibility prediction (miscible/immiscible), and a phase diagram. The Recycling Compatibility tab shows a color-coded compatibility matrix with Ra and RED values. The Compatibilizer Selection tab ranks candidates by interfacial affinity score.",
+    "workflow": "1. Open the Polymer Blend Miscibility tab and select PS and PMMA as blend components. 2. Enter molecular weights and observe the chi vs chi_c comparison and miscibility verdict. 3. Switch to Recycling Compatibility tab and select 6 commodity polymers to generate the full matrix. 4. Identify compatible pairs suitable for mixed recycling. 5. For incompatible pairs, switch to Compatibilizer Selection tab and evaluate block copolymer options."
+  },
+  "review_questions": [
+    "Explain why high molecular weight polymer blends are almost always immiscible from the Flory-Huggins perspective. How does the combinatorial entropy term scale with degree of polymerization, and what does this imply for the critical chi value?",
+    "Describe the procedure for constructing an N-by-N recycling compatibility matrix using HSP. What threshold criteria would you use to classify a polymer pair as 'recyclable together', and what limitations does the HSP approach have for this application?",
+    "A block copolymer A-b-B is proposed as a compatibilizer for an immiscible blend of polymer C and polymer D. What HSP relationships should blocks A and B satisfy relative to C and D for effective compatibilization? How does block length affect performance?",
+    "Explain the relationship between HSP distance and dissolution temperature for semi-crystalline polymers. Why can some solvents with small Ra still fail to dissolve a crystalline polymer at room temperature?",
+    "Discuss the HSP-based approach to predicting plasticizer migration in food-contact polymer packaging. What additional factors beyond HSP distance affect real-world migration rates?"
+  ],
+  "uncertain": [
+    "cross_references[4]",
+    "cross_references[5]",
+    "estimated_pages",
+    "key_references[9]",
+    "prerequisites"
+  ]
+}

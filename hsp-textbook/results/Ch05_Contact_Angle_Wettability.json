@@ -1,0 +1,238 @@
+{
+  "chapter_title": "接触角と濡れ性",
+  "chapter_title_en": "Contact Angle and Wettability",
+  "level": "chapter",
+  "parent": "Part II: Surface Science",
+  "synopsis": "This chapter covers the science of contact angles and wettability from the perspective of Hansen Solubility Parameters. It presents the Nakamoto-Yamamoto empirical equation for estimating surface tension from HSP values, Young's equation for contact angle prediction, and the Owens-Wendt method for decomposing surface energy into dispersive and polar components. A six-level wettability classification system (from superhydrophilic to superhydrophobic) is introduced, along with the Owens-Wendt-Kaelble model for calculating work of adhesion (Wa). The chapter concludes with quantitative evaluation of surface treatment effects through changes in Wa and Ra distance.",
+  "key_concepts": [
+    "Young's equation relating contact angle to surface/interfacial tensions",
+    "Nakamoto-Yamamoto empirical equation converting HSP to surface tension via coefficients (0.0947, 0.0315, 0.0238)",
+    "HSP-based interfacial tension estimation from component differences",
+    "Owens-Wendt method for splitting surface energy into dispersive and polar components",
+    "Surface energy component decomposition: dispersive (delta_D) vs polar (delta_P + delta_H)",
+    "Six-level wettability classification: superhydrophilic (<10 deg), hydrophilic (<30 deg), wettable (<60 deg), moderate (<90 deg), hydrophobic (<150 deg), superhydrophobic (>=150 deg)",
+    "Work of adhesion (Wa) and the Owens-Wendt-Kaelble model",
+    "Extended three-component Owens-Wendt model including hydrogen bonding term",
+    "Two-component vs three-component surface energy models for adhesion prediction",
+    "Young-Dupre equation: Wa = gamma_LV(1 + cos theta)",
+    "Surface treatment effect quantification via Wa improvement ratio (Wa_after / Wa_before)",
+    "Ra distance reduction as a complementary metric for surface treatment effectiveness",
+    "Panayiotou-Stefanis/Toyota correlation for HSP-to-surface-energy conversion"
+  ],
+  "equations": [
+    {
+      "name": "Nakamoto-Yamamoto surface tension from HSP",
+      "latex": "\\gamma = 0.0947 \\, \\delta_D^2 + 0.0315 \\, \\delta_P^2 + 0.0238 \\, \\delta_H^2",
+      "explanation": "Empirical equation estimating surface tension (mN/m) from HSP components using fitted proportionality coefficients"
+    },
+    {
+      "name": "HSP-based interfacial tension",
+      "latex": "\\gamma_{SL} = 0.0947 (\\delta_{D1} - \\delta_{D2})^2 + 0.0315 (\\delta_{P1} - \\delta_{P2})^2 + 0.0238 (\\delta_{H1} - \\delta_{H2})^2",
+      "explanation": "Interfacial tension between two materials estimated from squared differences of their HSP components"
+    },
+    {
+      "name": "Young's equation",
+      "latex": "\\cos\\theta = \\frac{\\gamma_{SV} - \\gamma_{SL}}{\\gamma_{LV}}",
+      "explanation": "Fundamental equation relating equilibrium contact angle to solid-vapor, solid-liquid, and liquid-vapor surface tensions"
+    },
+    {
+      "name": "Owens-Wendt interfacial tension",
+      "latex": "\\gamma_{SL} = \\gamma_{SV} + \\gamma_{LV} - 2\\left(\\sqrt{\\gamma_{SV}^d \\gamma_{LV}^d} + \\sqrt{\\gamma_{SV}^p \\gamma_{LV}^p}\\right)",
+      "explanation": "Interfacial tension from dispersive and polar surface energy components using geometric mean combining rule"
+    },
+    {
+      "name": "Surface energy component split from HSP",
+      "latex": "\\gamma^d = 0.0947 \\, \\delta_D^2, \\quad \\gamma^p = 0.0315 \\, \\delta_P^2 + 0.0238 \\, \\delta_H^2",
+      "explanation": "Decomposition of total surface energy into dispersive component (from delta_D) and polar component (from delta_P and delta_H)"
+    },
+    {
+      "name": "Owens-Wendt-Kaelble work of adhesion (2-component)",
+      "latex": "W_a = 2\\left(\\sqrt{\\gamma_D^1 \\gamma_D^2} + \\sqrt{\\gamma_P^1 \\gamma_P^2}\\right)",
+      "explanation": "Work of adhesion between two materials using geometric mean of dispersive and polar surface energy components"
+    },
+    {
+      "name": "Extended work of adhesion (3-component)",
+      "latex": "W_a = 2\\left(\\sqrt{\\gamma_D^1 \\gamma_D^2} + \\sqrt{\\gamma_P^1 \\gamma_P^2} + \\sqrt{\\gamma_H^1 \\gamma_H^2}\\right)",
+      "explanation": "Three-component extension including hydrogen bonding surface energy for HSP-compatible adhesion analysis"
+    },
+    {
+      "name": "Young-Dupre equation",
+      "latex": "W_a = \\gamma_{LV}(1 + \\cos\\theta)",
+      "explanation": "Work of adhesion derived from liquid surface tension and contact angle, linking measurable quantities to thermodynamic adhesion"
+    },
+    {
+      "name": "Surface treatment improvement ratio",
+      "latex": "\\text{Improvement Ratio} = \\frac{W_{a,\\text{after}}}{W_{a,\\text{before}}}",
+      "explanation": "Dimensionless ratio quantifying how much surface treatment improves adhesion; values > 1 indicate improvement"
+    }
+  ],
+  "historical_context": "Young's equation for contact angle was first proposed by Thomas Young in 1805, establishing the foundational relationship between wetting and surface tensions. The modern quantitative framework for surface energy decomposition began with Fowkes (1964), who introduced the concept of splitting surface energy into dispersive and non-dispersive components. Owens and Wendt (1969) extended this by applying a geometric mean combining rule to both dispersive and polar contributions, enabling practical determination of surface energy components from contact angle measurements. Kaelble (1970) further developed this framework for polymer adhesion applications. The connection between Hansen Solubility Parameters and surface energy was established through empirical correlations, notably by Panayiotou and Stefanis (2002) and Toyota researchers, who fitted proportionality coefficients (0.0947, 0.0315, 0.0238) linking HSP components to surface energy components. The Nakamoto-Yamamoto formulation (Langmuir, 2023) provided a direct HSP-to-surface-tension conversion. The six-level wettability classification system synthesizes decades of industrial practice from coatings, biomedical devices, and self-cleaning surface technologies.",
+  "related_project_modules": [
+    "contact-angle.ts",
+    "contact-angle-methods.ts",
+    "wettability.ts",
+    "work-of-adhesion.ts",
+    "surface-treatment-quantification.ts"
+  ],
+  "prerequisites": [
+    "Ch01_HSP_Fundamentals",
+    "Ch04_HSP_Estimation_Methods"
+  ],
+  "learning_objectives": [
+    "Estimate contact angles between solid-liquid pairs using HSP values and the Nakamoto-Yamamoto/Young's equation approach",
+    "Decompose surface energy into dispersive and polar components using the Owens-Wendt framework applied to HSP data",
+    "Classify wettability into six levels based on contact angle thresholds and understand the physical meaning of each level",
+    "Calculate work of adhesion using both two-component and three-component Owens-Wendt-Kaelble models",
+    "Quantitatively evaluate the effectiveness of surface treatments by comparing Wa and Ra before and after treatment"
+  ],
+  "practical_applications": [
+    "Predicting coating wettability on polymer substrates before formulation trials",
+    "Screening surface treatments (plasma, corona, UV-ozone) by comparing predicted Wa improvement ratios",
+    "Optimizing ink-substrate combinations for printing processes by matching surface energy components",
+    "Evaluating biocompatibility of medical device surfaces through wettability classification",
+    "Designing self-cleaning or anti-fouling surfaces by targeting specific wettability levels",
+    "Quality control of surface treatment processes by monitoring contact angle and Wa metrics",
+    "Adhesive selection for bonding dissimilar materials based on work of adhesion predictions",
+    "Predicting paint adhesion failure by identifying low-Wa interfaces in multilayer systems"
+  ],
+  "worked_examples": [
+    {
+      "title": "HSP-based contact angle estimation for water on polyethylene",
+      "description": "Given HSP values for water (deltaD=15.5, deltaP=16.0, deltaH=42.3) and polyethylene (deltaD=17.1, deltaP=0, deltaH=2.0), compute surface tensions gamma_LV and gamma_SV using the Nakamoto-Yamamoto equation, interfacial tension gamma_SL, and apply Young's equation to predict the contact angle. Compare with the experimental value of ~95 degrees."
+    },
+    {
+      "title": "Owens-Wendt surface energy decomposition",
+      "description": "For a polycarbonate substrate (deltaD=18.4, deltaP=4.0, deltaH=7.0), split the surface energy into dispersive and polar components. Use these components with water and diiodomethane probe liquids to demonstrate how the Owens-Wendt method constructs a linear regression for surface energy determination."
+    },
+    {
+      "title": "Surface treatment quantification for PP with corona treatment",
+      "description": "Polypropylene before treatment (deltaD=17.0, deltaP=0, deltaH=0.5) and after corona treatment (deltaD=17.0, deltaP=5.0, deltaH=4.0) bonded with an epoxy adhesive (deltaD=17.4, deltaP=5.5, deltaH=7.0). Calculate Wa_before, Wa_after, improvement ratio, Ra reduction, and assess whether the treatment is effective."
+    },
+    {
+      "title": "Wettability classification across material families",
+      "description": "Calculate contact angles for a probe liquid on five materials spanning the wettability spectrum (glass, nylon, polycarbonate, polyethylene, PTFE). Classify each into the six-level wettability system and discuss the relationship between HSP distance and wettability level."
+    }
+  ],
+  "key_references": [
+    {
+      "author": "Young, T.",
+      "year": 1805,
+      "title": "An Essay on the Cohesion of Fluids, Philosophical Transactions of the Royal Society of London, 95, 65-87"
+    },
+    {
+      "author": "Fowkes, F.M.",
+      "year": 1964,
+      "title": "Attractive Forces at Interfaces, Industrial & Engineering Chemistry, 56(12), 40-52"
+    },
+    {
+      "author": "Owens, D.K.; Wendt, R.C.",
+      "year": 1969,
+      "title": "Estimation of the Surface Free Energy of Polymers, Journal of Applied Polymer Science, 13(8), 1741-1747"
+    },
+    {
+      "author": "Kaelble, D.H.",
+      "year": 1970,
+      "title": "Dispersion-Polar Surface Tension Properties of Organic Solids, Journal of Adhesion, 2(2), 66-81"
+    },
+    {
+      "author": "Hansen, C.M.",
+      "year": 2007,
+      "title": "Hansen Solubility Parameters: A User's Handbook, 2nd Edition, CRC Press, Chapter 3: Methods of Characterization"
+    },
+    {
+      "author": "Panayiotou, C.",
+      "year": 2002,
+      "title": "The QCHB Model of Fluids and Their Mixtures, Journal of Chemical Thermodynamics, 35, 413-436 [uncertain]"
+    },
+    {
+      "author": "de Gennes, P.-G.",
+      "year": 1985,
+      "title": "Wetting: Statics and Dynamics, Reviews of Modern Physics, 57, 827-863"
+    },
+    {
+      "author": "van Oss, C.J.; Chaudhury, M.K.; Good, R.J.",
+      "year": 1988,
+      "title": "Interfacial Lifshitz-van der Waals and Polar Interactions in Macroscopic Systems, Chemical Reviews, 88(6), 927-941"
+    },
+    {
+      "author": "Nakamoto, H.; Yamamoto, T.",
+      "year": 2023,
+      "title": "HSP-Based Surface Tension Estimation Using Empirical Coefficients, Langmuir [uncertain]"
+    }
+  ],
+  "cross_references": [
+    "Ch01_HSP_Fundamentals",
+    "Ch04_HSP_Estimation_Methods",
+    "Ch06_Adhesion_Engineering",
+    "Ch07_Polymer_Solubility_Swelling"
+  ],
+  "difficulty_level": "graduate",
+  "estimated_pages": 40,
+  "figures_needed": [
+    {
+      "title": "Young's Equation Force Balance Diagram",
+      "description": "Schematic of a sessile drop on a flat solid surface showing the three interfacial tensions (gamma_SV, gamma_SL, gamma_LV) and contact angle theta at the three-phase contact line"
+    },
+    {
+      "title": "HSP-to-Surface-Tension Conversion Workflow",
+      "description": "Flowchart showing the path from HSP values through the Nakamoto-Yamamoto coefficients to surface tension, then through Young's equation to contact angle, and finally to wettability classification"
+    },
+    {
+      "title": "Owens-Wendt Surface Energy Decomposition",
+      "description": "Bar charts comparing dispersive and polar surface energy components for several common polymers, derived from their HSP values"
+    },
+    {
+      "title": "Six-Level Wettability Classification Scale",
+      "description": "Visual scale showing contact angle ranges (0-180 degrees) with color-coded zones for each wettability level, accompanied by schematic droplet shapes for each regime"
+    },
+    {
+      "title": "Work of Adhesion Comparison: 2-Component vs 3-Component Model",
+      "description": "Scatter plot comparing Wa values calculated by the standard 2-component Owens-Wendt model versus the 3-component extended model for various material pairs"
+    },
+    {
+      "title": "Surface Treatment Effect Visualization",
+      "description": "Before/after comparison chart showing Wa and Ra values for a substrate-adhesive pair, with improvement ratio and Ra reduction metrics annotated"
+    }
+  ],
+  "tables_needed": [
+    {
+      "title": "Nakamoto-Yamamoto Coefficients",
+      "description": "Table of the three empirical coefficients (C_D=0.0947, C_P=0.0315, C_H=0.0238) with their units, physical meaning, and the HSP component each multiplies"
+    },
+    {
+      "title": "Wettability Classification Thresholds",
+      "description": "Table of six wettability levels with contact angle ranges, labels, physical descriptions, and representative material examples for each level"
+    },
+    {
+      "title": "Surface Energy Components of Common Polymers",
+      "description": "Table listing 10-15 common polymers with their HSP values, computed dispersive and polar surface energy components, and total surface energy"
+    },
+    {
+      "title": "Contact Angle Predictions vs Experimental Values",
+      "description": "Validation table comparing HSP-predicted contact angles with experimentally measured values for various solid-liquid pairs, including error analysis"
+    },
+    {
+      "title": "Surface Treatment Effects on Industrial Substrates",
+      "description": "Table of common surface treatments (plasma, corona, UV-ozone, flame) showing before/after HSP values, Wa change, Ra change, and improvement ratio for typical polymer substrates"
+    }
+  ],
+  "software_demo": {
+    "tab": "Contact Angle Estimation (接触角推定) tab",
+    "inputs": "Select a parts group containing solid substrates (e.g., common polymers) and a probe liquid (e.g., water). Choose between group evaluation mode (one liquid vs all parts) or screening mode (all liquids vs one part).",
+    "expected_output": "Results table displays for each solid-liquid pair: contact angle (degrees), wettability level badge (color-coded), surface tension gamma_LV, surface energy gamma_SV, and interfacial tension gamma_SL. Results are sortable by any column and exportable to CSV.",
+    "workflow": "1. Open the Contact Angle Estimation tab. 2. Select group mode and choose a parts group containing polymer substrates. 3. Select water as the probe liquid. 4. Click evaluate to compute contact angles for all parts in the group. 5. Observe wettability badges and sort results by contact angle. 6. Switch to screening mode to test one substrate against all available solvents. 7. Export results to CSV for further analysis."
+  },
+  "review_questions": [
+    "Derive the contact angle prediction formula starting from Young's equation and the Nakamoto-Yamamoto surface tension equation. What assumptions are made when applying HSP-based surface tension estimates to Young's equation?",
+    "The Owens-Wendt method decomposes surface energy into dispersive and polar components. In the HSP-based implementation, delta_P and delta_H are combined into a single polar term. Discuss the physical justification and potential limitations of this simplification.",
+    "A surface treatment changes a substrate's HSP from (17.0, 0, 0.5) to (17.0, 5.0, 4.0) MPa^0.5. Without performing calculations, predict qualitatively how this will affect (a) surface energy, (b) contact angle with water, and (c) work of adhesion with an epoxy adhesive. Then verify with calculations.",
+    "Compare the two-component and three-component work of adhesion models. For which types of material pairs would you expect the largest discrepancy between them? Provide specific examples.",
+    "The wettability classification uses fixed angular thresholds (10, 30, 60, 90, 150 degrees). Discuss whether these thresholds are universal or whether they should be adjusted for specific applications such as biomedical implants versus industrial coatings."
+  ],
+  "uncertain": [
+    "key_references[5]",
+    "key_references[8]",
+    "cross_references",
+    "estimated_pages"
+  ]
+}

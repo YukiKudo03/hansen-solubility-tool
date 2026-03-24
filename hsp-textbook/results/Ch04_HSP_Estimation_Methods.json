@@ -1,0 +1,250 @@
+{
+  "chapter_title": "HSP推算法",
+  "chapter_title_en": "HSP Estimation Methods",
+  "level": "chapter",
+  "parent": "Part I: Fundamentals",
+  "synopsis": "This chapter provides a comprehensive treatment of all major methods for estimating Hansen Solubility Parameters. It covers group contribution methods (Van Krevelen-Hoftyzer and Stefanis-Panayiotou), copolymer HSP estimation via volume-fraction-weighted averaging, Nelder-Mead sphere fitting from dissolution test data, QSPR-based machine learning prediction from molecular descriptors, bootstrap uncertainty quantification, and inverse determination of surface HSP from contact angle measurements.",
+  "key_concepts": [
+    "Group contribution methods for HSP estimation",
+    "Van Krevelen-Hoftyzer method using molar attraction constants (Fd, Fp, Eh) and molar volume",
+    "Stefanis-Panayiotou first-order and second-order group contribution approach with universal constants",
+    "Copolymer HSP estimation via volume-fraction-weighted linear mixing rule",
+    "Nelder-Mead simplex optimization for HSP sphere fitting",
+    "Solvent classification (good/poor) as input to sphere fitting",
+    "Objective function design: maximizing correct classification rate while minimizing sphere radius",
+    "QSPR (Quantitative Structure-Property Relationship) regression from molecular descriptors",
+    "Molecular descriptors: molar volume, logP, H-bond donors/acceptors, aromatic ring count",
+    "Bootstrap resampling for 95% confidence interval estimation of HSP center and R0",
+    "Percentile-based confidence interval calculation",
+    "Surface HSP determination as an inverse problem from contact angle data",
+    "Owens-Wendt approach combined with HSP-to-surface-energy conversion",
+    "Young-Dupre equation for work of adhesion from contact angle",
+    "Ordinary least squares fitting of surface energy components"
+  ],
+  "equations": [
+    {
+      "name": "Van Krevelen-Hoftyzer dispersion component",
+      "latex": "\\delta_D = \\frac{\\sum F_{di}}{V}",
+      "explanation": "Dispersion solubility parameter from sum of molar attraction constants divided by molar volume"
+    },
+    {
+      "name": "Van Krevelen-Hoftyzer polar component",
+      "latex": "\\delta_P = \\frac{\\sqrt{\\sum F_{pi}^2}}{V}",
+      "explanation": "Polar solubility parameter from root sum of squares of polar attraction constants divided by molar volume"
+    },
+    {
+      "name": "Van Krevelen-Hoftyzer hydrogen bonding component",
+      "latex": "\\delta_H = \\sqrt{\\frac{\\sum E_{hi}}{V}}",
+      "explanation": "Hydrogen bonding solubility parameter from square root of sum of H-bond energies divided by molar volume"
+    },
+    {
+      "name": "Stefanis-Panayiotou general formula",
+      "latex": "\\delta_i = \\sum_j N_j C_{j,i} + \\sum_k M_k D_{k,i} + W_i",
+      "explanation": "HSP component i equals sum of first-order group contributions plus second-order corrections plus universal constant Wi"
+    },
+    {
+      "name": "Copolymer HSP mixing rule",
+      "latex": "\\delta_{cop} = \\sum_i \\phi_i \\delta_i",
+      "explanation": "Copolymer HSP estimated as volume-fraction-weighted average of homopolymer HSP values"
+    },
+    {
+      "name": "Nelder-Mead objective function",
+      "latex": "\\text{cost} = -\\left(\\frac{N_{correct}}{N_{total}} - 0.001 \\cdot R_0\\right)",
+      "explanation": "Minimization objective combining correct classification rate with a penalty on sphere radius R0"
+    },
+    {
+      "name": "Young-Dupre work of adhesion",
+      "latex": "W_a = \\gamma_{LV}(1 + \\cos\\theta)",
+      "explanation": "Work of adhesion from liquid surface tension and contact angle theta"
+    },
+    {
+      "name": "Geometric mean mixing for surface energy",
+      "latex": "\\frac{W_a}{2} = \\sqrt{\\gamma_D^s \\gamma_D^L} + \\sqrt{\\gamma_P^s \\gamma_P^L} + \\sqrt{\\gamma_H^s \\gamma_H^L}",
+      "explanation": "Extended Owens-Wendt equation with three surface energy components for HSP-compatible analysis"
+    },
+    {
+      "name": "HSP to surface energy conversion",
+      "latex": "\\gamma_D = 0.0947 \\, \\delta_D^2, \\quad \\gamma_P = 0.0315 \\, \\delta_P^2, \\quad \\gamma_H = 0.0238 \\, \\delta_H^2",
+      "explanation": "Empirical proportionality constants linking HSP components to surface energy components"
+    },
+    {
+      "name": "Bootstrap 95% confidence interval",
+      "latex": "CI_{95\\%} = [P_{2.5}(\\hat{\\theta}^*), \\, P_{97.5}(\\hat{\\theta}^*)]",
+      "explanation": "95% confidence interval from 2.5th and 97.5th percentiles of bootstrap distribution of fitted parameter theta"
+    }
+  ],
+  "historical_context": "Group contribution methods for predicting solubility parameters trace back to Hoy (1970) and Van Krevelen and Hoftyzer (1976), who compiled molar attraction constants (Fd, Fp) and hydrogen bonding energies (Eh) for common structural groups, published in 'Properties of Polymers'. Stefanis and Panayiotou (2008) introduced an improved two-level group contribution scheme with first-order and second-order structural groups plus universal constants, achieving better accuracy for complex molecules. The Nelder-Mead simplex algorithm (Nelder & Mead, 1965) was adapted for HSP sphere fitting as an alternative to grid search, enabling automated determination of optimal sphere center and radius from dissolution test data. QSPR approaches for HSP prediction emerged in the 2000s, notably by Gharagheizi et al. (2011) who used molecular descriptors and regression models. Bootstrap uncertainty quantification (Efron, 1979) was later applied to assess confidence intervals in fitted HSP parameters. Surface HSP determination via contact angle measurements builds on the Owens-Wendt (1969) surface energy decomposition framework.",
+  "related_project_modules": [
+    "group-contribution.ts",
+    "group-contribution-updates.ts",
+    "copolymer-hsp-estimation.ts",
+    "sphere-fitting.ts",
+    "ml-hsp-prediction.ts",
+    "hsp-uncertainty-quantification.ts",
+    "surface-hsp-determination.ts"
+  ],
+  "prerequisites": [
+    "Ch01_Introduction_to_HSP",
+    "Ch02_Thermodynamic_Foundations",
+    "Ch03_Three_Component_HSP"
+  ],
+  "learning_objectives": [
+    "Apply the Van Krevelen-Hoftyzer group contribution method to estimate HSP of a new compound from its molecular structure",
+    "Use the Stefanis-Panayiotou two-level group contribution method with first-order and second-order corrections for improved accuracy",
+    "Estimate copolymer HSP from monomer HSP values using volume-fraction-weighted averaging",
+    "Understand the Nelder-Mead optimization algorithm for fitting an HSP sphere to solvent dissolution test data",
+    "Evaluate uncertainty in HSP estimates using bootstrap resampling and 95% confidence intervals"
+  ],
+  "practical_applications": [
+    "Predicting HSP for novel polymers before synthesis, guiding material design decisions",
+    "Selecting candidate solvents for new polymers or resins when no experimental dissolution data exists",
+    "Estimating HSP of copolymers and polymer blends from known homopolymer parameters for coating formulation",
+    "Automated HSP sphere fitting from systematic dissolution screening data in paint and adhesive R&D",
+    "Rapid QSPR-based HSP screening of large chemical libraries for virtual solvent selection",
+    "Quantifying uncertainty in HSP database values to assess reliability for formulation predictions",
+    "Determining surface HSP of substrates from contact angle measurements for adhesion optimization",
+    "Quality control validation of HSP values by comparing group contribution estimates with experimental sphere fitting results"
+  ],
+  "worked_examples": [
+    {
+      "title": "Van Krevelen-Hoftyzer estimation of poly(methyl methacrylate) HSP",
+      "description": "Decompose PMMA repeat unit into structural groups (-CH3, -CH2-, >C<, -COO-), look up Fd, Fp, Eh, V values, and compute deltaD, deltaP, deltaH using the summation formulas. Compare with literature values."
+    },
+    {
+      "title": "Stefanis-Panayiotou estimation of toluene HSP",
+      "description": "Select first-order groups (ACH x5, AC x1, CH3 x1) and apply the SP formula with universal constants W_D=17.32, W_P=3.83, W_H=5.85 to obtain HSP. Demonstrate second-order correction with aromatic_ring group."
+    },
+    {
+      "title": "Nelder-Mead sphere fitting from 20 solvent dissolution tests",
+      "description": "Given a dataset of 20 solvents classified as good or poor for an epoxy resin, run the Nelder-Mead optimizer to find the optimal HSP center and interaction radius R0. Analyze misclassified solvents and fitness score."
+    },
+    {
+      "title": "Bootstrap uncertainty analysis of fitted HSP",
+      "description": "Using the 20-solvent dataset from the previous example, perform 200 bootstrap iterations of the sphere fitting. Compute 95% confidence intervals for deltaD, deltaP, deltaH, and R0. Discuss how sample size affects interval width."
+    }
+  ],
+  "key_references": [
+    {
+      "author": "Van Krevelen, D.W.; Te Nijenhuis, K.",
+      "year": 2009,
+      "title": "Properties of Polymers, 4th Edition, Chapter 7: Cohesive Properties and Solubility"
+    },
+    {
+      "author": "Stefanis, E.; Panayiotou, C.",
+      "year": 2008,
+      "title": "Prediction of Hansen Solubility Parameters with a New Group-Contribution Method, International Journal of Thermophysics, 29, 568-585"
+    },
+    {
+      "author": "Hansen, C.M.",
+      "year": 2007,
+      "title": "Hansen Solubility Parameters: A User's Handbook, 2nd Edition, CRC Press"
+    },
+    {
+      "author": "Nelder, J.A.; Mead, R.",
+      "year": 1965,
+      "title": "A Simplex Method for Function Minimization, The Computer Journal, 7(4), 308-313"
+    },
+    {
+      "author": "Gharagheizi, F.; Eslamimanesh, A.; Mohammadi, A.H.; Richon, D.",
+      "year": 2011,
+      "title": "Determination of Hansen Solubility Parameters from QSPR Models, Journal of Chemical & Engineering Data, 56, 1741-1750"
+    },
+    {
+      "author": "Efron, B.",
+      "year": 1979,
+      "title": "Bootstrap Methods: Another Look at the Jackknife, Annals of Statistics, 7(1), 1-26"
+    },
+    {
+      "author": "Owens, D.K.; Wendt, R.C.",
+      "year": 1969,
+      "title": "Estimation of the Surface Free Energy of Polymers, Journal of Applied Polymer Science, 13(8), 1741-1747"
+    },
+    {
+      "author": "Hoy, K.L.",
+      "year": 1970,
+      "title": "New Values of the Solubility Parameters from Vapor Pressure Data, Journal of Paint Technology, 42, 76-118"
+    },
+    {
+      "author": "Jurs, P.C.; Bakken, G.A.; McClelland, H.E.",
+      "year": 2000,
+      "title": "Computational Methods for the Analysis of Chemical Sensor Array Data from Volatile Analytes, Chemical Reviews, 100, 2649-2678 [uncertain]"
+    }
+  ],
+  "cross_references": [
+    "Ch01_Introduction_to_HSP",
+    "Ch03_Three_Component_HSP",
+    "Ch05_HSP_Sphere_and_RED",
+    "Ch06_Solvent_Selection",
+    "Ch08_Polymer_HSP",
+    "Ch10_Surface_HSP"
+  ],
+  "difficulty_level": "graduate",
+  "estimated_pages": 45,
+  "figures_needed": [
+    {
+      "title": "Van Krevelen-Hoftyzer Group Contribution Workflow",
+      "description": "Flowchart showing the process from molecular structure decomposition into groups, lookup of Fd/Fp/Eh/V values, to final HSP calculation"
+    },
+    {
+      "title": "Stefanis-Panayiotou Two-Level Group Scheme",
+      "description": "Diagram illustrating first-order groups and second-order structural corrections, showing how universal constants W are added"
+    },
+    {
+      "title": "Nelder-Mead Simplex Optimization Progression",
+      "description": "3D Hansen space plot showing the simplex vertices moving toward the optimal HSP center over iterations, with good/poor solvents displayed"
+    },
+    {
+      "title": "Comparison of Estimation Methods",
+      "description": "Bar chart or radar plot comparing HSP values obtained by Van Krevelen, Stefanis-Panayiotou, sphere fitting, and QSPR for a reference compound"
+    },
+    {
+      "title": "Bootstrap Confidence Interval Distributions",
+      "description": "Histograms of deltaD, deltaP, deltaH, and R0 from N bootstrap iterations, with 2.5th and 97.5th percentile lines marked"
+    },
+    {
+      "title": "Contact Angle Measurement Setup for Surface HSP",
+      "description": "Schematic showing sessile drop on a surface with contact angle theta, along with the data flow to surface HSP estimation via least squares"
+    }
+  ],
+  "tables_needed": [
+    {
+      "title": "Van Krevelen-Hoftyzer Group Contribution Constants",
+      "description": "Complete table of structural groups with Fd, Fp, Eh, and V values (aliphatic, aromatic, oxygen-containing, nitrogen-containing, sulfur, halogen groups)"
+    },
+    {
+      "title": "Stefanis-Panayiotou First-Order Group Contributions",
+      "description": "Table of 30+ first-order groups with dD, dP, dH increment values and universal constants W_D, W_P, W_H"
+    },
+    {
+      "title": "Stefanis-Panayiotou Second-Order Correction Groups",
+      "description": "Table of second-order structural corrections (alcohol, aromatic ring, conjugation) with their dD, dP, dH values"
+    },
+    {
+      "title": "Comparison of Estimated vs Literature HSP Values",
+      "description": "Validation table comparing group contribution estimates with experimental HSP values for 10-15 common solvents"
+    },
+    {
+      "title": "Molecular Descriptors for QSPR HSP Prediction",
+      "description": "Table listing the molecular descriptors (molar volume, logP, H-bond donors/acceptors, aromatic rings) with their typical ranges and influence on each HSP component"
+    }
+  ],
+  "software_demo": {
+    "tab": "Group Contribution (族寄与法) tab and HSP Sphere Fitting (HSP球算出) tab",
+    "inputs": "In the Group Contribution tab, select structural groups (e.g., CH3 x2, CH2 x4, OH x1) and their counts, then choose Van Krevelen or Stefanis-Panayiotou method. In the Sphere Fitting tab, enter solvent dissolution test data with good/poor classification.",
+    "expected_output": "The Group Contribution tab displays estimated deltaD, deltaP, deltaH values with confidence level (high/medium/low) and any warnings. The Sphere Fitting tab shows the optimized HSP center coordinates, interaction radius R0, fitness score, correct classification count, and list of misclassified solvents.",
+    "workflow": "1. Open Group Contribution tab and add first-order groups for the target molecule. 2. Click the HSP estimation button to obtain predicted HSP. 3. Switch to Sphere Fitting tab and enter dissolution test data for the same material. 4. Run sphere fitting and compare the fitted center with the group contribution estimate. 5. Optionally run bootstrap analysis to obtain 95% confidence intervals."
+  },
+  "review_questions": [
+    "Explain the difference between the Van Krevelen-Hoftyzer and Stefanis-Panayiotou group contribution methods. Under what circumstances would you prefer one over the other?",
+    "Why does the Van Krevelen-Hoftyzer method use different mathematical forms for deltaD (linear sum), deltaP (root sum of squares), and deltaH (square root of ratio)? What physical reasoning underlies each formula?",
+    "Describe the Nelder-Mead simplex algorithm as applied to HSP sphere fitting. What are the roles of reflection, expansion, contraction, and shrinkage operations? Why is a penalty term on R0 included in the objective function?",
+    "A bootstrap analysis of a 15-solvent dissolution dataset yields a 95% CI for deltaD of [16.2, 19.8] MPa^0.5. What factors could cause this interval to be wide, and how would you narrow it?",
+    "Discuss the advantages and limitations of QSPR-based HSP prediction compared to group contribution methods. For which types of molecules might QSPR outperform group contribution, and vice versa?"
+  ],
+  "uncertain": [
+    "prerequisites",
+    "cross_references",
+    "estimated_pages",
+    "key_references[8]"
+  ]
+}

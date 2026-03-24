@@ -1,0 +1,225 @@
+{
+  "chapter_title": "HSPの熱力学的基盤",
+  "chapter_title_en": "Thermodynamic Foundations of Hansen Solubility Parameters",
+  "level": "chapter",
+  "parent": "Part I: Fundamentals",
+  "synopsis": "This chapter establishes the thermodynamic underpinning of Hansen Solubility Parameters by connecting them to Flory-Huggins lattice theory and the chi interaction parameter. It extends the framework to gel swelling equilibrium via Flory-Rehner theory, crystalline polymer dissolution via Flory dilution theory, partition coefficient estimation from HSP distance, and corrections for associating liquids such as water and alcohols.",
+  "key_concepts": [
+    "Flory-Huggins lattice model for polymer-solvent mixing",
+    "Flory-Huggins chi interaction parameter and its relation to Ra (HSP distance)",
+    "Free energy of mixing: combinatorial entropy and enthalpic contributions",
+    "Critical chi parameter and polymer-solvent phase boundaries",
+    "Flory-Rehner equation for crosslinked gel swelling equilibrium",
+    "Elastic free energy contribution from crosslinked networks",
+    "Equilibrium polymer volume fraction in swollen gels",
+    "Flory dilution theory and melting point depression of crystalline polymers",
+    "Dissolution temperature prediction from chi and heat of fusion",
+    "Partition coefficient estimation from HSP distance differences (delta Ra-squared)",
+    "Semi-quantitative log K prediction from Flory-Huggins framework",
+    "Associating liquid corrections for hydrogen-bonding solvents (water, alcohols)",
+    "Alpha parameter for temperature-dependent hydrogen bond network disruption",
+    "Limitations of regular solution theory for strongly associating systems"
+  ],
+  "equations": [
+    {
+      "name": "Flory-Huggins chi from HSP distance",
+      "latex": "\\chi = \\frac{V_s \\cdot Ra^2}{6 R T}",
+      "explanation": "Relates the Flory-Huggins interaction parameter to the Hansen distance Ra, solvent molar volume Vs, gas constant R, and temperature T. The factor 6 arises from the convention used in three-component HSP space."
+    },
+    {
+      "name": "Critical chi parameter",
+      "latex": "\\chi_c = \\frac{1}{2} \\left( \\frac{1}{\\sqrt{N_1}} + \\frac{1}{\\sqrt{N_2}} \\right)^2",
+      "explanation": "Defines the upper limit of chi for miscibility in a binary polymer system with degrees of polymerization N1 and N2. For a polymer-solvent system (N2 = 1), chi_c approaches 0.5 for high molecular weight."
+    },
+    {
+      "name": "Flory-Huggins free energy of mixing",
+      "latex": "\\frac{\\Delta G_{mix}}{RT} = n_1 \\ln \\phi_1 + n_2 \\ln \\phi_2 + n_1 \\phi_2 \\chi",
+      "explanation": "The lattice model free energy of mixing consisting of combinatorial entropy (first two terms) and an enthalpic interaction term (third term)."
+    },
+    {
+      "name": "Flory-Rehner swelling equilibrium",
+      "latex": "\\ln(1 - \\phi_p) + \\phi_p + \\chi \\phi_p^2 = -V_s \\nu_e \\left( \\phi_p^{1/3} - \\frac{\\phi_p}{2} \\right)",
+      "explanation": "Balances the thermodynamic mixing drive (left side) against the elastic restoring force of the crosslinked network (right side) to determine the equilibrium polymer volume fraction phi_p in a swollen gel."
+    },
+    {
+      "name": "Flory dilution theory (melting point depression)",
+      "latex": "\\frac{1}{T_d} - \\frac{1}{T_m^0} = \\frac{R}{\\Delta H_u} \\cdot \\frac{V_u}{V_1} \\left( \\phi_1 - \\chi \\phi_1^2 \\right)",
+      "explanation": "Predicts how the dissolution temperature Td of a crystalline polymer decreases with increasing solvent volume fraction phi1. Depends on the heat of fusion per repeat unit and the chi parameter."
+    },
+    {
+      "name": "Partition coefficient from HSP distance",
+      "latex": "\\ln K \\approx -\\frac{V_{solute} \\cdot \\Delta Ra^2}{6 R T}",
+      "explanation": "Semi-quantitative estimation of the partition coefficient between two phases using the difference in squared HSP distances (delta Ra-squared) and the solute molar volume."
+    },
+    {
+      "name": "Associating liquid dH correction",
+      "latex": "\\delta_H^2(T) = \\delta_H^2(T_{ref}) \\cdot \\left(1 - \\alpha \\frac{T - T_{ref}}{T_{ref}} \\right)",
+      "explanation": "Temperature correction for the hydrogen bonding HSP component of associating liquids (water, alcohols), where alpha captures the rate of hydrogen bond network disruption with temperature."
+    }
+  ],
+  "historical_context": "The Flory-Huggins lattice theory was independently developed by Paul Flory and Maurice Huggins in 1941-1942, providing the first statistical mechanical treatment of polymer-solvent mixing. Flory and Rehner extended the framework to crosslinked systems in 1943 (J. Chem. Phys. 11:521). Flory's dilution theory for crystalline polymers appeared in his seminal 1953 monograph 'Principles of Polymer Chemistry.' The connection between chi and HSP distance (Ra) was formalized by Lindvig, Michelsen, and Kontogeorgis in 2002 (Fluid Phase Equilibria 203:247-260), building on Hansen's original 1967 three-parameter decomposition. Corrections for associating liquids draw on Barton's 1991 handbook and Hansen's treatment of temperature effects in Chapter 5 of his 2007 handbook.",
+  "related_project_modules": [
+    "flory-huggins.ts",
+    "flory-rehner.ts",
+    "flory-melting-point.ts",
+    "partition-coefficient.ts",
+    "associating-liquid-correction.ts"
+  ],
+  "prerequisites": [
+    "Ch01_Introduction_to_HSP"
+  ],
+  "learning_objectives": [
+    "Derive the Flory-Huggins chi parameter from Hansen distance Ra and explain the physical meaning of each term",
+    "Apply Flory-Rehner theory to predict equilibrium swelling of crosslinked elastomers and gels",
+    "Use Flory dilution theory to estimate dissolution temperatures of crystalline polymers in solvents",
+    "Estimate partition coefficients between two immiscible phases using HSP distance differences",
+    "Understand why associating liquids (water, alcohols) require special corrections and apply the alpha-parameter model"
+  ],
+  "practical_applications": [
+    "Predicting polymer-solvent miscibility and constructing phase diagrams for coatings formulation",
+    "Estimating crosslink density of rubber vulcanizates from equilibrium swelling measurements",
+    "Selecting solvents for dissolving or processing crystalline engineering plastics (e.g., PEEK, PPS, nylon)",
+    "Predicting octanol-water partition coefficients for environmental fate modeling of chemicals",
+    "Designing drug delivery hydrogels with controlled swelling ratios",
+    "Correcting HSP-based predictions for aqueous and alcoholic systems in pharmaceutical and food applications",
+    "Screening solvent candidates for extraction and purification processes based on partition selectivity"
+  ],
+  "worked_examples": [
+    {
+      "title": "Chi parameter calculation for polystyrene in toluene",
+      "description": "Given the HSP values for polystyrene and toluene, calculate Ra, then chi at 25 deg C, and compare with the critical chi to assess miscibility."
+    },
+    {
+      "title": "Equilibrium swelling of a crosslinked PDMS elastomer",
+      "description": "Use the Flory-Rehner equation to predict the volume swelling ratio Q of a PDMS network with known crosslink density in hexane, and compare with experimental data."
+    },
+    {
+      "title": "Dissolution temperature of polyethylene in xylene",
+      "description": "Apply the Flory melting point depression equation to predict the temperature at which high-density polyethylene dissolves in xylene at various concentrations."
+    },
+    {
+      "title": "Partition coefficient estimation for a pesticide between octanol and water",
+      "description": "Calculate delta Ra-squared for a model pesticide between octanol and water phases, estimate log K, and compare with experimental log Kow values."
+    }
+  ],
+  "key_references": [
+    {
+      "author": "Flory, P. J.",
+      "year": 1942,
+      "title": "Thermodynamics of High Polymer Solutions, J. Chem. Phys. 10:51-61"
+    },
+    {
+      "author": "Huggins, M. L.",
+      "year": 1942,
+      "title": "Some Properties of Solutions of Long-chain Compounds, J. Phys. Chem. 46:151-158"
+    },
+    {
+      "author": "Flory, P. J.; Rehner, J.",
+      "year": 1943,
+      "title": "Statistical Mechanics of Cross-Linked Polymer Networks II. Swelling, J. Chem. Phys. 11:521-526"
+    },
+    {
+      "author": "Flory, P. J.",
+      "year": 1953,
+      "title": "Principles of Polymer Chemistry, Cornell University Press"
+    },
+    {
+      "author": "Hansen, C. M.",
+      "year": 2007,
+      "title": "Hansen Solubility Parameters: A User's Handbook, 2nd ed., CRC Press"
+    },
+    {
+      "author": "Lindvig, T.; Michelsen, M. L.; Kontogeorgis, G. M.",
+      "year": 2002,
+      "title": "A Flory-Huggins model based on the Hansen solubility parameters, Fluid Phase Equilibria 203:247-260"
+    },
+    {
+      "author": "Barton, A. F. M.",
+      "year": 1991,
+      "title": "Handbook of Solubility Parameters and Other Cohesion Parameters, 2nd ed., CRC Press"
+    },
+    {
+      "author": "Mark, J. E.; Erman, B.",
+      "year": 2007,
+      "title": "Rubberlike Elasticity: A Molecular Primer, 2nd ed., Cambridge University Press"
+    },
+    {
+      "author": "Tian, Y.; Booth, J.; Meehan, E.; Jones, D. S.; Li, S.; Andrews, G. P.",
+      "year": 2013,
+      "title": "Construction of Drug-Polymer Thermodynamic Phase Diagrams Using Flory-Huggins Interaction Theory, Mol. Pharmaceutics 10:236-248"
+    }
+  ],
+  "cross_references": [
+    "Ch01_Introduction_to_HSP",
+    "Ch03_Determination_Methods",
+    "Ch05_Temperature_Pressure_Effects",
+    "Ch06_Polymer_Solubility",
+    "Ch08_Sphere_Fitting"
+  ],
+  "difficulty_level": "graduate",
+  "estimated_pages": 35,
+  "figures_needed": [
+    {
+      "title": "Flory-Huggins lattice model schematic",
+      "description": "Diagram showing a 2D lattice with polymer chain segments and solvent molecules occupying lattice sites, illustrating the combinatorial entropy of mixing."
+    },
+    {
+      "title": "Chi vs Ra plot",
+      "description": "Graph showing the relationship between Flory-Huggins chi parameter and Hansen distance Ra for various solvent molar volumes at 25 deg C."
+    },
+    {
+      "title": "Phase diagram with binodal and spinodal curves",
+      "description": "Free energy of mixing versus composition plot showing the common tangent construction, binodal, and spinodal curves, with chi_critical indicated."
+    },
+    {
+      "title": "Flory-Rehner swelling equilibrium curve",
+      "description": "Plot of the Flory-Rehner residual function versus polymer volume fraction showing the root (equilibrium phi_p) for different chi values and crosslink densities."
+    },
+    {
+      "title": "Melting point depression diagram",
+      "description": "Graph of dissolution temperature Td versus solvent volume fraction phi1 for a crystalline polymer at various chi values, compared with experimental DSC data."
+    },
+    {
+      "title": "Partition coefficient correlation",
+      "description": "Scatter plot of estimated log K from HSP distance differences versus experimental log Kow for a set of organic compounds, showing the semi-quantitative correlation."
+    },
+    {
+      "title": "Associating liquid dH temperature dependence",
+      "description": "Plot comparing the hydrogen bonding parameter dH versus temperature for water, methanol, and ethanol using the alpha-parameter correction model versus the standard Barton exponential decay."
+    }
+  ],
+  "tables_needed": [
+    {
+      "title": "HSP values and chi parameters for common polymer-solvent pairs",
+      "description": "Table listing dD, dP, dH, Ra, molar volume, and calculated chi for 10-15 representative polymer-solvent pairs with experimental chi values for comparison."
+    },
+    {
+      "title": "Associating liquid database parameters",
+      "description": "Table of associating liquid species (water, methanol, ethanol, ethylene glycol, acetic acid) with their reference dH, reference temperature, and alpha parameters."
+    },
+    {
+      "title": "Flory-Rehner swelling data for elastomers",
+      "description": "Table of crosslink densities, chi values, and predicted versus measured equilibrium swelling ratios Q for common elastomer-solvent systems (e.g., PDMS, SBR, natural rubber)."
+    },
+    {
+      "title": "Melting point depression data for crystalline polymers",
+      "description": "Table comparing predicted and experimental dissolution temperatures for PE, PET, and nylon in various solvents at different concentrations."
+    }
+  ],
+  "software_demo": {
+    "tab": "Flory-Huggins chi calculation tab and Swelling evaluation tab",
+    "inputs": "Select a polymer (e.g., polystyrene) and a solvent (e.g., toluene) from the database, enter the solvent molar volume (106.3 cm3/mol for toluene), and set temperature to 298.15 K. For swelling demo, additionally enter crosslink density.",
+    "expected_output": "The tool calculates Ra, chi parameter, and critical chi, then displays a miscibility assessment (miscible/partial/immiscible). For Flory-Rehner, it outputs the equilibrium polymer volume fraction and volume swelling ratio Q."
+  },
+  "review_questions": [
+    "Explain why the factor of 6 appears in the chi = Vs*Ra^2/(6RT) equation and how it relates to the three-component decomposition of the solubility parameter.",
+    "For a polymer-solvent system with chi = 0.48 and a high molecular weight polymer, predict whether the system is miscible, partially miscible, or immiscible. What changes if the polymer molecular weight is reduced to an oligomer with N = 10?",
+    "Describe how the Flory-Rehner equation balances thermodynamic and elastic contributions to determine swelling equilibrium. What happens to the equilibrium swelling ratio if crosslink density is doubled?",
+    "Why do associating liquids like water require a special correction to their hydrogen bonding parameter, and what physical phenomenon does the alpha parameter capture?",
+    "A solute has Ra = 5.0 MPa^0.5 to octanol and Ra = 12.0 MPa^0.5 to water. Estimate the sign and approximate magnitude of log K(octanol/water) and explain the physical basis of this prediction."
+  ],
+  "uncertain": [
+    "cross_references",
+    "estimated_pages"
+  ]
+}

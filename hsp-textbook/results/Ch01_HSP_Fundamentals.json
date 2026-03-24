@@ -1,0 +1,197 @@
+{
+  "chapter_title": "HSP基礎理論 — Hildebrandパラメータから三次元Hansen空間へ",
+  "chapter_title_en": "HSP Fundamentals: From Hildebrand Parameter to Three-Dimensional Hansen Space",
+  "level": "chapter",
+  "parent": "Part I: Fundamentals",
+  "synopsis": "This chapter introduces the theoretical foundation of Hansen Solubility Parameters (HSP), tracing the evolution from Hildebrand's one-dimensional solubility parameter to Hansen's three-component decomposition into dispersion (deltaD), polar (deltaP), and hydrogen-bonding (deltaH) contributions. It covers the key quantitative tools: Ra distance for measuring HSP similarity, RED (Relative Energy Difference) for normalization against interaction radius R0, the Hansen sphere concept for solubility boundary visualization, and a five-level risk classification system. The chapter also presents solvent mixture HSP calculation via volume-fraction-weighted averaging and batch evaluation matrices for multi-material x multi-solvent screening.",
+  "key_concepts": [
+    "Hildebrand solubility parameter (delta_total) and cohesive energy density",
+    "Hansen's three-component decomposition: deltaD (dispersion), deltaP (polar), deltaH (hydrogen bonding)",
+    "Units: MPa^(1/2) for all HSP components",
+    "Hansen distance Ra with the empirical factor of 4 for the dispersion term: Ra^2 = 4(deltaD1 - deltaD2)^2 + (deltaP1 - deltaP2)^2 + (deltaH1 - deltaH2)^2",
+    "Interaction radius R0 defining the Hansen sphere boundary",
+    "Relative Energy Difference (RED = Ra / R0) as the normalized solubility criterion",
+    "Hansen sphere: the three-dimensional solubility envelope in HSP space",
+    "Five-level risk classification based on RED thresholds (Dangerous, Warning, Caution, Hold, Safe)",
+    "Default risk thresholds: Dangerous < 0.5, Warning < 0.8, Caution < 1.2, Hold < 2.0, Safe >= 2.0",
+    "Solvent mixture HSP via volume-fraction-weighted linear averaging",
+    "Volume ratio to volume fraction conversion for mixture calculations",
+    "Batch comparison matrix: all-pairs evaluation of materials x solvents",
+    "Comparison statistics: min/max/mean RED across the evaluation matrix"
+  ],
+  "equations": [
+    {
+      "name": "Hildebrand Solubility Parameter",
+      "latex": "\\delta = \\sqrt{\\frac{\\Delta H_v - RT}{V_m}}",
+      "explanation": "Total solubility parameter from molar heat of vaporization and molar volume, representing cohesive energy density."
+    },
+    {
+      "name": "Hansen Decomposition",
+      "latex": "\\delta^2 = \\delta_D^2 + \\delta_P^2 + \\delta_H^2",
+      "explanation": "The total Hildebrand parameter is decomposed into three independent contributions: dispersion forces, permanent dipole interactions, and hydrogen bonding."
+    },
+    {
+      "name": "Hansen Distance (Ra)",
+      "latex": "R_a = \\sqrt{4(\\delta_{D1} - \\delta_{D2})^2 + (\\delta_{P1} - \\delta_{P2})^2 + (\\delta_{H1} - \\delta_{H2})^2}",
+      "explanation": "Distance between two substances in Hansen space. The factor of 4 on the dispersion term is an empirical correction to make the solubility region approximately spherical."
+    },
+    {
+      "name": "Relative Energy Difference (RED)",
+      "latex": "RED = \\frac{R_a}{R_0}",
+      "explanation": "Normalized distance relative to the interaction radius R0. RED < 1 generally indicates solubility; RED > 1 indicates non-solubility."
+    },
+    {
+      "name": "Mixture HSP (Volume-Fraction Weighted Average)",
+      "latex": "\\delta_{i,mix} = \\sum_k \\phi_k \\, \\delta_{i,k} \\quad (i = D, P, H)",
+      "explanation": "Each HSP component of a mixture is the volume-fraction-weighted average of the pure component values. phi_k = V_k / sum(V_k)."
+    },
+    {
+      "name": "Arrhenius Log-Mixing Rule for Viscosity",
+      "latex": "\\ln \\eta_{mix} = \\sum_k \\phi_k \\ln \\eta_k",
+      "explanation": "Mixture viscosity is estimated using a logarithmic volume-fraction mixing rule, more accurate than simple linear averaging for viscosity."
+    }
+  ],
+  "historical_context": "Joel H. Hildebrand introduced the one-dimensional solubility parameter concept in 1936, based on the square root of cohesive energy density. Charles M. Hansen, in his 1967 doctoral thesis at the Technical University of Denmark, proposed decomposing this single parameter into three components representing dispersion, polar, and hydrogen-bonding interactions. This breakthrough enabled the prediction of solubility as a geometric problem in three-dimensional space. Hansen's seminal paper 'The Three Dimensional Solubility Parameter and Solvent Diffusion Coefficient' (1967) and subsequent textbook 'Hansen Solubility Parameters: A User's Handbook' (1st ed. 2000, 2nd ed. 2007) established HSP as the standard framework in coatings, polymers, and pharmaceutical industries. The factor-of-4 coefficient on the dispersion axis was empirically derived to produce approximately spherical solubility envelopes for most polymers.",
+  "related_project_modules": [
+    "hsp.ts",
+    "risk.ts",
+    "types.ts",
+    "comparison.ts",
+    "mixture.ts",
+    "validation.ts"
+  ],
+  "prerequisites": [],
+  "learning_objectives": [
+    "Explain the physical meaning of each HSP component (deltaD, deltaP, deltaH) and their origin from intermolecular forces",
+    "Calculate Ra distance and RED value between any two substances given their HSP values and interaction radius",
+    "Apply the five-level risk classification system to assess solvent compatibility with a polymer material",
+    "Compute the HSP of a solvent mixture from its component volume fractions using linear mixing rules",
+    "Construct and interpret a batch evaluation matrix for screening multiple solvents against multiple materials"
+  ],
+  "practical_applications": [
+    "Selecting safe cleaning solvents for polymer components in manufacturing",
+    "Screening solvents for polymer dissolution in coatings formulation",
+    "Designing solvent blends to achieve a target HSP for optimal performance",
+    "Predicting chemical resistance of polymer parts to industrial fluids",
+    "Multi-material compatibility screening in product design (e.g., gaskets, seals, O-rings)",
+    "Pharmaceutical excipient-solvent compatibility assessment",
+    "Evaluating environmental replacement solvents by comparing HSP proximity to regulated solvents"
+  ],
+  "worked_examples": [
+    {
+      "title": "Ra and RED Calculation for PVC vs. Common Solvents",
+      "description": "Given PVC (deltaD=18.2, deltaP=7.5, deltaH=8.3, R0=3.5) and three solvents (THF, acetone, hexane), calculate Ra and RED for each pair, classify risk levels, and identify which solvents fall inside the Hansen sphere."
+    },
+    {
+      "title": "Designing a Binary Solvent Mixture to Target a Specific HSP",
+      "description": "Two solvents (toluene and ethanol) are mixed at varying volume ratios. Calculate the mixture HSP at 25/75, 50/50, and 75/25 ratios, then determine which ratio yields the smallest Ra to a target polymer."
+    },
+    {
+      "title": "Batch Evaluation Matrix for Automotive Seal Materials",
+      "description": "Construct a comparison matrix for 4 rubber materials (NBR, EPDM, FKM, silicone) against 6 common automotive fluids (gasoline, diesel, brake fluid, coolant, motor oil, transmission fluid). Identify the highest-risk material-fluid combinations using RED-based risk classification."
+    }
+  ],
+  "key_references": [
+    {
+      "author": "Hansen, C. M.",
+      "year": 2007,
+      "title": "Hansen Solubility Parameters: A User's Handbook, 2nd Edition, CRC Press"
+    },
+    {
+      "author": "Hildebrand, J. H.; Scott, R. L.",
+      "year": 1950,
+      "title": "The Solubility of Nonelectrolytes, 3rd Edition, Reinhold Publishing"
+    },
+    {
+      "author": "Hansen, C. M.",
+      "year": 1967,
+      "title": "The Three Dimensional Solubility Parameter and Solvent Diffusion Coefficient, Doctoral Dissertation, Technical University of Denmark"
+    },
+    {
+      "author": "Barton, A. F. M.",
+      "year": 1991,
+      "title": "CRC Handbook of Solubility Parameters and Other Cohesion Parameters, 2nd Edition, CRC Press"
+    },
+    {
+      "author": "Burke, J.",
+      "year": 1984,
+      "title": "Solubility Parameters: Theory and Application, The Book and Paper Group Annual, Vol. 3, AIC"
+    },
+    {
+      "author": "Van Krevelen, D. W.; Te Nijenhuis, K.",
+      "year": 2009,
+      "title": "Properties of Polymers, 4th Edition, Elsevier (Chapter 7: Cohesive Properties and Solubility)"
+    },
+    {
+      "author": "Abbott, S.; Hansen, C. M.; Yamamoto, H.",
+      "year": 2015,
+      "title": "Hansen Solubility Parameters in Practice (HSPiP), 5th Edition, www.hansen-solubility.com"
+    },
+    {
+      "author": "Stefanis, E.; Panayiotou, C.",
+      "year": 2008,
+      "title": "Prediction of Hansen Solubility Parameters with a New Group-Contribution Method, International Journal of Thermophysics, 29, 568-585"
+    }
+  ],
+  "cross_references": [
+    "Ch02_Thermodynamic_Foundations",
+    "Ch03_Temperature_Pressure_Effects",
+    "Ch04_HSP_Estimation_Methods"
+  ],
+  "difficulty_level": "undergraduate",
+  "estimated_pages": 35,
+  "figures_needed": [
+    {
+      "title": "Evolution from 1D Hildebrand to 3D Hansen Space",
+      "description": "Conceptual diagram showing the decomposition of the single Hildebrand parameter into three orthogonal axes (deltaD, deltaP, deltaH), illustrating how a line becomes a 3D coordinate system."
+    },
+    {
+      "title": "Hansen Sphere in 3D HSP Space",
+      "description": "3D scatter plot showing a polymer center point with interaction radius R0 forming a sphere, with good solvents (RED < 1) plotted inside and poor solvents (RED > 1) outside the sphere boundary."
+    },
+    {
+      "title": "Five-Level Risk Classification Diagram",
+      "description": "Concentric rings or bar chart showing the five risk zones (Dangerous, Warning, Caution, Hold, Safe) with their RED threshold boundaries at 0.5, 0.8, 1.2, and 2.0."
+    },
+    {
+      "title": "Solvent Mixture Path in HSP Space",
+      "description": "3D plot showing how a binary mixture traces a straight line between the two pure solvent HSP coordinates as the volume fraction varies from 0 to 1."
+    },
+    {
+      "title": "Batch Evaluation Heatmap",
+      "description": "Color-coded matrix (materials as rows, solvents as columns) showing RED values with risk-level color coding, demonstrating the batch screening workflow."
+    }
+  ],
+  "tables_needed": [
+    {
+      "title": "HSP Values of Common Solvents",
+      "description": "Table listing 15-20 common solvents with their deltaD, deltaP, deltaH values (MPa^1/2), molar volume, and boiling point for use in examples throughout the chapter."
+    },
+    {
+      "title": "HSP Values and R0 of Common Polymers",
+      "description": "Table listing 10-15 common polymers (PVC, PMMA, PS, PE, PP, Nylon, epoxy, etc.) with their HSP values and interaction radii R0."
+    },
+    {
+      "title": "Five-Level Risk Classification Thresholds",
+      "description": "Table detailing each risk level (Dangerous through Safe), its RED range, label, description, and recommended action, matching the implementation in risk.ts."
+    },
+    {
+      "title": "Sample Batch Evaluation Matrix Output",
+      "description": "Worked example showing a 4x6 material-solvent matrix with computed Ra, RED, and risk level for each cell, plus summary statistics (min, max, mean RED)."
+    }
+  ],
+  "software_demo": {
+    "tab": "HSP Risk Evaluation (HSPリスク評価)",
+    "inputs": "Select a parts group containing several polymer materials (e.g., rubber seal materials). Select multiple solvents from the database. Use default risk thresholds (Dangerous < 0.5, Warning < 0.8, Caution < 1.2, Hold < 2.0).",
+    "expected_output": "A color-coded comparison matrix showing Ra, RED, and risk level for every material-solvent combination. The heatmap immediately highlights dangerous combinations in red and safe combinations in green. Students can also switch to the mixture calculator tab to blend two solvents and see how the mixture HSP and resulting RED values change with volume fraction.",
+    "learning_value": "Demonstrates the core HSP workflow from raw parameters to actionable risk assessment, reinforcing Ra/RED calculation and the five-level classification in an interactive setting."
+  },
+  "review_questions": [
+    "Why does the Hansen distance formula include a factor of 4 on the dispersion term (deltaD)? What would happen to the shape of the solubility region if this factor were removed?",
+    "A polymer has HSP values (deltaD=17.0, deltaP=9.0, deltaH=5.0) with R0=6.0. A solvent has HSP values (deltaD=15.5, deltaP=6.0, deltaH=4.5). Calculate Ra and RED. What risk level does this correspond to under default thresholds?",
+    "Explain why the volume-fraction-weighted linear mixing rule works well for HSP values of mixtures, but not for properties like viscosity. What alternative mixing rule is used for viscosity?",
+    "A batch evaluation of 5 materials against 10 solvents produces 50 RED values. The minimum RED is 0.3 and the maximum is 4.2. What does this range tell you about the diversity of the material-solvent set?",
+    "Compare the Hildebrand solubility parameter approach with the Hansen three-parameter approach. Give an example of two solvents that have similar Hildebrand parameters but very different Hansen parameters, and explain why one dissolves a given polymer while the other does not."
+  ],
+  "uncertain": []
+}

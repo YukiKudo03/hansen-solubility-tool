@@ -1,0 +1,246 @@
+# HSP Textbook Research Outline
+# Hansen溶解度パラメータ — 理論・計算・応用の体系的教科書
+#
+# Structure: 5 Parts, 20 Chapters covering all 117 core modules
+# Target: Graduate-level textbook with practical software demonstrations
+
+topic: "Hansen Solubility Parameters: Theory, Computation, and Applications"
+
+execution:
+  output_dir: ./hsp-textbook/results
+  batch_size: 4
+  items_per_agent: 1
+
+items:
+  # ═══════════════════════════════════════════════════════════
+  # PART I: 基礎理論 (Fundamentals)
+  # ═══════════════════════════════════════════════════════════
+
+  - name: "Ch01_HSP_Fundamentals"
+    category: "Part I: Fundamentals"
+    description: >
+      HSPの基礎理論。Hildebrand溶解度パラメータからHansen三次元パラメータ
+      (δD, δP, δH)への発展。Ra距離、RED値、Hansen球の概念。
+      5段階リスク分類システム。溶媒混合のHSP計算（体積分率加重平均）。
+      バッチ評価マトリクスによる多材料×多溶媒スクリーニング。
+      Related modules: hsp.ts, risk.ts, types.ts, comparison.ts, mixture.ts, validation.ts
+
+  - name: "Ch02_Thermodynamic_Foundations"
+    category: "Part I: Fundamentals"
+    description: >
+      HSPの熱力学的基盤。Flory-Huggins格子理論とχパラメータ。
+      Flory-Rehner理論によるゲル膨潤平衡。Flory希釈理論と結晶性高分子の溶解温度。
+      分配係数のHSP距離からの推算。会合性液体（水・アルコール）の補正。
+      Related modules: flory-huggins.ts, flory-rehner.ts, flory-melting-point.ts,
+      partition-coefficient.ts, associating-liquid-correction.ts
+
+  - name: "Ch03_Temperature_Pressure_Effects"
+    category: "Part I: Fundamentals"
+    description: >
+      温度・圧力によるHSPの変化。Barton法による温度補正と体積膨張係数データ。
+      高圧・超臨界条件でのHSP補正（液体のTait式、scCO2のGiddings式）。
+      Antoine式とRaoult則による蒸発シミュレーション。
+      イオン液体・深共晶溶媒(DES)のHSP推算（カチオン-アニオン組成法）。
+      Related modules: temperature-hsp.ts, thermal-expansion-data.ts, pressure-hsp.ts,
+      evaporation.ts, ionic-liquid-des-hsp.ts
+
+  - name: "Ch04_HSP_Estimation_Methods"
+    category: "Part I: Fundamentals"
+    description: >
+      HSP推算法の全体系。Van Krevelen-Hoftyzer法とStefanis-Panayiotou法による
+      族寄与法。共重合体のHSP推定（体積分率加重）。溶解試験データからの
+      Nelder-Mead最適球当てはめ。QSPR分子記述子ベースのML予測。
+      Bootstrap法による95%信頼区間。逆問題としての表面HSP決定。
+      Related modules: group-contribution.ts, group-contribution-updates.ts,
+      copolymer-hsp-estimation.ts, sphere-fitting.ts, ml-hsp-prediction.ts,
+      hsp-uncertainty-quantification.ts, surface-hsp-determination.ts
+
+  # ═══════════════════════════════════════════════════════════
+  # PART II: 表面科学と接着 (Surface Science & Adhesion)
+  # ═══════════════════════════════════════════════════════════
+
+  - name: "Ch05_Contact_Angle_Wettability"
+    category: "Part II: Surface Science"
+    description: >
+      接触角と濡れ性の科学。Nakamoto-Yamamoto式によるHSPベース接触角推定。
+      Owens-Wendt法による表面エネルギー成分分割。6段階濡れ性分類
+      （超親水性～超疎水性）。接着仕事(Wa)のOwens-Wendt-Kaelbleモデル。
+      表面処理の前後効果定量化（Wa/Raの変化）。
+      Related modules: contact-angle.ts, contact-angle-methods.ts, wettability.ts,
+      work-of-adhesion.ts, surface-treatment-quantification.ts
+
+  - name: "Ch06_Adhesion_Engineering"
+    category: "Part II: Surface Science"
+    description: >
+      接着設計工学。Ra距離ベースの接着強度予測。インク-基材密着性評価
+      （Wa + Ra複合評価）。多層コーティング界面接着（最弱リンク解析）。
+      構造接着設計（二重Wa閾値）。プライマーレス接着設計（中間HSP提案）。
+      感圧接着テープ剥離強度（Wa相関）。印刷電子デバイスの濡れ性評価。
+      Related modules: adhesion.ts, ink-substrate-adhesion.ts,
+      multilayer-coating-adhesion.ts, structural-adhesive-joint.ts,
+      primerless-adhesion.ts, psa-peel-strength.ts, printed-electronics-wetting.ts
+
+  # ═══════════════════════════════════════════════════════════
+  # PART III: 高分子科学 (Polymer Science)
+  # ═══════════════════════════════════════════════════════════
+
+  - name: "Ch07_Polymer_Solubility_Swelling"
+    category: "Part III: Polymer Science"
+    description: >
+      高分子の溶解性と膨潤。RED値による5段階リスク分類。エラストマー/ゴムの
+      膨潤度分類（RED逆論理）。耐薬品性予測（RED大=耐性良）。
+      環境応力亀裂(ESC)のRED帯域（0.7-1.3危険帯）。ゴム配合設計。
+      ハイドロゲル平衡膨潤（Flory-Rehner自動化）。
+      Related modules: swelling.ts, chemical-resistance.ts, esc-classification.ts,
+      esc-pipeline.ts, rubber-compounding-design.ts, hydrogel-swelling-equilibrium.ts
+
+  - name: "Ch08_Polymer_Blends_Recycling"
+    category: "Part III: Polymer Science"
+    description: >
+      ポリマーブレンドとリサイクル。Flory-Huggins理論に基づく二成分ブレンド
+      相溶性予測。N×Nリサイクル相溶性マトリクス。ブロック共重合体による
+      相溶化剤選定。結晶性ポリマーの溶解温度予測。添加剤ブルーミング/移行リスク。
+      熱硬化樹脂の硬化剤選定。繊維の染色性予測。
+      Related modules: polymer-blend-miscibility.ts, polymer-recycling-compatibility.ts,
+      compatibilizer-selection.ts, crystalline-polymer-dissolution.ts,
+      polymer-additive-migration.ts, thermoset-curing-agent.ts, fiber-dyeability.ts
+
+  # ═══════════════════════════════════════════════════════════
+  # PART IV: 応用分野 (Application Domains)
+  # ═══════════════════════════════════════════════════════════
+
+  - name: "Ch09_Pharmaceutical_Drug_Delivery"
+    category: "Part IV: Applications"
+    description: >
+      医薬品とドラッグデリバリー。薬物溶解性のRED分類。経皮吸収促進剤選定
+      （3成分薬物-皮膚-促進剤系）。リポソーム透過性。ナノ粒子薬物ローディング。
+      共結晶スクリーニング（API-コフォーマー対）。多形/溶媒和物リスク
+      （RED帯域0.5-1.5）。キャリア選定。吸入薬プロペラント適合性。
+      Related modules: drug-solubility.ts, transdermal-enhancer.ts,
+      liposome-permeability.ts, nanoparticle-drug-loading.ts,
+      cocrystal-screening.ts, polymorph-solvate-risk.ts, carrier-selection.ts,
+      inhalation-drug-propellant.ts
+
+  - name: "Ch10_Biopharmaceuticals_Excipients"
+    category: "Part IV: Applications"
+    description: >
+      バイオ医薬品と賦形剤。タンパク質凝集リスク評価（バッファー系）。
+      バイオ製剤バッファー安定性（会合性液体補正付き）。賦形剤-API適合性。
+      残留溶媒リスク予測（RED逆論理）。溶解度のGreenhalgh-Williams推定
+      （RED + logP）。GHS安全性分類統合。
+      Related modules: protein-aggregation-risk.ts, biologic-formulation-buffer.ts,
+      excipient-compatibility.ts, residual-solvent-prediction.ts,
+      solubility-estimation.ts, ghs-safety.ts
+
+  - name: "Ch11_Nanomaterials_Dispersion"
+    category: "Part IV: Applications"
+    description: >
+      ナノ材料の分散科学。ナノ粒子分散のREDスクリーニング。
+      CNT/グラフェン分散溶媒選定。MXene (Ti3C2Tx)の水系/DMSO分散。
+      量子ドットリガンド交換溶媒選定。分散剤のDual-HSP評価
+      （anchor HSP + solvation HSP）。顔料分散安定性。
+      Related modules: cnt-graphene-dispersion.ts, mxene-dispersion.ts,
+      quantum-dot-ligand-exchange.ts, dispersant-selection.ts,
+      pigment-dispersion-stability.ts
+
+  - name: "Ch12_Coatings_Films"
+    category: "Part IV: Applications"
+    description: >
+      コーティングと薄膜。コーティング欠陥予測（接着+Marangoni効果）。
+      フォトレジスト現像液適合性（溶解コントラスト）。有機半導体薄膜形成。
+      誘電体膜品質スクリーニング。防落書きコーティング（RED逆論理）。
+      3D印刷溶媒スムージング（RED帯域0.5-1.5最適）。
+      封止材/アンダーフィル適合性。可塑剤選定。
+      Related modules: coating-defect-prediction.ts, photoresist-developer.ts,
+      dissolution-contrast.ts, organic-semiconductor-film.ts, dielectric-film.ts,
+      anti-graffiti-coating.ts, printing3d-smoothing.ts,
+      underfill-encapsulant.ts, plasticizer.ts
+
+  - name: "Ch13_Energy_Environment"
+    category: "Part IV: Applications"
+    description: >
+      エネルギー・環境応用。リチウムイオン電池電解液溶媒スクリーニング
+      （RED + 誘電率推定）。水素貯蔵材料の溶媒適合性。CO2吸収材選定。
+      超臨界CO2共溶媒選定（圧力補正HSP）。膜分離選択性（二重Ra²）。
+      バイオ燃料材料適合性。ガスHSPデータベース（CO2, O2, N2, H2等）。
+      Related modules: li-ion-battery-electrolyte.ts, hydrogen-storage-material.ts,
+      co2-absorbent-selection.ts, supercritical-co2-cosolvent.ts,
+      membrane-separation-selectivity.ts, biofuel-material-compatibility.ts,
+      gas-solubility.ts, polymer-membrane-gas-permeability.ts
+
+  - name: "Ch14_Food_Cosmetics"
+    category: "Part IV: Applications"
+    description: >
+      食品・化粧品。フレーバースカルピング（包装材によるアロマ吸着）リスク予測。
+      食品包装材の溶出リスク（RED逆論理）。化粧品エマルション安定性（O/W vs W/O）。
+      香料カプセル化壁材安定性。日焼け止めUVフィルター溶解性。
+      天然色素抽出効率。精油抽出溶媒スクリーニング。
+      Related modules: flavor-scalping.ts, flavor-scalping-prediction.ts,
+      food-packaging-migration.ts, cosmetic-emulsion-stability.ts,
+      fragrance-encapsulation.ts, sunscreen-uv-filter.ts,
+      natural-dye-extraction.ts, essential-oil-extraction.ts
+
+  - name: "Ch15_Industrial_Specialty"
+    category: "Part IV: Applications"
+    description: >
+      産業特殊応用。洗浄剤配合（土壌に対する洗浄効果）。
+      土壌汚染修復溶媒選定。ペロブスカイト溶媒工学
+      （良溶媒/貧溶媒分類）。UV硬化インクモノマー選定。
+      PCM（相変化材料）カプセル安定性。
+      Related modules: cleaning-product-formulation.ts,
+      soil-contaminant-extraction.ts, perovskite-solvent-engineering.ts,
+      uv-curable-ink-monomer.ts, pcm-encapsulation.ts
+
+  # ═══════════════════════════════════════════════════════════
+  # PART V: 先端手法と実践 (Advanced Methods & Practice)
+  # ═══════════════════════════════════════════════════════════
+
+  - name: "Ch16_Solvent_Selection_Optimization"
+    category: "Part V: Advanced Methods"
+    description: >
+      溶媒選定と最適化。溶媒スクリーニング/フィルタリング。グリーン溶媒代替
+      （REACH適合 + Ra距離ランキング + 安全スコア）。ブレンド最適化
+      （グリッドサーチ）。多成分最適化（4+成分、差分進化法）。
+      多目的最適化（HSP + 物性 + 安全性加重、Pareto最適）。
+      Related modules: solvent-finder.ts, solvent-substitution-design.ts,
+      green-solvent.ts, blend-optimizer.ts, multicomponent-optimizer.ts,
+      multi-objective.ts
+
+  - name: "Ch17_Visualization_Analysis"
+    category: "Part V: Advanced Methods"
+    description: >
+      HSP空間の可視化と解析。3D散布図とHansen球の可視化。
+      Teasプロット（三角座標、fd-fp-fh分率）。Bagleyプロット
+      （δV vs δHの2D表現）。2D射影（3つの直交射影面）。
+      データの解釈と意思決定支援。
+      Related modules: hsp-visualization.ts, teas-plot.ts,
+      bagley-plot.ts, projection-2d.ts
+
+  - name: "Ch18_Data_Management_Quality"
+    category: "Part V: Advanced Methods"
+    description: >
+      データ管理と品質保証。CSVインポート/エクスポート。データベース設計
+      （SQLite + リポジトリパターン）。シードデータ（溶媒135種、ナノ粒子18種、
+      薬物16種、ポリマー41種）。ブックマークと評価履歴。精度警告システム。
+      入力バリデーション。PDFレポート生成。MD結果インポート。
+      Related modules: csv-import.ts, bookmark.ts, evaluation-history.ts,
+      accuracy-warnings.ts, pdf-report.ts, report.ts, md-hsp-import.ts
+
+  - name: "Ch19_Software_Architecture"
+    category: "Part V: Advanced Methods"
+    description: >
+      ソフトウェアアーキテクチャと設計原則。Electron + React + TypeScript。
+      純粋関数としてのドメインロジック（src/core/の117モジュール）。
+      リポジトリパターンによるデータアクセス。IPC通信設計。
+      テスト駆動開発（2604テスト、98.88%カバレッジ）。E2Eテスト（295テスト）。
+      Related modules: All infrastructure modules
+
+  - name: "Ch20_Future_Directions"
+    category: "Part V: Advanced Methods"
+    description: >
+      HSP研究の将来展望。機械学習によるHSP予測の進展。
+      分子動力学シミュレーションとの連携。高次元パラメータ空間の探索。
+      リアルタイム実験データとの統合。クラウドベースの協調データベース。
+      量子化学計算からのHSP導出。サステナビリティ指標との統合。
+      Related modules: ml-hsp-prediction.ts, md-hsp-import.ts,
+      hsp-uncertainty-quantification.ts

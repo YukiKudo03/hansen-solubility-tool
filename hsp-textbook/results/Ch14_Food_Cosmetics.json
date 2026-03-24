@@ -1,0 +1,270 @@
+{
+  "chapter_title": "食品・化粧品",
+  "chapter_title_en": "Food and Cosmetics",
+  "level": "chapter",
+  "parent": "Part IV: Applications",
+  "synopsis": "This chapter applies Hansen Solubility Parameters to the food, fragrance, and cosmetics industries. Topics include flavor scalping prediction (aroma absorption by packaging polymers using inverse RED logic where low RED indicates high scalping risk), food packaging migration risk assessment (leaching of monomers and additives into food), cosmetic emulsion stability prediction using Bancroft's rule with HSP-based oil/emulsifier/water Ra distances, fragrance encapsulation wall material selection (high RED for stable capsules), sunscreen UV filter solubility in vehicle bases, natural dye extraction solvent optimization, and essential oil extraction solvent screening.",
+  "key_concepts": [
+    "Flavor scalping: absorption of food aroma compounds by packaging polymers, predicted by RED between polymer and aroma molecules",
+    "Inverse RED logic for scalping: RED < 0.8 indicates high scalping risk (polymer-aroma affinity), RED >= 1.2 indicates low risk",
+    "Food packaging migration: leaching of residual monomers, plasticizers, and additives from packaging into food simulants",
+    "Migration risk screening: RED < 0.8 between packaging and migrant substance indicates high migration probability",
+    "Bancroft's rule for emulsion type prediction: the phase in which the emulsifier is more soluble becomes the continuous phase",
+    "HSP-based emulsion type classification: Ra(oil, emulsifier) < Ra(emulsifier, water) predicts W/O; the reverse predicts O/W",
+    "Emulsion stability via dominant Ra: min(Ra_oil_emulsifier, Ra_emulsifier_water) determines stability level",
+    "Fragrance encapsulation stability: high RED between wall material and fragrance indicates strong barrier properties (RED >= 1.5 is excellent)",
+    "Sunscreen UV filter solubility: RED < 0.7 indicates excellent dissolution in vehicle base, RED >= 1.0 indicates crystallization risk",
+    "Natural dye extraction efficiency: RED between dye and solvent predicts extraction yield, with RED < 0.7 being optimal",
+    "Essential oil extraction solvent screening using the same RED-based extraction efficiency framework as natural dye extraction",
+    "Three-component HSP analysis for cosmetic emulsion systems (oil phase, emulsifier, water phase)",
+    "Food-contact regulatory context: HSP screening as a pre-regulatory tool for identifying high-risk packaging-food combinations"
+  ],
+  "equations": [
+    {
+      "name": "Hansen distance (Ra)",
+      "latex": "Ra = \\sqrt{4(\\delta_{D1} - \\delta_{D2})^2 + (\\delta_{P1} - \\delta_{P2})^2 + (\\delta_{H1} - \\delta_{H2})^2}",
+      "explanation": "Fundamental HSP distance used throughout this chapter for all pairwise affinity calculations between packaging, food components, cosmetic ingredients, and solvents"
+    },
+    {
+      "name": "Relative Energy Difference (RED)",
+      "latex": "RED = \\frac{Ra}{R_0}",
+      "explanation": "Ratio of HSP distance to interaction radius; the interpretation direction varies by application (low RED = risk for scalping/migration, high RED = desirable for encapsulation)"
+    },
+    {
+      "name": "Flavor scalping risk classification",
+      "latex": "\\text{Risk} = \\begin{cases} \\text{High Scalping} & RED < 0.8 \\\\ \\text{Moderate} & 0.8 \\leq RED < 1.2 \\\\ \\text{Low Scalping} & RED \\geq 1.2 \\end{cases}",
+      "explanation": "Classification of aroma absorption risk by packaging polymer; low RED means the polymer has high affinity for the aroma compound and will absorb it"
+    },
+    {
+      "name": "Packaging migration risk classification",
+      "latex": "\\text{Risk} = \\begin{cases} \\text{High Migration} & RED < 0.8 \\\\ \\text{Moderate} & 0.8 \\leq RED < 1.2 \\\\ \\text{Low Migration} & RED \\geq 1.2 \\end{cases}",
+      "explanation": "Classification of substance migration from packaging into food; low RED indicates the migrant is highly soluble in the food matrix, increasing leaching probability"
+    },
+    {
+      "name": "Emulsion type prediction (Bancroft's rule via HSP)",
+      "latex": "\\text{Type} = \\begin{cases} \\text{W/O} & Ra_{oil-emul} < Ra_{emul-water} \\\\ \\text{O/W} & Ra_{oil-emul} \\geq Ra_{emul-water} \\end{cases}",
+      "explanation": "The emulsifier partitions to the phase with which it has lower Ra; when the emulsifier is closer to the oil phase (lower Ra), a W/O emulsion forms"
+    },
+    {
+      "name": "Emulsion stability assessment",
+      "latex": "Ra_{dominant} = \\min(Ra_{oil-emul}, Ra_{emul-water}), \\quad \\text{Stability} = \\begin{cases} \\text{Stable} & Ra_{dom} < 4 \\\\ \\text{Moderate} & 4 \\leq Ra_{dom} < 8 \\\\ \\text{Unstable} & Ra_{dom} \\geq 8 \\end{cases}",
+      "explanation": "Stability is governed by how closely the emulsifier matches one of the two phases; lower dominant Ra indicates stronger anchoring of the emulsifier at the interface"
+    },
+    {
+      "name": "Fragrance encapsulation quality",
+      "latex": "\\text{Quality} = \\begin{cases} \\text{Poor} & RED < 1.0 \\\\ \\text{Good} & 1.0 \\leq RED < 1.5 \\\\ \\text{Excellent} & RED \\geq 1.5 \\end{cases}",
+      "explanation": "Higher RED between wall material and fragrance means the wall is a poor solvent for the fragrance, thus providing better containment and slower release"
+    },
+    {
+      "name": "UV filter solubility classification",
+      "latex": "\\text{Solubility} = \\begin{cases} \\text{Excellent} & RED < 0.7 \\\\ \\text{Good} & 0.7 \\leq RED < 1.0 \\\\ \\text{Poor (crystallization risk)} & RED \\geq 1.0 \\end{cases}",
+      "explanation": "For sunscreen formulation, the UV filter must remain dissolved in the vehicle base; RED < 0.7 ensures high solubility and reliable SPF performance"
+    },
+    {
+      "name": "Extraction efficiency classification (natural dye and essential oil)",
+      "latex": "\\text{Efficiency} = \\begin{cases} \\text{Excellent} & RED < 0.7 \\\\ \\text{Good} & 0.7 \\leq RED < 1.0 \\\\ \\text{Low} & RED \\geq 1.0 \\end{cases}",
+      "explanation": "For solvent extraction of natural dyes and essential oils, lower RED indicates higher thermodynamic affinity between solute and solvent, leading to greater extraction yield"
+    }
+  ],
+  "historical_context": "The application of solubility parameters to food packaging interactions began in the 1980s-1990s, driven by regulatory concerns over migration of packaging components into food. Piringer and Baner (2008) systematized the thermodynamic modeling of packaging-food interactions, and HSP-based screening was proposed as a rapid pre-regulatory assessment tool. Flavor scalping (the selective absorption of aroma compounds by packaging polymers) was first systematically studied by Mannheim et al. (1987) and Halek and Luttmann (1991), who identified polyethylene and polypropylene as particularly problematic for citrus and beverage flavor compounds. Nielsen and Jagerstad (1994) connected Hildebrand solubility parameters to scalping rates. The cosmetics applications emerged from the formulation science community, where Bancroft's rule (1913) for emulsion type prediction was reinterpreted through HSP distances by researchers in the 2000s. Abbott and Hansen (HSPiP software, 2008-2020) popularized the use of HSP for cosmetic emulsion design, sunscreen formulation, and fragrance encapsulation. UV filter crystallization in sunscreen products became an industry concern in the 2010s, with HSP analysis providing a predictive framework for filter-vehicle compatibility. Natural product extraction using HSP-guided solvent selection was advanced by Generino et al. (2015) and Yara-Varon et al. (2016) for essential oils and plant pigments, supporting the green chemistry movement toward safer, bio-based extraction solvents. [uncertain]",
+  "related_project_modules": [
+    "flavor-scalping.ts",
+    "flavor-scalping-prediction.ts",
+    "food-packaging-migration.ts",
+    "cosmetic-emulsion-stability.ts",
+    "fragrance-encapsulation.ts",
+    "sunscreen-uv-filter.ts",
+    "natural-dye-extraction.ts",
+    "essential-oil-extraction.ts"
+  ],
+  "prerequisites": [
+    "Ch01_HSP_Fundamentals",
+    "Ch02_Thermodynamic_Foundations",
+    "Ch07_Polymer_Solubility_Swelling"
+  ],
+  "learning_objectives": [
+    "Predict flavor scalping risk for packaging-aroma pairs using inverse RED logic and identify packaging materials that minimize aroma loss in food products",
+    "Screen food packaging materials for migration risk of residual monomers and additives using RED-based classification and relate results to regulatory thresholds",
+    "Determine emulsion type (O/W vs W/O) and stability for cosmetic formulations using three-component HSP distance analysis based on Bancroft's rule",
+    "Evaluate fragrance encapsulation wall materials by selecting polymers with high RED against target fragrances to maximize capsule retention time",
+    "Apply RED-based solvent screening to optimize extraction efficiency for natural dyes and essential oils, supporting green chemistry solvent selection"
+  ],
+  "practical_applications": [
+    "Food packaging material selection to minimize flavor scalping in juice, dairy, and beverage products",
+    "Regulatory pre-screening of food-contact materials for migration risk of plasticizers, antioxidants, and residual monomers",
+    "Cosmetic emulsion formulation: selecting emulsifiers to achieve target emulsion type (O/W for lotions, W/O for cold creams) with predicted stability",
+    "Fragrance microencapsulation for laundry detergents, fabric softeners, and long-lasting perfumes using HSP-optimized wall materials",
+    "Sunscreen formulation: ensuring UV filter solubility in vehicle base to prevent crystallization and maintain SPF performance",
+    "Natural dye extraction from plant materials (turmeric, indigo, cochineal) using HSP-optimized green solvents",
+    "Essential oil extraction solvent screening for perfumery and aromatherapy industries",
+    "Quality control of cosmetic raw materials by verifying HSP compatibility between active ingredients and formulation bases"
+  ],
+  "worked_examples": [
+    {
+      "title": "Flavor scalping risk assessment for orange juice in PE packaging",
+      "description": "Calculate RED values between polyethylene packaging (with known HSP and R0) and key orange juice aroma compounds (limonene, linalool, octanal, ethyl butyrate). Classify each aroma compound by scalping risk level and identify which compounds are most vulnerable to absorption. Propose alternative packaging materials (PET, glass-coated) that reduce scalping risk."
+    },
+    {
+      "title": "Cosmetic emulsion type and stability prediction for a moisturizing cream",
+      "description": "Given HSP values for mineral oil (oil phase), Tween 80 (emulsifier), and water, calculate Ra(oil, emulsifier) and Ra(emulsifier, water). Predict emulsion type using Bancroft's rule and assess stability from the dominant Ra value. Then substitute the emulsifier with Span 80 and predict how the emulsion type switches from O/W to W/O."
+    },
+    {
+      "title": "Sunscreen UV filter solubility screening in cosmetic bases",
+      "description": "Screen five common UV filters (avobenzone, octinoxate, octocrylene, homosalate, oxybenzone) against three vehicle bases (isopropyl myristate, C12-15 alkyl benzoate, caprylic/capric triglyceride). Calculate RED for each pair and identify optimal vehicle-filter combinations that ensure RED < 0.7 for long-term stability without crystallization."
+    },
+    {
+      "title": "Green solvent selection for essential oil extraction from lavender",
+      "description": "Screen 10 candidate solvents (ethanol, ethyl acetate, limonene, cyclopentyl methyl ether, 2-methylTHF, hexane, supercritical CO2-equivalent, etc.) against lavender essential oil HSP. Rank solvents by RED and extraction efficiency level. Identify the best green solvent alternatives to hexane that maintain RED < 0.7."
+    }
+  ],
+  "key_references": [
+    {
+      "author": "Hansen, C.M.",
+      "year": 2007,
+      "title": "Hansen Solubility Parameters: A User's Handbook, 2nd Edition, CRC Press"
+    },
+    {
+      "author": "Piringer, O.G.; Baner, A.L.",
+      "year": 2008,
+      "title": "Plastic Packaging: Interactions with Food and Pharmaceuticals, 2nd Edition, Wiley-VCH"
+    },
+    {
+      "author": "Halek, G.W.; Luttmann, J.P.",
+      "year": 1991,
+      "title": "Sorption Behavior of Citrus-Flavor Compounds in Polyethylenes and Polypropylenes: Effects of Permeant Functional Groups and Polymer Structure, in Food and Packaging Interactions II, ACS Symposium Series 473"
+    },
+    {
+      "author": "Abbott, S.; Hansen, C.M.",
+      "year": 2020,
+      "title": "Hansen Solubility Parameters in Practice (HSPiP), 5th Edition, www.hansen-solubility.com"
+    },
+    {
+      "author": "Bancroft, W.D.",
+      "year": 1913,
+      "title": "The Theory of Emulsification V, Journal of Physical Chemistry, 17(6), 501-519"
+    },
+    {
+      "author": "Yara-Varon, E.; Li, Y.; Balcells, M.; Canela-Garayoa, R.; Fabiano-Tixier, A.-S.; Chemat, F.",
+      "year": 2017,
+      "title": "Vegetable Oils as Alternative Solvents for Green Oleo-Extraction, Purification and Formulation of Food and Natural Products, Molecules, 22(9), 1474 [uncertain]"
+    },
+    {
+      "author": "Archer, W.L.",
+      "year": 1996,
+      "title": "Industrial Solvents Handbook, Marcel Dekker"
+    },
+    {
+      "author": "Mannheim, C.H.; Miltz, J.; Letzter, A.",
+      "year": 1987,
+      "title": "Interaction Between Polyethylene Laminated Cartons and Aseptically Packed Citrus Juices, Journal of Food Science, 52(3), 737-740"
+    },
+    {
+      "author": "Rowe, R.C.",
+      "year": 1988,
+      "title": "Adhesion of Film Coatings to Tablet Surfaces - A Theoretical Approach Based on Solubility Parameters, International Journal of Pharmaceutics, 41(3), 219-222 [uncertain]"
+    },
+    {
+      "author": "Chemat, F.; Vian, M.A.; Cravotto, G.",
+      "year": 2012,
+      "title": "Green Extraction of Natural Products: Concept and Principles, International Journal of Molecular Sciences, 13(7), 8615-8627"
+    }
+  ],
+  "cross_references": [
+    "Ch01_HSP_Fundamentals",
+    "Ch02_Thermodynamic_Foundations",
+    "Ch07_Polymer_Solubility_Swelling",
+    "Ch08_Polymer_Blends_Recycling",
+    "Ch09_Pharmaceutical_Drug_Delivery",
+    "Ch11_Nanomaterials_Dispersion",
+    "Ch12_Coatings_Films"
+  ],
+  "difficulty_level": "graduate",
+  "estimated_pages": 55,
+  "figures_needed": [
+    {
+      "title": "Flavor Scalping Risk Map in HSP Space",
+      "description": "3D HSP plot showing a packaging polymer sphere with aroma compounds positioned by their HSP values; compounds inside the sphere (RED < 1) are color-coded red for high scalping risk, yellow for moderate, and green for low risk outside the sphere"
+    },
+    {
+      "title": "Inverse RED Logic Diagram for Scalping vs Migration",
+      "description": "Conceptual diagram contrasting the standard RED interpretation (RED < 1 = compatible) with the inverse logic used in scalping (RED < 1 = risk) and the same-direction logic used in migration (RED < 1 = migration risk), showing how the same Ra/R0 calculation serves both purposes"
+    },
+    {
+      "title": "Emulsion Type Prediction Triangle",
+      "description": "Triangular diagram with oil, emulsifier, and water at vertices, showing Ra distances as edge lengths; regions labeled O/W and W/O based on which Ra is smaller, with stability zones color-coded by dominant Ra value"
+    },
+    {
+      "title": "Bancroft's Rule Visualization via HSP Distances",
+      "description": "HSP space plot showing an oil phase point, water phase point, and two emulsifier candidates positioned differently relative to both; arrows indicate Ra distances to demonstrate how emulsifier position determines emulsion type"
+    },
+    {
+      "title": "Fragrance Encapsulation RED Bar Chart",
+      "description": "Horizontal bar chart showing RED values for multiple fragrance-wall material pairs, with color bands indicating Poor (RED < 1.0, red), Good (1.0-1.5, yellow), and Excellent (RED >= 1.5, green) encapsulation quality"
+    },
+    {
+      "title": "UV Filter Solubility in Cosmetic Vehicle Bases",
+      "description": "Heat map matrix of RED values for UV filter-vehicle combinations, with cells colored green (Excellent, RED < 0.7), yellow (Good, 0.7-1.0), and red (Poor, crystallization risk, RED >= 1.0)"
+    },
+    {
+      "title": "Green Solvent Screening for Natural Product Extraction",
+      "description": "2D HSP projection (deltaP vs deltaH at fixed deltaD) showing the target natural product sphere with candidate extraction solvents positioned, distinguishing conventional solvents (hexane, DCM) from green alternatives (ethanol, ethyl acetate, limonene)"
+    },
+    {
+      "title": "Packaging Migration Screening Workflow",
+      "description": "Flowchart showing the HSP-based pre-screening pipeline: input packaging HSP and migrant HSP, calculate Ra and RED, classify migration risk, and connect to regulatory threshold evaluation for compliance assessment"
+    }
+  ],
+  "tables_needed": [
+    {
+      "title": "HSP Values for Common Food Packaging Polymers",
+      "description": "Table of deltaD, deltaP, deltaH, and R0 for LDPE, HDPE, PP, PET, PVC, PS, PA (nylon), EVOH, and PLA packaging materials"
+    },
+    {
+      "title": "HSP Values for Food Aroma Compounds",
+      "description": "Table of deltaD, deltaP, deltaH for 15+ aroma compounds including limonene, linalool, vanillin, ethyl butyrate, diacetyl, hexanal, octanal, cinnamaldehyde, menthol, and eugenol"
+    },
+    {
+      "title": "Flavor Scalping Risk Matrix: Packaging vs Aroma",
+      "description": "Matrix of RED values and scalping risk levels for common packaging-aroma pairs, highlighting high-risk combinations (e.g., PE-limonene, PP-linalool)"
+    },
+    {
+      "title": "Common Food Packaging Migrants and Their HSP Values",
+      "description": "Table of residual monomers (styrene, vinyl chloride, BPA), plasticizers (DEHP, DEHA), and antioxidants (BHT, Irganox 1076) with HSP values and regulatory limits"
+    },
+    {
+      "title": "Cosmetic Emulsifier HSP Values and HLB Correlation",
+      "description": "Table of common emulsifiers (Tween 20/60/80, Span 20/60/80, lecithin, ceteareth-20) with HSP values, HLB numbers, and predicted emulsion type from HSP analysis"
+    },
+    {
+      "title": "UV Filter HSP Values and Vehicle Compatibility",
+      "description": "Table of common organic UV filters (avobenzone, octinoxate, octocrylene, homosalate, oxybenzone, tinosorb S) with HSP values and RED against standard cosmetic vehicles"
+    },
+    {
+      "title": "Essential Oil HSP Values for Extraction Screening",
+      "description": "Table of HSP values for essential oils (lavender, tea tree, eucalyptus, peppermint, rosemary, chamomile) with recommended extraction solvents ranked by RED"
+    },
+    {
+      "title": "Encapsulation Wall Material HSP Values",
+      "description": "Table of common wall materials (gelatin, gum arabic, maltodextrin, PLGA, chitosan, cyclodextrin) with HSP values and R0, used for fragrance encapsulation screening"
+    }
+  ],
+  "software_demo": {
+    "tab": "Flavor Scalping Prediction tab, Food Packaging Migration tab, Cosmetic Emulsion Stability tab, Fragrance Encapsulation tab, Sunscreen UV Filter tab, Natural Dye Extraction tab, and Essential Oil Extraction tab",
+    "inputs": "In the Flavor Scalping tab, enter packaging polymer HSP (e.g., LDPE: dD=16.5, dP=3.4, dH=3.4, R0=6.0) and select aroma compounds from the database. In the Cosmetic Emulsion tab, enter HSP values for oil phase, emulsifier, and water phase. In the Sunscreen UV Filter tab, enter vehicle base HSP and R0, then select UV filter candidates. In the Natural Dye Extraction tab, enter dye HSP and R0 and select candidate solvents.",
+    "expected_output": "The Flavor Scalping tab displays a table of aroma compounds sorted by RED (ascending = highest risk first), with scalping level classification (High/Moderate/Low) and color-coded indicators. The Emulsion Stability tab shows emulsion type prediction (O/W or W/O), stability level, and Ra distances. The UV Filter tab shows a ranked list of UV filters by solubility level. The Extraction tabs show solvents ranked by extraction efficiency.",
+    "workflow": "1. Open Flavor Scalping tab, enter LDPE packaging HSP, add limonene, linalool, and vanillin as aroma compounds. Observe that limonene shows High Scalping risk (RED < 0.8). 2. Switch to Food Packaging Migration tab, enter the same LDPE HSP, add styrene monomer and BHT as potential migrants. 3. Open Cosmetic Emulsion tab, enter mineral oil HSP, Tween 80 HSP, and water HSP. Verify O/W type prediction. Replace Tween 80 with Span 80 and observe the switch to W/O. 4. Open Sunscreen UV Filter tab, enter isopropyl myristate vehicle, screen avobenzone and octocrylene. 5. Open Essential Oil Extraction tab, enter lavender oil HSP, and screen ethanol, ethyl acetate, and hexane."
+  },
+  "review_questions": [
+    "Explain the inverse RED logic used in flavor scalping prediction. Why does a low RED value between a packaging polymer and an aroma compound indicate a high scalping risk, and how does this contrast with the standard solubility interpretation?",
+    "A cosmetic formulator wants to create an O/W moisturizing lotion. Using Bancroft's rule interpreted through HSP distances, describe how to select an emulsifier that favors O/W formation. What HSP relationship between the emulsifier, oil phase, and water phase is required?",
+    "Compare the RED interpretation for fragrance encapsulation (high RED = good) with the RED interpretation for UV filter solubility in sunscreen (low RED = good). What underlying physical principle explains why the same metric is interpreted in opposite directions for these two applications?",
+    "Discuss how HSP-based screening can serve as a pre-regulatory tool for food packaging migration assessment. What are its advantages and limitations compared to full migration testing under EU Regulation 10/2011 or FDA 21 CFR 170-199?",
+    "A natural product chemist needs to replace hexane with a greener solvent for extracting curcumin from turmeric. Using the extraction efficiency RED framework, outline the solvent selection strategy and identify at least two green solvents that might achieve RED < 0.7 based on HSP reasoning."
+  ],
+  "uncertain": [
+    "historical_context",
+    "estimated_pages",
+    "key_references[5]",
+    "key_references[8]"
+  ]
+}
