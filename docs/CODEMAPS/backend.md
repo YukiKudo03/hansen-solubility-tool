@@ -1,4 +1,4 @@
-<!-- Generated: 2026-03-24 | Files scanned: 15 main/db | Token estimate: ~1200 -->
+<!-- Last Updated: 2026-03-31 | Main process: Electron 41, IPC handlers: 190+, Security: sandbox:true, context isolation, fs.promises, all CRUD validated -->
 
 # Backend — Main Process & IPC Handlers
 
@@ -23,34 +23,35 @@ main.ts → initDb() → Database initialization
 5. Configure auto-updater (electron-updater)
 6. Load dev server or production HTML
 
-## IPC Handlers (src/main/ipc-handlers.ts — 1990 lines)
+## IPC Handlers (src/main/ipc-handlers.ts — 2,050 lines)
 
 ### Pattern
 
 ```typescript
 ipcMain.handle('channel:method', (_, ...args) => {
-  // Validation (throw Error)
-  // Repository query/mutation
+  // Input validation (throw → renderer catches as Error)
+  // Repository query/mutation (synchronous better-sqlite3)
   // Return serialized result
 });
 ```
 
 All handlers:
-- Validate input (throw → renderer catches)
-- No async (synchronous DB)
-- Return serializable objects
+- Input validation: throw Error for invalid args (caught by renderer)
+- Synchronous DB operations (better-sqlite3)
+- Return JSON-serializable objects
+- All update handlers include IPC validation
 
-### Handler Categories (190+)
+### Handler Categories (167+ total)
 
 #### Parts Management (8)
 ```
 parts:getAllGroups()
 parts:getGroupById(id)
 parts:createGroup(dto) → validateName()
-parts:updateGroup(id, dto)
+parts:updateGroup(id, dto) → validateName()
 parts:deleteGroup(id) → cascade delete parts
 parts:createPart(dto) → validatePartInput()
-parts:updatePart(id, dto)
+parts:updatePart(id, dto) → validatePartInput()
 parts:deletePart(id)
 ```
 
@@ -60,7 +61,7 @@ solvents:getAll()
 solvents:getById(id)
 solvents:search(query)
 solvents:create(dto) → validateSolventInput()
-solvents:update(id, dto)
+solvents:update(id, dto) → validateSolventInput()
 solvents:delete(id)
 solvents:getPlasticizers() → notes tagged [可塑剤]
 solvents:createMixture(components) → calculateMixture()
@@ -156,7 +157,7 @@ groupContribution:estimateHSP(groups) → Van Krevelen-Hoftyzer HSP
 comparison:buildMatrix(groupIds, solventIds) → RED heatmap
 ```
 
-#### Extended Pipelines (80+ additional handlers)
+#### Extended Pipelines (60+ additional handlers)
 ```
 評価系 (33 pipelines): ESC, ブレンド相溶性, リサイクル相溶性, 添加剤移行,
   フレーバースカルピング, 包装材溶出, リポソーム透過性, インク-基材密着,
@@ -201,7 +202,7 @@ bookmarks:delete(id)
 ```
 evaluationHistory:list(filters) → history entries
 evaluationHistory:listFiltered(pipeline, status)
-evaluationHistory:save(entry) → auto-save evaluation result
+evaluationHistory:save(entry) → validatePipeline + JSON size cap (1MB)
 evaluationHistory:delete(id)
 evaluationHistory:clear() → delete all
 ```
@@ -210,7 +211,7 @@ evaluationHistory:clear() → delete all
 ```
 csv:importSolvents(csvContent) → parseSolventCsv() → creates N solvents
 csv:importParts(csvContent) → parsePartCsv() → creates N parts
-csv:save(content) → dialog.showSaveDialog() → fs.writeFileSync()
+csv:save(content) → dialog.showSaveDialog() → fs.promises.writeFile()
 ```
 
 ## Repository Pattern (src/db/)
@@ -275,23 +276,29 @@ ipcMain.handle('parts:create', (_, dto) => {
 - `validateDispersantInput()` — name + anchor HSP + solvation HSP + solvation r0
 - `validateBlendOptimizationInput()` — target HSP + part IDs
 
-## Preload Bridge (preload.ts — 10,757 lines)
+## Preload Bridge (preload.ts — 10,800 lines)
 
-Context-isolated proxy to IPC:
+Context-isolated secure proxy to IPC:
 
 ```typescript
 window.api = {
-  parts: { getAllGroups, getGroupById, ... },
-  solvents: { getAll, getById, ... },
-  evaluate: async (...) => ipcRenderer.invoke('evaluate', ...)
-  // All 190+ methods mapped
+  parts: { getAllGroups, getGroupById, ... },  // 8 CRUD handlers
+  solvents: { getAll, getById, search, ... },  // 8 handlers
+  nanoParticles: { ... },                      // 7 handlers
+  drugs: { ... },                              // 7 handlers
+  dispersants: { ... },                        // 5 handlers
+  evaluate: async (...) => ipcRenderer.invoke(...),  // 60+ evaluation handlers
+  settings: { ... },                           // 22 threshold handlers
+  bookmarks: { ... },                          // 3 handlers
+  evaluationHistory: { ... },                  // 5 handlers
+  csv: { ... }                                 // 3 import/export handlers
 }
 ```
 
-Whitelist pattern prevents arbitrary IPC calls.
+**Security:** Whitelist pattern prevents arbitrary IPC calls. No access to ipcRenderer directly from renderer.
 
 ---
 
 **Related:** See `architecture.md` for overview, `frontend.md` for UI components, `data.md` for repository interfaces.
 
-**Last Updated:** 2026-03-24
+**Last Updated:** 2026-03-31

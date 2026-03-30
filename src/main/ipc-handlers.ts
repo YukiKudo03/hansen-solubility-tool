@@ -8,7 +8,7 @@ import { calculateRa, calculateRed } from '../core/hsp';
 import { classifyRisk } from '../core/risk';
 import { classifyDispersibility, DEFAULT_DISPERSIBILITY_THRESHOLDS } from '../core/dispersibility';
 import { screenSolvents, filterByConstraints } from '../core/solvent-finder';
-import { validatePartInput, validateSolventInput, validateName, validateThresholds, validateMixtureInput, validateNanoParticleInput, validateDispersibilityThresholds, validateWettabilityThresholds, validateBlendOptimizationInput, validateSwellingThresholds, validateDrugInput, validateDrugSolubilityThresholds, validateChemicalResistanceThresholds, validatePlasticizerThresholds, validateCarrierThresholds, validateAdhesionThresholds, validateSolventClassifications, validateGreenSolventInput, validateMultiObjectiveInput, validateGroupContributionInput, validateDispersantInput, validateDispersantThresholds, validateESCInput, validateCocrystalInput, validatePrinting3dInput, validateDielectricInput, validateExcipientInput, validatePolymerBlendInput, validateRecyclingInput, validateCompatibilizerInput, validateCopolymerInput, validateAdditiveMigrationInput, validateFlavorScalpingInput, validateFoodPackagingMigrationInput, validateFragranceEncapsulationInput, validateTransdermalEnhancerInput, validateLiposomePermeabilityInput, validateInkSubstrateAdhesionInput, validateMultilayerCoatingInput, validatePSAPeelStrengthInput, validateStructuralAdhesiveJointInput, validateSurfaceTreatmentInput, validateAdhesionStrengthThresholds, validatePigmentDispersionInput, validateCNTGrapheneInput, validateMXeneDispersionInput, validateDrugLoadingInput, validateGasPermeabilityInput, validateMembraneSeparationInput, validateCO2AbsorbentInput, validateHydrogenStorageInput, validateCleaningFormulationInput, validateNaturalDyeExtractionInput, validateEssentialOilExtractionInput, validateSoilRemediationInput, validateResidualSolventInput, validateMultiComponentOptimizationInput, validateLiBatteryElectrolyteInput, validateSolventSubstitutionInput, validateCosmeticEmulsionInput } from '../core/validation';
+import { validatePartInput, validateSolventInput, validateName, validateThresholds, validateMixtureInput, validateNanoParticleInput, validateDispersibilityThresholds, validateWettabilityThresholds, validateBlendOptimizationInput, validateSwellingThresholds, validateDrugInput, validateDrugSolubilityThresholds, validateChemicalResistanceThresholds, validatePlasticizerThresholds, validateCarrierThresholds, validateAdhesionThresholds, validateSolventClassifications, validateGreenSolventInput, validateMultiObjectiveInput, validateGroupContributionInput, validateDispersantInput, validateDispersantThresholds, validateESCInput, validateCocrystalInput, validatePrinting3dInput, validateDielectricInput, validateExcipientInput, validatePolymerBlendInput, validateRecyclingInput, validateCompatibilizerInput, validateCopolymerInput, validateAdditiveMigrationInput, validateFlavorScalpingInput, validateFoodPackagingMigrationInput, validateFragranceEncapsulationInput, validateTransdermalEnhancerInput, validateLiposomePermeabilityInput, validateInkSubstrateAdhesionInput, validateMultilayerCoatingInput, validatePSAPeelStrengthInput, validateStructuralAdhesiveJointInput, validateSurfaceTreatmentInput, validateAdhesionStrengthThresholds, validatePigmentDispersionInput, validateCNTGrapheneInput, validateMXeneDispersionInput, validateDrugLoadingInput, validateGasPermeabilityInput, validateMembraneSeparationInput, validateCO2AbsorbentInput, validateHydrogenStorageInput, validateCleaningFormulationInput, validateNaturalDyeExtractionInput, validateEssentialOilExtractionInput, validateSoilRemediationInput, validateResidualSolventInput, validateMultiComponentOptimizationInput, validateLiBatteryElectrolyteInput, validateSolventSubstitutionInput, validateCosmeticEmulsionInput, validateHSPValues, validateR0 } from '../core/validation';
 import { classifyChemicalResistance, DEFAULT_CHEMICAL_RESISTANCE_THRESHOLDS } from '../core/chemical-resistance';
 import { classifyPlasticizerCompatibility, DEFAULT_PLASTICIZER_THRESHOLDS, screenPlasticizers } from '../core/plasticizer';
 import { classifyCarrierCompatibility, DEFAULT_CARRIER_THRESHOLDS, screenCarriers } from '../core/carrier-selection';
@@ -151,7 +151,10 @@ export function registerIpcHandlers(
     if (err) throw new Error(err);
     return partsRepo.createGroup(dto);
   });
-  ipcMain.handle('parts:updateGroup', (_, id, dto) => partsRepo.updateGroup(id, dto));
+  ipcMain.handle('parts:updateGroup', (_, id, dto) => {
+    if (dto.name !== undefined) { const err = validateName(dto.name); if (err) throw new Error(err); }
+    return partsRepo.updateGroup(id, dto);
+  });
   ipcMain.handle('parts:deleteGroup', (_, id: number) => partsRepo.deleteGroup(id));
 
   // --- 部品 ---
@@ -160,7 +163,14 @@ export function registerIpcHandlers(
     if (err) throw new Error(err);
     return partsRepo.createPart(dto);
   });
-  ipcMain.handle('parts:updatePart', (_, id, dto) => partsRepo.updatePart(id, dto));
+  ipcMain.handle('parts:updatePart', (_, id, dto) => {
+    if (dto.name !== undefined) { const err = validateName(dto.name); if (err) throw new Error(err); }
+    if (dto.deltaD !== undefined || dto.deltaP !== undefined || dto.deltaH !== undefined) {
+      const err = validateHSPValues(dto.deltaD ?? 0, dto.deltaP ?? 0, dto.deltaH ?? 0);
+      if (err) throw new Error(err);
+    }
+    return partsRepo.updatePart(id, dto);
+  });
   ipcMain.handle('parts:deletePart', (_, id: number) => partsRepo.deletePart(id));
 
   // --- 溶媒 ---
@@ -172,7 +182,14 @@ export function registerIpcHandlers(
     if (err) throw new Error(err);
     return solventRepo.createSolvent(dto);
   });
-  ipcMain.handle('solvents:update', (_, id, dto) => solventRepo.updateSolvent(id, dto));
+  ipcMain.handle('solvents:update', (_, id, dto) => {
+    if (dto.name !== undefined) { const err = validateName(dto.name); if (err) throw new Error(err); }
+    if (dto.deltaD !== undefined || dto.deltaP !== undefined || dto.deltaH !== undefined) {
+      const err = validateHSPValues(dto.deltaD ?? 0, dto.deltaP ?? 0, dto.deltaH ?? 0);
+      if (err) throw new Error(err);
+    }
+    return solventRepo.updateSolvent(id, dto);
+  });
   ipcMain.handle('solvents:delete', (_, id: number) => solventRepo.deleteSolvent(id));
 
   // --- 混合溶媒登録 ---
@@ -250,7 +267,7 @@ export function registerIpcHandlers(
       return { saved: false };
     }
 
-    fs.writeFileSync(result.filePath, csvContent, 'utf-8');
+    await fs.promises.writeFile(result.filePath, csvContent, 'utf-8');
     return { saved: true, filePath: result.filePath };
   });
 
@@ -487,7 +504,15 @@ export function registerIpcHandlers(
     if (err) throw new Error(err);
     return drugRepo.create(dto);
   });
-  ipcMain.handle('drugs:update', (_, id, dto) => drugRepo.update(id, dto));
+  ipcMain.handle('drugs:update', (_, id, dto) => {
+    if (dto.name !== undefined) { const err = validateName(dto.name); if (err) throw new Error(err); }
+    if (dto.deltaD !== undefined || dto.deltaP !== undefined || dto.deltaH !== undefined) {
+      const err = validateHSPValues(dto.deltaD ?? 0, dto.deltaP ?? 0, dto.deltaH ?? 0);
+      if (err) throw new Error(err);
+    }
+    if (dto.r0 !== undefined) { const err = validateR0(dto.r0); if (err) throw new Error(err); }
+    return drugRepo.update(id, dto);
+  });
   ipcMain.handle('drugs:delete', (_, id: number) => drugRepo.delete(id));
 
   // --- 薬物溶解性評価 ---
@@ -710,7 +735,13 @@ export function registerIpcHandlers(
     if (!isValidHistoryPipeline(pipeline)) throw new Error(`不正なパイプライン名です: ${pipeline}`);
     return historyRepo.getByPipeline(pipeline);
   });
-  ipcMain.handle('history:save', (_, entry: SerializedHistoryEntry, note?: string) => historyRepo.create(entry, note));
+  ipcMain.handle('history:save', (_, entry: SerializedHistoryEntry, note?: string) => {
+    if (!isValidHistoryPipeline(entry.pipeline)) throw new Error(`不正なパイプライン名です: ${entry.pipeline}`);
+    const MAX_JSON = 1 * 1024 * 1024;
+    if (entry.paramsJson.length > MAX_JSON || entry.resultJson.length > MAX_JSON || (entry.thresholdsJson && entry.thresholdsJson.length > MAX_JSON))
+      throw new Error('履歴データが大きすぎます（上限: 1MB）');
+    return historyRepo.create(entry, note);
+  });
   ipcMain.handle('history:delete', (_, id: number) => historyRepo.delete(id));
   ipcMain.handle('history:deleteOlderThan', (_, days: number) => {
     if (!Number.isFinite(days) || days < 1) throw new Error('日数は1以上の整数を指定してください');
@@ -732,7 +763,10 @@ export function registerIpcHandlers(
       properties: ['openFile'],
     });
     if (result.canceled || result.filePaths.length === 0) return null;
-    return fs.readFileSync(result.filePaths[0], 'utf-8');
+    const stats = await fs.promises.stat(result.filePaths[0]);
+    if (stats.size > MAX_CSV_SIZE)
+      throw new Error(`ファイルが大きすぎます（上限: ${MAX_CSV_SIZE / 1024 / 1024}MB）`);
+    return await fs.promises.readFile(result.filePaths[0], 'utf-8');
   });
 
   // --- 接着性予測 ---
@@ -1776,11 +1810,21 @@ export function registerIpcHandlers(
 
   // --- 結晶性ポリマー溶解温度 ---
   ipcMain.handle('crystallineDissolution:evaluate', (_, polymerHSP: HSPValues, solventHSP: HSPValues, params: CrystallinePolymerParams) => {
+    const e1 = validateHSPValues(polymerHSP.deltaD, polymerHSP.deltaP, polymerHSP.deltaH);
+    if (e1) throw new Error(`ポリマーHSP: ${e1}`);
+    const e2 = validateHSPValues(solventHSP.deltaD, solventHSP.deltaP, solventHSP.deltaH);
+    if (e2) throw new Error(`溶媒HSP: ${e2}`);
     return calculatePolymerDissolutionTemp(polymerHSP, solventHSP, params);
   });
 
   // --- ハイドロゲル膨潤平衡 ---
   ipcMain.handle('hydrogelSwelling:evaluate', (_, gelHSP: HSPValues, solventHSP: HSPValues, crosslinkDensity: number, vs: number) => {
+    const e1 = validateHSPValues(gelHSP.deltaD, gelHSP.deltaP, gelHSP.deltaH);
+    if (e1) throw new Error(`ゲルHSP: ${e1}`);
+    const e2 = validateHSPValues(solventHSP.deltaD, solventHSP.deltaP, solventHSP.deltaH);
+    if (e2) throw new Error(`溶媒HSP: ${e2}`);
+    if (!Number.isFinite(crosslinkDensity) || crosslinkDensity <= 0) throw new Error('架橋密度は正の数値を入力してください');
+    if (!Number.isFinite(vs) || vs <= 0) throw new Error('溶媒モル体積は正の数値を入力してください');
     return calculateHydrogelSwelling(gelHSP, solventHSP, crosslinkDensity, vs);
   });
 
@@ -1797,11 +1841,19 @@ export function registerIpcHandlers(
 
   // --- 熱硬化性樹脂硬化剤選定 ---
   ipcMain.handle('thermosetCuring:screen', (_, resinHSP: HSPValues, resinR0: number, agents: CuringAgent[]) => {
+    const e1 = validateHSPValues(resinHSP.deltaD, resinHSP.deltaP, resinHSP.deltaH);
+    if (e1) throw new Error(`樹脂HSP: ${e1}`);
+    const e2 = validateR0(resinR0);
+    if (e2) throw new Error(e2);
     return screenCuringAgents(resinHSP, resinR0, agents);
   });
 
   // --- 繊維染色性予測 ---
   ipcMain.handle('fiberDyeability:screen', (_, fiberHSP: HSPValues, fiberR0: number, dyes: Dye[]) => {
+    const e1 = validateHSPValues(fiberHSP.deltaD, fiberHSP.deltaP, fiberHSP.deltaH);
+    if (e1) throw new Error(`繊維HSP: ${e1}`);
+    const e2 = validateR0(fiberR0);
+    if (e2) throw new Error(e2);
     return screenDyeability(fiberHSP, fiberR0, dyes);
   });
 

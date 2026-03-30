@@ -132,10 +132,11 @@ describe('DispersantSelectionView', () => {
 
     render(<DispersantSelectionView />);
 
-    // 粒子と溶媒の選択
-    await waitFor(() => expect(mockApi.getAllNanoParticles).toHaveBeenCalled());
+    // 粒子と溶媒の選択（オプションがDOMに描画されるまで待つ）
+    await waitFor(() => expect(screen.getByText(/カーボンブラック/)).toBeInTheDocument());
     const selects = screen.getAllByRole('combobox');
     await user.selectOptions(selects[1], String(particle.id));
+    await waitFor(() => expect(screen.getByText(/NMP/)).toBeInTheDocument());
     await user.selectOptions(selects[2], String(solvent.id));
 
     // 実行ボタンを押す

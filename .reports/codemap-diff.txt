@@ -1,92 +1,65 @@
 CODEMAP UPDATE REPORT
-Generated: 2026-03-24
+Generated: 2026-03-31
 
 SUMMARY
 =======
-Incremental update from 2026-03-22 baseline. Key changes: test count growth
-(2170→2604 unit, 98→295 E2E), hook/badge count increases, IPC handler growth,
-and test infrastructure improvements (pool:forks, pretest rebuild).
+Incremental update from 2026-03-30 baseline. Key changes: security hardening
+(sandbox, IPC validation, fs.promises, DevTools guard), unused dependency removal,
+test fix, and codemap freshness updates.
 
-CHANGES SINCE 2026-03-22
+CHANGES SINCE 2026-03-30
 =========================
 
-1. docs/CODEMAPS/INDEX.md
-   - Pipelines: 70+ -> 90+
-   - IPC handlers: 167 -> 190+
-   - Hooks: 69 -> 79
-   - Unit tests: 2170 -> 2604
-   - E2E tests: 25 specs -> 30 specs (295 tests)
-   - Source files: 349 -> 361
-   - Renderer files: 214 -> 226
-   - Total files: 571 -> 588
+1. Security Hardening
+   - main.ts: sandbox: false → sandbox: true
+   - main.ts: DevTools guarded by NODE_ENV === 'development'
+   - ipc-handlers.ts: Added validation to 4 update handlers (parts:updateGroup,
+     parts:updatePart, solvents:update, drugs:update)
+   - ipc-handlers.ts: Added HSP+R0 validation to 4 new pipeline handlers
+     (crystallineDissolution, hydrogelSwelling, thermosetCuring, fiberDyeability)
+   - ipc-handlers.ts: history:save validates pipeline + 1MB JSON cap
+   - ipc-handlers.ts: import:openFile checks file size before reading
+   - ipc-handlers.ts: fs.writeFileSync → fs.promises.writeFile
+   - ipc-handlers.ts: fs.readFileSync → fs.promises.readFile
+   - sqlite-repository.ts: getThresholds() JSON.parse → try-catch fallback
+   - useDispersantSelection.ts: Added .catch() to useEffect Promise
+   - DispersantSelectionView.tsx: Added .catch() to useEffect Promises
 
-2. docs/CODEMAPS/architecture.md
-   - IPC count: 167 -> 190+
-   - Hooks: 69 -> 79
-   - Badges: 40 -> 45+
-   - Test count updated
-   - Evaluators: 70+ -> 90+
+2. Dependency Changes
+   - Removed: gstack (github:garrytan/gstack) — unused, supply-chain risk
 
-3. docs/CODEMAPS/frontend.md
-   - Hooks: 69 -> 79 (10 new feature hooks)
-   - Badges: 40 -> 45+ (5 new)
-   - Nav items: 93 -> 96
-   - Added hook pattern documentation
-   - Added state management section
+3. Test Fix
+   - DispersantSelectionView.test.tsx: Fixed async race condition
 
-4. docs/CODEMAPS/backend.md
-   - IPC handlers: 167 -> 190+
-   - Extended pipelines: 60+ -> 80+
-   - Settings handlers: 7 -> 22
-   - main.ts lines: 91 -> 124
+4. Codemap Files Updated
+   - architecture.md: header, module boundaries (security annotations)
+   - backend.md: handler validation annotations, fs.promises, history:save
+   - dependencies.md: security section rewritten (sandbox, validation, fs.promises)
+   - INDEX.md: header stats, status line
 
-5. docs/CODEMAPS/data.md
-   - Tables: 7 -> 9 (bookmarks, evaluation_history explicitly documented)
-   - Dispersant repository: added getByType, search methods
-   - Seed data summary table added
-   - Repository count: 6 -> 8
-
-6. docs/CODEMAPS/dependencies.md
-   - Added production deps: plotly.js, react-plotly.js, jspdf, electron-updater, i18next, react-i18next
-   - Added @electron/rebuild to build deps
-   - Added pretest script documentation
-   - Added pool:forks note for Vitest
-   - @playwright/test version: latest -> 1.58.2
-
-VERIFIED COUNTS (2026-03-24)
+VERIFIED COUNTS (2026-03-31)
 =============================
-| Metric              | 2026-03-22 | 2026-03-24 | Delta |
+| Metric              | 2026-03-30 | 2026-03-31 | Delta |
 |---------------------|------------|------------|-------|
-| Source files        | 349        | 361        | +12   |
-| Core modules        | 117        | 117        | 0     |
-| Components          | 142        | 142        | 0     |
-| Hooks               | 69         | 79         | +10   |
-| Badges              | 40         | 45+        | +5    |
-| Nav tabs            | 93         | 96         | +3    |
-| IPC handlers        | 167        | 190+       | +23   |
-| Test files          | 222        | 227        | +5    |
-| Unit tests passed   | 2170       | 2604       | +434  |
-| E2E specs           | 25         | 30         | +5    |
-| E2E tests           | 98         | 295        | +197  |
-| Core coverage       | 98.88%     | 98.88%     | 0     |
-| Evaluation pipelines| 70+        | 90+        | +20   |
+| Source files        | 359        | 359        | 0     |
+| Test files          | 230        | 230        | 0     |
+| Unit tests passed   | 2603→fail1 | 2604       | +1 fix|
+| E2E specs           | 30         | 30         | 0     |
+| Production deps     | 10         | 9          | -1    |
+| Validated IPC update | 1          | 5          | +4    |
+| Validated pipeline   | ~80        | ~84        | +4    |
+| sandbox              | false      | true       | fixed |
 
-TEST INFRASTRUCTURE IMPROVEMENTS
-=================================
-- Added `pretest` script: `npm rebuild better-sqlite3 --silent`
-  (prevents ABI mismatch between Electron and system Node.js)
-- Changed Vitest pool from `threads` (default) to `forks`
-  (eliminates flaky tests from shared memory in JSDOM environment)
-- All 2604 unit tests and 197 test files now pass consistently
+STALENESS CHECK
+===============
+- architecture.md: 2026-03-31 ✓
+- backend.md: 2026-03-31 ✓
+- frontend.md: 2026-03-30 (1 day, OK — no UI changes)
+- data.md: 2026-03-30 (1 day, OK — no schema changes)
+- dependencies.md: 2026-03-31 ✓
+- INDEX.md: 2026-03-31 ✓
 
-ARCHITECTURE OVERVIEW
-=====================
-Electron 41 + React 19 + Vite 5 + SQLite (better-sqlite3)
-- src/core/   117 files  15,400 lines  90+ evaluators, 10 classifiers
-- src/db/      12 files   2,100 lines  9 tables, 8 repos, 7 seed files
-- src/main/     3 files   2,700 lines  190+ IPC handlers
-- src/renderer/226 files  18,500 lines  142 components, 79 hooks, 96 nav tabs
-- tests/       227 files              2604 unit + 295 E2E (30 specs)
+No staleness warnings (all updated within 7 days).
 
 ---
 End of Report

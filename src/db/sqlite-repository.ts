@@ -284,7 +284,11 @@ export class SqliteSettingsRepository implements SettingsRepository {
   getThresholds(): RiskThresholds {
     const json = this.getSetting('risk_thresholds');
     if (!json) return { ...DEFAULT_THRESHOLDS };
-    return JSON.parse(json) as RiskThresholds;
+    try {
+      return JSON.parse(json) as RiskThresholds;
+    } catch {
+      return { ...DEFAULT_THRESHOLDS };
+    }
   }
 
   setThresholds(thresholds: RiskThresholds): void {

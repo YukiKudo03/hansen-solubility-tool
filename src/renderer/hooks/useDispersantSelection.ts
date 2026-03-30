@@ -9,6 +9,9 @@ export function useDispersants() {
   useEffect(() => {
     window.api.getAllDispersants().then((data) => {
       setDispersants(data);
+    }).catch(() => {
+      // DB取得失敗時は空リストのまま
+    }).finally(() => {
       setLoading(false);
     });
   }, []);
