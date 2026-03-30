@@ -1,4 +1,4 @@
-<!-- Last Updated: 2026-03-31 | Files scanned: 359 src + 230 tests | Components: 142, Hooks: 79, IPC handlers: 190+ -->
+<!-- Last Updated: 2026-03-31 | Files scanned: 359 src + 230 tests + 45 textbook | Components: 142, Hooks: 79, IPC handlers: 190+ -->
 
 # Hansen Solubility Project — Codemap Index
 
@@ -175,8 +175,9 @@ Pure domain logic (testable, no side effects)
 | **Main** | 3 | 2,800 | Electron 41+, IPC (167+ handlers), preload, security hardening |
 | **Renderer** | 226 | 18,500 | 142 components, 79 hooks, 6-category navigation, i18n (ja/en) |
 | **Tests** | 227 | — | 197 unit + 30 E2E specs (~155 test cases/spec) |
-| **Total** | 588 | 39,500+ | — |
+| **Textbook** | 45 | 12,277 | 20 chapters (787KB), 20 research JSONs, outline, fields, report, writing plan |
+| **Total** | 633 | 51,700+ | — |
 
 ---
 
-**Last Updated:** 2026-03-31 | **Status:** 60+ evaluation pipelines complete, 93 tabs functional, core coverage 98.88%, all 2604 tests passing, security hardened (sandbox, validation, fs.promises)
+**Last Updated:** 2026-03-31 | **Status:** 60+ evaluation pipelines complete, 93 tabs functional, core coverage 98.88%, all 2604 tests passing, security hardened, HSP textbook 20 chapters (787KB) complete

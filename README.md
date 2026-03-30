@@ -181,6 +181,7 @@ SQLite database with 9 tables, automatically initialized on first launch:
 | **[docs/CONTRIBUTING.md](docs/CONTRIBUTING.md)** | Developer guide — setup, testing, code style, PR checklist |
 | **[docs/RUNBOOK.md](docs/RUNBOOK.md)** | Operations guide — build, deploy, auto-update, troubleshooting |
 | **[docs/CODEMAPS/](docs/CODEMAPS/)** | Architecture documentation — system design, module details |
+| **[hsp-textbook/chapters/](hsp-textbook/chapters/)** | HSP Textbook — 20 chapters, 787KB, graduate-level (Japanese) |
 
 ---
 
