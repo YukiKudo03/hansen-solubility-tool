@@ -1,4 +1,4 @@
-<!-- Generated: 2026-03-24 | Files scanned: 361 src | Token estimate: ~980 -->
+<!-- Last Updated: 2026-03-31 | Phases: 11-15 complete (60+ pipelines, 93 UI tabs) | Security hardened: sandbox, validation, fs.promises -->
 
 # Hansen Solubility System Architecture
 
@@ -38,7 +38,7 @@
 └─────────────────────────────────────────────────────────────────┘
 ```
 
-## Evaluation Pipelines (90+ total across 6 categories)
+## Evaluation Pipelines (60+ core + 30+ stub views = 93 total tabs across 6 categories)
 
 ### Category 1: 評価 (33 pipelines)
 ```
@@ -121,46 +121,53 @@ Temperature correction via Barton法 (`temperature-hsp.ts`).
 ## Advanced Computation Modules
 
 ```
-Core Calculations:
+Core Calculations (12):
+  hsp.ts                  Ra/RED共通計算
   temperature-hsp.ts      Barton法 — HSPの温度補正
   thermal-expansion-data.ts 27溶媒の体積膨張係数
   evaporation.ts          Antoine式+Raoult則 — 蒸発シミュレーション
-  contact-angle-methods.ts Owens-Wendt法 — 代替接触角推定
-  solubility-estimation.ts Greenhalgh式 — 溶解度mg/mL推定
-
-Advanced Analysis:
-  dispersant-selection.ts Dual-HSP分散剤スクリーニング（anchor+solvation）
-  group-contribution.ts   Van Krevelen法 — 官能基→HSP推定 (+201行)
+  contact-angle.ts/methods.ts Nakamoto-Yamamoto + Owens-Wendt
+  solubility-estimation.ts Greenhalgh式 — 溶解度推定
   adhesion.ts             接着強度計算エンジン
-  teas-plot.ts            TEAS分析メトリクス
-  bagley-plot.ts          Bagleyプロット計算
-  projection-2d.ts        2D射影変換
-  sphere-fitting.ts       最適球当てはめ
-  green-solvent.ts        環境スコアリング
-  multi-objective.ts      Pareto最適化
+  blend-optimizer.ts      グリッドサーチ最適化
+  mixture.ts              溶媒混合計算
+  comparison.ts           バッチ評価マトリクス
+
+Advanced Analysis (12):
+  dispersant-selection.ts  Dual-HSP分散剤スクリーニング
+  group-contribution.ts    Van Krevelen法 — 官能基→HSP推定
+  group-contribution-updates.ts 拡張族寄与法（新規官能基）
+  copolymer-hsp.ts         コポリマーHSP推定
+  inverse-hsp.ts           逆問題HSP推定
+  hsp-uncertainty.ts       HSP不確かさ定量化
+  teas-plot.ts             TEAS分析メトリクス
+  bagley-plot.ts           Bagleyプロット計算
+  projection-2d.ts         2D射影変換
+  sphere-fitting.ts        最適球当てはめ
+  green-solvent.ts         環境スコアリング
+  multi-objective.ts       Pareto最適化
 
 Utilities:
-  csv-import.ts           CSVパース・バリデーション
-  ghs-safety.ts           GHS分類・SVHC判定
-  comparison.ts           バッチ評価マトリクス
-  hsp-visualization.ts    3Dプロットデータ生成
-  theme.ts                MD3 light/dark カラートークン
-  pdf-report.ts           PDFレポートデータ生成
-  accuracy-warnings.ts    精度警告・信頼度表示
+  csv-import.ts            CSVパース・バリデーション
+  ghs-safety.ts            GHS分類・SVHC判定
+  hsp-visualization.ts     3Dプロットデータ生成
+  theme.ts                 MD3 light/dark カラートークン
+  pdf-report.ts            PDFレポートデータ生成
+  accuracy-warnings.ts     精度警告・信頼度表示
 ```
 
 ## Module Boundaries
 
 | Layer | Location | Files | Lines | Purpose |
 |-------|----------|-------|-------|---------|
-| **Domain** | `src/core/` | 117 | 15,400 | 90+ evaluators, 10 classifiers, utilities |
-| **Data** | `src/db/` | 12 | 2,100 | Schema(9 tables), 8 repos, 7 seed files |
-| **Main** | `src/main/` | 3 | 2,700 | Electron, 190+ IPC, auto-updater |
+| **Domain** | `src/core/` | 117 | 15,400 | 60+ evaluators, 12 classifiers, 12 analytics, utilities |
+| **Data** | `src/db/` | 12 | 2,100 | Schema(9 tables), 8 repos, 8 seed files |
+| **Main** | `src/main/` | 3 | 2,800 | Electron 41, 190+ IPC handlers, sandbox:true, all CRUD validated |
 | **UI** | `src/renderer/` | 226 | 18,500 | 142 components, 79 hooks, i18n |
 | **Tests** | `tests/` | 227 | — | 2604 unit/renderer + 295 E2E (30 specs) |
 
 ---
 
-**Last Updated:** 2026-03-24
+**Last Updated:** 2026-03-31
 
 **Next:** See `backend.md` for IPC/handlers, `frontend.md` for components, `data.md` for schema.

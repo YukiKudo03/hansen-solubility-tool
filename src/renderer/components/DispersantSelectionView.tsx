@@ -24,8 +24,8 @@ export default function DispersantSelectionView() {
   const { sortKey, sortDir, toggleSort } = useSortableTable<SortKey>('compositeScore');
 
   useEffect(() => {
-    window.api.getAllNanoParticles().then(setNanoParticles);
-    window.api.getAllSolvents().then(setSolvents);
+    window.api.getAllNanoParticles().then(setNanoParticles).catch(() => { /* 初期ロード失敗時は空リスト */ });
+    window.api.getAllSolvents().then(setSolvents).catch(() => { /* 初期ロード失敗時は空リスト */ });
   }, []);
 
   const filteredParticles = useMemo(() => {

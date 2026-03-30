@@ -139,7 +139,11 @@ See `docs/CODEMAPS/INDEX.md` for detailed architecture.
 - [ ] Database schema changes include migration in `schema.ts` (`migrateDatabase`)
 - [ ] Database changes update seed data if needed
 - [ ] IPC changes update `ipc-handlers.ts`, `preload.ts`, and `preload.d.ts`
+- [ ] IPC handlers validate input (create **and** update paths)
 - [ ] New entity types added to `src/core/types.ts`
+- [ ] No `(window as any).api` — use typed `window.api` from `preload.d.ts`
+- [ ] No `useState<any>` — use specific types from `src/core/types.ts`
+- [ ] useEffect Promises have `.catch()` or try-catch error handling
 - [ ] Accessibility: `htmlFor`, `aria-label`, `role="alert"` for errors, keyboard navigation
 
 ## Docker

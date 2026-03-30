@@ -1,4 +1,4 @@
-<!-- Generated: 2026-03-24 | Updated: 2026-03-24 | Files scanned: 2 | Token estimate: ~750 -->
+<!-- Generated: 2026-03-24 | Updated: 2026-03-31 | Files scanned: 2 | Token estimate: ~750 -->
 
 # External Dependencies & Build Tools
 
@@ -133,12 +133,16 @@
 ## Security Considerations
 
 - **Context Isolation:** Enabled (Electron preload bridge)
-- **Node Integration:** Disabled (unsafe)
-- **Sandbox:** Disabled (required for native module access)
+- **Node Integration:** Disabled
+- **Sandbox:** Enabled (`sandbox: true` — 2026-03-31 hardened)
 - **Preload:** Validates IPC messages via whitelist in `preload.ts`
+- **IPC Validation:** All CRUD handlers (create + update) validated
+- **History Save:** Pipeline allowlist + 1MB JSON size cap
+- **DevTools:** Guarded by `NODE_ENV === 'development'`
+- **File I/O:** `fs.promises` (non-blocking) + 10MB size limit on import
 
 ---
 
-**Last Updated:** 2026-03-24
+**Last Updated:** 2026-03-31
 
 **Related:** See `architecture.md` for system design, `backend.md` for main process, `data.md` for database.

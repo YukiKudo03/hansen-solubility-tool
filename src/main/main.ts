@@ -70,7 +70,7 @@ function createWindow(db: Database.Database): void {
       preload: path.join(__dirname, 'preload.js'),
       contextIsolation: true,
       nodeIntegration: false,
-      sandbox: false,
+      sandbox: true,
     },
   });
 
@@ -86,9 +86,10 @@ function createWindow(db: Database.Database): void {
   registerIpcHandlers(partsRepo, solventRepo, settingsRepo, nanoParticleRepo, drugRepo, bookmarkRepo, historyRepo, dispersantRepo);
 
   // 開発時はVite devサーバー、本番時はビルド済みファイルを読み込む
+  const isDev = process.env.NODE_ENV === 'development';
   if (process.env.VITE_DEV_SERVER_URL) {
     mainWindow.loadURL(process.env.VITE_DEV_SERVER_URL);
-    mainWindow.webContents.openDevTools();
+    if (isDev) mainWindow.webContents.openDevTools();
   } else {
     mainWindow.loadFile(path.join(__dirname, '../../renderer/index.html'));
   }

@@ -116,6 +116,29 @@ Copy `hansen.db` to back up all user data. The database uses WAL mode, so also c
 
 Delete `hansen.db` (and `-wal`/`-shm` files) to reset to defaults. Data will be re-seeded on next launch.
 
+## Security
+
+### Electron Hardening
+
+| Setting | Value | Purpose |
+|---------|-------|---------|
+| `contextIsolation` | `true` | Renderer cannot access Node.js APIs directly |
+| `nodeIntegration` | `false` | No `require()` in renderer process |
+| `sandbox` | `true` | Chromium sandbox isolates renderer from OS |
+| DevTools | `NODE_ENV` guarded | Only opens in development mode |
+
+### IPC Validation
+
+- All **create** and **update** handlers validate input before DB operations
+- `history:save` validates pipeline name against allowlist + enforces 1MB JSON size cap
+- `import:openFile` checks file size (10MB limit) before reading
+- File I/O uses `fs.promises` (non-blocking) to prevent UI freezes
+- `getThresholds()` uses try-catch fallback for corrupt JSON
+
+### Preload Bridge
+
+The preload script (`preload.ts`) exposes a whitelist of IPC methods via `contextBridge.exposeInMainWorld`. The renderer can only call pre-defined methods — no arbitrary IPC invocation is possible.
+
 ## Common Issues
 
 ### `better-sqlite3` build fails on install
