@@ -1,4 +1,4 @@
-<!-- Generated: 2026-03-24 | Files scanned: 226 renderer | Token estimate: ~1200 -->
+<!-- Last Updated: 2026-03-30 | UI: 142 components (93 Views + 49 supporting), 79 hooks, MD3 responsive, dark mode class-based -->
 
 # Frontend Component Architecture
 
@@ -15,16 +15,16 @@ Screen Width    Navigation Pattern       Component
 
 ## 6 Category Navigation (96 feature items)
 
-| Category | Icon | Items |
-|----------|------|-------|
-| 評価 | 📊 | 33 items: 溶解性評価, 接触角推定, 膨潤度予測, 耐薬品性予測, 接着性予測, ESC, ブレンド相溶性, リサイクル相溶性, 添加剤移行, ガス透過性, 膜分離, etc. |
-| 選定 | 🔍 | 26 items: ナノ粒子分散, 分散剤選定, 可塑剤選定, キャリア選定, 共結晶, 顔料分散, CNT/グラフェン, MXene, CO2吸収材, etc. |
-| 最適化 | ⚡ | 17 items: ブレンド最適化, 薬物溶解性, 比較レポート, HSP球算出, グリーン溶媒, 多目的選定, ペロブスカイト, LiB電解液, etc. |
-| データ | 💾 | 3 items: データベース編集, 混合溶媒, 履歴 |
-| 分析 | 📈 | 16 items: 3D可視化, Teasプロット, Bagleyプロット, 2D射影, 族寄与法, コポリマーHSP, 温度/圧力補正, 逆HSP, ML予測, etc. |
-| 設定 | ⚙️ | 1 item: 設定 |
+| Category | Items | Views |
+|----------|-------|-------|
+| 評価 | 33 | Solubility, ContactAngle, Swelling, ChemicalResistance, Adhesion, ESC, PolymerBlend, Recycling, AdditiveMigration, FlavorScalping, FoodPackaging, Liposome, InkSubstrate, MultilayerCoating, PsaPeel, StructuralAdhesive, GasPermeability, MembraneSeparation, InhalationDrug, ProteinAggregation, ResidualSolvent, CoatingDefect, Photoresist, CrystallineDissolution, HydrogelSwelling, RubberCompounding, FiberDyeability, PolymorphRisk, PrintedElectronics, UnderfillEncapsulant, BiofuelCompatibility, SurfaceTreatmentQuantification, PSAPeelStrength |
+| 選定 | 26 | NanoDispersion, DispersantSelection, Plasticizer, CarrierSelection, Cocrystal, Printing3d, DielectricFilm, Excipient, Compatibilizer, Fragrance, Transdermal, PigmentDispersion, CntGraphene, Mxene, NpDrugLoading, Co2Absorbent, HydrogenStorage, SunscreenUv, BiologicBuffer, NaturalDye, EssentialOil, SoilRemediation, Thermoset, QuantumDot, PcmEncapsulation, CleaningFormulation |
+| 最適化 | 17 | BlendOptimizer, DrugSolubility, Comparison, SphereFitting, GreenSolvent, MultiObjective, SupercriticalCo2, PerovskiteSolvent, OrganicSemiconductor, UvCurableInk, Multicomponent, LiBattery, SolventSubstitution, CosmeticEmulsion, AntiGraffiti, PrimerlessAdhesion, (additional) |
+| 分析 | 16 | HSPVisualization, TeasPlot, BagleyPlot, Projection2D, GroupContribution, CopolymerHsp, SurfaceTreatment, TemperatureHsp, PressureHsp, InverseHsp, HspUncertainty, SurfaceHsp, IonicLiquid, MlHspPrediction, MdHspImport, GroupContributionUpdates |
+| データ | 3 | DatabaseEditor, MixtureLab, EvaluationHistory |
+| 設定 | 1 | Settings |
 
-Defined in: `src/renderer/navigation.ts` (Tab type, NavCategory, NAV_CATEGORIES)
+Defined in: `src/renderer/navigation.ts` (Tab type, NavCategory, 6 categories, VIEW_MAP)
 
 ## Component Hierarchy
 
@@ -169,17 +169,18 @@ export function useFeatureName() {
 - Custom hooks for business logic encapsulation
 - Direct `window.api.*` calls (Electron IPC bridge)
 
-## IPC Interface (window.api) — 190+ Methods
+## IPC Interface (window.api) — 167+ Methods
 
 ```
 Parts CRUD (8), Solvents CRUD+Plasticizers (8), NanoParticles CRUD (7), Drugs CRUD (7), Dispersants CRUD (5)
-Core pipeline evaluation/screening (30), Extended pipeline handlers (80+)
-Settings get/set (22), Bookmarks (3), History (5), CSV Import (3), Export saveCsv (1)
-Advanced analytics handlers (12+)
+Core pipeline evaluation/screening (30), Extended pipeline handlers (60+)
+Settings get/set (22), Bookmarks (3), History (5), CSV Import/Export (3)
+Advanced analytics (12+)
+Total: ~167 IPC methods, all validated
 ```
 
 ---
 
 **Related:** See `architecture.md` for system overview, `backend.md` for IPC handlers, `data.md` for schema.
 
-**Last Updated:** 2026-03-24
+**Last Updated:** 2026-03-30

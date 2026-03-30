@@ -1,4 +1,4 @@
-<!-- Generated: 2026-03-24 | Updated: 2026-03-24 | Files scanned: 12 | Token estimate: ~900 -->
+<!-- Last Updated: 2026-03-30 | SQLite schema: 9 tables, 8 repositories, 8 seed files, 135+ solvents, dual-HSP dispersants -->
 
 # Database Schema & Data Layer
 
@@ -34,9 +34,10 @@ Chemical solvents + plasticizers (identified by `[可塑剤]` tag in notes).
 | delta_d/p/h | REAL NOT NULL | HSP (MPa^½) |
 | molar_volume, mol_weight | REAL | Optional |
 | boiling_point, viscosity, specific_gravity, surface_tension | REAL | Physical props |
+| solute_delta_d/p/h, solute_r0 | REAL | NEW: Solute HSP (for inverse evaluation) |
 | notes | TEXT | `[可塑剤]` tag for plasticizers |
 
-**Seed:** ~85 solvents + 10 plasticizers = ~95 rows
+**Seed:** 135 solvents total (85 core + 10 plasticizers + 40 extended)
 
 ### nano_particles
 | Key Columns | category (carbon/metal/metal_oxide/quantum_dot/polymer/other), core_material, surface_ligand, delta_d/p/h, r0, particle_size |
@@ -94,19 +95,21 @@ main.ts → initDb()
 
 ## Seed Data Summary
 
-| Entity | Count | Source File |
-|--------|-------|-------------|
-| Solvents | 135 | seed-data.ts |
-| Nanoparticles | 18 | seed-nano-particles.ts |
-| Drugs | 16 | seed-drugs.ts |
-| Polymers (groups + parts) | ~10 groups, ~83 parts | seed-data.ts |
-| Coatings | 12 parts | seed-coatings.ts |
-| Plasticizers | 10 | seed-plasticizers.ts |
-| Carriers | 11 parts | seed-carriers.ts |
-| Dispersants | ~10 | seed-dispersants.ts |
+| Entity | Count | Source File | Status |
+|--------|-------|-------------|--------|
+| Solvents | 135 | seed-data.ts | Complete (core + extended) |
+| Nanoparticles | 18 | seed-nano-particles.ts | Complete (carbon, metal, metal oxide, quantum dot, polymer) |
+| Drugs | 16 | seed-drugs.ts | Complete (therapeutic categories) |
+| Polymers (groups + parts) | ~10 groups, ~83 parts | seed-data.ts | Complete (7 polymer groups) |
+| Coatings | 12 parts | seed-coatings.ts | Complete (UV, powder, epoxy, polyurethane, etc.) |
+| Plasticizers | 10 | seed-plasticizers.ts | Complete (seeded as solvents with tag) |
+| Carriers | 11 parts | seed-carriers.ts | Complete (DDS: liposome, nanoparticle, polymer, etc.) |
+| Dispersants | ~10 | seed-dispersants.ts | Complete (dual-HSP: anchor + solvation) |
+
+**Total seeded data:** ~265 entities across 8 seed functions
 
 ---
 
-**Last Updated:** 2026-03-24
+**Last Updated:** 2026-03-30
 
 **Related:** See `architecture.md` for overview, `backend.md` for repository implementation, `frontend.md` for UI interaction.

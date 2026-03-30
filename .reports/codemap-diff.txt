@@ -1,65 +1,51 @@
 CODEMAP UPDATE REPORT
-Generated: 2026-03-31
+Generated: 2026-03-31 (2nd update)
 
 SUMMARY
 =======
-Incremental update from 2026-03-30 baseline. Key changes: security hardening
-(sandbox, IPC validation, fs.promises, DevTools guard), unused dependency removal,
-test fix, and codemap freshness updates.
+Incremental update. Key addition: HSP textbook (20 chapters, 787KB) generated
+from structured research data. No source code changes.
 
-CHANGES SINCE 2026-03-30
-=========================
+CHANGES SINCE LAST UPDATE (2026-03-31 1st)
+============================================
 
-1. Security Hardening
-   - main.ts: sandbox: false → sandbox: true
-   - main.ts: DevTools guarded by NODE_ENV === 'development'
-   - ipc-handlers.ts: Added validation to 4 update handlers (parts:updateGroup,
-     parts:updatePart, solvents:update, drugs:update)
-   - ipc-handlers.ts: Added HSP+R0 validation to 4 new pipeline handlers
-     (crystallineDissolution, hydrogelSwelling, thermosetCuring, fiberDyeability)
-   - ipc-handlers.ts: history:save validates pipeline + 1MB JSON cap
-   - ipc-handlers.ts: import:openFile checks file size before reading
-   - ipc-handlers.ts: fs.writeFileSync → fs.promises.writeFile
-   - ipc-handlers.ts: fs.readFileSync → fs.promises.readFile
-   - sqlite-repository.ts: getThresholds() JSON.parse → try-catch fallback
-   - useDispersantSelection.ts: Added .catch() to useEffect Promise
-   - DispersantSelectionView.tsx: Added .catch() to useEffect Promises
+1. HSP Textbook Generated
+   - hsp-textbook/chapters/ch01.md ~ ch20.md (20 files, 12,277 lines, 787KB)
+   - hsp-textbook/WRITING_PLAN.md (execution plan)
+   - Content: graduate-level Japanese textbook covering all 117 core modules
+   - Structure: 5 Parts, 20 Chapters
+     Part I:  Ch01-04 (基礎理論) — 2,156 lines
+     Part II: Ch05-06 (表面科学) — 1,261 lines
+     Part III: Ch07-08 (高分子科学) — 1,266 lines
+     Part IV: Ch09-15 (応用分野) — 4,843 lines
+     Part V:  Ch16-20 (先端手法) — 2,751 lines
+   - Each chapter: theory + equations (LaTeX+Unicode) + exercises + review questions + software labs + references
 
-2. Dependency Changes
-   - Removed: gstack (github:garrytan/gstack) — unused, supply-chain risk
+2. Codemap Updates
+   - INDEX.md: Added Textbook row to file statistics, updated total counts
 
-3. Test Fix
-   - DispersantSelectionView.test.tsx: Fixed async race condition
-
-4. Codemap Files Updated
-   - architecture.md: header, module boundaries (security annotations)
-   - backend.md: handler validation annotations, fs.promises, history:save
-   - dependencies.md: security section rewritten (sandbox, validation, fs.promises)
-   - INDEX.md: header stats, status line
-
-VERIFIED COUNTS (2026-03-31)
-=============================
-| Metric              | 2026-03-30 | 2026-03-31 | Delta |
-|---------------------|------------|------------|-------|
-| Source files        | 359        | 359        | 0     |
-| Test files          | 230        | 230        | 0     |
-| Unit tests passed   | 2603→fail1 | 2604       | +1 fix|
-| E2E specs           | 30         | 30         | 0     |
-| Production deps     | 10         | 9          | -1    |
-| Validated IPC update | 1          | 5          | +4    |
-| Validated pipeline   | ~80        | ~84        | +4    |
-| sandbox              | false      | true       | fixed |
+VERIFIED COUNTS (2026-03-31 2nd)
+=================================
+| Metric              | Previous   | Current    | Delta   |
+|---------------------|------------|------------|---------|
+| Source files        | 359        | 359        | 0       |
+| Test files          | 230        | 230        | 0       |
+| Textbook files      | 0          | 45         | +45     |
+| Total project files | 588        | 633        | +45     |
+| Total lines         | 39,500+    | 51,700+    | +12,277 |
+| Textbook chapters   | 0          | 20         | +20     |
+| Textbook size       | 0          | 787 KB     | +787 KB |
 
 STALENESS CHECK
 ===============
-- architecture.md: 2026-03-31 ✓
-- backend.md: 2026-03-31 ✓
-- frontend.md: 2026-03-30 (1 day, OK — no UI changes)
-- data.md: 2026-03-30 (1 day, OK — no schema changes)
+- architecture.md: 2026-03-31 ✓ (no src changes)
+- backend.md: 2026-03-31 ✓ (no src changes)
+- frontend.md: 2026-03-30 (1 day, OK)
+- data.md: 2026-03-30 (1 day, OK)
 - dependencies.md: 2026-03-31 ✓
-- INDEX.md: 2026-03-31 ✓
+- INDEX.md: 2026-03-31 ✓ (updated with textbook stats)
 
-No staleness warnings (all updated within 7 days).
+No staleness warnings.
 
 ---
 End of Report
