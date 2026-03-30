@@ -1,0 +1,108 @@
+{
+  "basic_info": {
+    "name": "Molecular Dynamics HSP Calculation",
+    "name_ja": "分子動力学によるHSP計算",
+    "category": "Computational",
+    "description": "All-atom molecular dynamics (MD) simulation is used to compute Hansen Solubility Parameters from first principles by calculating the cohesive energy density (CED) of a liquid and decomposing it into dispersion, polar, and hydrogen bonding contributions. A simulation box of molecules is equilibrated at the target temperature and pressure, and the total intermolecular interaction energy is computed by comparing the potential energy of the condensed phase to the gas phase (isolated molecule). The three HSP components are obtained by partitioning the pairwise interaction energies into van der Waals (Lennard-Jones), electrostatic (Coulombic), and hydrogen bonding terms. This approach provides HSP values for compounds where experimental data is unavailable, including novel molecules, reactive intermediates, polymers, and materials under non-ambient conditions of temperature and pressure.",
+    "maturity_level": "established"
+  },
+  "hsp_principle": {
+    "hsp_principle": "The total solubility parameter delta_t is defined as the square root of the cohesive energy density: delta_t = sqrt(E_coh/V_m), where E_coh is the molar cohesive energy (energy required to separate molecules from the liquid to the gas phase) and V_m is the molar volume. In MD simulation, E_coh is calculated as the difference between the intramolecular energy of isolated gas-phase molecules and the total potential energy per molecule in the liquid state. The HSP decomposition is achieved by partitioning the intermolecular potential energy into components: E_vdW (van der Waals/Lennard-Jones interactions) maps to dD^2, E_elec (electrostatic/Coulombic interactions excluding H-bonds) maps to dP^2, and E_hbond (hydrogen bond interactions) maps to dH^2, such that delta_t^2 = dD^2 + dP^2 + dH^2. The hydrogen bonding energy can be separated from total electrostatic energy using geometric or energetic criteria for hydrogen bond identification. Force field selection (OPLS-AA, COMPASS, GAFF, CHARMM) critically affects accuracy. Simulations typically use NPT ensemble at 298 K and 1 atm with periodic boundary conditions and 200-1000 molecules for adequate statistics.",
+    "key_equation": "delta_t^2 = E_coh/V_m = (E_gas - E_liquid)/V_m; dD^2 = -E_vdW/V_m; dP^2 = -E_elec(non-HB)/V_m; dH^2 = -E_hbond/V_m; E_coh = E_vdW + E_elec + E_hbond",
+    "red_direction": "low_is_good",
+    "typical_red_threshold": "Computational accuracy target: predicted HSP within 1.0-2.0 MPa^0.5 of experimental values per component; typical MD RMSE: dD ~0.5-1.5, dP ~1.0-3.0, dH ~1.0-3.0 MPa^0.5",
+    "sensitivity_to_hbond_split": "high",
+    "temperature_pressure_sensitivity": "high"
+  },
+  "input_data": {
+    "required_inputs": [
+      "Molecular structure and force field parameters for the compound",
+      "Force field selection (OPLS-AA, COMPASS, GAFF, TraPPE, etc.)",
+      "Simulation conditions: temperature, pressure, number of molecules, box size",
+      "Equilibration and production run time parameters",
+      "Hydrogen bond definition criteria (geometric cutoffs for donor-acceptor distance and angle)"
+    ],
+    "data_sources": [
+      "Force field parameter databases (OPLS-AA, AMBER/GAFF, CHARMM General Force Field)",
+      "Automated parameterization tools (LigParGen, ACPYPE, CGenFF)",
+      "Quantum mechanical calculations for charge assignment (RESP, CM5, AM1-BCC)",
+      "Experimental density and heat of vaporization data for force field validation",
+      "NIST ThermoData Engine for reference thermophysical properties"
+    ],
+    "data_availability_score": 3,
+    "complementary_parameters": [
+      "Experimental density (for force field validation)",
+      "Heat of vaporization (for CED validation)",
+      "Dielectric constant (for electrostatic component validation)",
+      "Radial distribution functions (for liquid structure validation)",
+      "Diffusion coefficient (for dynamics validation)"
+    ]
+  },
+  "accuracy": {
+    "accuracy_level": "semi-quantitative",
+    "limitations": [
+      "Force field accuracy is the primary bottleneck; different force fields can give dH values differing by 3-5 MPa^0.5 for the same molecule",
+      "Partitioning electrostatic energy into polar and hydrogen bonding components is ambiguous and method-dependent",
+      "Long-range electrostatic corrections (Ewald summation vs cutoff) significantly affect dP values",
+      "Simulation convergence requires long runs (5-20 ns production) for reliable energy statistics, especially for viscous or strongly hydrogen-bonded liquids",
+      "Quantum effects (proton tunneling, charge transfer, polarization) are absent in classical force fields",
+      "Polymers require special treatment due to chain connectivity and entanglement effects"
+    ],
+    "known_failure_modes": [
+      "Highly polar aprotic solvents (DMSO, DMF) where force fields often underestimate dP",
+      "Water and highly associated liquids where cooperative hydrogen bonding networks are poorly captured by pairwise additive force fields",
+      "Fluorinated compounds where standard force fields lack accurate fluorine parameters",
+      "Multifunctional molecules (amino acids, sugars) with complex intramolecular hydrogen bonding that reduces effective dH",
+      "Ionic liquids where the CED decomposition does not straightforwardly apply due to Coulombic contributions"
+    ],
+    "validation_method": [
+      "Comparison of predicted dD, dP, dH against experimental HSP from HSPiP database",
+      "Verification of simulated liquid density against experimental values (within 2-5%)",
+      "Comparison of computed heat of vaporization with experimental data",
+      "Convergence analysis: block averaging to estimate statistical uncertainty",
+      "Cross-validation against group contribution estimates"
+    ]
+  },
+  "implementation": {
+    "complexity": "high",
+    "ui_pattern": "pairwise",
+    "existing_modules_reusable": [
+      "calculateRa (for using MD-derived HSP in downstream applications)",
+      "calculateRed (for downstream screening)"
+    ],
+    "multi_component_complexity": "binary",
+    "scale_of_application": "design"
+  },
+  "literature": {
+    "key_references": [
+      "Belmares, M.; Blanco, M.; Goddard, W.A.; Ross, R.B.; Caldwell, G.; Chou, S.-H.; Pham, J.; Olofson, P.M.; Thomas, C. 'Hildebrand and Hansen Solubility Parameters from Molecular Dynamics with Applications to Electronic Nose Polymer Sensors', Journal of Computational Chemistry, 2004, 25, 1814-1826. DOI: 10.1002/jcc.20098",
+      "Gupta, J.; Nunes, C.; Vyas, S.; Jonnalagadda, S. 'Prediction of Solubility Parameters and Miscibility of Pharmaceutical Compounds by Molecular Dynamics Simulations', Journal of Physical Chemistry B, 2011, 115, 2014-2023. DOI: 10.1021/jp108540n",
+      "Jawalkar, S.S.; Adoor, S.G.; Sairam, M.; Nadagouda, M.N.; Aminabhavi, T.M. 'Molecular Modeling on the Binary Blend Compatibility of Poly(vinyl alcohol) and Poly(methyl methacrylate): An Atomistic Simulation and Thermodynamic Approach', Journal of Physical Chemistry B, 2005, 109, 15611-15620. DOI: 10.1021/jp051206v",
+      "Panayiotou, C. 'Redefining Solubility Parameters: The Partial Solvation Parameters', Physical Chemistry Chemical Physics, 2012, 14, 3882-3908. DOI: 10.1039/C2CP23966C [uncertain]",
+      "Jarray, A.; Wijshoff, H.; Luiken, J.A.; den Otter, W.K. 'Systematic Approach for Determination of Hansen Solubility Parameters from Molecular Dynamics Simulation', Journal of Chemical Theory and Computation, 2020, 16, 3170-3180 [uncertain]"
+    ],
+    "first_reported_year": 2004,
+    "regulatory_relevance": "MD-calculated HSP values are not directly referenced in regulatory frameworks. However, REACH allows computational methods for physicochemical property estimation when experimental data is unavailable, provided the method is scientifically validated. OECD guidance on (Q)SAR models acknowledges simulation-based property prediction. In practice, MD-derived HSP are used for internal R&D screening but experimental confirmation is required for regulatory submissions."
+  },
+  "industry_application": {
+    "industry_sectors": [
+      "Pharmaceutical (HSP prediction for novel API candidates before synthesis)",
+      "Polymer science (compatibility prediction for new polymer blends and composites)",
+      "Energy materials (electrolyte-electrode compatibility for batteries)",
+      "Chemical engineering (solvent design and process optimization)",
+      "Coatings (HSP estimation for novel resin chemistries)"
+    ],
+    "commercial_tools": [
+      "Materials Studio (Accelrys/BIOVIA - includes Amorphous Cell and Forcite for CED calculation)",
+      "GROMACS (open-source MD engine, widely used for HSP calculation with custom scripts)",
+      "LAMMPS (open-source, flexible MD code with energy decomposition capabilities)",
+      "Schrödinger Desmond (high-performance MD with automated CED workflow)",
+      "Amsterdam Modeling Suite (AMS/ReaxFF for reactive systems HSP calculation)"
+    ]
+  },
+  "uncertain": [
+    "typical_red_threshold",
+    "key_references",
+    "regulatory_relevance"
+  ]
+}

@@ -1,0 +1,113 @@
+{
+  "basic_info": {
+    "name": "HSP for Ionic Liquids and DES",
+    "name_ja": "イオン液体・深共晶溶媒のHSP",
+    "category": "Computational",
+    "description": "Extension of the Hansen Solubility Parameter framework to ionic liquids (ILs) and deep eutectic solvents (DES), which present unique challenges due to their unusual cohesive energy contributions. Ionic liquids are salts with melting points below 100 deg C, composed of organic cations and organic or inorganic anions, where Coulombic interactions dominate the cohesive energy density. Deep eutectic solvents are eutectic mixtures of hydrogen bond donors and acceptors (e.g., choline chloride + urea) with similarly complex interaction profiles. Determining HSP for these systems requires adaptation of measurement and calculation methods because their strong ionic/hydrogen bonding character pushes beyond the range of conventional organic solvents. HSP values for ILs and DES enable rational solvent selection for extraction, catalysis, electrochemistry, biomass processing, and as green solvent replacements in applications where their unique properties (negligible vapor pressure, wide liquid range, tunable polarity) are advantageous.",
+    "maturity_level": "emerging"
+  },
+  "hsp_principle": {
+    "hsp_principle": "For ionic liquids, the total cohesive energy density includes a dominant Coulombic contribution that does not map neatly onto the three Hansen parameters (dD, dP, dH). Several approaches have been proposed: (1) treating the Coulombic contribution as part of the polar component dP, yielding very high dP values (15-30 MPa^0.5); (2) introducing a fourth parameter dE (electrostatic/ionic) to separately represent the Coulombic interaction, giving a 4-parameter model delta_t^2 = dD^2 + dP^2 + dH^2 + dE^2; (3) using the Kamlet-Taft solvatochromic approach to calibrate HSP from alpha, beta, and pi* polarity descriptors. For DES, the hydrogen bonding network between the HBA (hydrogen bond acceptor, e.g., choline chloride) and HBD (hydrogen bond donor, e.g., urea, glycerol) creates a cooperative supramolecular structure where dH values are typically very high (20-40 MPa^0.5). The HSP of DES can be tuned by varying the HBA:HBD molar ratio, offering a design space not available with conventional solvents. Experimental determination commonly uses dissolution/miscibility testing with a panel of reference solvents and polymers, or IGC at elevated temperatures (ILs have high viscosity at room temperature). COSMO-RS computations provide an alternative route to IL/DES HSP by computing sigma-profiles from quantum mechanical calculations.",
+    "key_equation": "Standard: Ra = sqrt(4*(dD1-dD2)^2 + (dP1-dP2)^2 + (dH1-dH2)^2); Extended 4-param: Ra = sqrt(4*(dD1-dD2)^2 + (dP1-dP2)^2 + (dH1-dH2)^2 + (dE1-dE2)^2); DES tuning: HSP_DES = x_HBA*HSP_HBA + x_HBD*HSP_HBD (approximate, non-ideal mixing corrections needed) [uncertain]",
+    "red_direction": "low_is_good",
+    "typical_red_threshold": "RED < 1.0 for miscibility/dissolution; however the standard 4:1:1 weighting in Ra may not be optimal for ionic systems; some authors suggest modified weighting [uncertain]",
+    "sensitivity_to_hbond_split": "high",
+    "temperature_pressure_sensitivity": "medium"
+  },
+  "input_data": {
+    "required_inputs": [
+      "IL or DES composition (cation-anion pair for IL, HBA-HBD pair and molar ratio for DES)",
+      "HSP values for the IL/DES (from experimental determination or COSMO-RS prediction)",
+      "HSP values for the target solute or material",
+      "Temperature (IL/DES properties are strongly T-dependent due to viscosity effects)"
+    ],
+    "data_sources": [
+      "Published IL HSP compilations (Marciniak 2010, Paduszynski & Domanska reviews)",
+      "COSMO-RS computed HSP (COSMOtherm software)",
+      "Experimental determination via dissolution/miscibility testing with solvent panels",
+      "IGC measurements on IL-coated columns at elevated temperature",
+      "Kamlet-Taft parameters for ILs correlated to HSP (Jessop, Kou)"
+    ],
+    "data_availability_score": 2,
+    "complementary_parameters": [
+      "Kamlet-Taft parameters (alpha, beta, pi*) for polarity characterization",
+      "Viscosity (strongly affects mass transfer and practical dissolution kinetics)",
+      "Density and molar volume (needed for HSP calculation from CED)",
+      "Water content (trace water drastically affects IL/DES properties)",
+      "Thermal decomposition temperature (upper operating limit)",
+      "Conductivity and electrochemical window (for electrochemical applications)"
+    ]
+  },
+  "accuracy": {
+    "accuracy_level": "qualitative",
+    "limitations": [
+      "The three-parameter HSP framework was developed for molecular liquids and may be fundamentally inadequate for capturing the Coulombic interactions in ILs",
+      "Large scatter in published IL HSP values across studies (variations of 5+ MPa^0.5 for the same IL) due to methodological differences",
+      "The linear mixing rule for DES HSP breaks down due to strong non-ideal hydrogen bonding interactions between HBA and HBD",
+      "High viscosity of ILs complicates experimental HSP determination by slowing dissolution kinetics (thermodynamic vs kinetic miscibility)",
+      "IL nanostructure (polar/nonpolar domain segregation) creates microheterogeneous environments not captured by bulk HSP",
+      "Impurities (water, halides) in ILs significantly affect measured HSP values"
+    ],
+    "known_failure_modes": [
+      "ILs with long alkyl chains (e.g., [C8mim]+) that exhibit surfactant-like behavior and micelle formation not predictable from HSP alone",
+      "Protic ILs where proton transfer equilibria create complex speciation not represented by a single set of HSP values",
+      "DES at extreme HBD:HBA ratios where the eutectic structure breaks down and properties change discontinuously",
+      "Task-specific ILs with functional groups (e.g., amino-functionalized) that react with solutes rather than just solvating them",
+      "Systems where IL-solute specific interactions (pi-pi, charge transfer) dominate over bulk solvation effects"
+    ],
+    "validation_method": [
+      "Dissolution testing of reference polymers and solutes in the IL/DES",
+      "Liquid-liquid miscibility mapping with conventional organic solvents",
+      "Partition coefficient measurement between IL and reference solvent",
+      "Comparison of COSMO-RS predicted HSP with experimentally determined values",
+      "Activity coefficient measurements at infinite dilution via GLC or headspace GC"
+    ]
+  },
+  "implementation": {
+    "complexity": "high",
+    "ui_pattern": "screening",
+    "existing_modules_reusable": [
+      "calculateRa (applicable but may need modified weighting for ionic systems)",
+      "calculateRed",
+      "classifyRisk",
+      "sphere fitting (for experimental IL/DES HSP determination from dissolution data)"
+    ],
+    "multi_component_complexity": "ternary",
+    "scale_of_application": "screening"
+  },
+  "literature": {
+    "key_references": [
+      "Marciniak, A. 'The Solubility Parameters of Ionic Liquids', International Journal of Molecular Sciences, 2010, 11, 1973-1990. DOI: 10.3390/ijms11051973",
+      "Paduszynski, K.; Domanska, U. 'Solubility of Aliphatic Hydrocarbons in Piperidinium Ionic Liquids: Measurements and Modeling in Terms of Perturbed-Chain Statistical Associating Fluid Theory and Nonrandom Hydrogen-Bonding Theory', Journal of Physical Chemistry B, 2011, 115, 12537-12548 [uncertain]",
+      "Kou, Y.; Wan, Y.; Tong, Z.; Wang, M. 'Hansen Solubility Parameters of Ionic Liquids and Deep Eutectic Solvents', in 'Ionic Liquids in Green Chemistry', Springer, 2020 [uncertain]",
+      "Jessop, P.G.; Jessop, D.A.; Fu, D.; Phan, L. 'Solvatochromic Parameters for Solvents of Interest in Green Chemistry', Green Chemistry, 2012, 14, 1245-1259. DOI: 10.1039/C2GC16670D",
+      "Verma, R.; Mohan, M.; Goud, V.V.; Banerjee, T. 'Operational Strategies and Comprehensive Evaluation of Menthol-based Deep Eutectic Solvent for the Extraction of Lower Alcohols from Aqueous Media', ACS Sustainable Chemistry & Engineering, 2018, 6, 16920-16932 [uncertain]"
+    ],
+    "first_reported_year": 2006,
+    "regulatory_relevance": "REACH registration of ionic liquids requires physicochemical characterization including solubility data but does not mandate HSP determination. EU REACH has registered several common ILs. EPA TSCA has limited IL-specific guidance. No regulatory framework currently references HSP for ILs or DES specifically. Green chemistry initiatives (EPA Green Chemistry Challenge, EU Green Deal) encourage use of ILs/DES as alternatives to volatile organic solvents but do not require HSP-based screening. [uncertain]"
+  },
+  "industry_application": {
+    "industry_sectors": [
+      "Biomass processing (cellulose dissolution and lignocellulosic fractionation using ILs/DES)",
+      "Pharmaceutical (API extraction, purification, and crystallization in ILs/DES)",
+      "Electrochemistry (electrolyte design for batteries, supercapacitors, and electrodeposition)",
+      "Chemical manufacturing (catalysis, extraction, and separation processes)",
+      "Environmental (CO2 capture, heavy metal extraction, and waste treatment)"
+    ],
+    "commercial_tools": [
+      "COSMOtherm (COSMO-RS based HSP prediction for ILs and DES)",
+      "HSPiP (database includes limited IL entries; sphere fitting applicable to experimental data)",
+      "ILUAM database (University of Alabama IL database with physicochemical properties)",
+      "Materials Studio (MD simulation for IL CED and HSP calculation)",
+      "Sigma-Aldrich/Merck IL product catalog (provides Kamlet-Taft parameters for commercial ILs)"
+    ]
+  },
+  "uncertain": [
+    "key_equation",
+    "typical_red_threshold",
+    "first_reported_year",
+    "key_references",
+    "regulatory_relevance",
+    "data_availability_score"
+  ]
+}

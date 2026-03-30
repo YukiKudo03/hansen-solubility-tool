@@ -1,0 +1,110 @@
+{
+  "basic_info": {
+    "name": "Pressure-dependent HSP Correction",
+    "name_ja": "圧力依存HSP補正",
+    "category": "Computational",
+    "description": "Correction of Hansen Solubility Parameters for pressure effects, essential for applications involving supercritical fluid extraction (particularly supercritical CO2), high-pressure processing, and deep-sea/subsurface material compatibility. At elevated pressures, liquid density increases, intermolecular distances decrease, and cohesive energy density changes, all of which shift HSP values. For supercritical fluids like CO2, the HSP varies dramatically with pressure and temperature as the fluid transitions from gas-like to liquid-like densities. The ability to calculate pressure-dependent HSP enables optimization of supercritical extraction conditions, prediction of high-pressure polymer processing behavior, and assessment of material compatibility under extreme conditions encountered in oil and gas, deep-sea, and aerospace applications.",
+    "maturity_level": "emerging"
+  },
+  "hsp_principle": {
+    "hsp_principle": "HSP values are defined at standard conditions (25 deg C, 1 atm) but change with pressure through density-dependent and equation-of-state effects. The primary mechanism is that increased pressure compresses the liquid, reducing molar volume V_m and increasing cohesive energy density CED = E_coh/V_m, thereby increasing delta_t. For supercritical CO2, the solubility parameter can be approximated from the reduced density using the Giddings correlation: delta = 1.25*P_c^0.5 * (rho_r / rho_r_liq), where rho_r is the reduced density at the operating conditions and rho_r_liq is the reduced density of the saturated liquid. The three HSP components respond differently to pressure: dD increases approximately linearly with density through enhanced London dispersion interactions; dP changes modestly for non-polar fluids but significantly for polar fluids where compression brings dipoles closer; dH can either increase (enhanced hydrogen bond density) or decrease (disruption of hydrogen bond networks at very high pressures). For supercritical CO2, dD dominates (no permanent dipole), ranging from near zero at low pressures to ~15 MPa^0.5 at very high pressures (400+ bar), with small dP (~3-6) and dH (~3-6) contributed by the quadrupole moment and Lewis acid character. Co-solvents (entrainers) like ethanol or methanol added to scCO2 shift the effective mixture HSP into regions with higher dP and dH, enabling dissolution of more polar solutes.",
+    "key_equation": "Giddings: delta_t(P,T) = 1.25*P_c^0.5 * rho_r(P,T)/rho_r_liq; General: delta_t(P) = delta_t(P0) * (V_m(P0)/V_m(P))^0.5; scCO2 HSP: dD = f(rho), dP ~ 3-6 MPa^0.5 (quadrupole), dH ~ 3-6 MPa^0.5 (Lewis acid); Mixture with co-solvent: HSP_mix = phi_CO2*HSP_CO2(P,T) + phi_cosolv*HSP_cosolv",
+    "red_direction": "low_is_good",
+    "typical_red_threshold": "RED < 1.0 for solubility; for scCO2 extraction, optimal conditions are where RED(P,T) crosses below 1.0 for the target solute while remaining above 1.0 for matrix components",
+    "sensitivity_to_hbond_split": "medium",
+    "temperature_pressure_sensitivity": "high"
+  },
+  "input_data": {
+    "required_inputs": [
+      "HSP values at reference conditions (25 deg C, 1 atm) for the solute/material",
+      "Operating pressure and temperature",
+      "Equation of state parameters or density data for the solvent at operating conditions",
+      "Critical properties (Pc, Tc, Vc) for supercritical fluid applications",
+      "Co-solvent type and concentration (for modified scCO2)"
+    ],
+    "data_sources": [
+      "NIST WebBook for CO2 density at arbitrary P and T",
+      "Peng-Robinson or Soave-Redlich-Kwong equation of state for PVT data",
+      "HSPiP database for reference-condition HSP values",
+      "Published scCO2 HSP correlations (Williams 2004, Gupta & Shim 2006)",
+      "REFPROP (NIST) for accurate thermophysical properties of CO2 and co-solvents"
+    ],
+    "data_availability_score": 3,
+    "complementary_parameters": [
+      "Fluid density at operating conditions (from EOS or NIST tables)",
+      "Compressibility factor Z",
+      "Viscosity at high pressure (for mass transfer kinetics)",
+      "Diffusion coefficient at operating conditions",
+      "Solute vapor pressure (for extraction selectivity)",
+      "Co-solvent-solute specific interactions (not captured by HSP alone)"
+    ]
+  },
+  "accuracy": {
+    "accuracy_level": "semi-quantitative",
+    "limitations": [
+      "The Giddings correlation for scCO2 HSP gives only the total solubility parameter; decomposition into dD, dP, dH requires additional assumptions or models",
+      "HSP decomposition of supercritical fluids is ambiguous because the quadrupole moment of CO2 contributes to both dP and dH in ways that are not clearly separable",
+      "Pressure corrections assume simple density scaling, which breaks down near critical points where fluctuations are large",
+      "Co-solvent effects involve specific interactions (e.g., ethanol-CO2 clustering) that deviate from ideal volume-fraction mixing rules",
+      "Entrainer effects are often larger than predicted by simple HSP mixing, suggesting specific solute-cosolvent interactions beyond HSP",
+      "Very high pressures (>1000 bar) may cause phase transitions or structural changes in materials not predicted by HSP shifts alone"
+    ],
+    "known_failure_modes": [
+      "Near-critical region where small P or T changes cause dramatic density fluctuations and HSP discontinuities",
+      "Polar solutes in pure scCO2 where the low dP and dH of CO2 cannot be overcome even at very high pressures",
+      "Retrograde solubility behavior (solubility decreasing with pressure at certain T) not predicted by monotonic HSP-pressure relationship",
+      "Multi-solute systems where selectivity depends on kinetic effects (diffusion, film resistance) not captured by equilibrium HSP",
+      "Polymer-scCO2 systems where CO2-induced plasticization changes the polymer HSP simultaneously"
+    ],
+    "validation_method": [
+      "Measurement of solute solubility in scCO2 at multiple P and T conditions",
+      "Cloud point determination for polymer-scCO2 systems",
+      "Comparison of predicted optimal extraction pressure with experimental extraction yield curves",
+      "Correlation of scCO2 HSP with experimentally measured Hildebrand parameter via density",
+      "Co-solvent screening validation through extraction efficiency measurements"
+    ]
+  },
+  "implementation": {
+    "complexity": "medium",
+    "ui_pattern": "optimization",
+    "existing_modules_reusable": [
+      "calculateRa (applied at each P,T point)",
+      "calculateRed (with P,T-corrected HSP)",
+      "classifyRisk"
+    ],
+    "multi_component_complexity": "ternary",
+    "scale_of_application": "design"
+  },
+  "literature": {
+    "key_references": [
+      "Giddings, J.C.; Myers, M.N.; McLaren, L.; Keller, R.A. 'High Pressure Gas Chromatography of Nonvolatile Species', Science, 1968, 162, 67-73. DOI: 10.1126/science.162.3849.67",
+      "Williams, L.L.; Rubin, J.B.; Edwards, H.W. 'Calculation of Hansen Solubility Parameter Values for a Range of Pressure and Temperature Conditions, Including the Supercritical Fluid Region', Industrial & Engineering Chemistry Research, 2004, 43, 4967-4972. DOI: 10.1021/ie0497543",
+      "Gupta, R.B.; Shim, J.-J. 'Solubility in Supercritical Carbon Dioxide', CRC Press, 2006. Chapter 2: Thermodynamic Framework",
+      "Hansen, C.M. 'Hansen Solubility Parameters: A User's Handbook', 2nd Edition, CRC Press, 2007. Chapter 14: Supercritical Solvents",
+      "Sanchez, I.C.; Lacombe, R.H. 'Statistical Thermodynamics of Polymer Solutions', Macromolecules, 1978, 11, 1145-1156 [uncertain]"
+    ],
+    "first_reported_year": 1968,
+    "regulatory_relevance": "Supercritical CO2 extraction is recognized as a green technology by EPA and EU regulations. FDA GRAS status for scCO2-extracted food ingredients requires process validation but does not mandate HSP-based optimization. EU Novel Food Regulation and organic certification bodies accept scCO2 extraction. EPA P2 (Pollution Prevention) framework encourages scCO2 as a solvent replacement. No regulations specifically reference pressure-dependent HSP corrections, but the underlying extraction processes are well-regulated."
+  },
+  "industry_application": {
+    "industry_sectors": [
+      "Food and beverage (scCO2 decaffeination, hop extraction, essential oil extraction)",
+      "Pharmaceutical (scCO2 particle formation, API purification, residual solvent removal)",
+      "Cosmetics (natural ingredient extraction using scCO2)",
+      "Oil and gas (high-pressure material compatibility, polymer seal selection for downhole conditions)",
+      "Polymer processing (supercritical fluid impregnation, foaming, and particle formation)"
+    ],
+    "commercial_tools": [
+      "HSPiP (includes scCO2 HSP calculator with P and T input)",
+      "Aspen Plus / Aspen HYSYS (process simulation with EOS-based solubility parameter calculation)",
+      "REFPROP (NIST reference fluid properties for accurate CO2 PVT data)",
+      "ProSim Ternary Diagram (phase equilibrium visualization for scCO2 systems)",
+      "COSMOtherm (COSMO-RS predictions applicable to high-pressure conditions with pressure correction)"
+    ]
+  },
+  "uncertain": [
+    "typical_red_threshold",
+    "key_references",
+    "regulatory_relevance"
+  ]
+}

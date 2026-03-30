@@ -1,0 +1,109 @@
+{
+  "basic_info": {
+    "name": "Compatibilizer Selection for Blends",
+    "name_ja": "ブレンド用相溶化剤の選定",
+    "category": "Adhesion/Surface",
+    "description": "HSP-guided selection of block copolymer or graft copolymer compatibilizers for immiscible polymer blends. The compatibilizer must have segments that are HSP-compatible with each immiscible phase: one block matching polymer A and the other matching polymer B. By calculating Ra between each compatibilizer segment and each blend component, the optimal compatibilizer architecture can be identified. This reduces interfacial tension, stabilizes the morphology, and improves mechanical properties of the blend. The approach enables rapid screening of compatibilizer candidates from databases before expensive compounding trials.",
+    "maturity_level": "established"
+  },
+  "hsp_principle": {
+    "hsp_principle": "Immiscible polymer blends have high interfacial tension leading to coarse phase morphology and poor mechanical properties. A compatibilizer (typically a block or graft copolymer A-b-B or A-g-B) acts as a macromolecular surfactant, localizing at the interface between the two phases. For effective compatibilization, block A of the compatibilizer must be miscible with polymer phase 1 (low Ra and RED < 1) and block B must be miscible with polymer phase 2 (low Ra and RED < 1). The HSP distance between each compatibilizer segment and its target phase determines the thermodynamic driving force for interfacial segregation. The interfacial tension reduction is approximately proportional to exp(-Ra^2), meaning small increases in HSP mismatch lead to rapidly diminishing compatibilization efficiency. Random copolymer compatibilizers can also be evaluated by calculating their blend-averaged HSP and comparing with both phases.",
+    "key_equation": "Ra(block_A, polymer_1) = sqrt(4*(dD_A-dD_1)^2 + (dP_A-dP_1)^2 + (dH_A-dH_1)^2); Ra(block_B, polymer_2) = sqrt(4*(dD_B-dD_2)^2 + (dP_B-dP_2)^2 + (dH_B-dH_2)^2); Effectiveness criterion: RED_A1 < 1 AND RED_B2 < 1",
+    "red_direction": "low_is_good",
+    "typical_red_threshold": "RED < 1.0 for each block-phase pair required; RED < 0.5 for both pairs indicates excellent compatibilizer; total Ra(A-1) + Ra(B-2) should be minimized",
+    "sensitivity_to_hbond_split": "medium",
+    "temperature_pressure_sensitivity": "medium"
+  },
+  "input_data": {
+    "required_inputs": [
+      "HSP values (dD, dP, dH) for polymer phase 1",
+      "HSP values (dD, dP, dH) for polymer phase 2",
+      "HSP values (dD, dP, dH) for each block/segment of the candidate compatibilizer",
+      "Interaction radius R0 for each polymer phase",
+      "Processing temperature (for melt blending)"
+    ],
+    "data_sources": [
+      "HSPiP database (polymer and copolymer HSP values)",
+      "Group contribution methods (Van Krevelen, Hoftyzer-Van Krevelen) for novel copolymer segments",
+      "Literature HSP compilations for common polymers",
+      "Copolymer HSP estimation via volume-fraction weighted averaging of homopolymer HSP",
+      "Inverse gas chromatography for custom or synthesized compatibilizers"
+    ],
+    "data_availability_score": 3,
+    "complementary_parameters": [
+      "Molecular weight of compatibilizer (affects interfacial activity)",
+      "Block ratio and architecture (diblock, triblock, graft)",
+      "Processing conditions (temperature, shear rate, mixing time)",
+      "Blend composition ratio",
+      "Melt viscosity ratio of the two phases",
+      "Compatibilizer loading level (typically 1-10 wt%)"
+    ]
+  },
+  "accuracy": {
+    "accuracy_level": "semi-quantitative",
+    "limitations": [
+      "HSP matching provides thermodynamic screening but does not account for kinetic aspects of compatibilizer migration to the interface during melt processing",
+      "Block copolymer HSP is estimated from homopolymer values; actual segment HSP may differ due to confinement and chain connectivity effects",
+      "Does not predict optimal compatibilizer molecular weight or block ratio, which are critical for interfacial activity",
+      "Reactive compatibilization (in-situ formation of graft copolymers) involves chemical reactions not captured by HSP thermodynamics",
+      "Crystallization effects in semicrystalline blend components can override thermodynamic compatibilization",
+      "Volume-fraction averaging for random copolymer HSP is approximate and fails for alternating or gradient copolymers"
+    ],
+    "known_failure_modes": [
+      "Systems where reactive compatibilization is dominant (e.g., PA/PP with maleic anhydride grafted PP) and the chemical reaction provides compatibility regardless of HSP match",
+      "Blends where the compatibilizer forms micelles in one phase instead of migrating to the interface (excess compatibilizer)",
+      "High-viscosity blends where kinetic barriers prevent compatibilizer from reaching the interface within processing time",
+      "Blends with strong specific interactions (e.g., hydrogen bonding) that create compatibility beyond HSP prediction"
+    ],
+    "validation_method": [
+      "TEM or SEM morphology analysis (dispersed phase size reduction indicates effective compatibilization)",
+      "Mechanical testing (tensile strength, impact strength, elongation at break)",
+      "Rheological measurements (storage modulus, relaxation spectra for interfacial contribution)",
+      "DSC (Tg shifts indicating partial miscibility at interface)",
+      "Interfacial tension measurement (pendant drop or breaking thread method)"
+    ]
+  },
+  "implementation": {
+    "complexity": "medium",
+    "ui_pattern": "screening",
+    "existing_modules_reusable": [
+      "calculateRa",
+      "calculateRed",
+      "classifyRisk",
+      "optimizeBlend (for copolymer composition optimization)"
+    ],
+    "multi_component_complexity": "ternary",
+    "scale_of_application": "screening"
+  },
+  "literature": {
+    "key_references": [
+      "Paul, D.R.; Bucknall, C.B. 'Polymer Blends', Wiley-Interscience, 2000",
+      "Hansen, C.M. 'Hansen Solubility Parameters: A User's Handbook', 2nd Ed., CRC Press, 2007",
+      "Utracki, L.A.; Wilkie, C.A. 'Polymer Blends Handbook', 2nd Ed., Springer, 2014",
+      "Van Krevelen, D.W.; Te Nijenhuis, K. 'Properties of Polymers', 4th Ed., Elsevier, 2009",
+      "Taguet, A.; Cassagnau, P.; Lopez-Cuesta, J.M. 'Structuration, selective dispersion and compatibilizing effect of (nano)fillers in polymer blends', Progress in Polymer Science, 2014, DOI: 10.1016/j.progpolymsci.2014.04.002"
+    ],
+    "first_reported_year": 1985,
+    "regulatory_relevance": "Compatibilized polymer blends used in food-contact packaging must comply with FDA 21 CFR regulations and EU 10/2011 framework. The compatibilizer itself must be on approved substance lists. HSP screening supports REACH compliance by identifying safer compatibilizer alternatives during substitution assessments."
+  },
+  "industry_application": {
+    "industry_sectors": [
+      "Automotive (PP/PA blends for under-hood parts, TPO bumper systems)",
+      "Packaging (PE/PA barrier film blends, recycled polymer compatibility)",
+      "Electronics (PPO/PS blends, engineering plastic alloys for housings)",
+      "Recycling (mixed plastic waste stream compatibilization)",
+      "Consumer goods (ABS/PC blends, impact-modified blends)"
+    ],
+    "commercial_tools": [
+      "HSPiP (polymer blend and compatibilizer screening module)",
+      "Materials Studio (Synthia for copolymer HSP estimation)",
+      "Aspen Polymers (blend thermodynamics with chi parameter)",
+      "PolyInfo / NIMS database (polymer property database with blend data)",
+      "COSMOtherm (COSMO-RS based compatibility prediction)"
+    ]
+  },
+  "uncertain": [
+    "first_reported_year",
+    "typical_red_threshold"
+  ]
+}

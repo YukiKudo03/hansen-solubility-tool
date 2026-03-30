@@ -1,0 +1,145 @@
+{
+  "basic_info": {
+    "name": "Cleaning Product Formulation",
+    "name_ja": "洗浄製品処方設計",
+    "category": "Food/Cosmetics",
+    "description": "HSP matching between soil/stain types and surfactant/solvent cleaning systems predicts cleaning efficacy and guides formulation optimization. By characterizing the HSP of target soils (greases, oils, waxes, inks, protein-based stains) and matching them with cleaning agents, formulators can rationally select solvents, co-solvents, and surfactants that maximize soil removal. This approach is increasingly important for developing effective green cleaning products that replace hazardous solvents while maintaining performance.",
+    "maturity_level": "established"
+  },
+  "hsp_principle": {
+    "hsp_principle": "Cleaning efficacy fundamentally depends on the thermodynamic affinity between the cleaning agent and the soil to be removed. When the HSP of the cleaning solvent or the hydrophobic tail environment of a surfactant micelle closely matches the HSP of the soil, dissolution or emulsification is thermodynamically favorable. The Ra distance between soil HSP and solvent HSP predicts the cleaning power: smaller Ra means the soil dissolves more readily in the cleaning medium. For surfactant-based systems, the effective HSP of the micellar interior (dominated by the hydrophobic tail structure) determines which soils can be solubilized. Mixed solvent systems and hydrotrope-assisted formulations can be optimized by adjusting the blend HSP to match diverse soil types. The approach enables a two-step strategy: first identify the soil HSP, then screen or blend solvents/surfactants to minimize Ra.",
+    "key_equation": "Ra = sqrt(4*(dD_soil-dD_solvent)^2 + (dP_soil-dP_solvent)^2 + (dH_soil-dH_solvent)^2); RED = Ra/R0_soil; Cleaning efficiency inversely proportional to RED",
+    "red_direction": "low_is_good",
+    "typical_red_threshold": "RED < 1.0 for effective soil removal; RED < 0.8 for rapid cleaning",
+    "sensitivity_to_hbond_split": "medium",
+    "temperature_pressure_sensitivity": "medium"
+  },
+  "input_data": {
+    "required_inputs": [
+      "Soil/stain HSP (dD, dP, dH) - varies by soil type",
+      "Soil interaction radius R0",
+      "Cleaning solvent or surfactant system HSP (dD, dP, dH)",
+      "Cleaning temperature",
+      "Solvent blend or surfactant concentration"
+    ],
+    "data_sources": [
+      "HSPiP database for solvents, surfactants, and common soils",
+      "Published HSP data for oils, greases, waxes, and polymeric soils",
+      "Experimental soil characterization via solubility testing in graded solvents",
+      "Group contribution methods for novel soil/surfactant HSP estimation",
+      "Surfactant manufacturer technical data"
+    ],
+    "data_availability_score": 4,
+    "complementary_parameters": [
+      "Surface tension and contact angle (wetting behavior)",
+      "Surfactant CMC (critical micelle concentration)",
+      "Soil adhesion strength to substrate",
+      "Mechanical action (agitation, scrubbing energy)",
+      "pH and ionic strength",
+      "Temperature",
+      "Viscosity of cleaning solution",
+      "Substrate material and surface energy"
+    ]
+  },
+  "accuracy": {
+    "accuracy_level": "semi-quantitative",
+    "limitations": [
+      "Real-world soils are complex mixtures with heterogeneous HSP, making a single HSP value an oversimplification",
+      "Cleaning involves kinetic factors (diffusion, mechanical action, rinsing) not captured by thermodynamic HSP matching",
+      "Surfactant micelle HSP is concentration-dependent and difficult to characterize precisely",
+      "Soil adhesion to substrates involves surface energy and mechanical interlocking beyond HSP",
+      "Protein-based and enzymatic soils require biochemical action not predicted by HSP",
+      "Aged or cross-linked soils (baked-on, oxidized) have different HSP than fresh equivalents"
+    ],
+    "known_failure_modes": [
+      "Enzymatic cleaning where biological activity dominates over solubility (e.g., protease for blood stains)",
+      "Particulate soils (clay, soot) where mechanical removal and charge interactions dominate",
+      "Polymerized or cross-linked soils (dried paint, baked-on food) where dissolution kinetics are extremely slow despite favorable HSP",
+      "Multi-layer soils where outer layer HSP differs from inner layer, requiring sequential cleaning strategies"
+    ],
+    "validation_method": [
+      "Gravimetric soil removal measurement (weight loss of soiled substrate)",
+      "Visual and instrumental cleanliness assessment (gloss, reflectance)",
+      "Contact angle measurement before and after cleaning",
+      "Gardner washability/scrub resistance testing",
+      "Standardized cleaning efficacy tests (ASTM D4488, DIN EN ISO 11998)",
+      "Spectrophotometric stain removal measurement"
+    ]
+  },
+  "implementation": {
+    "complexity": "medium",
+    "ui_pattern": "screening",
+    "existing_modules_reusable": [
+      "calculateRa",
+      "calculateRed",
+      "classifyRisk",
+      "optimizeBlend"
+    ],
+    "multi_component_complexity": "ternary",
+    "scale_of_application": "design"
+  },
+  "literature": {
+    "key_references": [
+      {
+        "author": "Hansen, C.M.",
+        "title": "Hansen Solubility Parameters: A User's Handbook, 2nd Edition",
+        "journal": "CRC Press",
+        "year": 2007,
+        "doi": "10.1201/9781420006834"
+      },
+      {
+        "author": "Abbott, S.; Hansen, C.M.",
+        "title": "Hansen Solubility Parameters in Practice (HSPiP) software documentation",
+        "journal": "HSPiP, 5th Edition eBook",
+        "year": 2013,
+        "doi": "N/A"
+      },
+      {
+        "author": "Johansson, I.; Somasundaran, P. (Eds.)",
+        "title": "Handbook for Cleaning/Decontamination of Surfaces",
+        "journal": "Elsevier",
+        "year": 2007,
+        "doi": "10.1016/B978-0-444-51664-0.X5000-9"
+      },
+      {
+        "author": "Archer, W.L.",
+        "title": "Determination of Hansen solubility parameters for selected cellulose ether derivatives",
+        "journal": "Industrial & Engineering Chemistry Research",
+        "year": 1991,
+        "doi": "10.1021/ie00056a023"
+      },
+      {
+        "author": "Abbott, S.",
+        "title": "Surfactant Science: Principles and Practice",
+        "journal": "Self-published (free online textbook)",
+        "year": 2019,
+        "doi": "N/A"
+      }
+    ],
+    "first_reported_year": "[uncertain]",
+    "regulatory_relevance": "HSP-guided formulation supports REACH compliance by enabling substitution of hazardous solvents (chlorinated solvents, n-hexane, toluene) with safer alternatives. Relevant to EPA Safer Chemical Ingredients List (SCIL) and EU Ecolabel criteria for cleaning products. FDA compliance for food-contact surface cleaners. VOC emission regulations drive reformulation toward low-VOC cleaning agents where HSP matching ensures efficacy is maintained."
+  },
+  "industry_application": {
+    "industry_sectors": [
+      "Household and consumer cleaning products",
+      "Industrial and institutional (I&I) cleaning",
+      "Electronics cleaning (flux removal, precision cleaning)",
+      "Automotive and aerospace degreasing",
+      "Food processing equipment cleaning (CIP systems)",
+      "Textile and laundry care",
+      "Heritage conservation and art restoration"
+    ],
+    "commercial_tools": [
+      "HSPiP (Hansen Solubility Parameters in Practice)",
+      "COSMOtherm",
+      "Dow Chemical ECOSENSE solvent selector",
+      "BASF Solvents Navigator",
+      "Eastman Chemical solvent selection tools"
+    ]
+  },
+  "uncertain": [
+    "hsp_principle.typical_red_threshold",
+    "literature.first_reported_year",
+    "literature.key_references[3].doi"
+  ]
+}

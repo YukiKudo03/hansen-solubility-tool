@@ -1,0 +1,109 @@
+{
+  "basic_info": {
+    "name": "Temperature-dependent HSP Correction",
+    "name_ja": "温度依存HSP補正",
+    "category": "Computational",
+    "description": "Methods for estimating Hansen Solubility Parameters at arbitrary temperatures using thermal expansion coefficients and thermodynamic relationships. The Barton method and its extensions correct room-temperature HSP values for temperature effects by accounting for volume changes (thermal expansion), reduced intermolecular interactions at elevated temperatures, and changes in hydrogen bonding association equilibria. The dispersion parameter (dD) decreases with temperature due to volume expansion following a -1.25 power law with molar volume. The polar parameter (dP) decreases similarly but less steeply. The hydrogen bonding parameter (dH) shows the most complex behavior, decreasing significantly at high temperatures due to disruption of hydrogen bond networks. These corrections are essential for predicting solubility, compatibility, and processing behavior at temperatures far from the standard 25C reference, such as in melt processing, high-temperature coating application, cryogenic storage, and supercritical fluid applications.",
+    "maturity_level": "established"
+  },
+  "hsp_principle": {
+    "hsp_principle": "HSP values are defined at 25C reference conditions. At different temperatures, the molar volume changes due to thermal expansion, which directly affects the cohesive energy density and thus all three HSP components. The Barton method uses the coefficient of thermal expansion (alpha) to estimate volume change: V(T) = V(25C) * exp(alpha * (T - 25)). The dispersion parameter follows: dD(T) = dD(25) * (V(25)/V(T))^1.25, derived from London dispersion force theory where the interaction energy scales with the -6 power of intermolecular distance. The polar parameter follows: dP(T) = dP(25) * (V(25)/V(T))^0.5, reflecting the weaker volume dependence of dipole-dipole interactions. The hydrogen bonding parameter has a more complex temperature dependence because hydrogen bonds break progressively with increasing temperature: dH(T) = dH(25) * exp(-alpha_H * (T - 25)), where alpha_H is an empirical parameter related to the hydrogen bond dissociation enthalpy. For solvents with strong self-association (water, alcohols, carboxylic acids), the temperature dependence of dH is particularly steep due to cooperative hydrogen bond network disruption. Extensions include group contribution corrections for specific functional groups and Clausius-Clapeyron type corrections near phase transitions.",
+    "key_equation": "V(T) = V(25) * exp(alpha*(T-25)); dD(T) = dD(25) * (V(25)/V(T))^1.25; dP(T) = dP(25) * (V(25)/V(T))^0.5; dH(T) = dH(25) * exp(-1.22e-3*(T-25)) [approximate for non-associated liquids]; For associated liquids: dH(T)^2 = dH(25)^2 - (Delta_H_assoc/V) * (1 - T/T_ref)",
+    "red_direction": "low_is_good",
+    "typical_red_threshold": "Same as underlying application (RED < 1.0 for solubility); temperature correction shifts the threshold by modifying HSP values",
+    "sensitivity_to_hbond_split": "high",
+    "temperature_pressure_sensitivity": "high"
+  },
+  "input_data": {
+    "required_inputs": [
+      "HSP values (dD, dP, dH) at reference temperature (typically 25C)",
+      "Molar volume at reference temperature",
+      "Coefficient of thermal expansion (alpha) for each component",
+      "Target temperature for correction",
+      "Hydrogen bond association enthalpy (for strongly associated liquids)"
+    ],
+    "data_sources": [
+      "HSPiP database for 25C reference HSP values and molar volumes",
+      "CRC Handbook of Chemistry and Physics for thermal expansion coefficients",
+      "NIST WebBook for thermodynamic properties",
+      "Literature values for hydrogen bond dissociation enthalpies",
+      "Group contribution estimation when experimental alpha is unavailable"
+    ],
+    "data_availability_score": 4,
+    "complementary_parameters": [
+      "Boiling point and critical temperature (upper limit of liquid-phase correction)",
+      "Heat capacity (Cp) for enthalpy calculations",
+      "Vapor pressure curve (for evaporation considerations at elevated T)",
+      "Glass transition temperature Tg (for polymer HSP temperature dependence)",
+      "Association equilibrium constants for strongly hydrogen-bonding solvents"
+    ]
+  },
+  "accuracy": {
+    "accuracy_level": "semi-quantitative",
+    "limitations": [
+      "The power-law exponents (1.25 for dD, 0.5 for dP) are theoretical approximations derived from simplified intermolecular force models",
+      "Hydrogen bonding temperature dependence is highly system-specific and the exponential approximation is crude for strongly associated liquids",
+      "Near critical points and phase transitions, the continuous thermal expansion model breaks down",
+      "For polymers, the temperature dependence differs above and below Tg due to different thermal expansion coefficients in glassy vs rubbery states",
+      "The method assumes ideal gas thermal expansion; real liquid behavior at high pressures requires equation-of-state corrections",
+      "No reliable correction exists for temperatures below the freezing point of the solvent"
+    ],
+    "known_failure_modes": [
+      "Water and highly associated liquids where cooperative hydrogen bond networks create non-monotonic temperature dependence of dH",
+      "Temperatures near the boiling point where vapor-liquid equilibrium effects dominate",
+      "Supercooled or glassy states where thermal expansion coefficients are discontinuous",
+      "Binary or multicomponent systems where mixing HSP at elevated temperatures requires composition-dependent corrections",
+      "Ionic liquids where electrostatic interactions have different temperature dependence than captured by HSP"
+    ],
+    "validation_method": [
+      "Inverse gas chromatography (IGC) at multiple temperatures for experimental HSP determination",
+      "Solubility measurements at multiple temperatures compared with predictions",
+      "PVT (pressure-volume-temperature) measurements for thermal expansion verification",
+      "DSC for phase transition identification affecting correction validity",
+      "Comparison with COSMO-RS predicted temperature dependence"
+    ]
+  },
+  "implementation": {
+    "complexity": "medium",
+    "ui_pattern": "pairwise",
+    "existing_modules_reusable": [
+      "calculateRa",
+      "calculateRed",
+      "classifyRisk"
+    ],
+    "multi_component_complexity": "binary",
+    "scale_of_application": "design"
+  },
+  "literature": {
+    "key_references": [
+      "Barton, A.F.M. 'Handbook of Solubility Parameters and Other Cohesion Parameters', 2nd ed., CRC Press, 1991 (Chapter on temperature dependence of solubility parameters)",
+      "Hansen, C.M. 'Hansen Solubility Parameters: A User's Handbook', 2nd ed., CRC Press, 2007 (Section 1.3: Temperature effects)",
+      "Lindvig, T.; Michelsen, M.L.; Kontogeorgis, G.M. 'A Flory-Huggins Model Based on the Hansen Solubility Parameters', Fluid Phase Equilibria, 2002, 203, 247-260. DOI: 10.1016/S0378-3812(02)00184-X",
+      "Bustamante, P.; Pena, M.A.; Barra, J. 'The Modified Extended Hansen Method to Determine Partial Solubility Parameters of Drugs Containing a Single Hydrogen Bonding Group and an Application to Solubility Prediction', International Journal of Pharmaceutics, 2000, 194, 117-124 [uncertain]",
+      "Panayiotou, C. 'Redefining Solubility Parameters: The Partial Solvation Parameters', Physical Chemistry Chemical Physics, 2012, 14, 3882-3908 [uncertain]"
+    ],
+    "first_reported_year": 1983,
+    "regulatory_relevance": "No specific regulatory framework addresses temperature-corrected HSP. However, pharmaceutical dissolution testing at 37C (body temperature) implicitly requires temperature-corrected HSP for accurate prediction. ASTM and ISO solubility testing standards specify temperature conditions but do not reference HSP correction methods. [uncertain]"
+  },
+  "industry_application": {
+    "industry_sectors": [
+      "Polymer processing (melt compounding, extrusion, and injection molding at 150-350C)",
+      "Coatings (high-temperature bake coatings and powder coating applications)",
+      "Pharmaceutical (body-temperature dissolution and controlled release prediction)",
+      "Oil and gas (downhole chemical compatibility at elevated temperatures)",
+      "Food processing (hot-fill packaging compatibility assessment)",
+      "Cryogenics (low-temperature seal and gasket material compatibility)"
+    ],
+    "commercial_tools": [
+      "HSPiP (built-in temperature correction using Barton method with user-adjustable parameters)",
+      "COSMOtherm (COSMO-RS based temperature-dependent sigma profiles for rigorous T correction)",
+      "Aspen Plus (equation-of-state based solubility parameter estimation at arbitrary T and P)",
+      "Materials Studio (molecular dynamics for temperature-dependent cohesive energy density)"
+    ]
+  },
+  "uncertain": [
+    "key_references",
+    "first_reported_year",
+    "regulatory_relevance"
+  ]
+}

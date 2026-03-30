@@ -1,0 +1,98 @@
+{
+  "basic_info": {
+    "name": "Ink-Substrate Adhesion",
+    "name_ja": "インク-基材間接着性",
+    "category": "Coatings/Inks",
+    "description": "HSP distance between ink formulation and substrate surface HSP predicts adhesion quality and delamination risk. By calculating the Ra (HSP distance) between the ink binder system and the substrate surface energy parameters, formulators can predict whether an ink will wet, adhere to, and remain bonded to a given substrate. Low Ra values indicate thermodynamic compatibility and strong adhesion, while high Ra values suggest poor wetting and risk of delamination under mechanical or environmental stress.",
+    "maturity_level": "established"
+  },
+  "hsp_principle": {
+    "hsp_principle": "The adhesion between an ink film and a substrate is governed by thermodynamic compatibility at the interface. When the HSP of the ink binder closely match the surface HSP of the substrate, intermolecular interactions across the interface are maximized, leading to strong adhesion. The HSP distance Ra quantifies this mismatch: a smaller Ra means the ink binder and substrate share similar dispersion, polar, and hydrogen bonding character, promoting molecular-level contact and interdiffusion at the interface. Surface treatment (corona, plasma, flame) modifies substrate surface HSP to improve compatibility with target inks.",
+    "key_equation": "Ra = sqrt(4*(dD_ink - dD_sub)^2 + (dP_ink - dP_sub)^2 + (dH_ink - dH_sub)^2)",
+    "red_direction": "low_is_good",
+    "typical_red_threshold": "Ra < 5 MPa^0.5 for good adhesion; RED < 1.0 when using ink binder solubility sphere",
+    "sensitivity_to_hbond_split": "medium",
+    "temperature_pressure_sensitivity": "medium"
+  },
+  "input_data": {
+    "required_inputs": [
+      "Ink binder/resin HSP (dD, dP, dH)",
+      "Substrate surface HSP (dD, dP, dH)",
+      "Ink binder interaction radius R0 (if using RED approach)",
+      "Surface treatment conditions (if applicable)"
+    ],
+    "data_sources": [
+      "HSPiP database for common polymeric binders",
+      "Contact angle measurements + Owens-Wendt or van Oss method for substrate surface HSP",
+      "Inverse gas chromatography (IGC) for substrate surface characterization",
+      "Supplier technical data sheets for ink resin HSP",
+      "Literature values for common substrates (PET, PE, PP, paper, glass)"
+    ],
+    "data_availability_score": 3,
+    "complementary_parameters": [
+      "Surface energy and contact angle of substrate",
+      "Ink viscosity and surface tension",
+      "Substrate surface roughness",
+      "Drying/curing temperature and time",
+      "Film thickness",
+      "Surface treatment level (dyne level)"
+    ]
+  },
+  "accuracy": {
+    "accuracy_level": "semi-quantitative",
+    "limitations": [
+      "Substrate surface HSP estimation from contact angle data introduces uncertainty, especially for heterogeneous or porous surfaces",
+      "HSP model does not capture mechanical interlocking contributions to adhesion on rough substrates",
+      "Crosslinking and curing reactions alter final film HSP from initial formulation values",
+      "Migration of additives (plasticizers, slip agents) to the interface can change adhesion over time",
+      "HSP approach assumes equilibrium thermodynamics but adhesion also depends on kinetic factors like drying rate and solvent retention"
+    ],
+    "known_failure_modes": [
+      "Highly crystalline substrates (e.g., untreated PP, PE) where surface HSP measurement is unreliable",
+      "Systems dominated by mechanical interlocking rather than chemical adhesion",
+      "Multi-layer ink systems where interlayer interactions dominate over ink-substrate interface",
+      "Substrates with surface contamination or release agents that mask true surface HSP"
+    ],
+    "validation_method": "Cross-cut adhesion test (ASTM D3359), peel strength measurement (ASTM D903), tape adhesion test, scotch tape pull-off test, and accelerated aging followed by adhesion re-testing"
+  },
+  "implementation": {
+    "complexity": "medium",
+    "ui_pattern": "matrix",
+    "existing_modules_reusable": [
+      "calculateRa",
+      "calculateRed",
+      "classifyRisk"
+    ],
+    "multi_component_complexity": "binary",
+    "scale_of_application": "screening"
+  },
+  "literature": {
+    "key_references": [
+      "Hansen, C.M. 'Hansen Solubility Parameters: A User's Handbook', 2nd ed., CRC Press, 2007",
+      "Abbott, S., Hansen, C.M. 'Hansen Solubility Parameters in Practice', HSPiP, 5th ed., 2015",
+      "Rabelink, M. et al. 'Predicting ink adhesion on polymer films using Hansen solubility parameters', Progress in Organic Coatings, 2018",
+      "Ghosh, P. 'Adhesion and surface energy of polymeric films for flexible packaging', Journal of Applied Polymer Science, 2012"
+    ],
+    "first_reported_year": "[uncertain]",
+    "regulatory_relevance": "Not directly regulated, but adhesion performance requirements are specified in food packaging (FDA 21 CFR), pharmaceutical packaging (USP), and industrial coating standards (ISO 2409). HSP-based screening is used internally by formulators but not formally referenced in regulations."
+  },
+  "industry_application": {
+    "industry_sectors": [
+      "Flexible packaging and converting",
+      "Commercial and publication printing",
+      "Label and tag printing",
+      "Automotive coatings",
+      "Consumer electronics decoration"
+    ],
+    "commercial_tools": [
+      "HSPiP (Hansen Solubility Parameters in Practice)",
+      "DataPhysics OCA contact angle systems (for substrate HSP)",
+      "Surface Analyst (for surface energy measurement)",
+      "Proprietary ink formulation software from major ink manufacturers"
+    ]
+  },
+  "uncertain": [
+    "first_reported_year",
+    "data_availability_score"
+  ]
+}

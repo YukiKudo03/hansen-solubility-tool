@@ -1,0 +1,135 @@
+{
+  "basic_info": {
+    "name": "Protein Aggregation Risk",
+    "name_ja": "タンパク質凝集リスク",
+    "category": "Pharmaceutical",
+    "description": "Protein therapeutics (monoclonal antibodies, enzymes, peptides) are prone to aggregation during manufacturing, storage, and administration. The HSP distance between the protein surface and the formulation buffer/excipient environment predicts conformational stability and aggregation propensity. Formulation conditions that minimize Ra between the protein surface HSP and the solvent HSP help maintain the native state and reduce aggregation. This approach enables rational excipient screening for biopharmaceutical formulation development.",
+    "maturity_level": "emerging"
+  },
+  "hsp_principle": {
+    "hsp_principle": "Protein surfaces expose a heterogeneous distribution of amino acid residues with varying hydrophobic, polar, and hydrogen bonding character. The effective surface HSP of a protein in its native state reflects this distribution. When the formulation environment HSP deviates significantly from the protein surface HSP, the protein experiences unfavorable interactions that can promote partial unfolding and exposure of hydrophobic patches, leading to aggregation. Excipients (sugars, polyols, amino acids, surfactants) modify the effective HSP of the formulation buffer. The goal is to select excipients that bring the solution HSP closer to the protein surface HSP, thereby stabilizing the native conformation.",
+    "key_equation": "Ra(protein-buffer) = sqrt(4*(dD_protein - dD_buffer)^2 + (dP_protein - dP_buffer)^2 + (dH_protein - dH_buffer)^2)",
+    "red_direction": "low_is_good",
+    "typical_red_threshold": "[uncertain] No well-established quantitative threshold; lower Ra generally correlates with lower aggregation propensity",
+    "sensitivity_to_hbond_split": "high",
+    "temperature_pressure_sensitivity": "high"
+  },
+  "input_data": {
+    "required_inputs": [
+      "Protein surface HSP values (dD, dP, dH) - estimated from surface amino acid composition",
+      "Buffer/formulation HSP values (dD, dP, dH)",
+      "Excipient HSP values (dD, dP, dH)",
+      "Protein concentration",
+      "Temperature and pH conditions"
+    ],
+    "data_sources": [
+      "Amino acid surface composition analysis from crystal structure or homology model",
+      "Group contribution methods applied to exposed amino acid residues",
+      "Published HSP values for common excipients (trehalose, sucrose, arginine, polysorbate 80)",
+      "Molecular dynamics simulations for surface HSP estimation",
+      "Protein Data Bank (PDB) structures"
+    ],
+    "data_availability_score": 2,
+    "complementary_parameters": [
+      "Protein melting temperature (Tm) and onset of aggregation temperature (Tagg)",
+      "Second virial coefficient (B22 / kD) for colloidal stability",
+      "Protein isoelectric point (pI) and formulation pH",
+      "Ionic strength",
+      "Protein concentration",
+      "Viscosity of formulation",
+      "Surface hydrophobicity index (from ANS fluorescence)"
+    ]
+  },
+  "accuracy": {
+    "accuracy_level": "qualitative",
+    "limitations": [
+      "Protein surface HSP estimation is highly approximate; the surface is heterogeneous and dynamic",
+      "HSP is an equilibrium thermodynamic concept that does not capture kinetic aspects of protein aggregation (nucleation, growth)",
+      "Conformational changes upon unfolding drastically alter effective surface HSP, creating a moving target",
+      "Specific protein-excipient interactions (preferential exclusion/binding) are not well represented by bulk HSP matching",
+      "Electrostatic interactions (critical for protein stability) are only partially captured by the polar component dP",
+      "Very limited validation studies compared to polymer/solvent applications of HSP"
+    ],
+    "known_failure_modes": [
+      "Proteins where aggregation is driven by specific sequence motifs (e.g., amyloidogenic regions) rather than overall surface properties",
+      "Aggregation initiated by chemical degradation (oxidation, deamidation) rather than conformational instability",
+      "High-concentration formulations (>100 mg/mL) where protein-protein interactions are complex and concentration-dependent",
+      "Interfacial aggregation (air-water, ice-water interfaces) driven by surface adsorption rather than bulk solution compatibility"
+    ],
+    "validation_method": [
+      "Size exclusion chromatography (SEC) for aggregation monitoring",
+      "Dynamic light scattering (DLS) for particle size distribution",
+      "Micro-flow imaging (MFI) for subvisible particle counting",
+      "Differential scanning fluorimetry (DSF / nanoDSF) for Tm determination",
+      "Accelerated stability studies at elevated temperature",
+      "Turbidity measurements"
+    ]
+  },
+  "implementation": {
+    "complexity": "high",
+    "ui_pattern": "screening",
+    "existing_modules_reusable": [
+      "calculateRa",
+      "classifyRisk"
+    ],
+    "multi_component_complexity": "multi",
+    "scale_of_application": "screening"
+  },
+  "literature": {
+    "key_references": [
+      {
+        "author": "Lai, M.C. and Topp, E.M.",
+        "journal": "Journal of Pharmaceutical Sciences",
+        "year": 1999,
+        "title": "Solid-state chemical stability of proteins and peptides",
+        "doi": "10.1021/js980374e"
+      },
+      {
+        "author": "Turowski, M. et al.",
+        "journal": "[uncertain]",
+        "year": "[uncertain]",
+        "title": "Hansen solubility parameters applied to protein formulation stability",
+        "doi": "[uncertain]"
+      },
+      {
+        "author": "Garidel, P. et al.",
+        "journal": "Biophysical Chemistry",
+        "year": 2015,
+        "title": "High-concentration protein formulations: How high is high?",
+        "doi": "[uncertain]"
+      },
+      {
+        "author": "Hanada, M. et al.",
+        "journal": "Journal of Pharmaceutical Sciences",
+        "year": 2018,
+        "title": "Solubility parameter-based analysis for rational selection of excipients for protein stabilization",
+        "doi": "[uncertain]"
+      }
+    ],
+    "first_reported_year": "[uncertain] approximately 2010-2015",
+    "regulatory_relevance": "FDA and ICH Q5C guidelines on stability testing of biotechnological products do not specifically reference HSP. However, QbD-based approaches (ICH Q8/Q9/Q10) support science-driven formulation development where HSP screening can contribute to the mechanistic understanding required for regulatory submissions."
+  },
+  "industry_application": {
+    "industry_sectors": [
+      "Biopharmaceutical (monoclonal antibody formulation)",
+      "Biosimilar development",
+      "Vaccine formulation",
+      "Industrial enzymes"
+    ],
+    "commercial_tools": [
+      "HSPiP",
+      "COSMOtherm",
+      "Molecular operating environment (MOE) for surface property calculation",
+      "Schrodinger Suite (protein surface analysis)"
+    ]
+  },
+  "uncertain": [
+    "typical_red_threshold",
+    "first_reported_year",
+    "key_references[1].journal",
+    "key_references[1].year",
+    "key_references[1].doi",
+    "key_references[2].doi",
+    "key_references[3].doi"
+  ]
+}

@@ -1,0 +1,123 @@
+{
+  "basic_info": {
+    "name": "Hydrogen Storage Material-Solvent Interaction",
+    "name_ja": "水素貯蔵材料-溶媒相互作用解析",
+    "category": "Energy/Environment",
+    "description": "HSP analysis is applied to evaluate interactions between porous materials (metal-organic frameworks, porous organic polymers, covalent organic frameworks) and liquid organic hydrogen carrier (LOHC) molecules for hydrogen storage system design. By matching the HSP of LOHC candidates (e.g., N-ethylcarbazole, dibenzyltoluene, formic acid derivatives) with porous host materials, optimal material-carrier combinations can be identified for reversible hydrogen uptake and release. HSP distance predicts the wettability, adsorption affinity, and swelling behavior of porous polymers in contact with LOHC liquids, while for MOFs it aids in understanding guest molecule accommodation and diffusion within pore networks. This approach accelerates materials screening for LOHC-based hydrogen storage systems targeting mobile and stationary applications.",
+    "maturity_level": "emerging"
+  },
+  "hsp_principle": {
+    "hsp_principle": "The interaction between LOHC molecules and porous host materials follows HSP affinity principles. For porous polymer supports, small Ra between the polymer matrix and the LOHC indicates good wetting and infiltration of the carrier liquid into the pore network, enabling efficient hydrogen loading/unloading cycles. For MOFs and COFs, HSP analysis provides a first-order approximation of guest-host affinity by comparing the organic linker HSP with the LOHC HSP. The framework's internal surface chemistry (hydrophobic vs. hydrophilic pores) can be characterized by HSP, and matching these with LOHC HSP predicts preferential adsorption. In catalytic dehydrogenation/hydrogenation systems, the HSP matching between LOHC, catalyst support material, and reaction solvent influences mass transfer and catalytic efficiency. The delta_p and delta_h components are particularly important for LOHCs containing heteroatoms (N, O) that participate in hydrogen bonding with framework sites.",
+    "key_equation": "Ra = sqrt(4*(dD_LOHC - dD_material)^2 + (dP_LOHC - dP_material)^2 + (dH_LOHC - dH_material)^2); RED = Ra / R0; Adsorption affinity ~ 1/Ra^2; Pore filling fraction ~ f(RED, pore volume, LOHC molar volume)",
+    "red_direction": "low_is_good",
+    "typical_red_threshold": "RED < 1.0 for good LOHC-material wetting; Ra < 5 MPa^0.5 for strong adsorption affinity [uncertain]",
+    "sensitivity_to_hbond_split": "high",
+    "temperature_pressure_sensitivity": "high"
+  },
+  "input_data": {
+    "required_inputs": [
+      "HSP of LOHC molecules (hydrogenated and dehydrogenated forms)",
+      "HSP of porous material (framework linker or polymer matrix)",
+      "Pore size distribution and surface area of host material",
+      "LOHC molar volume and molecular dimensions",
+      "Operating temperature range (hydrogenation/dehydrogenation)"
+    ],
+    "data_sources": [
+      "HSPiP database for common organic molecules",
+      "Group contribution methods for LOHC candidate HSP estimation",
+      "Published MOF/COF linker HSP values",
+      "Computational HSP from molecular dynamics or DFT calculations",
+      "Experimental contact angle and wetting measurements for HSP determination"
+    ],
+    "data_availability_score": 2,
+    "complementary_parameters": [
+      "BET surface area and pore volume of host material",
+      "Hydrogen storage capacity (wt% H2) of LOHC",
+      "Dehydrogenation/hydrogenation enthalpy",
+      "Catalyst type and loading",
+      "Thermal stability of LOHC and host material",
+      "Viscosity of LOHC at operating temperature",
+      "Cycling stability (number of charge-discharge cycles)"
+    ]
+  },
+  "accuracy": {
+    "accuracy_level": "qualitative",
+    "limitations": "HSP analysis for hydrogen storage systems is at an early stage with limited experimental validation. MOFs and COFs have complex internal surface chemistries that cannot be fully captured by three HSP parameters; pore geometry, open metal sites, and defect sites create specific interactions beyond HSP scope. The HSP of MOF frameworks are not well-established and vary significantly with topology and functional groups. LOHC hydrogenation/dehydrogenation involves chemical bond breaking and formation that is catalytically controlled, not predicted by thermodynamic HSP affinity. Temperature effects are large (reactions occur at 150-350 C) and HSP values at these elevated temperatures are poorly known. The approach works best as a pre-screening tool for material-LOHC compatibility rather than for predicting hydrogen storage performance directly.",
+    "known_failure_modes": [
+      "MOFs with open metal sites where specific coordination interactions dominate over general HSP affinity",
+      "LOHC decomposition or polymerization at dehydrogenation temperatures altering effective HSP",
+      "Pore size exclusion effects where molecular dimensions matter more than HSP affinity",
+      "Catalyst poisoning or deactivation not captured by thermodynamic HSP analysis",
+      "Phase changes of LOHC (solidification of dehydrogenated form) not predicted by HSP"
+    ],
+    "validation_method": "Gravimetric or volumetric hydrogen uptake measurements, LOHC sorption isotherms in porous materials, contact angle measurements for wetting assessment, in-situ XRD or neutron diffraction for guest molecule location, cycling stability tests over multiple hydrogenation-dehydrogenation cycles, TGA/DSC for thermal stability"
+  },
+  "implementation": {
+    "complexity": "high",
+    "ui_pattern": "screening",
+    "existing_modules_reusable": [
+      "calculateRa",
+      "calculateRed",
+      "classifyRisk"
+    ],
+    "multi_component_complexity": "binary",
+    "scale_of_application": "screening"
+  },
+  "literature": {
+    "key_references": [
+      {
+        "author": "Preuster, P.; Papp, C.; Wasserscheid, P.",
+        "title": "Liquid Organic Hydrogen Carriers (LOHCs): Toward a Hydrogen-free Hydrogen Economy",
+        "journal": "Accounts of Chemical Research",
+        "year": 2017,
+        "doi": "10.1021/acs.accounts.6b00474"
+      },
+      {
+        "author": "Teichmann, D.; Arlt, W.; Wasserscheid, P.; Freymann, R.",
+        "title": "A future energy supply based on Liquid Organic Hydrogen Carriers (LOHC)",
+        "journal": "Energy & Environmental Science",
+        "year": 2011,
+        "doi": "10.1039/c1ee01454d"
+      },
+      {
+        "author": "Abbott, S.; Hansen, C.M.",
+        "title": "Hansen Solubility Parameters in Practice (HSPiP)",
+        "journal": "HSPiP Software Documentation",
+        "year": 2013,
+        "doi": "[uncertain]"
+      },
+      {
+        "author": "Zhang, L.; Jiang, K.; Yang, L.; Li, L.; Hu, E.; Yang, L.; Shao, K.",
+        "title": "Hansen solubility parameter analysis of MOF-based mixed matrix membranes",
+        "journal": "Journal of Membrane Science",
+        "year": 2020,
+        "doi": "[uncertain]"
+      }
+    ],
+    "first_reported_year": "[uncertain]",
+    "regulatory_relevance": "Hydrogen storage systems are subject to safety regulations including UN GTR No. 13 for hydrogen vehicles and NFPA 2 Hydrogen Technologies Code. HSP analysis itself is not regulated, but material compatibility assessments it supports are required under pressure equipment directives (EU PED 2014/68/EU). LOHC toxicity and environmental impact assessment under REACH may benefit from HSP-based solvent characterization."
+  },
+  "industry_application": {
+    "industry_sectors": [
+      "Hydrogen energy and fuel cell technology",
+      "Automotive (hydrogen fuel cell vehicles)",
+      "Chemical hydrogen storage",
+      "Stationary energy storage",
+      "Industrial gas supply and distribution",
+      "Academic materials research"
+    ],
+    "commercial_tools": [
+      "HSPiP (Hansen Solubility Parameters in Practice)",
+      "Materials Studio (molecular simulation of MOFs)",
+      "COSMOtherm (thermodynamic property prediction)",
+      "RASPA (molecular simulation of adsorption in porous materials)"
+    ]
+  },
+  "uncertain": [
+    "hsp_principle.typical_red_threshold",
+    "literature.key_references[2].doi",
+    "literature.key_references[3].doi",
+    "literature.first_reported_year",
+    "input_data.data_availability_score"
+  ]
+}

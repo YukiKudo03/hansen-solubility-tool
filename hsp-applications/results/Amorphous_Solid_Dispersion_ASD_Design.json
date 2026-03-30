@@ -1,0 +1,131 @@
+{
+  "basic_info": {
+    "name": "Amorphous Solid Dispersion (ASD) Design",
+    "name_ja": "非晶質固体分散体（ASD）設計",
+    "category": "Pharmaceutical",
+    "description": "Amorphous solid dispersions (ASDs) improve oral bioavailability of poorly soluble drugs by molecularly dispersing the API in a polymer matrix. HSP distance between the API and carrier polymer predicts thermodynamic miscibility: small Ra values indicate favorable mixing enthalpy, which correlates with physical stability against recrystallization. The Flory-Huggins interaction parameter chi can be estimated from HSP distance, enabling rapid in-silico screening of polymer carriers before costly experimental studies.",
+    "maturity_level": "established"
+  },
+  "hsp_principle": {
+    "hsp_principle": "The thermodynamic miscibility of an API-polymer pair is governed by the Gibbs free energy of mixing. The enthalpic contribution is approximated by the Flory-Huggins interaction parameter chi, which can be estimated from the HSP distance (Ra) between drug and polymer. A small Ra indicates similar intermolecular interactions (dispersion, polar, hydrogen bonding), predicting favorable mixing and resistance to amorphous phase separation or recrystallization. The approach maps both API and polymer into 3D Hansen space and uses proximity as a miscibility predictor.",
+    "key_equation": "chi = V_drug * (Ra)^2 / (6 * R * T), where Ra = sqrt(4*(dD1-dD2)^2 + (dP1-dP2)^2 + (dH1-dH2)^2)",
+    "red_direction": "low_is_good",
+    "typical_red_threshold": "Ra < 7 MPa^0.5 generally indicates good miscibility; chi < 0.5 suggests thermodynamic miscibility",
+    "sensitivity_to_hbond_split": "high",
+    "temperature_pressure_sensitivity": "high"
+  },
+  "input_data": {
+    "required_inputs": [
+      "API HSP values (dD, dP, dH)",
+      "Polymer HSP values (dD, dP, dH)",
+      "Molar volume of drug (V_drug)",
+      "Temperature of interest",
+      "Drug loading target (weight fraction)"
+    ],
+    "data_sources": [
+      "HSPiP database for common polymers (PVP, PVPVA, HPMC, HPMCAS, Soluplus)",
+      "Group contribution methods (Van Krevelen, Hoftyzer) for novel APIs",
+      "Inverse gas chromatography (IGC) measurements",
+      "Solubility parameter estimation from molecular structure (e.g., COSMOtherm)",
+      "Literature values for FDA-approved polymers"
+    ],
+    "data_availability_score": 3,
+    "complementary_parameters": [
+      "Glass transition temperature (Tg) of API and polymer",
+      "Melting point and enthalpy of fusion of crystalline API",
+      "Molecular weight of polymer",
+      "Drug loading ratio",
+      "Moisture sorption isotherms",
+      "Crystallization tendency classification of API"
+    ]
+  },
+  "accuracy": {
+    "accuracy_level": "semi-quantitative",
+    "limitations": [
+      "HSP-based chi estimation assumes regular solution theory, neglecting specific directional interactions such as ionic or charge-transfer complexes",
+      "Polymer conformational entropy contributions are not captured by HSP distance alone",
+      "Temperature dependence of HSP values is often approximated or ignored, reducing accuracy at processing temperatures vs. storage temperatures",
+      "Drug-polymer hydrogen bonding specificity (donor-acceptor pairing) is not fully resolved by the single dH parameter",
+      "Kinetic factors (nucleation barriers, polymer chain mobility) are not predicted",
+      "High drug loading scenarios deviate from dilute-mixing assumptions"
+    ],
+    "known_failure_modes": [
+      "APIs with strong self-association (dimers, catemers) may show poorer miscibility than HSP predicts",
+      "Polymers with specific acid-base interactions with APIs (e.g., HPMCAS with basic drugs) may show better miscibility than Ra alone predicts",
+      "Systems where crystallization is kinetically controlled rather than thermodynamically driven",
+      "Salt forms or ionic APIs where electrostatic interactions dominate"
+    ],
+    "validation_method": [
+      "Differential scanning calorimetry (DSC) - single Tg indicates miscibility",
+      "Modulated DSC for Tg detection at low drug loadings",
+      "X-ray powder diffraction (XRPD) for crystallinity detection",
+      "Solid-state NMR for domain size estimation",
+      "Accelerated stability studies (40C/75%RH) for recrystallization monitoring",
+      "Dissolution testing under non-sink conditions"
+    ]
+  },
+  "implementation": {
+    "complexity": "medium",
+    "ui_pattern": "screening",
+    "existing_modules_reusable": [
+      "calculateRa",
+      "calculateRed",
+      "classifyRisk"
+    ],
+    "multi_component_complexity": "binary",
+    "scale_of_application": "screening"
+  },
+  "literature": {
+    "key_references": [
+      {
+        "author": "Greenhalgh, D.J. et al.",
+        "journal": "Journal of Pharmaceutical Sciences",
+        "year": 1999,
+        "title": "Solubility parameters as predictors of miscibility in solid dispersions",
+        "doi": "10.1021/js9804069"
+      },
+      {
+        "author": "Forster, A. et al.",
+        "journal": "Journal of Pharmacy and Pharmacology",
+        "year": 2001,
+        "title": "Selection of excipients for melt extrusion with two poorly water-soluble drugs by solubility parameter calculation and thermal analysis",
+        "doi": "10.1211/0022357011775532"
+      },
+      {
+        "author": "Marsac, P.J. et al.",
+        "journal": "Journal of Pharmaceutical Sciences",
+        "year": 2006,
+        "title": "Estimation of drug-polymer miscibility and solubility in amorphous solid dispersions using experimentally determined interaction parameters",
+        "doi": "10.1002/jps.20625"
+      },
+      {
+        "author": "Thakral, S. and Thakral, N.K.",
+        "journal": "Journal of Pharmaceutical Sciences",
+        "year": 2013,
+        "title": "Prediction of drug-polymer miscibility through the use of solubility parameter based Flory-Huggins interaction parameter and the experimental validation",
+        "doi": "10.1002/jps.23583"
+      }
+    ],
+    "first_reported_year": 1999,
+    "regulatory_relevance": "FDA encourages mechanistic understanding of ASD stability; HSP-based miscibility screening is commonly included in IND/NDA filings as part of formulation rationale. ICH Q8 pharmaceutical development framework supports science-based formulation selection including solubility parameter approaches."
+  },
+  "industry_application": {
+    "industry_sectors": [
+      "Pharmaceutical (oral solid dosage)",
+      "Contract research organizations (CRO)",
+      "Generic pharmaceutical development",
+      "Pharmaceutical excipient manufacturers"
+    ],
+    "commercial_tools": [
+      "HSPiP (Hansen Solubility Parameters in Practice)",
+      "COSMOtherm (Dassault Systemes / SCM)",
+      "Materials Studio (Dassault Systemes BIOVIA)",
+      "ADMET Predictor (Simulations Plus)",
+      "MeltCalc"
+    ]
+  },
+  "uncertain": [
+    "typical_red_threshold",
+    "first_reported_year"
+  ]
+}

@@ -1,0 +1,108 @@
+{
+  "basic_info": {
+    "name": "Inverse HSP Estimation from Data",
+    "name_ja": "データからの逆HSP推定",
+    "category": "Computational",
+    "description": "Computational methods for determining Hansen Solubility Parameters of an unknown material by fitting an optimal HSP sphere to experimental good-solvent/bad-solvent classification data. The classic approach uses geometric optimization to find the sphere center (dD, dP, dH) and radius R0 that best separates good solvents (inside) from bad solvents (outside) in 3D Hansen space. Modern extensions include Bayesian inference methods that provide confidence regions (credible intervals) for the estimated HSP values, accounting for experimental uncertainty, limited data, and misclassified solvents. This is the foundational computational method underlying nearly all experimental HSP determination for polymers, nanomaterials, pigments, and biological materials.",
+    "maturity_level": "established"
+  },
+  "hsp_principle": {
+    "hsp_principle": "The inverse problem of HSP estimation seeks to find the center coordinates (dD, dP, dH) and radius R0 of a sphere in Hansen space that optimally classifies a set of test solvents as good (inside sphere, RED < 1) or bad (outside sphere, RED > 1). The classic method minimizes misclassification by adjusting four parameters (dD, dP, dH, R0) using optimization algorithms. The original approach by Hansen used iterative manual fitting, later automated with simplex and gradient-based optimizers. The objective function typically combines misclassification count with a data-fit quality measure. Bayesian extensions model the probability of a solvent being 'good' as a function of RED through a logistic or probit link function, and use MCMC sampling or variational inference to obtain posterior distributions over (dD, dP, dH, R0), yielding credible regions that quantify uncertainty in the estimated parameters. This is critical because small experimental datasets (15-40 solvents) and subjective good/bad classification lead to significant parameter uncertainty that deterministic sphere fitting ignores.",
+    "key_equation": "Minimize: sum of misclassifications where RED_i < 1 for bad solvents or RED_i > 1 for good solvents; Ra_i = sqrt(4*(dD_s,i - dD)^2 + (dP_s,i - dP)^2 + (dH_s,i - dH)^2); RED_i = Ra_i / R0; Bayesian: P(good|RED) = sigmoid(a*(1 - RED) + b); posterior ~ product(P(data_i|dD,dP,dH,R0)) * prior(dD,dP,dH,R0)",
+    "red_direction": "low_is_good",
+    "typical_red_threshold": "RED = 1.0 is the classification boundary by definition; sphere fitting optimizes this boundary",
+    "sensitivity_to_hbond_split": "low",
+    "temperature_pressure_sensitivity": "low"
+  },
+  "input_data": {
+    "required_inputs": [
+      "List of test solvents with known HSP values (dD, dP, dH)",
+      "Binary classification of each solvent as good (dissolves/disperses) or bad (does not)",
+      "Optionally: quantitative dissolution/dispersion data (concentration, swelling ratio) for continuous fitting",
+      "Minimum 15-20 solvents spanning Hansen space for reliable sphere fitting"
+    ],
+    "data_sources": [
+      "Experimental dissolution or dispersion testing across a solvent panel",
+      "HSPiP database for test solvent HSP values (>1200 solvents)",
+      "Published good/bad solvent datasets for common polymers and materials",
+      "Swelling experiments for crosslinked polymers",
+      "Turbidity or UV-Vis absorbance measurements for quantitative classification"
+    ],
+    "data_availability_score": 5,
+    "complementary_parameters": [
+      "Solvent molar volume (affects entropic contribution not captured by HSP distance)",
+      "Temperature at which dissolution tests were conducted",
+      "Quantitative solubility data (if available) for weighted fitting",
+      "Polymer molecular weight (affects dissolution kinetics and threshold)",
+      "Time allowed for dissolution (kinetic vs thermodynamic classification)"
+    ]
+  },
+  "accuracy": {
+    "accuracy_level": "semi-quantitative",
+    "limitations": [
+      "Sphere fitting assumes the good-solvent region is spherical in Hansen space, which is an approximation; real solubility regions can be ellipsoidal or irregular",
+      "Results are sensitive to the choice and number of test solvents; poor coverage of Hansen space leads to poorly constrained sphere parameters",
+      "Binary good/bad classification discards quantitative information and introduces subjective threshold effects",
+      "The 4:1:1 weighting factor in the Ra equation is assumed fixed but may not be optimal for all material types",
+      "Classic deterministic fitting provides point estimates without uncertainty quantification",
+      "Outliers (misclassified solvents due to kinetic effects or specific interactions) can strongly bias the fitted sphere"
+    ],
+    "known_failure_modes": [
+      "Insufficient solvent coverage in one region of Hansen space causing the sphere to be poorly constrained in that direction",
+      "Materials with non-spherical solubility regions (e.g., elongated along dH axis) where sphere model is inadequate",
+      "Kinetically trapped states where apparent good/bad classification does not reflect thermodynamic equilibrium",
+      "Multiple local minima in the optimization landscape leading to different solutions depending on initial guess",
+      "Very small R0 values where few solvents fall inside the sphere, making the fit unreliable"
+    ],
+    "validation_method": [
+      "Leave-one-out cross-validation: fit sphere excluding each solvent and predict its classification",
+      "Bootstrap resampling to estimate parameter uncertainty",
+      "Independent validation with solvents not used in fitting",
+      "Comparison with literature HSP values for well-characterized materials",
+      "Bayesian posterior predictive checks"
+    ]
+  },
+  "implementation": {
+    "complexity": "medium",
+    "ui_pattern": "optimization",
+    "existing_modules_reusable": [
+      "calculateRa",
+      "calculateRed",
+      "sphere fitting",
+      "classifyRisk"
+    ],
+    "multi_component_complexity": "multi",
+    "scale_of_application": "design"
+  },
+  "literature": {
+    "key_references": [
+      "Hansen, C.M. 'Hansen Solubility Parameters: A User's Handbook', 2nd ed., CRC Press, 2007 (Chapter 1: Methods of characterization - sphere fitting methodology)",
+      "Gharagheizi, F. 'New Procedure to Determine Hansen Solubility Parameters of Polymers', Journal of Applied Polymer Science, 2007, 103, 31-36 [uncertain]",
+      "Louwerse, M.J.; Maldonado, A.; Rousseau, S.; Moreau-Masselon, C.; Rber, B.; Sommerdijk, N.A.J.M. 'Revisiting Hansen Solubility Parameters by Including Thermodynamics', ChemPhysChem, 2017, 18, 2914-2920 [uncertain]",
+      "Diaz de los Rios, M.; Ramos, E. 'Determination of the Hansen Solubility Parameters of Carbon Black by Inverse Gas Chromatography', Journal of Chromatography A, 2020 [uncertain]",
+      "Bottcher, T.; Henkel, S.; Mack, N.; Kalies, G. 'Bayesian Estimation of Hansen Solubility Parameters', Molecular Informatics, 2022 [uncertain]"
+    ],
+    "first_reported_year": 1967,
+    "regulatory_relevance": "HSP sphere fitting is the standard method recognized in HSPiP software documentation. No direct regulatory requirement, but the methodology underpins HSP determination used in REACH solvent substitution assessments and pharmaceutical excipient screening. ICH Q3D and FDA guidance implicitly rely on HSP data obtained through sphere fitting methods."
+  },
+  "industry_application": {
+    "industry_sectors": [
+      "Polymer science (HSP determination for new polymers and copolymers)",
+      "Pharmaceutical (API and excipient HSP characterization)",
+      "Coatings and inks (pigment and resin HSP determination)",
+      "Nanomaterials (HSP determination for CNTs, graphene, quantum dots, MXenes)",
+      "Chemical engineering (solvent selection based on material HSP)"
+    ],
+    "commercial_tools": [
+      "HSPiP (built-in sphere fitting optimization with DIY module)",
+      "COSMOtherm (sigma-profile based HSP estimation as alternative to sphere fitting)",
+      "Y-MB software (Hansen sphere fitting tool)",
+      "MATLAB/Python custom implementations using scipy.optimize or Bayesian frameworks (PyMC, Stan)"
+    ]
+  },
+  "uncertain": [
+    "key_references",
+    "first_reported_year",
+    "regulatory_relevance"
+  ]
+}

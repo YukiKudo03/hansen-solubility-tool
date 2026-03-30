@@ -1,0 +1,133 @@
+{
+  "basic_info": {
+    "name": "Biologic Formulation Buffer Selection",
+    "name_ja": "バイオ医薬品製剤用緩衝液選定",
+    "category": "Pharmaceutical",
+    "description": "HSP-based co-solvent and buffer excipient assessment for protein conformation stability in biologic drug products. This application uses Hansen solubility parameters to evaluate how formulation excipients (sugars, polyols, surfactants, amino acids, buffer species) interact with the protein surface to maintain native conformation and prevent aggregation. By comparing the HSP of the solvent environment with the effective surface HSP of the protein, formulators can predict whether a given buffer composition will stabilize or destabilize the biologic, enabling rational selection of formulation components for monoclonal antibodies, enzymes, and other therapeutic proteins.",
+    "maturity_level": "emerging"
+  },
+  "hsp_principle": {
+    "hsp_principle": "Protein stability in aqueous formulations depends on the balance of protein-solvent and protein-protein interactions. The preferential exclusion theory (Timasheff) explains how co-solutes either stabilize proteins (kosmotropes, excluded from protein surface) or destabilize them (chaotropes, preferentially bound). HSP provides a framework to quantify these interactions: excipients with HSP values very different from the protein surface HSP promote preferential exclusion and stabilization, while excipients with HSP values similar to hydrophobic patches on the protein surface may promote unfolding. The hydrogen bonding parameter (dH) is particularly important as it governs water structure around the protein. Mapping buffer excipients in Hansen space relative to the protein's effective surface HSP enables prediction of stabilizing vs. destabilizing formulation components.",
+    "key_equation": "Ra = sqrt(4*(dD_excipient - dD_protein_surface)^2 + (dP_excipient - dP_protein_surface)^2 + (dH_excipient - dH_protein_surface)^2); Preferential interaction parameter correlated with Ra [uncertain]",
+    "red_direction": "threshold_specific",
+    "typical_red_threshold": "Application-specific; excipients with HSP promoting preferential exclusion from protein surface are stabilizing; no universal RED threshold established [uncertain]",
+    "sensitivity_to_hbond_split": "high",
+    "temperature_pressure_sensitivity": "high"
+  },
+  "input_data": {
+    "required_inputs": [
+      "Effective protein surface HSP values (dD, dP, dH) or hydrophobicity profile",
+      "Excipient/co-solvent HSP values (dD, dP, dH)",
+      "Buffer species HSP values",
+      "Formulation pH and ionic strength",
+      "Protein concentration",
+      "Storage temperature range"
+    ],
+    "data_sources": [
+      "HSPiP database for common co-solvents and excipients",
+      "Computational estimation of protein surface HSP from amino acid sequence and 3D structure",
+      "Literature values for sugars (trehalose, sucrose), polyols (sorbitol, mannitol), and surfactants (polysorbate 20/80)",
+      "Molecular dynamics simulations for protein surface interaction parameters",
+      "Experimental preferential interaction measurements (densimetry, vapor pressure osmometry)"
+    ],
+    "data_availability_score": 2,
+    "complementary_parameters": [
+      "Protein melting temperature (Tm) and aggregation onset temperature (Tagg)",
+      "Protein isoelectric point (pI) and charge at formulation pH",
+      "Second virial coefficient (B22) for protein-protein interaction",
+      "Viscosity at target protein concentration",
+      "Surfactant critical micelle concentration (CMC)",
+      "Osmolality of final formulation"
+    ]
+  },
+  "accuracy": {
+    "accuracy_level": "qualitative",
+    "limitations": [
+      "Protein surface HSP is an approximation; real protein surfaces are heterogeneous with hydrophobic, charged, and polar patches",
+      "HSP framework was developed for small molecules and polymer systems; extension to large biomacromolecules is not rigorously validated",
+      "Electrostatic interactions (charge-charge, charge-dipole) critical for protein stability are poorly captured by the three HSP parameters",
+      "Conformational dynamics and flexibility of proteins are not described by static HSP values",
+      "Specific binding interactions (e.g., metal ion coordination, disulfide scrambling) are outside the HSP framework",
+      "Concentration-dependent colloidal stability aspects (opalescence, liquid-liquid phase separation) require additional parameters beyond HSP"
+    ],
+    "known_failure_modes": [
+      "Proteins with dominant electrostatic instability (charge repulsion at low ionic strength) where HSP provides no insight",
+      "Surfactant-protein interactions that depend on specific binding sites rather than bulk HSP matching",
+      "Oxidation-driven degradation pathways unrelated to solubility parameters",
+      "Freeze-thaw or agitation-induced aggregation driven by interfacial stress rather than thermodynamic solution HSP"
+    ],
+    "validation_method": [
+      "Differential scanning fluorimetry (DSF/nanoDSF) for thermal stability (Tm shifts)",
+      "Size exclusion chromatography (SEC) for aggregate quantification",
+      "Dynamic light scattering (DLS) for colloidal stability and aggregation onset",
+      "Isothermal chemical denaturation (ICD) for conformational stability",
+      "Accelerated stability studies at 25C and 40C",
+      "Subvisible particle analysis (MFI, FlowCam)"
+    ]
+  },
+  "implementation": {
+    "complexity": "high",
+    "ui_pattern": "screening",
+    "existing_modules_reusable": [
+      "calculateRa",
+      "classifyRisk"
+    ],
+    "multi_component_complexity": "multi",
+    "scale_of_application": "screening"
+  },
+  "literature": {
+    "key_references": [
+      {
+        "author": "Ney, K.H.",
+        "journal": "Zeitschrift fuer Lebensmittel-Untersuchung und Forschung",
+        "year": 1971,
+        "title": "Prediction of bitterness of peptides from their amino acid composition",
+        "doi": "[uncertain]"
+      },
+      {
+        "author": "Timasheff, S.N.",
+        "journal": "Advances in Protein Chemistry",
+        "year": 1998,
+        "title": "Control of protein stability and reactions by weakly interacting cosolvents: the simplicity of the complicated",
+        "doi": "10.1016/S0065-3233(08)60656-7"
+      },
+      {
+        "author": "Ohtake, S. et al.",
+        "journal": "Advanced Drug Delivery Reviews",
+        "year": 2011,
+        "title": "Interactions of formulation excipients with proteins in solution and in the dried state",
+        "doi": "10.1016/j.addr.2011.06.011"
+      },
+      {
+        "author": "Abbott, S. and Hansen, C.M.",
+        "journal": "Hansen Solubility Parameters in Practice (HSPiP) e-book",
+        "year": 2013,
+        "title": "Chapter on biological applications of HSP",
+        "doi": "N/A"
+      }
+    ],
+    "first_reported_year": 2010,
+    "regulatory_relevance": "Biologic formulation development is governed by ICH Q5C (stability of biotechnological products) and ICH Q8 (pharmaceutical development). While HSP-based buffer selection is not yet a standard regulatory expectation, mechanistic understanding of excipient-protein interactions is valued in BLA submissions. FDA encourages science-based rationale for formulation design of biologics under the QbD framework."
+  },
+  "industry_application": {
+    "industry_sectors": [
+      "Biopharmaceutical (monoclonal antibody formulation)",
+      "Biosimilar development",
+      "Vaccine formulation",
+      "Contract development organizations specializing in biologics"
+    ],
+    "commercial_tools": [
+      "HSPiP (Hansen Solubility Parameters in Practice)",
+      "COSMOtherm for excipient interaction modeling",
+      "UNCHAINED LABS (Stunner, Uncle) for high-throughput formulation screening",
+      "Molecular Operating Environment (MOE) for protein surface analysis"
+    ]
+  },
+  "uncertain": [
+    "key_equation",
+    "typical_red_threshold",
+    "first_reported_year",
+    "data_availability_score",
+    "key_references"
+  ]
+}

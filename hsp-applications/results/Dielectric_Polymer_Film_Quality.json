@@ -1,0 +1,111 @@
+{
+  "basic_info": {
+    "name": "Dielectric Polymer Film Quality",
+    "name_ja": "誘電体高分子膜品質",
+    "category": "Electronics/Advanced",
+    "description": "The quality of thin dielectric polymer films used in capacitors, gate insulators (OFETs), and interlayer dielectrics is strongly influenced by the HSP distance between the polymer and its processing solvent. When the solvent HSP closely matches the polymer HSP (RED < 1), the polymer dissolves completely with full chain extension, producing uniform, dense films upon casting. Good HSP matching promotes slow, controlled crystallization or amorphous film formation with minimal voids, pinholes, and residual stress. In contrast, poor HSP matching (RED > 1) leads to polymer aggregation in solution, resulting in rough, porous films with reduced breakdown voltage and increased leakage current. HSP-guided solvent selection thus directly impacts dielectric constant uniformity, breakdown strength, and long-term reliability of polymer dielectric films in electronic devices.",
+    "maturity_level": "established"
+  },
+  "hsp_principle": {
+    "hsp_principle": "The dielectric film formation process begins with polymer dissolution, where the polymer chain conformation in solution is governed by the Flory-Huggins interaction parameter chi, which correlates with Ra^2. In a good solvent (low Ra, RED < 1), polymer chains are extended and the solution is homogeneous at the molecular level. Upon film casting (spin-coating, slot-die, or blade coating), solvent evaporation concentrates the solution. With a good solvent, the transition from dilute solution to solid film proceeds through a uniform concentration pathway, yielding dense, smooth films. With a marginal or poor solvent (RED near or above 1), chains are collapsed and may aggregate before complete solvent removal, creating density fluctuations, voids, and rough surfaces. For semicrystalline dielectric polymers (PVDF, P(VDF-TrFE)), the solvent HSP also influences crystalline polymorph selection: solvents with high dP and dH (DMF, DMSO) favor the electroactive beta-phase, while low-polarity solvents favor the non-polar alpha-phase. The drying rate relative to crystallization kinetics determines whether the film is amorphous, semicrystalline, or contains mixed phases — all affecting dielectric properties. Residual solvent trapped in films also reduces breakdown voltage; HSP predicts the difficulty of solvent removal (stronger polymer-solvent interaction = more residual solvent).",
+    "key_equation": "Ra = sqrt(4*(dD_poly - dD_solv)^2 + (dP_poly - dP_solv)^2 + (dH_poly - dH_solv)^2); RED = Ra/R0; chi ~ V_m * Ra^2 / (6*R*T)",
+    "red_direction": "low_is_good",
+    "typical_red_threshold": "RED < 0.8 for excellent film quality and high breakdown voltage; RED 0.8-1.0 for acceptable films; RED > 1.0 leads to poor film uniformity and reduced dielectric performance",
+    "sensitivity_to_hbond_split": "medium",
+    "temperature_pressure_sensitivity": "medium"
+  },
+  "input_data": {
+    "required_inputs": [
+      "HSP values (dD, dP, dH) of dielectric polymer",
+      "HSP values (dD, dP, dH) of processing solvent(s)",
+      "R0 of the dielectric polymer solubility sphere",
+      "Polymer molecular weight and concentration",
+      "Target film thickness"
+    ],
+    "data_sources": [
+      "HSPiP database for common dielectric polymers (PMMA, PS, PVDF, P(VDF-TrFE), polyimide, PVP, CYTOP)",
+      "HSPiP solvent database",
+      "Published literature on dielectric polymer HSP characterization",
+      "Polymer supplier datasheets",
+      "Group contribution estimation for novel dielectric polymers"
+    ],
+    "data_availability_score": 4,
+    "complementary_parameters": [
+      "Solvent boiling point and evaporation rate",
+      "Solution viscosity at coating concentration",
+      "Spin speed or coating parameters",
+      "Annealing temperature and time",
+      "Substrate surface energy and wettability",
+      "Polymer Tg and crystallization temperature",
+      "Film thickness uniformity specification"
+    ]
+  },
+  "accuracy": {
+    "accuracy_level": "semi-quantitative",
+    "limitations": [
+      "Film quality depends on drying kinetics (evaporation rate, airflow) which are process-dependent and not captured by equilibrium HSP",
+      "Breakdown voltage is affected by film defects (particles, pinholes) introduced during processing, not solely by HSP matching",
+      "Semicrystalline polymer morphology depends on crystallization kinetics which involves factors beyond HSP (nucleation density, cooling rate)",
+      "Multi-layer dielectric stacks involve interlayer compatibility not fully described by pairwise HSP",
+      "High-k dielectric polymers with strong dipolar interactions may require extended HSP models",
+      "Residual solvent effects depend on annealing conditions and film thickness in addition to polymer-solvent HSP affinity"
+    ],
+    "known_failure_modes": [
+      "Fluoropolymer dielectrics (CYTOP, Teflon AF) with limited solubility in few specialty solvents where HSP sphere fitting has insufficient data points",
+      "Polyimide films formed via imidization of poly(amic acid) where chemical transformation during curing changes HSP",
+      "Crosslinked dielectric polymers (e.g., SU-8 after UV cure) where post-curing HSP differs from pre-cure solution state",
+      "Ultrathin films (<50 nm) where substrate effects and confinement alter polymer chain organization independently of solvent HSP"
+    ],
+    "validation_method": [
+      "Dielectric breakdown voltage measurement (ASTM D149)",
+      "Capacitance-voltage (C-V) and current-voltage (I-V) measurements",
+      "AFM surface roughness measurement (RMS roughness)",
+      "Spectroscopic ellipsometry for film thickness and refractive index uniformity",
+      "XRD for crystalline phase identification in semicrystalline dielectrics",
+      "TGA for residual solvent content quantification"
+    ]
+  },
+  "implementation": {
+    "complexity": "low",
+    "ui_pattern": "screening",
+    "existing_modules_reusable": [
+      "calculateRa",
+      "calculateRed",
+      "classifyRisk"
+    ],
+    "multi_component_complexity": "binary",
+    "scale_of_application": "design"
+  },
+  "literature": {
+    "key_references": [
+      "Noh, Y.Y.; Zhao, N.; Caironi, M.; Sirringhaus, H. 'Downscaling of self-aligned, all-printed polymer thin-film transistors', Nature Nanotechnol., 2007, 2, 784-789. DOI: 10.1038/nnano.2007.365",
+      "Facchetti, A.; Yoon, M.H.; Marks, T.J. 'Gate Dielectrics for Organic Field-Effect Transistors: New Opportunities for Organic Electronics', Adv. Mater., 2005, 17, 1705-1725. DOI: 10.1002/adma.200500517",
+      "Lovinger, A.J. 'Ferroelectric Polymers', Science, 1983, 220, 1115-1121. DOI: 10.1126/science.220.4602.1115",
+      "Hansen, C.M. 'Hansen Solubility Parameters: A User's Handbook', 2nd Ed., CRC Press, 2007",
+      "Sharpe, R.B.A.; Titulaer, B.J.F.; Peeters, E.; Burdinski, D.; Huskens, J.; Zandvliet, H.J.W.; Reinhoudt, D.N.; Poelsema, B. 'Edge Transfer Lithography Using Alkanethiol Inks', Nano Lett., 2006, 6, 1235-1239 [uncertain]"
+    ],
+    "first_reported_year": 2003,
+    "regulatory_relevance": "No direct regulatory framework referencing HSP for dielectric films. IPC standards govern dielectric material testing for PCBs. UL 94 flammability and IEC 60243 breakdown voltage standards apply. REACH and RoHS drive elimination of hazardous solvents (NMP, DMF) from dielectric film processing, where HSP enables identification of safer solvent alternatives."
+  },
+  "industry_application": {
+    "industry_sectors": [
+      "Organic/printed electronics (OFET gate dielectrics)",
+      "Flexible display manufacturing (interlayer dielectrics)",
+      "Capacitor manufacturing (high-k polymer dielectrics for MLCC alternatives)",
+      "Semiconductor packaging (low-k interlayer dielectrics)",
+      "Energy storage (polymer film capacitors for power electronics)"
+    ],
+    "commercial_tools": [
+      "HSPiP (polymer-solvent compatibility for film casting)",
+      "COSMOtherm (solvent screening for specialty dielectric polymers)",
+      "Brewer Science spin-coating process optimization tools",
+      "COMSOL Multiphysics (thin film drying simulation, complementary to HSP selection)",
+      "Materials Studio (molecular simulation of polymer dielectric properties)"
+    ]
+  },
+  "uncertain": [
+    "first_reported_year",
+    "typical_red_threshold",
+    "key_references"
+  ]
+}

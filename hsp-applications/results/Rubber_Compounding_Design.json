@@ -1,0 +1,114 @@
+{
+  "basic_info": {
+    "name": "Rubber Compounding Design",
+    "name_ja": "ゴム配合設計",
+    "category": "Polymer/Materials",
+    "description": "HSP matching between rubber matrix, fillers, plasticizers, processing oils, and vulcanization agents is used to optimize compound properties. Good HSP compatibility between the rubber and plasticizer/oil ensures uniform dispersion and retention, while controlled HSP matching with fillers affects reinforcement and dispersion quality. For multi-rubber blends (e.g., NR/SBR, EPDM/NR), HSP differences predict phase distribution of curatives and fillers between rubber phases, which is critical for achieving balanced vulcanization and mechanical properties.",
+    "maturity_level": "established"
+  },
+  "hsp_principle": {
+    "hsp_principle": "Rubber compounding involves multiple HSP-based interactions that collectively determine compound quality. (1) Rubber-plasticizer compatibility: plasticizers with low RED to the rubber matrix provide stable, non-migrating plasticization. The Ra distance predicts oil/plasticizer retention and resistance to extraction. (2) Rubber-filler interaction: the HSP match between rubber and filler surface treatment determines wetting, dispersion, and bound rubber formation. Silica surface modification (silanization) shifts filler surface HSP toward the rubber HSP, improving dispersion. (3) Curative distribution in blends: in heterogeneous rubber blends, curatives preferentially migrate to the phase with better HSP match, leading to uneven crosslink density. HSP differences between rubber phases predict curative partitioning. (4) Rubber-rubber blend compatibility: Ra between rubbers determines phase morphology and interfacial adhesion. These principles enable systematic optimization of complex multi-component rubber formulations.",
+    "key_equation": "Ra = sqrt(4*(dD_rubber-dD_additive)^2 + (dP_rubber-dP_additive)^2 + (dH_rubber-dH_additive)^2); RED = Ra/R0; Partition coefficient K_AB ~ exp((Ra_B^2 - Ra_A^2)*V/(RT))",
+    "red_direction": "low_is_good",
+    "typical_red_threshold": "RED < 1.0 for plasticizer compatibility; RED < 0.8 for low migration/extraction risk; filler-rubber RED < 1.0 for good dispersion",
+    "sensitivity_to_hbond_split": "medium",
+    "temperature_pressure_sensitivity": "medium"
+  },
+  "input_data": {
+    "required_inputs": [
+      "HSP values (dD, dP, dH) for each rubber in the compound",
+      "HSP values for plasticizers/process oils",
+      "HSP values (or surface energy) of fillers (carbon black grades, silica, calcium carbonate)",
+      "HSP values of vulcanization chemicals (sulfur, accelerators, activators)",
+      "Volume fractions of each component",
+      "Processing temperature range"
+    ],
+    "data_sources": [
+      "HSPiP database (rubber and plasticizer HSP)",
+      "Rubber manufacturer technical data (compound formulation guides)",
+      "IGC measurements for filler surface HSP characterization",
+      "Group contribution methods for specialty rubbers",
+      "Literature (Barton, Hansen) for common elastomer HSP values",
+      "Contact angle measurements for filler surface energy estimation"
+    ],
+    "data_availability_score": 3,
+    "complementary_parameters": [
+      "Mooney viscosity of raw rubber",
+      "Filler surface area and structure (DBP absorption)",
+      "Cure kinetics (scorch time, cure rate, optimum cure time)",
+      "Processing temperature profile",
+      "Filler loading level (phr)",
+      "Rubber blend ratio",
+      "Vulcanization system type (sulfur, peroxide, metal oxide)"
+    ]
+  },
+  "accuracy": {
+    "accuracy_level": "semi-quantitative",
+    "limitations": [
+      "Filler surface HSP is difficult to characterize precisely; carbon black surface chemistry varies widely with grade and oxidation level",
+      "HSP approach does not capture filler-filler interaction (networking/flocculation) which strongly affects compound properties",
+      "Vulcanization is a complex chemical reaction; HSP predicts curative distribution but not reaction kinetics or network structure",
+      "Processing-induced morphology changes (mixing energy, dump temperature) are not captured by equilibrium HSP predictions",
+      "Does not account for bound rubber layer formation around fillers, which is influenced by both thermodynamic and kinetic factors",
+      "Temperature during processing (100-180C) significantly shifts HSP values, but high-temperature HSP data for rubbers and additives is limited"
+    ],
+    "known_failure_modes": [
+      "Carbon black distribution in NR/BR blends: kinetic mixing effects can override thermodynamic HSP-predicted partitioning",
+      "Silica-silane-rubber systems: the silanization reaction chemically changes the filler surface, making pre-reaction HSP prediction inaccurate",
+      "Bloom of waxes and antiozonants: HSP predicts solubility but migration kinetics depend on crystallinity and Tg, leading to unexpected surface bloom",
+      "EPDM/diene rubber blends where curative partitioning is dominated by double bond reactivity rather than HSP-driven distribution"
+    ],
+    "validation_method": [
+      "Mooney viscosity and compound rheology (MDR cure curves)",
+      "Microscopy (TEM, AFM) for filler dispersion and phase morphology",
+      "Dynamic mechanical analysis (DMA) for blend compatibility assessment",
+      "Swelling tests in solvents to assess crosslink density distribution",
+      "Migration/extraction testing per relevant standards",
+      "Tensile, tear, and abrasion testing of vulcanizates"
+    ]
+  },
+  "implementation": {
+    "complexity": "high",
+    "ui_pattern": "matrix",
+    "existing_modules_reusable": [
+      "calculateRa",
+      "calculateRed",
+      "classifyRisk",
+      "optimizeBlend"
+    ],
+    "multi_component_complexity": "multi",
+    "scale_of_application": "design"
+  },
+  "literature": {
+    "key_references": [
+      "Hansen, C.M. 'Hansen Solubility Parameters: A User's Handbook', 2nd Ed., CRC Press, 2007, Chapter 17",
+      "Bristow, G.M.; Watson, W.F. 'Cohesive energy densities of polymers: Part 1 - Cohesive energy densities of rubbers by swelling measurements', Transactions of the Faraday Society, 1958, 54, 1731-1741",
+      "Gardiner, J.B. 'Curative Diffusion Between Dissimilar Elastomers and Its Influence on Adhesion', Rubber Chemistry and Technology, 1968, 41(5), 1312-1328",
+      "Hess, W.M.; Scott, C.E.; Callan, J.E. 'Carbon Black Distribution in Elastomer Blends', Rubber Chemistry and Technology, 1967, 40(2), 371-384",
+      "Yip, E.; Cacioli, P. 'The manufacture of gloves from natural rubber latex', Journal of Allergy and Clinical Immunology, 2002, 110(2), S3-S14 [uncertain]"
+    ],
+    "first_reported_year": 1958,
+    "regulatory_relevance": "Rubber compounds for food contact (FDA 21 CFR 177.2600), pharmaceutical closures (USP <381>), and medical devices require extractables/leachables assessment where HSP-based migration prediction supports compliance screening [uncertain]"
+  },
+  "industry_application": {
+    "industry_sectors": [
+      "Tire manufacturing (tread, sidewall, and innerliner compound optimization)",
+      "Automotive (seals, hoses, vibration dampers, weatherstripping)",
+      "Industrial rubber goods (belts, gaskets, rollers)",
+      "Medical/pharmaceutical (gloves, closures, tubing)",
+      "Footwear (outsole compound design)"
+    ],
+    "commercial_tools": [
+      "HSPiP (rubber-additive compatibility screening)",
+      "Compounding simulation tools from rubber chemical suppliers (e.g., Lanxess CompoundExpert)",
+      "CAMPUS rubber database (limited coverage)",
+      "Specialty: RPA (Rubber Process Analyzer) with compound database integration",
+      "COSMOtherm (for plasticizer/oil HSP estimation)"
+    ]
+  },
+  "uncertain": [
+    "first_reported_year",
+    "regulatory_relevance",
+    "key_references"
+  ]
+}

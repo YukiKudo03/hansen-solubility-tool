@@ -1,0 +1,118 @@
+{
+  "basic_info": {
+    "name": "Polymer Membrane Gas Permeability",
+    "name_ja": "高分子膜ガス透過性予測",
+    "category": "Polymer/Materials",
+    "description": "HSP distance between gas molecules (O2, N2, CO2, CH4, H2) and membrane polymer is used to predict gas permeability coefficients and ideal selectivity ratios. The approach is based on the solution-diffusion model: gas permeability P = S x D, where solubility S correlates with HSP affinity between gas and polymer, while diffusivity D relates to polymer free volume and chain mobility. Smaller HSP distance between a gas and the polymer matrix indicates higher solubility of that gas, enabling prediction of permeability ranking and membrane material selection for gas separation applications such as CO2 capture, O2/N2 enrichment, and natural gas sweetening.",
+    "maturity_level": "established"
+  },
+  "hsp_principle": {
+    "hsp_principle": "Gas permeation through dense polymer membranes follows the solution-diffusion mechanism. The solubility coefficient S of a gas in a polymer correlates with the thermodynamic affinity between the gas and polymer, which can be quantified by the HSP distance Ra. A small Ra(gas-polymer) implies favorable gas-polymer interactions and higher solubility. For condensable gases (CO2, hydrocarbons), the HSP approach is particularly effective because solubility dominates permeability. The Flory-Huggins interaction parameter chi, estimable from Ra, directly relates to the Henry's law solubility coefficient. Gas selectivity (alpha_A/B = P_A/P_B) can be predicted by comparing Ra values: if Ra(A-polymer) < Ra(B-polymer), gas A will generally have higher solubility and thus higher permeability (for gases of similar size). However, size-sieving (diffusivity selectivity) must also be considered, especially for glassy polymers.",
+    "key_equation": "Ra = sqrt(4*(dD_gas - dD_polymer)^2 + (dP_gas - dP_polymer)^2 + (dH_gas - dH_polymer)^2); ln(S) ~ -Ra^2 * V_gas / (R * T); Selectivity alpha_A/B = (S_A/S_B) * (D_A/D_B)",
+    "red_direction": "low_is_good",
+    "typical_red_threshold": "No universal RED threshold; Ra < 6 MPa^0.5 generally indicates significant gas solubility in the polymer",
+    "sensitivity_to_hbond_split": "medium",
+    "temperature_pressure_sensitivity": "high"
+  },
+  "input_data": {
+    "required_inputs": [
+      "HSP of target gas molecules (delta_d, delta_p, delta_h)",
+      "HSP of membrane polymer (delta_d, delta_p, delta_h)",
+      "Molar volume of gas (condensed or effective)",
+      "Operating temperature and pressure",
+      "Polymer free volume fraction (for diffusivity estimation)"
+    ],
+    "data_sources": [
+      "HSPiP database for common polymers",
+      "Published gas HSP values (Yampolskii, Freeman compilations)",
+      "Group contribution methods for novel polymer HSP",
+      "NIST Webbook for gas physical properties",
+      "Experimental IGC data for polymer HSP"
+    ],
+    "data_availability_score": 3,
+    "complementary_parameters": [
+      "Polymer glass transition temperature (Tg)",
+      "Polymer fractional free volume (FFV)",
+      "Gas kinetic diameter (for diffusivity estimation)",
+      "Gas critical temperature and condensability",
+      "Polymer crystallinity",
+      "Operating temperature and feed pressure"
+    ]
+  },
+  "accuracy": {
+    "accuracy_level": "semi-quantitative",
+    "limitations": "HSP-based prediction primarily addresses the solubility component of permeability and does not fully capture diffusivity, which depends on polymer chain packing, free volume distribution, and gas molecular size. For light gases (H2, He) in glassy polymers, diffusivity selectivity dominates over solubility selectivity, limiting HSP predictive power. Gas HSP values are less well-established than liquid/polymer HSP, particularly for non-condensable gases where the concept of cohesive energy density is less straightforward. Plasticization by CO2 or hydrocarbons at high pressures changes polymer HSP in situ. Polymer aging (physical aging of glassy membranes) alters free volume over time, affecting permeability in ways not captured by static HSP.",
+    "known_failure_modes": [
+      "Light gas (H2, He) permeation in glassy polymers where diffusivity selectivity dominates",
+      "CO2-induced plasticization at high pressures altering polymer matrix properties",
+      "Mixed gas effects where competitive sorption changes selectivity from ideal predictions",
+      "Highly crystalline or semi-crystalline polymers where gas transport occurs only through amorphous regions",
+      "Thin-film composite membranes where interfacial effects dominate"
+    ],
+    "validation_method": "Constant-volume variable-pressure permeation testing (time-lag method), gravimetric or barometric sorption measurements for solubility coefficients, pure and mixed gas permeation experiments at controlled temperature and pressure"
+  },
+  "implementation": {
+    "complexity": "medium",
+    "ui_pattern": "matrix",
+    "existing_modules_reusable": [
+      "calculateRa",
+      "calculateRed",
+      "classifyRisk"
+    ],
+    "multi_component_complexity": "binary",
+    "scale_of_application": "screening"
+  },
+  "literature": {
+    "key_references": [
+      {
+        "author": "Yampolskii, Y.; Pinnau, I.; Freeman, B.D.",
+        "title": "Materials Science of Membranes for Gas and Vapor Separation",
+        "journal": "Wiley",
+        "year": 2006,
+        "doi": "10.1002/047002903X"
+      },
+      {
+        "author": "Robeson, L.M.",
+        "title": "The upper bound revisited",
+        "journal": "Journal of Membrane Science",
+        "year": 2008,
+        "doi": "10.1016/j.memsci.2008.04.030"
+      },
+      {
+        "author": "Hansen, C.M.",
+        "title": "Hansen Solubility Parameters: A User's Handbook, 2nd Edition",
+        "journal": "CRC Press",
+        "year": 2007,
+        "doi": "10.1201/9781420006834"
+      },
+      {
+        "author": "Lindvig, T.; Michelsen, M.L.; Kontogeorgis, G.M.",
+        "title": "A Flory-Huggins model based on the Hansen solubility parameters",
+        "journal": "Fluid Phase Equilibria",
+        "year": 2002,
+        "doi": "10.1016/S0378-3812(01)00713-7"
+      }
+    ],
+    "first_reported_year": "[uncertain]",
+    "regulatory_relevance": "No direct regulatory mandates, but HSP-based membrane screening supports material selection for CO2 capture systems relevant to EPA greenhouse gas regulations and EU Emissions Trading System. Membrane materials for food-contact packaging (FDA, EU 10/2011) can use HSP screening to predict barrier properties."
+  },
+  "industry_application": {
+    "industry_sectors": [
+      "Gas separation and purification",
+      "Carbon capture and storage (CCS)",
+      "Natural gas processing",
+      "Oxygen/nitrogen enrichment",
+      "Food packaging (barrier films)",
+      "Petrochemical industry"
+    ],
+    "commercial_tools": [
+      "HSPiP (Hansen Solubility Parameters in Practice)",
+      "COSMOtherm (gas solubility prediction via COSMO-RS)",
+      "Materials Studio (molecular dynamics simulation of gas transport)",
+      "Membrane Databank (polymer permeability reference data)"
+    ]
+  },
+  "uncertain": [
+    "literature.first_reported_year"
+  ]
+}

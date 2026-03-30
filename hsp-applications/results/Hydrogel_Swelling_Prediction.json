@@ -1,0 +1,115 @@
+{
+  "basic_info": {
+    "name": "Hydrogel Swelling Prediction",
+    "name_ja": "ハイドロゲル膨潤予測",
+    "category": "Polymer/Materials",
+    "description": "HSP distance between a crosslinked hydrogel network and the swelling medium is used to predict the equilibrium swelling ratio. The Flory-Rehner theory links the polymer-solvent interaction parameter chi to swelling behavior, and chi can be estimated from HSP distance. Smaller HSP distance (better thermodynamic affinity) between the gel network and the swelling fluid leads to higher equilibrium swelling. This approach is applied in biomedical hydrogels (drug delivery, wound dressings, contact lenses), agricultural superabsorbent polymers, and soft actuator design.",
+    "maturity_level": "established"
+  },
+  "hsp_principle": {
+    "hsp_principle": "Hydrogel swelling is governed by the balance between the osmotic driving force (mixing free energy favoring solvent uptake) and the elastic restoring force of the crosslinked network (opposing expansion). The mixing free energy is captured by the Flory-Huggins interaction parameter chi between the network polymer and the swelling medium. HSP distance Ra allows estimation of chi: chi ~ V_solvent * Ra^2 / (6RT). Lower chi (smaller Ra) means stronger thermodynamic affinity, greater osmotic driving force, and higher equilibrium swelling ratio. For hydrogels in aqueous media, the delta_h component is particularly important due to hydrogen bonding between water and hydrophilic network chains. The equilibrium swelling ratio Q can be predicted using the modified Flory-Rehner equation incorporating the HSP-derived chi parameter.",
+    "key_equation": "chi = V_s * Ra^2 / (6 * R * T); Flory-Rehner: ln(1 - phi_p) + phi_p + chi * phi_p^2 = -V_s * nu_e * (phi_p^(1/3) - phi_p/2); Q = 1/phi_p",
+    "red_direction": "low_is_good",
+    "typical_red_threshold": "Ra < 5 MPa^0.5 for significant swelling; RED < 1.0 indicates the solvent is within the gel solubility sphere and will cause substantial swelling",
+    "sensitivity_to_hbond_split": "high",
+    "temperature_pressure_sensitivity": "medium"
+  },
+  "input_data": {
+    "required_inputs": [
+      "HSP of hydrogel network polymer (delta_d, delta_p, delta_h)",
+      "HSP of swelling medium (delta_d, delta_p, delta_h)",
+      "Molar volume of swelling medium",
+      "Crosslink density (nu_e) of the hydrogel network",
+      "Temperature"
+    ],
+    "data_sources": [
+      "HSPiP database for common polymers and solvents",
+      "Group contribution methods for hydrogel polymer HSP (PEG, PVA, PAA, PHEMA, etc.)",
+      "Published literature for hydrogel HSP values",
+      "Experimental swelling studies in solvent series (inverse method to determine gel HSP)",
+      "Molecular simulation for novel hydrogel chemistries"
+    ],
+    "data_availability_score": 3,
+    "complementary_parameters": [
+      "Crosslink density or molecular weight between crosslinks (Mc)",
+      "Polymer volume fraction in the reference state",
+      "pH and ionic strength of swelling medium (for ionic hydrogels)",
+      "Temperature (LCST/UCST behavior for thermoresponsive gels)",
+      "Degree of ionization (for polyelectrolyte gels)"
+    ]
+  },
+  "accuracy": {
+    "accuracy_level": "semi-quantitative",
+    "limitations": "HSP-based chi estimation provides a reasonable first approximation but the Flory-Huggins chi parameter is known to be concentration-dependent for many polymer-solvent systems, whereas HSP gives a single constant value. For polyelectrolyte hydrogels (e.g., polyacrylic acid), ionic osmotic pressure contributions to swelling are not captured by HSP. Thermoresponsive hydrogels (PNIPAM) exhibit LCST behavior driven by entropic effects that HSP poorly describes. The hydrogen bonding component is critical for aqueous systems but is the least accurately determined HSP parameter. Network defects (dangling ends, entanglements, loops) affect swelling but are not reflected in HSP. For mixed solvent systems, composition-dependent HSP must be considered.",
+    "known_failure_modes": [
+      "Polyelectrolyte hydrogels where Donnan equilibrium and ionic osmotic pressure dominate swelling",
+      "Thermoresponsive hydrogels (PNIPAM) near the LCST where entropic contributions dominate",
+      "pH-responsive hydrogels where ionization state drastically changes effective HSP",
+      "Biological fluids with complex composition that cannot be represented by simple HSP",
+      "Highly swollen gels (Q > 50) where Flory-Rehner assumptions break down"
+    ],
+    "validation_method": "Gravimetric swelling measurement (mass change vs. time until equilibrium), volumetric swelling ratio determination, swelling kinetics in various solvents, rheological characterization of swollen gels, DSC for polymer-solvent interaction assessment"
+  },
+  "implementation": {
+    "complexity": "medium",
+    "ui_pattern": "pairwise",
+    "existing_modules_reusable": [
+      "calculateRa",
+      "calculateRed",
+      "classifyRisk"
+    ],
+    "multi_component_complexity": "binary",
+    "scale_of_application": "design"
+  },
+  "literature": {
+    "key_references": [
+      {
+        "author": "Flory, P.J.; Rehner, J.",
+        "title": "Statistical mechanics of cross-linked polymer networks: II. Swelling",
+        "journal": "Journal of Chemical Physics",
+        "year": 1943,
+        "doi": "10.1063/1.1723792"
+      },
+      {
+        "author": "Hansen, C.M.",
+        "title": "Hansen Solubility Parameters: A User's Handbook, 2nd Edition",
+        "journal": "CRC Press",
+        "year": 2007,
+        "doi": "10.1201/9781420006834"
+      },
+      {
+        "author": "Peppas, N.A.; Hilt, J.Z.; Khademhosseini, A.; Langer, R.",
+        "title": "Hydrogels in biology and medicine: From molecular principles to bionanotechnology",
+        "journal": "Advanced Materials",
+        "year": 2006,
+        "doi": "10.1002/adma.200501612"
+      },
+      {
+        "author": "Brannon-Peppas, L.; Peppas, N.A.",
+        "title": "Equilibrium swelling behavior of pH-sensitive hydrogels",
+        "journal": "Chemical Engineering Science",
+        "year": 1991,
+        "doi": "10.1016/0009-2509(91)80164-S"
+      }
+    ],
+    "first_reported_year": 1943,
+    "regulatory_relevance": "Biomedical hydrogels require FDA 510(k) or PMA clearance where swelling characterization is a standard material property test. ISO 10993 biocompatibility standards reference swelling behavior. EU Medical Device Regulation (MDR 2017/745) requires material characterization including swelling properties. Agricultural superabsorbents may fall under EPA or EFSA regulations depending on application."
+  },
+  "industry_application": {
+    "industry_sectors": [
+      "Biomedical devices (contact lenses, wound dressings)",
+      "Drug delivery systems",
+      "Agricultural superabsorbent polymers",
+      "Personal care products (diapers, hygiene)",
+      "Soft robotics and actuators",
+      "Tissue engineering scaffolds"
+    ],
+    "commercial_tools": [
+      "HSPiP (Hansen Solubility Parameters in Practice)",
+      "COMSOL Multiphysics (hydrogel swelling simulation)",
+      "Materials Studio (molecular simulation of gel-solvent interactions)",
+      "COSMOtherm (solvent-polymer interaction prediction)"
+    ]
+  },
+  "uncertain": []
+}

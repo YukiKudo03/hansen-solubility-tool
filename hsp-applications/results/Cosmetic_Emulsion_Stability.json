@@ -1,0 +1,143 @@
+{
+  "basic_info": {
+    "name": "Cosmetic Emulsion Stability",
+    "name_ja": "化粧品エマルション安定性",
+    "category": "Food/Cosmetics",
+    "description": "The HSP balance between oil phase, emulsifier, and aqueous phase predicts emulsion type (O/W or W/O), thermodynamic stability, and shelf life of cosmetic formulations. By matching the emulsifier HSP to the oil phase or water phase, formulators can control which phase the emulsifier preferentially partitions into, determining emulsion type per Bancroft's rule. The HSP distance between oil and emulsifier governs interfacial tension reduction and long-term resistance to coalescence, creaming, and Ostwald ripening.",
+    "maturity_level": "established"
+  },
+  "hsp_principle": {
+    "hsp_principle": "Emulsion stability is governed by the emulsifier's affinity for each phase. When the emulsifier HSP is closer to the oil phase HSP, it preferentially resides at the interface with its hydrophobic portion in oil, favoring W/O emulsions. When closer to the aqueous phase, O/W emulsions form. The Ra between emulsifier and oil phase correlates with the effectiveness of interfacial film formation: lower Ra means better wetting and packing of emulsifier at the oil-water interface. For multi-oil systems, each oil component's HSP distance from the emulsifier affects the overall interfacial stability. The concept extends the HLB (hydrophilic-lipophilic balance) framework by providing a three-dimensional matching capability that accounts for dispersion, polar, and hydrogen bonding contributions independently.",
+    "key_equation": "Ra_oil-emulsifier = sqrt(4*(dD_oil-dD_emul)^2 + (dP_oil-dP_emul)^2 + (dH_oil-dH_emul)^2); RED = Ra/R0; Emulsion type predicted by comparing Ra(oil-emulsifier) vs Ra(water-emulsifier)",
+    "red_direction": "low_is_good",
+    "typical_red_threshold": "RED < 1.0 between emulsifier and dispersed phase for stable emulsion; Ra(oil-emulsifier) < 5 MPa^0.5 for excellent stability",
+    "sensitivity_to_hbond_split": "high",
+    "temperature_pressure_sensitivity": "medium"
+  },
+  "input_data": {
+    "required_inputs": [
+      "Oil phase HSP (dD, dP, dH) - individual oils and blend average",
+      "Emulsifier HSP (dD, dP, dH)",
+      "Water phase HSP (dD=15.5, dP=16.0, dH=42.3 MPa^0.5)",
+      "Emulsifier HLB value (complementary to HSP)",
+      "Phase volume ratio (oil:water)",
+      "Processing temperature"
+    ],
+    "data_sources": [
+      "HSPiP database (oils, surfactants, solvents)",
+      "Cosmetic ingredient supplier literature (BASF Care Chemicals, Evonik, Croda)",
+      "Published HSP for common cosmetic oils (Brouwer 2011, Abbott & Hansen)",
+      "Group contribution estimation for novel emollients",
+      "Experimental determination via emulsion stability testing with solvent probes"
+    ],
+    "data_availability_score": 3,
+    "complementary_parameters": [
+      "Emulsifier HLB value",
+      "Oil phase viscosity",
+      "Interfacial tension (pendant drop or spinning drop)",
+      "Zeta potential of droplets",
+      "Droplet size distribution (DLS, laser diffraction)",
+      "Phase volume ratio",
+      "Ionic strength of aqueous phase",
+      "pH of the formulation"
+    ]
+  },
+  "accuracy": {
+    "accuracy_level": "semi-quantitative",
+    "limitations": [
+      "HSP does not capture the kinetic aspects of emulsification (shear rate, mixing energy, droplet breakup dynamics)",
+      "Emulsifier partitioning depends on concentration-dependent self-assembly (micelles, liquid crystals) not described by HSP",
+      "Complex emulsifier mixtures (co-emulsifiers, polymeric thickeners) create synergies not predictable from individual HSP",
+      "Temperature-induced phase inversion (PIT method) involves dynamic HSP changes that static values cannot fully model",
+      "Pickering emulsions (particle-stabilized) require surface energy and contact angle data beyond HSP",
+      "Protein and polysaccharide emulsifiers have conformational HSP that depends on pH and ionic strength"
+    ],
+    "known_failure_modes": [
+      "Silicone oils with very low polarity where conventional HSP matching underperforms specialized silicone surfactants",
+      "Emulsions stabilized primarily by rheological means (high viscosity continuous phase) rather than interfacial chemistry",
+      "Phase inversion emulsions where the desired type is thermodynamically unfavored but kinetically stabilized",
+      "Multiple emulsions (W/O/W, O/W/O) where two different interfaces must be simultaneously optimized"
+    ],
+    "validation_method": [
+      "Visual and microscopic assessment of emulsion type (dye test, conductivity)",
+      "Accelerated stability testing (centrifugation, temperature cycling)",
+      "Droplet size distribution measurement over time (Mastersizer, DLS)",
+      "Turbiscan stability analysis (backscattering profile)",
+      "Rheological measurement (viscosity and viscoelasticity changes over time)",
+      "Shelf life testing at 25C, 40C, and freeze-thaw conditions"
+    ]
+  },
+  "implementation": {
+    "complexity": "medium",
+    "ui_pattern": "optimization",
+    "existing_modules_reusable": [
+      "calculateRa",
+      "calculateRed",
+      "optimizeBlend",
+      "classifyRisk"
+    ],
+    "multi_component_complexity": "ternary",
+    "scale_of_application": "design"
+  },
+  "literature": {
+    "key_references": [
+      {
+        "author": "Hansen, C.M.",
+        "title": "Hansen Solubility Parameters: A User's Handbook, 2nd Edition",
+        "journal": "CRC Press",
+        "year": 2007,
+        "doi": "10.1201/9781420006834"
+      },
+      {
+        "author": "Brouwer, W.M.; van Haeren, P.J.C.",
+        "title": "Application of Hansen solubility parameters in the development of cosmetic emulsions",
+        "journal": "SOFW Journal",
+        "year": 2011,
+        "doi": "[uncertain]"
+      },
+      {
+        "author": "Vaughan, C.D.",
+        "title": "Using solubility parameters in cosmetics formulation",
+        "journal": "Journal of the Society of Cosmetic Chemists",
+        "year": 1985,
+        "doi": "[uncertain]"
+      },
+      {
+        "author": "Abbott, S.",
+        "title": "Surfactant Science: Principles and Practice",
+        "journal": "Self-published (available via HSPiP resources)",
+        "year": 2015,
+        "doi": "N/A"
+      },
+      {
+        "author": "Tadros, T.F.",
+        "title": "Emulsion Formation, Stability, and Rheology",
+        "journal": "Wiley-VCH",
+        "year": 2013,
+        "doi": "10.1002/9783527647941.ch1"
+      }
+    ],
+    "first_reported_year": 1985,
+    "regulatory_relevance": "Cosmetic emulsion stability is critical for regulatory compliance under EU Cosmetics Regulation (EC) No 1223/2009, which requires demonstrated product stability. HSP-guided formulation helps ensure shelf life compliance. FDA OTC monograph products also require stability data. HSP-based screening supports reformulation for REACH-compliant ingredient substitution."
+  },
+  "industry_application": {
+    "industry_sectors": [
+      "Skin care (creams, lotions, serums)",
+      "Sun care (sunscreen emulsions)",
+      "Color cosmetics (foundations, primers)",
+      "Hair care (conditioner emulsions, styling creams)",
+      "Pharmaceutical topicals (dermatological creams)"
+    ],
+    "commercial_tools": [
+      "HSPiP (Hansen Solubility Parameters in Practice)",
+      "COSMOtherm",
+      "BASF Care Chemicals Formulation Tools",
+      "Croda Formulation Selector",
+      "Evonik TEGO surfactant selection guides"
+    ]
+  },
+  "uncertain": [
+    "literature.key_references[1].doi",
+    "literature.key_references[2].doi"
+  ]
+}

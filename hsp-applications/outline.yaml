@@ -1,0 +1,295 @@
+topic: "HSP-based Property Estimation and Prediction Applications"
+
+items:
+  # ===== Category 1: Polymer / Materials Science =====
+  - name: "Polymer Blend Miscibility"
+    category: "Polymer/Materials"
+    description: "Ra/RED between two polymers predicts miscible/immiscible/partially miscible blends. Flory-Huggins chi parameter estimated from HSP distance."
+
+  - name: "Copolymer HSP Estimation"
+    category: "Polymer/Materials"
+    description: "Weighted average HSP from monomer composition ratios for random, block, and graft copolymers."
+
+  - name: "Crystalline Polymer Dissolution Temperature"
+    category: "Polymer/Materials"
+    description: "HSP distance combined with melting point predicts LCST/UCST dissolution behavior in specific solvents."
+
+  - name: "Environmental Stress Cracking (ESC)"
+    category: "Polymer/Materials"
+    description: "Solvent-polymer RED threshold predicts stress cracking risk. Critical for material selection in chemical environments."
+
+  - name: "Rubber Compounding Design"
+    category: "Polymer/Materials"
+    description: "HSP matching between rubber matrix, fillers, and vulcanization agents for optimal compound properties."
+
+  - name: "Fiber Dyeability Prediction"
+    category: "Polymer/Materials"
+    description: "Dye-fiber HSP distance predicts dyeing affinity, uptake rate, and wash fastness for textile applications."
+
+  - name: "Polymer Membrane Gas Permeability"
+    category: "Polymer/Materials"
+    description: "HSP distance between gas molecules (O2, N2, CO2) and membrane polymer predicts permeability coefficients and selectivity."
+
+  - name: "Polymer Recycling Compatibility"
+    category: "Polymer/Materials"
+    description: "HSP distance between mixed waste polymers predicts blend compatibility during mechanical recycling for circular economy."
+
+  - name: "Hydrogel Swelling Prediction"
+    category: "Polymer/Materials"
+    description: "HSP distance between crosslinked hydrogel network and swelling medium predicts equilibrium swelling ratio for biomedical/agricultural uses."
+
+  - name: "Polymer Additive Migration/Blooming"
+    category: "Polymer/Materials"
+    description: "HSP distance between additive (stabilizer, flame retardant) and polymer matrix predicts migration rate and surface blooming."
+
+  - name: "Thermoset Curing Agent Selection"
+    category: "Polymer/Materials"
+    description: "HSP matching between epoxy/polyester resin and hardener affects mixing homogeneity, pot life, and crosslink density."
+
+  - name: "3D Printing Solvent Smoothing"
+    category: "Polymer/Materials"
+    description: "HSP distance between thermoplastic filament (ABS, PLA, PETG) and vapor/liquid solvent predicts surface smoothing effectiveness."
+
+  # ===== Category 2: Coatings / Paints / Inks =====
+  - name: "Pigment Dispersion Stability"
+    category: "Coatings/Inks"
+    description: "Pigment-vehicle RED predicts dispersion stability, flocculation risk, and color development in paint formulations."
+
+  - name: "Coating Defect Prediction"
+    category: "Coatings/Inks"
+    description: "Surface tension difference combined with HSP mismatch predicts cratering, dewetting, and orange peel defects."
+
+  - name: "Solvent Substitution Design"
+    category: "Coatings/Inks"
+    description: "Finding regulatory-compliant replacement solvents by minimizing HSP distance to banned/restricted originals."
+
+  - name: "Ink-Substrate Adhesion"
+    category: "Coatings/Inks"
+    description: "HSP distance between ink formulation and substrate surface HSP predicts adhesion quality and delamination risk."
+
+  - name: "Anti-Graffiti Coating Design"
+    category: "Coatings/Inks"
+    description: "Maximize HSP mismatch between topcoat and common graffiti materials to ensure easy removal."
+
+  - name: "Multilayer Coating Interlayer Adhesion"
+    category: "Coatings/Inks"
+    description: "HSP gradient across primer/basecoat/clearcoat layers predicts delamination risk at each interface."
+
+  - name: "UV-Curable Ink Monomer Selection"
+    category: "Coatings/Inks"
+    description: "HSP matching between photoinitiator, oligomer, and reactive diluent affects cure depth, adhesion, and migration in food-safe inks."
+
+  - name: "Residual Solvent Prediction"
+    category: "Coatings/Inks"
+    description: "HSP affinity between solvent and dried film matrix predicts residual solvent levels after drying process."
+
+  # ===== Category 3: Pharmaceutical / Bio =====
+  - name: "Amorphous Solid Dispersion (ASD) Design"
+    category: "Pharmaceutical"
+    description: "API-polymer HSP distance predicts miscibility and physical stability of amorphous formulations. Flory-Huggins chi from HSP."
+
+  - name: "Cocrystal Screening"
+    category: "Pharmaceutical"
+    description: "API-coformer HSP distance predicts cocrystal formation likelihood. Screening tool for polymorph exploration."
+
+  - name: "Transdermal Penetration Enhancer Selection"
+    category: "Pharmaceutical"
+    description: "Drug-skin-enhancer HSP matching predicts permeation enhancement for topical/transdermal delivery."
+
+  - name: "Liposome Membrane Permeability"
+    category: "Pharmaceutical"
+    description: "Drug HSP vs lipid bilayer HSP distance predicts passive membrane permeation and encapsulation efficiency."
+
+  - name: "Protein Aggregation Risk"
+    category: "Pharmaceutical"
+    description: "Protein surface HSP vs formulation buffer HSP predicts conformational stability and aggregation propensity."
+
+  - name: "Excipient Compatibility Screening"
+    category: "Pharmaceutical"
+    description: "HSP distance between API and excipients (binders, fillers, lubricants) predicts physical stability of tablet formulations."
+
+  - name: "Nanoparticle Drug Loading Optimization"
+    category: "Pharmaceutical"
+    description: "HSP matching between drug and nanocarrier (PLGA, PCL, chitosan) predicts encapsulation efficiency and loading capacity."
+
+  - name: "Polymorph/Solvate Risk Assessment"
+    category: "Pharmaceutical"
+    description: "Solvent HSP regions overlapping metastable polymorph zones indicate crystallization conditions producing unwanted forms."
+
+  - name: "Biologic Formulation Buffer Selection"
+    category: "Pharmaceutical"
+    description: "HSP-based co-solvent/buffer excipient assessment for protein conformation stability in biologic drug products."
+
+  - name: "Inhalation Drug-Propellant Compatibility"
+    category: "Pharmaceutical"
+    description: "HSP distance between drug and HFA propellant predicts suspension/solution stability in metered-dose inhalers."
+
+  # ===== Category 4: Food / Cosmetics / Consumer =====
+  - name: "Fragrance Encapsulation"
+    category: "Food/Cosmetics"
+    description: "Fragrance-wall material HSP distance predicts encapsulation suitability, retention, and controlled release."
+
+  - name: "Cosmetic Emulsion Stability"
+    category: "Food/Cosmetics"
+    description: "Oil-emulsifier-water HSP balance predicts emulsion type (O/W vs W/O), stability, and shelf life."
+
+  - name: "Food Packaging Migration Risk"
+    category: "Food/Cosmetics"
+    description: "Packaging polymer-food component RED predicts migration of monomers, additives into food (EFSA/FDA context)."
+
+  - name: "Essential Oil Extraction Solvent Selection"
+    category: "Food/Cosmetics"
+    description: "Natural product-solvent HSP matching optimizes extraction yield and selectivity for target compounds."
+
+  - name: "Flavor Scalping Prediction"
+    category: "Food/Cosmetics"
+    description: "HSP distance between aroma compounds and packaging polymer predicts sorption of flavors from food into packaging."
+
+  - name: "Natural Dye Extraction Optimization"
+    category: "Food/Cosmetics"
+    description: "HSP matching between target pigments (anthocyanins, carotenoids) and extraction solvent for food/textile colorants."
+
+  - name: "Cleaning Product Formulation"
+    category: "Food/Cosmetics"
+    description: "HSP matching between soil/stain type and surfactant/solvent system predicts cleaning efficacy."
+
+  - name: "Sunscreen UV Filter Compatibility"
+    category: "Food/Cosmetics"
+    description: "HSP distance between organic UV filters and cosmetic vehicle determines solubility limit affecting SPF and photostability."
+
+  # ===== Category 5: Energy / Environment =====
+  - name: "Li-ion Battery Electrolyte Design"
+    category: "Energy/Environment"
+    description: "Electrolyte salt-solvent HSP compatibility predicts solvation, ion transport, and SEI formation characteristics."
+
+  - name: "CO2 Absorbent Selection"
+    category: "Energy/Environment"
+    description: "CO2 HSP vs absorbent HSP distance predicts absorption capacity for carbon capture applications."
+
+  - name: "Membrane Separation Selectivity"
+    category: "Energy/Environment"
+    description: "HSP distance difference between target/impurity and membrane material predicts separation factor."
+
+  - name: "Soil Contaminant Extraction"
+    category: "Energy/Environment"
+    description: "Contaminant-extraction solvent HSP matching for environmental remediation optimization."
+
+  - name: "Perovskite Solar Cell Solvent Engineering"
+    category: "Energy/Environment"
+    description: "Processing solvent and anti-solvent HSP critically affect perovskite film morphology, grain size, and defect density."
+
+  - name: "Hydrogen Storage Material-Solvent Interaction"
+    category: "Energy/Environment"
+    description: "HSP analysis of MOFs or porous polymers with H2 carrier molecules for LOHC design."
+
+  - name: "Biofuel-Material Compatibility"
+    category: "Energy/Environment"
+    description: "HSP distance between biodiesel/bioethanol blends and fuel system materials predicts swelling and degradation."
+
+  - name: "Supercritical CO2 Co-solvent Selection"
+    category: "Energy/Environment"
+    description: "HSP-based entrainer selection to extend scCO2 extraction to polar solutes. Green chemistry application."
+
+  - name: "PCM Encapsulation for Thermal Storage"
+    category: "Energy/Environment"
+    description: "HSP matching between phase-change material and shell polymer predicts compatibility and cycling stability."
+
+  # ===== Category 6: Electronics / Advanced Materials =====
+  - name: "CNT/Graphene Dispersion Solvent"
+    category: "Electronics/Advanced"
+    description: "HSP sphere determination for carbon nanomaterials. Solvent selection within HSP sphere for stable dispersions."
+
+  - name: "Organic Semiconductor Thin Film"
+    category: "Electronics/Advanced"
+    description: "Organic semiconductor-solvent HSP affects film morphology, crystallinity, and charge transport in OFETs/OLEDs."
+
+  - name: "Photoresist Developer Compatibility"
+    category: "Electronics/Advanced"
+    description: "Resist-developer HSP distance determines dissolution contrast and pattern resolution in lithography."
+
+  - name: "PSA Tape Peel Strength"
+    category: "Electronics/Advanced"
+    description: "Pressure-sensitive adhesive-adherend HSP distance correlates with tack, peel force, and shear resistance."
+
+  - name: "Quantum Dot Ligand Exchange Solvent"
+    category: "Electronics/Advanced"
+    description: "HSP matching for QD surface ligands and exchange solvents governs colloidal stability during processing."
+
+  - name: "Printed Electronics Ink-Substrate Wetting"
+    category: "Electronics/Advanced"
+    description: "HSP + surface energy governs wetting, coffee-ring suppression in inkjet-printed conductors and semiconductors."
+
+  - name: "Dielectric Polymer Film Quality"
+    category: "Electronics/Advanced"
+    description: "HSP distance between dielectric polymer and processing solvent affects film uniformity and breakdown voltage."
+
+  - name: "Underfill/Encapsulant Compatibility"
+    category: "Electronics/Advanced"
+    description: "HSP matching between encapsulant and chip surfaces predicts adhesion and moisture ingress in semiconductor packaging."
+
+  - name: "MXene Dispersion Optimization"
+    category: "Electronics/Advanced"
+    description: "HSP sphere for MXene (Ti3C2Tx) delamination and dispersion with distinct hydrophilic surface chemistry."
+
+  # ===== Category 7: Computational / Estimation Methods =====
+  - name: "Inverse HSP Estimation from Data"
+    category: "Computational"
+    description: "Optimal sphere fitting from good/bad solvent data. Extension to Bayesian confidence regions."
+
+  - name: "Multi-component Solvent Optimization"
+    category: "Computational"
+    description: "4+ component blend optimization using gradient-free or evolutionary algorithms for target HSP matching."
+
+  - name: "Temperature-dependent HSP Correction"
+    category: "Computational"
+    description: "Barton method and extensions for HSP estimation at arbitrary temperatures using thermal expansion coefficients."
+
+  - name: "Group Contribution Method Updates"
+    category: "Computational"
+    description: "Updated Hoftyzer-Van Krevelen parameters with DFT-derived fragment contributions for novel chemical structures."
+
+  - name: "ML HSP Prediction from Structure"
+    category: "Computational"
+    description: "QSPR/ML models (random forest, GNN, transformers) predicting HSP from SMILES or molecular descriptors."
+
+  - name: "Molecular Dynamics HSP Calculation"
+    category: "Computational"
+    description: "All-atom MD simulation of cohesive energy density components for first-principles HSP determination."
+
+  - name: "Surface HSP Determination Methods"
+    category: "Computational"
+    description: "IGC, contact angle series, AFM methods for solid surface/particle/fiber HSP. Essential input data for many applications."
+
+  - name: "HSP for Ionic Liquids and DES"
+    category: "Computational"
+    description: "Extension of HSP framework to ionic liquids and deep eutectic solvents with unusual cohesive contributions."
+
+  - name: "Pressure-dependent HSP Correction"
+    category: "Computational"
+    description: "HSP variation with pressure for supercritical extraction and high-pressure processing applications."
+
+  - name: "HSP Uncertainty Quantification"
+    category: "Computational"
+    description: "Bayesian/Monte Carlo propagation of experimental uncertainty through sphere fitting to yield confidence regions."
+
+  # ===== Category 8: Adhesion / Joining / Surface Science =====
+  - name: "Structural Adhesive Joint Design"
+    category: "Adhesion/Surface"
+    description: "HSP matching between structural adhesive and both adherend surfaces predicts bond strength and durability."
+
+  - name: "Surface Treatment Effect Quantification"
+    category: "Adhesion/Surface"
+    description: "Change in surface HSP after corona/plasma/flame treatment measured via contact angle series."
+
+  - name: "Compatibilizer Selection for Blends"
+    category: "Adhesion/Surface"
+    description: "HSP-guided selection of block/graft copolymer compatibilizers matching each immiscible phase in polymer blends."
+
+  - name: "Primer-less Adhesion Design"
+    category: "Adhesion/Surface"
+    description: "HSP optimization of substrate-adhesive pair to eliminate primer layer in automotive/aerospace assembly."
+
+execution:
+  batch_size: 5
+  items_per_agent: 5
+  output_dir: ./results

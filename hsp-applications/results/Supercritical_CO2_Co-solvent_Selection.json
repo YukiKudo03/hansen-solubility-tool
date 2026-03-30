@@ -1,0 +1,108 @@
+{
+  "basic_info": {
+    "name": "Supercritical CO2 Co-solvent Selection",
+    "name_ja": "超臨界CO2共溶媒選択",
+    "category": "Energy/Environment",
+    "description": "HSP-based entrainer (co-solvent/modifier) selection to extend the solvation range of supercritical CO2 (scCO2) extraction toward polar solutes. Pure scCO2 has low polarity (dP ~ 3.5, dH ~ 5.7 MPa^0.5 at typical operating conditions), which limits its ability to dissolve polar compounds. By adding a small fraction (1-10 mol%) of a polar co-solvent (e.g., ethanol, methanol, acetone), the effective HSP of the scCO2 mixture shifts toward the target solute's HSP sphere, enabling dissolution. HSP matching between the co-solvent-modified scCO2 and the target solute guides co-solvent selection and concentration optimization. This is a key green chemistry approach replacing conventional organic solvent extraction in food, pharmaceutical, and natural product industries.",
+    "maturity_level": "established"
+  },
+  "hsp_principle": {
+    "hsp_principle": "The core principle is that scCO2 possesses definable but pressure- and temperature-dependent HSP values, primarily dominated by dispersion forces (dD ~ 15.6 MPa^0.5 at 200 bar, 40 C) with modest polar and hydrogen bonding components. The HSP of CO2 shifts significantly with density (and hence T and P). By adding a co-solvent, the mixture HSP can be estimated via volume-fraction-weighted linear mixing: dD_mix = phi_CO2*dD_CO2 + phi_cosolv*dD_cosolv, and similarly for dP and dH. The target is to minimize the Ra distance between the modified scCO2 mixture and the solute of interest. The RED number (Ra/R0 of the solute) predicts whether the modified scCO2 falls inside the solubility sphere of the target compound. Co-solvent selection is thus an optimization problem: find the entrainer that moves the scCO2 HSP vector most efficiently toward the solute while maintaining supercritical phase behavior and process economics.",
+    "key_equation": "Ra = sqrt(4*(dD_mix - dD_solute)^2 + (dP_mix - dP_solute)^2 + (dH_mix - dH_solute)^2); dD_mix = phi_CO2*dD_CO2(T,P) + phi_cos*dD_cos; RED = Ra/R0_solute",
+    "red_direction": "low_is_good",
+    "typical_red_threshold": "RED < 1.0 for solubility; RED < 0.7 preferred for efficient extraction yield; RED > 1.2 indicates negligible solubility enhancement",
+    "sensitivity_to_hbond_split": "high",
+    "temperature_pressure_sensitivity": "high"
+  },
+  "input_data": {
+    "required_inputs": [
+      "HSP values (dD, dP, dH) of pure CO2 at operating T and P",
+      "HSP values (dD, dP, dH) of candidate co-solvents",
+      "HSP values (dD, dP, dH) and R0 of target solute",
+      "Operating temperature and pressure",
+      "Co-solvent mole fraction or volume fraction"
+    ],
+    "data_sources": [
+      "Williams et al. (2004) tabulated CO2 HSP as function of T and P",
+      "HSPiP database for co-solvent HSP values",
+      "Experimental solubility data in scCO2 for sphere fitting",
+      "Equation of state (Peng-Robinson) for CO2 density at T,P",
+      "Group contribution methods for novel solute HSP estimation"
+    ],
+    "data_availability_score": 3,
+    "complementary_parameters": [
+      "CO2 density at operating conditions (critical for HSP estimation)",
+      "Co-solvent vapor pressure and miscibility with CO2",
+      "Phase equilibrium data (VLE) for CO2-cosolvent binary",
+      "Solute melting point and sublimation pressure",
+      "Mass transfer coefficients for extraction kinetics"
+    ]
+  },
+  "accuracy": {
+    "accuracy_level": "semi-quantitative",
+    "limitations": [
+      "CO2 HSP values are highly density-dependent; small errors in density estimation propagate to HSP and Ra",
+      "Linear mixing rule for HSP of CO2-cosolvent mixture is an approximation; non-ideal mixing and clustering of co-solvent molecules around solute can occur",
+      "At near-critical conditions, large compressibility causes steep HSP gradients with small T/P changes",
+      "Does not account for specific chemical interactions (e.g., co-solvent-solute hydrogen bonding complexation) beyond what HSP captures",
+      "Entrainer effect magnitude often exceeds what simple HSP mixing predicts due to local composition enhancement near the solute",
+      "Kinetic and mass-transfer limitations in real extraction are not addressed"
+    ],
+    "known_failure_modes": [
+      "Highly polar solutes (e.g., sugars, amino acids) where even maximum co-solvent addition cannot bring RED below 1.0",
+      "Systems where co-solvent forms azeotrope-like behavior with CO2, making mixture HSP estimation unreliable",
+      "Multi-solute extraction where selectivity depends on small HSP differences masked by co-solvent broadening of the solubility sphere",
+      "Near-critical anomalies where clustering effects dominate over bulk HSP predictions"
+    ],
+    "validation_method": [
+      "Static or dynamic solubility measurement at controlled T and P",
+      "Cloud point pressure determination with varying co-solvent fraction",
+      "Gravimetric extraction yield comparison across co-solvents",
+      "HPLC/GC analysis of extract composition and purity"
+    ]
+  },
+  "implementation": {
+    "complexity": "high",
+    "ui_pattern": "optimization",
+    "existing_modules_reusable": [
+      "calculateRa",
+      "calculateRed",
+      "classifyRisk",
+      "optimizeBlend"
+    ],
+    "multi_component_complexity": "ternary",
+    "scale_of_application": "design"
+  },
+  "literature": {
+    "key_references": [
+      "Williams, L.L.; Rubin, J.B.; Edwards, H.W. 'Calculation of Hansen Solubility Parameter Values for a Range of Pressure and Temperature Conditions, Including the Supercritical Fluid Region', Ind. Eng. Chem. Res., 2004, 43, 4967-4972",
+      "Hansen, C.M. 'Hansen Solubility Parameters: A User's Handbook', 2nd Ed., CRC Press, 2007, Chapter 15 (Supercritical Fluids)",
+      "Dobbs, J.M.; Wong, J.M.; Johnston, K.P. 'Nonpolar Co-Solvents for Solubility Enhancement in Supercritical Fluid Carbon Dioxide', J. Chem. Eng. Data, 1986, 31, 303-308",
+      "Gupta, R.B.; Shim, J.J. 'Solubility in Supercritical Carbon Dioxide', CRC Press, 2007",
+      "Brennecke, J.F.; Eckert, C.A. 'Phase Equilibria for Supercritical Fluid Process Design', AIChE J., 1989, 35, 1409-1427"
+    ],
+    "first_reported_year": 2004,
+    "regulatory_relevance": "scCO2 extraction is FDA GRAS and EU-approved for food and pharmaceutical processing. HSP-based co-solvent selection supports green chemistry regulatory frameworks (REACH substitution assessments) and is referenced in ICH Q3C guidance for residual solvent classification in pharmaceutical extraction."
+  },
+  "industry_application": {
+    "industry_sectors": [
+      "Food processing (decaffeination, hop extraction, nutraceutical isolation)",
+      "Pharmaceutical (API purification, natural product extraction)",
+      "Cosmetics (essential oil and lipid extraction)",
+      "Environmental remediation (soil decontamination with scCO2)",
+      "Chemical manufacturing (green solvent replacement programs)"
+    ],
+    "commercial_tools": [
+      "HSPiP (supercritical fluid module with T/P-dependent CO2 HSP)",
+      "Aspen Plus (equation of state modeling for scCO2 systems)",
+      "COSMOtherm (COSMO-RS predictions for scCO2 solubility)",
+      "SuperPro Designer (scCO2 process simulation)",
+      "NIST Webbook (CO2 thermophysical property data)"
+    ]
+  },
+  "uncertain": [
+    "first_reported_year",
+    "typical_red_threshold",
+    "regulatory_relevance"
+  ]
+}

@@ -1,0 +1,121 @@
+{
+  "basic_info": {
+    "name": "Biofuel-Material Compatibility",
+    "name_ja": "バイオ燃料-材料適合性予測",
+    "category": "Energy/Environment",
+    "description": "HSP distance between biodiesel, bioethanol, and their blends with petroleum fuels and fuel system materials (elastomers, plastics, coatings) is used to predict swelling, degradation, and compatibility issues. As biofuel adoption increases, existing fuel system components designed for conventional petroleum fuels face exposure to chemically different biofuel constituents (fatty acid methyl esters in biodiesel, ethanol in E10-E85 blends). HSP analysis predicts which materials will experience unacceptable swelling, softening, or extraction of plasticizers when exposed to biofuels, enabling proactive material selection and qualification for fuel-compatible components in vehicles, storage tanks, dispensing equipment, and pipeline systems.",
+    "maturity_level": "established"
+  },
+  "hsp_principle": {
+    "hsp_principle": "Material compatibility with biofuels follows HSP affinity principles: when the HSP distance Ra between a biofuel and a polymer material is small (RED < 1), the fuel can penetrate and swell the polymer, potentially causing dimensional changes, mechanical property loss, and extraction of additives. For elastomeric seals and hoses, the degree of swelling correlates with Ra according to Flory-Rehner theory modified with HSP-derived chi parameters. Biodiesel (FAME) has different HSP from petroleum diesel due to ester functional groups contributing to higher delta_p and delta_h, bringing it closer to many elastomers in HSP space. Ethanol-gasoline blends show nonlinear HSP variation with blend ratio due to hydrogen bonding effects, creating a 'co-solvency' region that can dissolve materials resistant to either pure component. The RED number predicts resistance (RED > 1) or vulnerability (RED < 1) of each material to a given fuel composition.",
+    "key_equation": "Ra = sqrt(4*(dD_fuel - dD_material)^2 + (dP_fuel - dP_material)^2 + (dH_fuel - dH_material)^2); RED = Ra / R0; Volume swell (%) ~ f(1/RED); Blend HSP: delta_blend = sum(phi_i * delta_i) (with non-ideal correction for ethanol-hydrocarbon mixtures); chi = V_fuel * Ra^2 / (6 * R * T)",
+    "red_direction": "high_is_good",
+    "typical_red_threshold": "RED > 1.0 for material resistance; RED < 0.8 indicates significant swelling risk (>10% volume change); RED 0.8-1.2 is a caution zone requiring experimental verification",
+    "sensitivity_to_hbond_split": "high",
+    "temperature_pressure_sensitivity": "medium"
+  },
+  "input_data": {
+    "required_inputs": [
+      "HSP of biofuel or fuel blend (delta_d, delta_p, delta_h)",
+      "HSP and interaction radius R0 of fuel system material (elastomer, plastic, coating)",
+      "Fuel blend composition (vol% biodiesel or ethanol)",
+      "Material crosslink density (for elastomers)",
+      "Service temperature range"
+    ],
+    "data_sources": [
+      "HSPiP database for common elastomers and plastics",
+      "Published HSP for FAME biodiesel components (methyl oleate, methyl palmitate, etc.)",
+      "Calculated blend HSP from component volume fractions",
+      "ASTM fuel specifications for reference fuel compositions",
+      "Rubber manufacturers' technical data sheets for elastomer HSP"
+    ],
+    "data_availability_score": 4,
+    "complementary_parameters": [
+      "Material crosslink density and hardness",
+      "Fuel permeation rate through material",
+      "Temperature cycling profile",
+      "Exposure duration (for kinetic swelling prediction)",
+      "Presence of fuel additives and contaminants",
+      "Material tensile strength and elongation at break",
+      "Fuel oxidation stability (peroxide formation)"
+    ]
+  },
+  "accuracy": {
+    "accuracy_level": "semi-quantitative",
+    "limitations": "HSP-based compatibility prediction is well-suited for equilibrium swelling prediction but does not capture time-dependent degradation mechanisms including oxidative attack by biodiesel peroxides, hydrolysis of ester-based polymers by water in biofuels, or stress cracking under mechanical load. Biodiesel composition varies with feedstock (soy, rapeseed, palm, waste cooking oil), causing HSP variation that must be accounted for. Ethanol-gasoline blends exhibit non-ideal mixing behavior due to hydrogen bonding, making simple linear HSP blending rules inaccurate at intermediate compositions. Fuel system materials often contain plasticizers, fillers, and stabilizers whose extraction changes material properties in ways not predicted by bulk polymer HSP. Temperature cycling and combined chemical-mechanical stress are not modeled.",
+    "known_failure_modes": [
+      "Ethanol-gasoline co-solvency effects where intermediate blend ratios (E20-E40) attack materials resistant to both pure components",
+      "Oxidized biodiesel with elevated peroxide values causing chemical degradation beyond physical swelling",
+      "Fiber-reinforced composites (e.g., fiberglass fuel tanks) where interfacial degradation differs from matrix swelling",
+      "Metallic corrosion by biofuels (not addressable by HSP)",
+      "Multi-layer fuel lines where different polymers respond differently to fuel permeation"
+    ],
+    "validation_method": "ASTM D471 standard immersion testing for rubber volume change, SAE J1748 and J2260 fuel system material compatibility testing, tensile property measurement before and after fuel exposure (ASTM D412), fuel permeation testing per CARB/EPA protocols, dynamic mechanical analysis (DMA) for modulus changes"
+  },
+  "implementation": {
+    "complexity": "medium",
+    "ui_pattern": "matrix",
+    "existing_modules_reusable": [
+      "calculateRa",
+      "calculateRed",
+      "classifyRisk",
+      "optimizeBlend"
+    ],
+    "multi_component_complexity": "ternary",
+    "scale_of_application": "screening"
+  },
+  "literature": {
+    "key_references": [
+      {
+        "author": "Haseeb, A.S.M.A.; Fazal, M.A.; Jahirul, M.I.; Masjuki, H.H.",
+        "title": "Compatibility of automotive materials in biodiesel: A review",
+        "journal": "Fuel",
+        "year": 2011,
+        "doi": "10.1016/j.fuel.2010.10.042"
+      },
+      {
+        "author": "Flitney, R.",
+        "title": "Which elastomers are right for biofuels?",
+        "journal": "Sealing Technology",
+        "year": 2007,
+        "doi": "10.1016/S1350-4789(07)70406-3"
+      },
+      {
+        "author": "Hansen, C.M.",
+        "title": "Hansen Solubility Parameters: A User's Handbook, 2nd Edition",
+        "journal": "CRC Press",
+        "year": 2007,
+        "doi": "10.1201/9781420006834"
+      },
+      {
+        "author": "Weltschev, M.",
+        "title": "Influence of biodiesel, normal diesel and biofuel blends on the chemical resistance of polymeric materials",
+        "journal": "Materials and Corrosion",
+        "year": 2019,
+        "doi": "[uncertain]"
+      }
+    ],
+    "first_reported_year": 2005,
+    "regulatory_relevance": "EPA Renewable Fuel Standard (RFS2) and EU Renewable Energy Directive (RED II) mandate increasing biofuel blending, driving material compatibility requirements. SAE J2260 specifies compatibility testing for fuel system elastomers. ASTM D7467 (B6-B20 biodiesel blends) and ASTM D4806 (fuel ethanol) include material compatibility provisions. CARB fuel system permeation standards require demonstration of material resistance. UL 2583 covers material compatibility for fuel dispensing equipment."
+  },
+  "industry_application": {
+    "industry_sectors": [
+      "Automotive (OEM and aftermarket fuel systems)",
+      "Fuel distribution and dispensing equipment",
+      "Biofuel production and blending facilities",
+      "Aerospace (sustainable aviation fuel compatibility)",
+      "Marine engines and fuel systems",
+      "Agricultural equipment"
+    ],
+    "commercial_tools": [
+      "HSPiP (Hansen Solubility Parameters in Practice)",
+      "O-Ring Material Selection databases (Parker, Trelleborg)",
+      "COSMOtherm (fuel-material interaction prediction)",
+      "FEA software with swelling models (ANSYS, Abaqus)"
+    ]
+  },
+  "uncertain": [
+    "literature.key_references[3].doi",
+    "literature.first_reported_year"
+  ]
+}

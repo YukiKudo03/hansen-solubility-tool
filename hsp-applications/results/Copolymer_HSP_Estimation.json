@@ -1,0 +1,102 @@
+{
+  "basic_info": {
+    "name": "Copolymer HSP Estimation",
+    "name_ja": "コポリマーHSP推算",
+    "category": "Polymer/Materials",
+    "description": "Hansen Solubility Parameters for copolymers are estimated by a weighted average of the HSP values of the constituent homopolymer segments, weighted by their volume (or mole/weight) fractions. This approach applies to random, alternating, block, and graft copolymers, though the physical interpretation differs: random copolymers behave as homogeneous entities where averaged HSP directly applies, while block and graft copolymers may exhibit microphase separation where individual block HSP values remain relevant. The method enables rapid estimation of copolymer solubility behavior without full experimental characterization.",
+    "maturity_level": "established"
+  },
+  "hsp_principle": {
+    "hsp_principle": "The core principle is linear additivity of HSP contributions from each monomer unit, weighted by their volume fraction in the copolymer. For a copolymer of monomers A and B with volume fractions phi_A and phi_B, each HSP component is calculated as delta_i(copolymer) = phi_A * delta_i(A) + phi_B * delta_i(B). This assumes that the contribution of each monomer to the overall cohesive energy density is proportional to its volume fraction, which is most valid for random copolymers where monomers are statistically distributed. For block copolymers, the averaged HSP predicts overall solubility, but individual block HSP values determine selective solvent behavior and microdomain swelling. Graft copolymers similarly require consideration of backbone vs. graft arm HSP for interfacial and compatibilizer applications.",
+    "key_equation": "dD_copoly = sum(phi_i * dD_i); dP_copoly = sum(phi_i * dP_i); dH_copoly = sum(phi_i * dH_i); where phi_i = volume fraction of monomer i",
+    "red_direction": "low_is_good",
+    "typical_red_threshold": "No specific threshold; estimated copolymer HSP is used as input for standard RED < 1.0 solubility criterion with solvents or other polymers",
+    "sensitivity_to_hbond_split": "medium",
+    "temperature_pressure_sensitivity": "low"
+  },
+  "input_data": {
+    "required_inputs": [
+      "HSP values (dD, dP, dH) of each homopolymer corresponding to the monomer units",
+      "Volume fraction (or weight fraction with density conversion) of each monomer in the copolymer",
+      "Copolymer architecture type (random, block, graft, alternating)"
+    ],
+    "data_sources": [
+      "HSPiP database (homopolymer HSP values)",
+      "Group contribution methods (Van Krevelen, Hoftyzer-Van Krevelen) for novel monomers",
+      "Literature compilations of homopolymer HSP (Hansen 2007, Van Krevelen 2009)",
+      "Experimental solubility testing of the copolymer for validation",
+      "Monomer molar volume data from density measurements or literature"
+    ],
+    "data_availability_score": 4,
+    "complementary_parameters": [
+      "Copolymer composition (precisely determined by NMR or elemental analysis)",
+      "Sequence distribution (random vs. blocky) from reactivity ratios",
+      "Monomer densities for weight-to-volume fraction conversion",
+      "Block lengths (for block copolymers)",
+      "Tg of copolymer (for validation of effective composition)"
+    ]
+  },
+  "accuracy": {
+    "accuracy_level": "semi-quantitative",
+    "limitations": [
+      "Linear mixing rule assumes no interaction effects between monomer units, which is an approximation; intramolecular interactions in the copolymer can shift effective HSP",
+      "Block copolymers with microphase separation cannot be fully described by a single averaged HSP set; each phase has its own effective HSP",
+      "Volume fraction estimation may be inaccurate if significant volume change occurs on copolymerization",
+      "Does not account for sequence distribution effects in random copolymers (blocky vs. truly random)",
+      "Alternating copolymers may behave differently from the linear average prediction due to regular dipole arrangements",
+      "Accuracy decreases for copolymers with strongly interacting monomers (e.g., acid/base pairs)"
+    ],
+    "known_failure_modes": [
+      "Block copolymers in selective solvents: averaged HSP predicts dissolution but only one block dissolves, leading to micelle formation",
+      "Strongly hydrogen-bonding copolymers where intramolecular H-bonding reduces effective dH below the linear average",
+      "Copolymers with charge-transfer interactions between donor/acceptor monomers",
+      "Low copolymer compositions where trace monomer dramatically alters surface behavior but minimally affects bulk HSP"
+    ],
+    "validation_method": [
+      "Solubility testing of copolymer in a range of solvents and comparing with Hansen sphere",
+      "Turbidimetric titration to determine solubility boundaries",
+      "Inverse gas chromatography (IGC) at infinite dilution for direct HSP measurement",
+      "Swelling experiments in solvent series",
+      "Comparison of predicted vs. measured Tg using Fox or Gordon-Taylor equation"
+    ]
+  },
+  "implementation": {
+    "complexity": "low",
+    "ui_pattern": "optimization",
+    "existing_modules_reusable": [
+      "calculateRa",
+      "calculateRed"
+    ],
+    "multi_component_complexity": "binary",
+    "scale_of_application": "design"
+  },
+  "literature": {
+    "key_references": [
+      "Hansen, C.M. 'Hansen Solubility Parameters: A User's Handbook', 2nd Ed., CRC Press, 2007, Chapter 5",
+      "Van Krevelen, D.W.; Te Nijenhuis, K. 'Properties of Polymers', 4th Ed., Elsevier, 2009, Chapter 7",
+      "Barton, A.F.M. 'CRC Handbook of Solubility Parameters and Other Cohesion Parameters', 2nd Ed., CRC Press, 1991",
+      "Lindvig, T.; Michelsen, M.L.; Kontogeorgis, G.M. 'A Flory-Huggins model based on the Hansen solubility parameters', Fluid Phase Equilibria, 2002, 203(1-2), 247-260"
+    ],
+    "first_reported_year": 1971,
+    "regulatory_relevance": "Not directly referenced in regulations, but copolymer HSP estimation supports material safety assessments under REACH for predicting extractable/leachable behavior from copolymer packaging materials"
+  },
+  "industry_application": {
+    "industry_sectors": [
+      "Coatings (acrylic and vinyl copolymer resin design for solvent selection)",
+      "Adhesives (copolymer composition optimization for substrate matching)",
+      "Packaging (copolymer barrier film development)",
+      "Biomedical (copolymer biomaterial design for drug delivery carriers)",
+      "Plastics compounding (compatibilizer copolymer design for blends)"
+    ],
+    "commercial_tools": [
+      "HSPiP (copolymer HSP estimation module with composition input)",
+      "COSMOtherm (segment-based approach for copolymer sigma profiles)",
+      "Y-MB (Yamamoto Molecule Breaking method for polymer segment contributions)",
+      "Materials Studio (Synthia for copolymer property prediction)"
+    ]
+  },
+  "uncertain": [
+    "first_reported_year",
+    "regulatory_relevance"
+  ]
+}

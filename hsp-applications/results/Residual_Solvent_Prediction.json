@@ -1,0 +1,103 @@
+{
+  "basic_info": {
+    "name": "Residual Solvent Prediction",
+    "name_ja": "残留溶剤予測",
+    "category": "Coatings/Inks",
+    "description": "HSP affinity between a solvent and the dried or cured film matrix predicts residual solvent levels after the drying process. Solvents with HSP closely matching the film matrix (low Ra, RED < 1) are thermodynamically 'comfortable' within the polymer, leading to higher retention and slower release. Conversely, solvents with large HSP distance from the film matrix are driven out more efficiently during drying. This principle enables formulators to optimize solvent blends that provide good application properties but minimize retained solvent in the final product.",
+    "maturity_level": "established"
+  },
+  "hsp_principle": {
+    "hsp_principle": "Residual solvent in a dried coating or film is governed by both thermodynamic affinity and diffusion kinetics. The thermodynamic driving force for solvent retention is quantified by HSP distance: solvents within the polymer's solubility sphere (RED < 1) have favorable interaction energy with the matrix and resist evaporation. The partition coefficient between the film and the vapor phase correlates with the Flory-Huggins interaction parameter chi, which is related to Ra. Solvents with low Ra remain trapped in the film longer, requiring higher temperatures or longer drying times for complete removal. This is particularly critical for food packaging, pharmaceutical coatings, and adhesive laminations where residual solvent limits are strictly regulated.",
+    "key_equation": "chi = V_s * (Ra)^2 / (6 * R * T); lower chi (lower Ra) = higher retention; residual solvent inversely correlates with RED of solvent-film pair",
+    "red_direction": "high_is_good",
+    "typical_red_threshold": "RED > 1.0 for solvents that release easily; RED < 0.8 indicates high retention risk; residual solvent typically < 5 mg/m2 target for food packaging",
+    "sensitivity_to_hbond_split": "high",
+    "temperature_pressure_sensitivity": "high"
+  },
+  "input_data": {
+    "required_inputs": [
+      "HSP (dD, dP, dH) of each solvent in the formulation",
+      "HSP (dD, dP, dH) of the dried/cured film matrix",
+      "Interaction radius R0 of the film polymer",
+      "Molar volume of each solvent",
+      "Boiling point and vapor pressure of each solvent",
+      "Drying temperature and time profile"
+    ],
+    "data_sources": [
+      "HSPiP database for solvent HSP (comprehensive coverage)",
+      "HSPiP or literature for polymer film HSP",
+      "Solvent physical property databases (boiling point, vapor pressure, molar volume)",
+      "IGC measurements for cured/crosslinked film HSP",
+      "Supplier data for coating resin systems"
+    ],
+    "data_availability_score": 4,
+    "complementary_parameters": [
+      "Solvent boiling point and evaporation rate",
+      "Film thickness",
+      "Glass transition temperature of the film polymer",
+      "Crosslink density of cured films",
+      "Drying oven temperature profile and air flow",
+      "Diffusion coefficient of solvent in polymer",
+      "Substrate permeability (for laminated structures)"
+    ]
+  },
+  "accuracy": {
+    "accuracy_level": "semi-quantitative",
+    "limitations": [
+      "Drying is a kinetic process; HSP only describes thermodynamic affinity, not diffusion rate",
+      "Film morphology changes during drying (skin formation) can trap solvents regardless of HSP",
+      "Crosslinking during drying changes the film HSP continuously, making static HSP comparison approximate",
+      "Multi-solvent blends create non-ideal evaporation profiles where azeotrope-like behavior occurs",
+      "Very thin films and very thick films behave differently due to diffusion path length effects"
+    ],
+    "known_failure_modes": [
+      "Solvent trapping under a skin layer formed by rapid surface drying, independent of HSP affinity",
+      "Residual high-boiling co-solvents (e.g., NMP, cyclohexanone) retained despite moderate RED due to very low vapor pressure",
+      "Water retention in hydrophilic films where hydrogen bonding creates strong specific interactions not fully captured by HSP",
+      "Latent solvent release during lamination or storage when temperature rises above the drying temperature"
+    ],
+    "validation_method": "Gas chromatography headspace analysis (GC-HS), total residual solvent by gravimetric method, GC-MS for specific solvent identification, real-time monitoring with process mass spectrometry, EN 13628 for residual solvents in packaging"
+  },
+  "implementation": {
+    "complexity": "medium",
+    "ui_pattern": "screening",
+    "existing_modules_reusable": [
+      "calculateRa",
+      "calculateRed",
+      "classifyRisk"
+    ],
+    "multi_component_complexity": "ternary",
+    "scale_of_application": "production"
+  },
+  "literature": {
+    "key_references": [
+      "Hansen, C.M. 'Hansen Solubility Parameters: A User's Handbook', 2nd ed., CRC Press, 2007, Chapter on diffusion and solvent retention",
+      "Abbott, S., Hansen, C.M. 'Hansen Solubility Parameters in Practice', HSPiP, 5th ed., 2015",
+      "Vrentas, J.S., Duda, J.L. 'Diffusion in polymer-solvent systems', Journal of Polymer Science: Polymer Physics, 1977, Vol. 15, pp. 403-416",
+      "Miltz, J., Rosen-Doody, V. 'Migration of residual solvents in flexible food packaging', Packaging Technology and Science, 1993, Vol. 6, pp. 239-246",
+      "Helmroth, I.E. et al. 'Predictive modeling of migration from packaging materials into food products', Trends in Food Science & Technology, 2002, Vol. 13, pp. 102-109"
+    ],
+    "first_reported_year": "[uncertain]",
+    "regulatory_relevance": "Directly relevant to food packaging regulations: EU Framework Regulation 1935/2004, EU Plastics Regulation 10/2011, FDA 21 CFR 175-178, EFSA guidelines on food contact materials. Residual solvent limits in pharmaceutical packaging per USP <467> and ICH Q3C. HSP-based screening is used by industry to guide solvent selection but is not a formal regulatory method."
+  },
+  "industry_application": {
+    "industry_sectors": [
+      "Flexible food packaging and lamination",
+      "Pharmaceutical packaging and coatings",
+      "Pressure-sensitive adhesives",
+      "Industrial protective coatings",
+      "Graphic arts and publication printing"
+    ],
+    "commercial_tools": [
+      "HSPiP (Hansen Solubility Parameters in Practice)",
+      "AKTS-SML (migration and diffusion modeling)",
+      "COSMOtherm (for thermodynamic modeling)",
+      "MIGRATEST EXP/LITE (migration simulation)",
+      "GC-HS instrumentation (Shimadzu, Agilent) for validation"
+    ]
+  },
+  "uncertain": [
+    "first_reported_year",
+    "typical_red_threshold"
+  ]
+}

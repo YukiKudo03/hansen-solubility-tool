@@ -1,0 +1,102 @@
+{
+  "basic_info": {
+    "name": "Multilayer Coating Interlayer Adhesion",
+    "name_ja": "多層コーティング層間接着性",
+    "category": "Coatings/Inks",
+    "description": "In multilayer coating systems (primer/basecoat/clearcoat), HSP distance between adjacent layers predicts the risk of interlayer delamination. By mapping the HSP gradient across the coating stack, formulators can identify weak interfaces where large HSP mismatches may cause adhesion failure. Optimizing the HSP profile so that each pair of adjacent layers has a sufficiently small Ra ensures robust interlayer adhesion across the full system.",
+    "maturity_level": "established"
+  },
+  "hsp_principle": {
+    "hsp_principle": "Each layer in a multilayer coating system has its own HSP determined by its resin chemistry, crosslinker, and additives. Interlayer adhesion depends on thermodynamic compatibility at each interface: when two adjacent layers have similar HSP, polymer chain interdiffusion across the interface is favored during the coating and curing process, creating a strong interphase. Large HSP jumps between layers create weak interfaces prone to delamination. The HSP gradient concept allows systematic analysis of the entire stack by computing Ra for each adjacent layer pair and identifying the weakest interface. Additionally, residual solvent from lower layers can partially dissolve or swell the upper layer if HSP are too close, causing defects.",
+    "key_equation": "Ra_ij = sqrt(4*(dD_i - dD_j)^2 + (dP_i - dP_j)^2 + (dH_i - dH_j)^2) for each adjacent layer pair (i, j)",
+    "red_direction": "low_is_good",
+    "typical_red_threshold": "Ra < 5 MPa^0.5 between adjacent layers for good adhesion; RED < 1.0 for each interface pair",
+    "sensitivity_to_hbond_split": "medium",
+    "temperature_pressure_sensitivity": "medium"
+  },
+  "input_data": {
+    "required_inputs": [
+      "HSP (dD, dP, dH) for each layer (primer, basecoat, clearcoat, etc.)",
+      "HSP of substrate surface",
+      "Interaction radius R0 for each layer material (if using RED approach)",
+      "Curing/drying temperature for each layer",
+      "Solvent system HSP for each layer"
+    ],
+    "data_sources": [
+      "HSPiP database for common coating resins (epoxy, polyurethane, acrylic, alkyd, melamine)",
+      "Supplier technical data for resin and crosslinker HSP",
+      "Group contribution calculation for custom resin blends",
+      "IGC measurements for cured film HSP characterization",
+      "Literature values for automotive and industrial coating systems"
+    ],
+    "data_availability_score": 4,
+    "complementary_parameters": [
+      "Glass transition temperature (Tg) of each layer",
+      "Crosslink density of each cured layer",
+      "Thermal expansion coefficient mismatch between layers",
+      "Solvent retention in each layer before overcoating",
+      "Flash-off time between layer applications",
+      "Film thickness of each layer",
+      "Surface tension and wetting behavior"
+    ]
+  },
+  "accuracy": {
+    "accuracy_level": "semi-quantitative",
+    "limitations": [
+      "HSP of cured/crosslinked films differ from uncured resin HSP and are difficult to measure directly",
+      "Interdiffusion kinetics depend on application window timing, not just thermodynamic compatibility",
+      "Mechanical stress at interfaces due to differential shrinkage or thermal expansion is not captured by HSP",
+      "Chemical bonding (covalent crosslinks across interface) can provide adhesion independent of HSP match",
+      "Additives, pigments, and fillers modify effective layer HSP in ways difficult to predict"
+    ],
+    "known_failure_modes": [
+      "Overcoating too late on a highly crosslinked layer where interdiffusion is kinetically blocked despite good HSP match",
+      "Solvent pop or lifting when upper layer solvent strongly swells the lower layer (HSP too similar with aggressive solvents)",
+      "Adhesion failure at primer-substrate interface on contaminated or poorly prepared surfaces",
+      "Delamination caused by internal stress relaxation during thermal cycling, unrelated to HSP compatibility"
+    ],
+    "validation_method": "Cross-cut adhesion test (ISO 2409 / ASTM D3359), pull-off adhesion test (ASTM D4541), mandrel bend test, impact resistance test, thermal cycling followed by adhesion re-testing, scanning electron microscopy of fracture interfaces"
+  },
+  "implementation": {
+    "complexity": "medium",
+    "ui_pattern": "matrix",
+    "existing_modules_reusable": [
+      "calculateRa",
+      "calculateRed",
+      "classifyRisk"
+    ],
+    "multi_component_complexity": "multi",
+    "scale_of_application": "design"
+  },
+  "literature": {
+    "key_references": [
+      "Hansen, C.M. 'Hansen Solubility Parameters: A User's Handbook', 2nd ed., CRC Press, 2007",
+      "Awaja, F. et al. 'Adhesion of polymers', Progress in Polymer Science, 2009, Vol. 34, pp. 948-968",
+      "Nichols, M.E. et al. 'Intercoat adhesion in automotive paint systems', Journal of Coatings Technology, 2002, Vol. 74, No. 924",
+      "van Oss, C.J. 'Interfacial Forces in Aqueous Media', CRC Press, 2006",
+      "Abbott, S., Hansen, C.M. 'Hansen Solubility Parameters in Practice', HSPiP, 5th ed., 2015"
+    ],
+    "first_reported_year": "[uncertain]",
+    "regulatory_relevance": "Automotive OEM specifications (e.g., SAE J400, Ford/GM/Toyota internal specs) require interlayer adhesion testing. Aerospace coatings follow MIL-PRF standards. HSP-based screening is used as a formulation tool but is not explicitly referenced in regulatory standards."
+  },
+  "industry_application": {
+    "industry_sectors": [
+      "Automotive OEM and refinish coatings",
+      "Aerospace coatings",
+      "Protective and marine coatings",
+      "Architectural coatings",
+      "Can and coil coatings",
+      "Electronics conformal coatings"
+    ],
+    "commercial_tools": [
+      "HSPiP (Hansen Solubility Parameters in Practice)",
+      "COSMOtherm (for molecular-level compatibility prediction)",
+      "Proprietary formulation software from major coatings companies (PPG, AkzoNobel, BASF, Axalta)",
+      "Materials Studio (for molecular dynamics simulation of interface)"
+    ]
+  },
+  "uncertain": [
+    "first_reported_year",
+    "typical_red_threshold"
+  ]
+}

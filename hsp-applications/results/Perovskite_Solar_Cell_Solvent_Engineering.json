@@ -1,0 +1,120 @@
+{
+  "basic_info": {
+    "name": "Perovskite Solar Cell Solvent Engineering",
+    "name_ja": "ペロブスカイト太陽電池溶媒工学",
+    "category": "Energy/Environment",
+    "description": "HSP analysis guides selection of processing solvents and anti-solvents for perovskite thin-film deposition, critically affecting film morphology, grain size, crystallinity, and defect density. The HSP distance between the perovskite precursor complex (e.g., PbI2-DMSO or MAI-PbI2-DMF adducts) and the processing solvent determines dissolution quality, while the HSP distance between the anti-solvent and the wet precursor film controls nucleation kinetics and crystal growth. Optimal solvent systems produce uniform, pinhole-free perovskite films with large grain sizes, directly improving power conversion efficiency (PCE) and device stability. HSP-based screening accelerates solvent system discovery, reducing the experimental search space for new perovskite compositions including mixed-halide and all-inorganic variants.",
+    "maturity_level": "emerging"
+  },
+  "hsp_principle": {
+    "hsp_principle": "Perovskite precursors form Lewis acid-base adducts with coordinating solvents (DMF, DMSO, NMP), and the stability of these adducts correlates with HSP affinity. The processing solvent must have low Ra to the precursor complex to ensure complete dissolution and homogeneous solution. During anti-solvent dripping, a solvent with high Ra to the perovskite but miscibility with the processing solvent is introduced, rapidly reducing precursor solubility and triggering supersaturation-driven nucleation. The HSP difference between processing solvent and anti-solvent (Ra_solvent-antisolvent) influences the rate of solvent exchange and thus nucleation density: moderate Ra produces controlled nucleation with large grains, while very high Ra causes rapid precipitation with small grains. The hydrogen bonding parameter delta_h is particularly important because it governs the donor-acceptor interactions between solvents and Pb2+ centers in the precursor. Solvent blending with calculated HSP enables fine control of intermediate phase formation and crystallization pathway.",
+    "key_equation": "Ra = sqrt(4*(dD_solvent - dD_precursor)^2 + (dP_solvent - dP_precursor)^2 + (dH_solvent - dH_precursor)^2); Anti-solvent criterion: Ra(anti-solvent, precursor) >> Ra(processing solvent, precursor); Nucleation rate ~ exp(-Delta_G* / kT) where Delta_G* depends on supersaturation controlled by Ra(anti-solvent, processing solvent)",
+    "red_direction": "threshold_specific",
+    "typical_red_threshold": "Processing solvent: RED < 1.0 to precursor; Anti-solvent: RED > 2.0 to precursor; Ra(processing solvent, anti-solvent) in range 5-15 MPa^0.5 for controlled crystallization [uncertain]",
+    "sensitivity_to_hbond_split": "high",
+    "temperature_pressure_sensitivity": "medium"
+  },
+  "input_data": {
+    "required_inputs": [
+      "HSP of perovskite precursor complex (delta_d, delta_p, delta_h)",
+      "HSP of candidate processing solvents",
+      "HSP of candidate anti-solvents",
+      "Boiling point and vapor pressure of solvents",
+      "Donor number (DN) of coordinating solvents"
+    ],
+    "data_sources": [
+      "HSPiP database for common organic solvents",
+      "Published perovskite precursor HSP from dissolution testing",
+      "Group contribution estimation for novel solvent HSP",
+      "Literature HSP for DMF, DMSO, GBL, NMP, and common anti-solvents",
+      "Experimental solubility sphere determination via systematic dissolution tests"
+    ],
+    "data_availability_score": 2,
+    "complementary_parameters": [
+      "Gutmann donor number (DN) of solvents",
+      "Solvent boiling point and evaporation rate",
+      "Solvent viscosity (affects film thickness uniformity)",
+      "Solvent-substrate surface energy matching",
+      "Precursor concentration and stoichiometry",
+      "Substrate temperature during deposition",
+      "Ambient humidity during processing"
+    ]
+  },
+  "accuracy": {
+    "accuracy_level": "semi-quantitative",
+    "limitations": "HSP analysis captures thermodynamic solvent-precursor affinity but does not fully describe the complex crystallization kinetics of perovskite formation, including intermediate phase transitions (e.g., delta to alpha phase). Perovskite precursors are ionic/coordination compounds whose interactions extend beyond van der Waals, polar, and hydrogen bonding forces captured by HSP. The strong Lewis acid-base coordination between Pb2+ and donor solvents is only partially reflected in delta_h. HSP of perovskite precursor complexes are composition-dependent and not well-tabulated, requiring experimental determination for each new formulation. Film morphology depends on many non-HSP factors including spin speed, substrate wetting, anti-solvent drip timing, and ambient conditions. Degradation pathways (moisture, heat, light) are not predicted by HSP.",
+    "known_failure_modes": [
+      "Precursor complexes with strong specific coordination (e.g., DMSO-PbI2 adducts) where Lewis acid-base interactions dominate over general HSP affinity",
+      "Mixed-cation perovskites (FA/MA/Cs) where multiple precursor species have different HSP",
+      "Anti-solvent volume and timing effects that override thermodynamic HSP predictions",
+      "High-humidity environments where water ingress during processing alters crystallization regardless of solvent HSP",
+      "Scalable deposition methods (slot-die, blade coating) where fluid dynamics matter more than equilibrium solubility"
+    ],
+    "validation_method": "SEM and AFM imaging of perovskite film morphology (grain size, coverage, pinhole density), XRD for crystallinity and phase purity, UV-Vis absorption and photoluminescence for optical quality, solar cell J-V characterization for PCE, stability testing under ISOS protocols"
+  },
+  "implementation": {
+    "complexity": "high",
+    "ui_pattern": "optimization",
+    "existing_modules_reusable": [
+      "calculateRa",
+      "calculateRed",
+      "optimizeBlend",
+      "classifyRisk"
+    ],
+    "multi_component_complexity": "ternary",
+    "scale_of_application": "design"
+  },
+  "literature": {
+    "key_references": [
+      {
+        "author": "Jeon, N.J.; Noh, J.H.; Kim, Y.C.; Yang, W.S.; Ryu, S.; Seok, S.I.",
+        "title": "Solvent engineering for high-performance inorganic-organic hybrid perovskite solar cells",
+        "journal": "Nature Materials",
+        "year": 2014,
+        "doi": "10.1038/nmat4014"
+      },
+      {
+        "author": "Hamill, J.C.; Schwartz, J.; Loo, Y.-L.",
+        "title": "Influence of Solvent Coordination on Hybrid Organic-Inorganic Perovskite Formation",
+        "journal": "ACS Energy Letters",
+        "year": 2018,
+        "doi": "10.1021/acsenergylett.7b01083"
+      },
+      {
+        "author": "Noel, N.K.; Habisreutinger, S.N.; Wenger, B.; Elliott, M.T.; Sherber, A.; Snaith, H.J.",
+        "title": "A low viscosity, low boiling point, clean solvent system for the rapid crystallisation of highly specular perovskite films",
+        "journal": "Energy & Environmental Science",
+        "year": 2017,
+        "doi": "10.1039/C6EE02373H"
+      },
+      {
+        "author": "Cao, X.; Zhang, G.; Jiang, L.; Cai, Y.; Wang, Y.; He, X.; Zeng, Q.; Chen, J.; Jia, Y.; Wei, J.",
+        "title": "Achieving environment-friendly production of CsPbBr3 films for efficient solar cells via HSP analysis",
+        "journal": "Green Chemistry",
+        "year": 2021,
+        "doi": "10.1039/D0GC04043F"
+      }
+    ],
+    "first_reported_year": 2014,
+    "regulatory_relevance": "Lead-containing perovskites fall under RoHS and REACH restrictions on hazardous substances. HSP-guided green solvent substitution supports compliance with EU Directive 2011/65/EU (RoHS) and worker safety regulations by replacing toxic solvents (DMF, NMP) with safer alternatives. No regulatory body currently mandates HSP analysis, but it aids in meeting VOC emission standards and workplace exposure limits."
+  },
+  "industry_application": {
+    "industry_sectors": [
+      "Photovoltaic manufacturing",
+      "Thin-film electronics",
+      "Academic perovskite research",
+      "Building-integrated photovoltaics (BIPV)",
+      "Flexible electronics and wearable energy harvesting"
+    ],
+    "commercial_tools": [
+      "HSPiP (Hansen Solubility Parameters in Practice)",
+      "COSMOtherm (solvent screening and sigma profiles)",
+      "Scienomics MAPS (molecular simulation for perovskite systems)",
+      "GreatCell Solar / Solaronix (perovskite materials suppliers with formulation guides)"
+    ]
+  },
+  "uncertain": [
+    "hsp_principle.typical_red_threshold",
+    "input_data.data_availability_score"
+  ]
+}

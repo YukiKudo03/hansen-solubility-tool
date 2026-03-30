@@ -1,0 +1,133 @@
+{
+  "basic_info": {
+    "name": "Inhalation Drug-Propellant Compatibility",
+    "name_ja": "吸入薬-噴射剤適合性評価",
+    "category": "Pharmaceutical",
+    "description": "HSP distance between a drug substance and HFA propellant (HFA-134a or HFA-227ea) predicts suspension or solution stability in pressurized metered-dose inhalers (pMDIs). When the drug HSP closely matches the propellant HSP, solution-based pMDIs with molecularly dissolved drug are feasible. When HSP distance is large, suspension formulations result, and the magnitude of the mismatch influences physical stability parameters such as flocculation rate, creaming/sedimentation, and valve clogging. This HSP-based approach enables rapid screening of drug-propellant combinations and guides co-solvent selection (e.g., ethanol) to bridge HSP gaps for improved formulation stability.",
+    "maturity_level": "established"
+  },
+  "hsp_principle": {
+    "hsp_principle": "The solubility of drug particles in HFA propellants follows classical like-dissolves-like principles quantified by HSP distance. HFA propellants (HFA-134a: 1,1,1,2-tetrafluoroethane; HFA-227ea: 1,1,1,2,3,3,3-heptafluoropropane) have distinctive HSP profiles with moderate dispersion forces, significant polarity from C-F bonds, and low hydrogen bonding capacity. Most drug substances have substantially different HSP profiles, leading to suspension-type formulations. The Ra between drug and propellant determines whether a solution or suspension formulation is achievable. Co-solvents like ethanol shift the effective HSP of the propellant blend toward the drug's HSP, improving solubility. Surfactant excipients (oleic acid, lecithin) further modulate the interface. The approach calculates Ra between drug and propellant (or propellant-cosolvent blend) to predict formulation type and optimize co-solvent concentration.",
+    "key_equation": "Ra = sqrt(4*(dD_drug - dD_propellant)^2 + (dP_drug - dP_propellant)^2 + (dH_drug - dH_propellant)^2); For co-solvent blends: dD_mix = phi_1*dD_1 + phi_2*dD_2 (volume-weighted mixing)",
+    "red_direction": "low_is_good",
+    "typical_red_threshold": "Ra < 5 MPa^0.5 for solution formulation feasibility; Ra > 8 MPa^0.5 indicates suspension-only formulation; intermediate values may allow solution with co-solvent addition [uncertain]",
+    "sensitivity_to_hbond_split": "medium",
+    "temperature_pressure_sensitivity": "high"
+  },
+  "input_data": {
+    "required_inputs": [
+      "Drug HSP values (dD, dP, dH)",
+      "Propellant HSP values (HFA-134a: dD=12.1, dP=7.1, dH=5.7 MPa^0.5; HFA-227ea: dD=11.9, dP=5.4, dH=2.9 MPa^0.5) [uncertain]",
+      "Co-solvent HSP values (ethanol: dD=15.8, dP=8.8, dH=19.4 MPa^0.5)",
+      "Co-solvent concentration range",
+      "Canister storage temperature and pressure"
+    ],
+    "data_sources": [
+      "HSPiP database for propellant and co-solvent HSP values",
+      "Group contribution methods for drug HSP estimation",
+      "Published literature on HFA propellant properties",
+      "Experimental solubility measurements in propellant systems (high-pressure solubility cells)",
+      "Fluorocarbon chemistry references for propellant HSP values"
+    ],
+    "data_availability_score": 3,
+    "complementary_parameters": [
+      "Drug particle size and morphology",
+      "Drug crystal habit and surface energy",
+      "Propellant vapor pressure at storage temperature",
+      "Moisture content and water solubility in propellant",
+      "Surfactant HLB and concentration",
+      "Valve and actuator material compatibility",
+      "Drug solubility in propellant-cosolvent mixtures (experimental)"
+    ]
+  },
+  "accuracy": {
+    "accuracy_level": "semi-quantitative",
+    "limitations": [
+      "HFA propellant HSP values have some uncertainty due to limited experimental determination methods under pressurized conditions",
+      "Surface energy and crystal face-specific interactions of micronized drug particles are not fully captured by bulk HSP",
+      "Electrostatic charging of drug particles in low-dielectric propellant medium is not predicted by HSP",
+      "Valve and gasket interactions with the formulation add complexity beyond drug-propellant HSP matching",
+      "Moisture ingress effects on suspension stability are not predicted by anhydrous HSP analysis",
+      "Drug solubility in pressurized propellant at canister conditions may deviate from ambient HSP predictions"
+    ],
+    "known_failure_modes": [
+      "Ostwald ripening in suspension formulations driven by particle size distribution rather than HSP",
+      "Crystal growth or polymorphic transformation in the propellant medium",
+      "Drug-surfactant interactions creating unexpected solution behavior not predicted by drug-propellant Ra alone",
+      "Extractable/leachable interactions between formulation and container closure system"
+    ],
+    "validation_method": [
+      "High-pressure view cell solubility measurements",
+      "Delivered dose uniformity (DDU) testing per USP <601>",
+      "Aerodynamic particle size distribution (APSD) by cascade impaction",
+      "Accelerated stability studies at 25C/60%RH and 40C/75%RH",
+      "Visual inspection of canister contents through transparent containers",
+      "Valve delivery consistency testing over canister life"
+    ]
+  },
+  "implementation": {
+    "complexity": "medium",
+    "ui_pattern": "optimization",
+    "existing_modules_reusable": [
+      "calculateRa",
+      "calculateRed",
+      "classifyRisk",
+      "optimizeBlend"
+    ],
+    "multi_component_complexity": "ternary",
+    "scale_of_application": "design"
+  },
+  "literature": {
+    "key_references": [
+      {
+        "author": "Stefely, J.S. et al.",
+        "journal": "Respiratory Drug Delivery",
+        "year": 2000,
+        "title": "Solubility parameters and their application in metered dose inhaler formulation development",
+        "doi": "[uncertain]"
+      },
+      {
+        "author": "Vervaet, C. and Byron, P.R.",
+        "journal": "International Journal of Pharmaceutics",
+        "year": 1999,
+        "title": "Drug-surfactant-propellant interactions in HFA-formulations",
+        "doi": "10.1016/S0378-5173(99)00135-9"
+      },
+      {
+        "author": "Rogueda, P.G.A.",
+        "journal": "Drug Development and Industrial Pharmacy",
+        "year": 2003,
+        "title": "HPFP, a model propellant for pMDIs",
+        "doi": "10.1081/DDC-120016687"
+      },
+      {
+        "author": "Hickey, A.J. and da Rocha, S.R.P.",
+        "journal": "Pharmaceutical Inhalation Aerosol Technology (3rd Edition)",
+        "year": 2019,
+        "title": "Physicochemical aspects of pMDI formulation",
+        "doi": "N/A"
+      }
+    ],
+    "first_reported_year": 1999,
+    "regulatory_relevance": "pMDI formulation development is governed by FDA guidance for metered dose inhaler and dry powder inhaler drug products. HSP-based rationale for propellant and co-solvent selection is accepted in ANDA and NDA CMC sections. The transition from CFC to HFA propellants drove significant HSP-based reformulation research. EMA guideline on pharmaceutical development of inhalation products also supports science-based formulation approaches."
+  },
+  "industry_application": {
+    "industry_sectors": [
+      "Pharmaceutical (respiratory drug delivery)",
+      "Generic inhaler development",
+      "Propellant manufacturers (Honeywell, Mexichem)",
+      "Contract manufacturing organizations for inhalation products"
+    ],
+    "commercial_tools": [
+      "HSPiP (Hansen Solubility Parameters in Practice)",
+      "COSMOtherm for solubility prediction in fluorocarbon systems",
+      "Proveris ARIA for delivered dose and spray characterization",
+      "Copley Scientific inhaler testing equipment"
+    ]
+  },
+  "uncertain": [
+    "typical_red_threshold",
+    "first_reported_year",
+    "key_references"
+  ]
+}

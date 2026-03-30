@@ -76,7 +76,28 @@
       "Bash(export PATH=\"$HOME/.bun/bin:$PATH\")",
       "Bash(bun --version)",
       "mcp__plugin_discord_discord__reply",
-      "Bash(npx jest:*)"
+      "Bash(npx jest:*)",
+      "Skill(research)",
+      "WebFetch(domain:ramprasad.mse.gatech.edu)",
+      "WebFetch(domain:www.theplasticshop.co.uk)",
+      "WebFetch(domain:eng.libretexts.org)",
+      "WebFetch(domain:www.ledrays.com)",
+      "WebFetch(domain:www.osti.gov)",
+      "WebFetch(domain:gmpplastic.com)",
+      "WebFetch(domain:kinampark.com)",
+      "WebFetch(domain:www.intechopen.com)",
+      "WebFetch(domain:www.ossila.com)",
+      "WebFetch(domain:www.dataphysics-instruments.com)",
+      "WebFetch(domain:pppdb.uchicago.edu)",
+      "WebFetch(domain:pmc.ncbi.nlm.nih.gov)",
+      "Bash(start \"\" \"out/Hansen溶解度パラメータ評価ツール 1.0.0.exe\")",
+      "Bash(npx @electron/rebuild)",
+      "Bash(start \"\" \"out/win-unpacked/Hansen溶解度パラメータ評価ツール.exe\")",
+      "Bash(npx asar:*)",
+      "Bash(rm -rf node_modules/better-sqlite3/build)",
+      "Bash(npx @electron/rebuild -f -m .)",
+      "Bash(npx @electron/rebuild -f)",
+      "Bash(npx tsx:*)"
     ]
   }
 }

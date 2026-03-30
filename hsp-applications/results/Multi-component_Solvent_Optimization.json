@@ -1,0 +1,113 @@
+{
+  "basic_info": {
+    "name": "Multi-component Solvent Optimization",
+    "name_ja": "多成分溶媒最適化",
+    "category": "Computational",
+    "description": "Computational optimization of solvent blends containing four or more components to achieve a target HSP value, using gradient-free or evolutionary algorithms. The HSP of a mixture is calculated as the volume-weighted average of individual solvent HSPs, creating a continuous multidimensional optimization problem: find the composition (volume fractions) of N solvents from a candidate pool that minimizes the distance between the blend HSP and a target point in Hansen space, subject to constraints on cost, toxicity, volatility, viscosity, and regulatory compliance. For 4+ components, the combinatorial explosion and nonlinear constraints make exhaustive search impractical, requiring metaheuristic approaches such as genetic algorithms, particle swarm optimization, differential evolution, or Bayesian optimization. This enables green solvent replacement, regulatory-compliant formulation redesign, and cost optimization while maintaining dissolution or compatibility performance.",
+    "maturity_level": "established"
+  },
+  "hsp_principle": {
+    "hsp_principle": "The HSP of a solvent mixture is approximated as the volume-fraction-weighted linear combination of individual component HSPs: dD_mix = sum(phi_i * dD_i), dP_mix = sum(phi_i * dP_i), dH_mix = sum(phi_i * dH_i), where phi_i is the volume fraction of solvent i. This linear mixing rule, while approximate, works well for most practical formulations. The optimization objective is to minimize Ra between the blend HSP and a target HSP (typically the material to be dissolved or the solvent being replaced), subject to sum(phi_i) = 1, phi_i >= 0, and additional practical constraints. For 4+ component systems, the feasible composition space is a high-dimensional simplex, and the constraint surface may be non-convex when practical constraints (cost, EHS rating, flash point, evaporation rate) are included. Gradient-free algorithms are preferred because: (1) the objective landscape may have multiple local minima when discrete solvent selection is combined with continuous composition optimization, (2) constraints may be discontinuous (e.g., regulatory banned solvent lists), and (3) the solvent candidate pool is discrete while compositions are continuous, creating a mixed-integer optimization problem.",
+    "key_equation": "dD_mix = sum(phi_i * dD_i); dP_mix = sum(phi_i * dP_i); dH_mix = sum(phi_i * dH_i); Minimize Ra_target = sqrt(4*(dD_mix - dD_target)^2 + (dP_mix - dP_target)^2 + (dH_mix - dH_target)^2); subject to: sum(phi_i) = 1, phi_i >= 0, and EHS/cost/physical property constraints",
+    "red_direction": "low_is_good",
+    "typical_red_threshold": "Ra_target < 1.0 MPa^0.5 for excellent match; Ra_target < R0_material for functional match; minimize RED = Ra/R0",
+    "sensitivity_to_hbond_split": "medium",
+    "temperature_pressure_sensitivity": "medium"
+  },
+  "input_data": {
+    "required_inputs": [
+      "Target HSP values (dD, dP, dH) to be matched (material HSP or solvent to be replaced)",
+      "Candidate solvent pool with HSP values (dD, dP, dH) for each",
+      "Volume fraction bounds for each solvent (min/max allowed)",
+      "Number of components (N >= 4)",
+      "Constraint specifications: cost limits, EHS ratings, flash point, evaporation rate, viscosity, regulatory restrictions"
+    ],
+    "data_sources": [
+      "HSPiP database (>1200 solvents with full HSP and physical property data)",
+      "REACH SVHC and candidate list for regulatory exclusions",
+      "Solvent supplier databases for cost and availability data",
+      "GHS safety data sheets for EHS constraint parameters",
+      "Literature or experimental HSP values for the target material"
+    ],
+    "data_availability_score": 5,
+    "complementary_parameters": [
+      "Solvent cost per liter",
+      "Environmental, health, and safety (EHS) scores",
+      "Flash point and autoignition temperature",
+      "Evaporation rate (relative to butyl acetate)",
+      "Viscosity of the blend",
+      "VOC classification and vapor pressure",
+      "Boiling point range for the blend",
+      "Kauri-Butanol (KB) value for solvency power validation"
+    ]
+  },
+  "accuracy": {
+    "accuracy_level": "quantitative",
+    "limitations": [
+      "Linear mixing rule for HSP is an approximation that breaks down for highly non-ideal mixtures (strong hydrogen bonding, association, or phase separation)",
+      "Activity coefficient effects in non-ideal mixtures cause the effective HSP to deviate from the volume-weighted average",
+      "Optimization finds mathematically optimal compositions that may not be practically realizable (e.g., requiring precise four-decimal volume fractions)",
+      "Physical property constraints (viscosity, evaporation rate) require additional mixing rules that may not be as reliable as HSP mixing",
+      "The discrete-continuous nature (selecting solvents AND optimizing composition) creates NP-hard combinatorial challenges for large candidate pools",
+      "Azeotrope formation in multicomponent blends affects evaporation behavior unpredictably"
+    ],
+    "known_failure_modes": [
+      "Solvent blends with strong hydrogen bonding interactions (e.g., alcohol-amine mixtures) where nonlinear HSP mixing occurs",
+      "Phase-separated blends where the effective HSP is undefined (immiscible solvent combinations)",
+      "Blend compositions optimized for HSP match but practically unusable due to stability, stratification, or incompatibility issues",
+      "Over-constrained problems with many practical constraints that eliminate all feasible solutions",
+      "Blends near azeotrope compositions where evaporation changes the composition and effective HSP over time"
+    ],
+    "validation_method": [
+      "Experimental dissolution or compatibility testing of the optimized blend",
+      "Refractive index or density measurement to verify actual blend composition",
+      "GC-MS headspace analysis to verify no preferential evaporation has changed composition",
+      "Comparison with known good-performing solvent blend as positive control",
+      "Accelerated aging test to verify blend stability over time"
+    ]
+  },
+  "implementation": {
+    "complexity": "high",
+    "ui_pattern": "optimization",
+    "existing_modules_reusable": [
+      "calculateRa",
+      "calculateRed",
+      "optimizeBlend"
+    ],
+    "multi_component_complexity": "multi",
+    "scale_of_application": "design"
+  },
+  "literature": {
+    "key_references": [
+      "Hansen, C.M. 'Hansen Solubility Parameters: A User's Handbook', 2nd ed., CRC Press, 2007 (Chapter 8: Methods of formulation optimization)",
+      "Gharagheizi, F.; Sattari, M.; Angaji, M.T. 'Effect of Calculation Method on the Hansen Solubility Parameters and Their Application in the Study of Solvent Blends', Journal of Chemical & Engineering Data, 2006 [uncertain]",
+      "Durkee, J.B. 'Cleaning with Solvents: Science and Technology', William Andrew, 2014 (Chapter on multi-solvent blend optimization using HSP)",
+      "Abbott, S.; Hansen, C.M. 'Hansen Solubility Parameters in Practice (HSPiP)', e-book, 5th edition, 2015 (Chapter on Optimizer tool for multi-component blends)",
+      "Jessop, P.G.; Jessop, D.A.; Fu, D.; Phan, L. 'Solvatochromic Parameters for Solvents of Interest in Green Chemistry', Green Chemistry, 2012, 14, 1245-1259"
+    ],
+    "first_reported_year": 1990,
+    "regulatory_relevance": "Multi-component solvent optimization is directly relevant to REACH solvent substitution requirements (Annex XVII restrictions, SVHC replacement). EU Ecolabel criteria for paints and coatings reference VOC limits achievable through optimized solvent blends. FDA 21 CFR 173 lists residual solvent classes that constrain pharmaceutical solvent optimization."
+  },
+  "industry_application": {
+    "industry_sectors": [
+      "Coatings and paints (reformulation for VOC reduction and regulatory compliance)",
+      "Pharmaceutical (ICH Q3C compliant solvent blend design)",
+      "Printing inks (ink-jet and flexographic solvent optimization)",
+      "Cleaning (industrial parts cleaning solvent replacement)",
+      "Adhesives (contact adhesive solvent blend formulation)",
+      "Chemical manufacturing (extraction and crystallization solvent design)"
+    ],
+    "commercial_tools": [
+      "HSPiP (built-in Optimizer for multi-component blend design with up to 10 components)",
+      "COSMOtherm (COSMO-RS based blend optimization with thermodynamic mixing corrections)",
+      "MATLAB Global Optimization Toolbox (custom genetic algorithm implementations)",
+      "Python scipy.optimize and pymoo (open-source multi-objective optimization)",
+      "Solvay SOLVAL (proprietary solvent replacement tool) [uncertain]"
+    ]
+  },
+  "uncertain": [
+    "key_references",
+    "first_reported_year",
+    "commercial_tools"
+  ]
+}

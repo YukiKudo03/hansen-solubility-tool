@@ -1,0 +1,108 @@
+{
+  "basic_info": {
+    "name": "Environmental Stress Cracking (ESC)",
+    "name_ja": "環境応力亀裂（ESC）",
+    "category": "Polymer/Materials",
+    "description": "Environmental Stress Cracking occurs when a stressed polymer part is exposed to a chemical agent that would not cause failure in the absence of stress. HSP-based RED values between the polymer and the chemical environment predict ESC risk: chemicals with RED values near or below 1.0 (partial solubility) are the most dangerous ESC agents, as they can absorb into the stressed polymer surface and promote craze-to-crack transitions. This approach is critical for material selection in chemical environments, enabling rapid screening of polymer-chemical combinations for ESC susceptibility without lengthy mechanical testing.",
+    "maturity_level": "mature"
+  },
+  "hsp_principle": {
+    "hsp_principle": "ESC is driven by localized plasticization and chain disentanglement at crack tips where absorbed solvent molecules reduce the local Tg and craze fibril stability. The HSP distance between polymer and environmental fluid determines the degree of absorption and plasticization. Critically, ESC does not require full dissolution (RED < 1.0); chemicals in the RED range of approximately 0.7-1.3 are often the most dangerous because they absorb enough to plasticize without fully dissolving the polymer. The mechanism involves: (1) stress-enhanced absorption at craze tips due to dilatation and increased free volume, (2) local reduction in yield stress and craze fibril strength, and (3) accelerated craze-to-crack transition. The RED threshold for ESC onset is typically lower than for bulk dissolution because mechanical stress effectively enlarges the solubility sphere. The delta_H (hydrogen bonding) component is particularly important for predicting ESC in polar polymers.",
+    "key_equation": "Ra = sqrt(4*(dD1-dD2)^2 + (dP1-dP2)^2 + (dH1-dH2)^2); RED = Ra/R0; ESC risk is highest when 0.7 < RED < 1.3",
+    "red_direction": "threshold_specific",
+    "typical_red_threshold": "RED < 0.8 high ESC risk (also likely full dissolution); RED 0.8-1.0 significant ESC risk; RED 1.0-1.3 moderate ESC risk under high stress; RED > 1.3 low ESC risk",
+    "sensitivity_to_hbond_split": "medium",
+    "temperature_pressure_sensitivity": "medium"
+  },
+  "input_data": {
+    "required_inputs": [
+      "HSP values (dD, dP, dH) for the polymer",
+      "Interaction radius R0 for the polymer",
+      "HSP values (dD, dP, dH) for the environmental chemical/fluid",
+      "Applied stress level (or strain) on the polymer part",
+      "Service temperature"
+    ],
+    "data_sources": [
+      "HSPiP database (polymer and solvent HSP)",
+      "Material supplier technical datasheets (polymer ESC resistance ratings)",
+      "ASTM D1693 (ESCR bent strip test data for polyethylene)",
+      "Literature compilations of ESC agent rankings",
+      "Chemical product SDS sheets (for complex mixture HSP estimation)"
+    ],
+    "data_availability_score": 4,
+    "complementary_parameters": [
+      "Applied stress or strain level",
+      "Polymer molecular weight and molecular weight distribution",
+      "Degree of crystallinity and morphology",
+      "Residual stress from processing (injection molding, thermoforming)",
+      "Temperature of exposure",
+      "Exposure duration",
+      "Polymer orientation and weld line locations"
+    ]
+  },
+  "accuracy": {
+    "accuracy_level": "semi-quantitative",
+    "limitations": [
+      "ESC is a kinetic/mechanical phenomenon; HSP provides thermodynamic screening but cannot predict time-to-failure quantitatively",
+      "Stress level strongly modulates the effective R0 (stressed polymer has larger effective solubility sphere), but this stress-modified R0 is not well-characterized for most polymers",
+      "Complex chemical mixtures (detergents, oils, cleaning agents) require HSP estimation of the mixture, introducing additional uncertainty",
+      "Polymer processing history (residual stress, orientation, crystallinity) dramatically affects ESC resistance but is not captured by HSP",
+      "Does not distinguish between slow crack growth and rapid brittle failure modes",
+      "Surface treatments, coatings, and fillers modify ESC behavior beyond what HSP predicts"
+    ],
+    "known_failure_modes": [
+      "Polycarbonate ESC with certain aromatic solvents occurs at RED values somewhat above 1.0 due to specific aromatic-aromatic interactions not fully captured by HSP",
+      "Surfactant-induced ESC in polyethylene: aqueous surfactant solutions have high RED but still cause ESC by surface wetting and reducing surface energy at crack tips",
+      "Silicone fluids causing ESC in some elastomers despite seemingly high RED values",
+      "Mixtures where minor component with low RED drives ESC despite high overall mixture RED"
+    ],
+    "validation_method": [
+      "ASTM D1693 bent strip test (for PE)",
+      "ASTM F2136 notched constant tensile load (NCTL) test",
+      "Slow crack growth testing (ASTM F1473 PENT test)",
+      "Full notch creep test (FNCT) per ISO 16770",
+      "Strain-rate controlled tensile testing in chemical environment",
+      "Bergen jig constant strain ESC test"
+    ]
+  },
+  "implementation": {
+    "complexity": "low",
+    "ui_pattern": "screening",
+    "existing_modules_reusable": [
+      "calculateRa",
+      "calculateRed",
+      "classifyRisk"
+    ],
+    "multi_component_complexity": "binary",
+    "scale_of_application": "screening"
+  },
+  "literature": {
+    "key_references": [
+      "Hansen, C.M.; Just, L. 'Prediction of Environmental Stress Cracking in Plastics with Hansen Solubility Parameters', Industrial & Engineering Chemistry Research, 2001, 40(1), 21-25",
+      "Wright, D.C. 'Environmental Stress Cracking of Plastics', Rapra Technology, 1996",
+      "Hansen, C.M. 'Hansen Solubility Parameters: A User's Handbook', 2nd Ed., CRC Press, 2007, Chapter 18",
+      "Arnold, J.C. 'The influence of liquid uptake on environmental stress cracking of glassy polymers', Materials Science and Engineering A, 2004, 384(1-2), 249-256",
+      "Soares, J.B.P.; Abbott, R.F.; Kim, J.D. 'Environmental stress cracking resistance of polyethylene: the use of CRYSTAF and SEC to establish structure-property relationships', Journal of Polymer Science Part B, 2000, 38(10), 1267-1275"
+    ],
+    "first_reported_year": 1992,
+    "regulatory_relevance": "ESC testing is required for plastic piping (ASTM D1693, ISO 16770) in water/gas distribution standards; chemical resistance data including ESC is required for ATEX-rated plastic enclosures; FDA food-contact polymer parts must demonstrate resistance to ESC from cleaning agents"
+  },
+  "industry_application": {
+    "industry_sectors": [
+      "Automotive (fuel system components, under-hood parts exposed to fluids)",
+      "Packaging (HDPE containers for detergents, chemicals, agricultural products)",
+      "Construction (plastic piping, geomembranes, window profiles)",
+      "Medical devices (polymer components exposed to disinfectants and cleaning agents)",
+      "Consumer products (appliance housings, electronic enclosures)"
+    ],
+    "commercial_tools": [
+      "HSPiP (ESC screening module with chemical-polymer RED mapping)",
+      "CAMPUS plastics database (ESC ratings for commercial grades)",
+      "UL Prospector (chemical resistance data for plastics)",
+      "Matweb (material property database with ESC resistance data)"
+    ]
+  },
+  "uncertain": [
+    "first_reported_year"
+  ]
+}

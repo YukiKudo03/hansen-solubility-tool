@@ -1,0 +1,111 @@
+{
+  "basic_info": {
+    "name": "Primer-less Adhesion Design",
+    "name_ja": "プライマーレス接着設計",
+    "category": "Adhesion/Surface",
+    "description": "HSP optimization of the substrate-adhesive pair to eliminate the primer layer in automotive and aerospace assembly processes. Primers are traditionally used to bridge the HSP gap between substrates (metals, composites, plastics) and structural adhesives. By systematically matching adhesive HSP to substrate surface HSP, or by modifying adhesive formulation to shift its HSP toward the substrate, direct bonding without primer becomes feasible. This reduces process steps, cost, VOC emissions, and cycle time while maintaining bond performance. HSP-guided adhesive reformulation targets the optimal balance of cohesive strength and adhesive compatibility.",
+    "maturity_level": "emerging"
+  },
+  "hsp_principle": {
+    "hsp_principle": "A primer functions as an HSP intermediary: its HSP is close to both the substrate and the adhesive, bridging the thermodynamic gap. To eliminate the primer, the adhesive formulation must be modified so that its HSP directly matches the substrate surface HSP. This is achieved by adjusting adhesive resin chemistry, adding tackifiers, or incorporating functional monomers that shift dP and dH toward the substrate values. The HSP optimization target is to minimize Ra(adhesive, substrate) while maintaining the adhesive's bulk mechanical properties (modulus, Tg, elongation). For dissimilar-material joints, the adhesive HSP must be optimized as a compromise between both substrate surfaces. The RED framework provides the design criterion: post-reformulation RED < 1.0 for each interface, without primer. Additionally, HSP analysis of the primer system reveals which HSP components the primer was compensating, guiding the direction of adhesive modification.",
+    "key_equation": "Ra = sqrt(4*(dD_adh-dD_sub)^2 + (dP_adh-dP_sub)^2 + (dH_adh-dH_sub)^2); RED = Ra/R0; Target: RED(adhesive_new, substrate) < RED(adhesive_old, substrate) and RED(adhesive_new, substrate) < 1.0",
+    "red_direction": "low_is_good",
+    "typical_red_threshold": "RED < 1.0 for each substrate-adhesive interface required for primer-less bonding; RED < 0.8 recommended for durability margin; RED 1.0-1.3 may still bond initially but fails under environmental stress",
+    "sensitivity_to_hbond_split": "high",
+    "temperature_pressure_sensitivity": "medium"
+  },
+  "input_data": {
+    "required_inputs": [
+      "Surface HSP (dD, dP, dH) of substrate A (as-received or treated surface)",
+      "Surface HSP (dD, dP, dH) of substrate B (for dissimilar joints)",
+      "HSP (dD, dP, dH) of current adhesive formulation",
+      "HSP (dD, dP, dH) of current primer (to understand the bridging function)",
+      "R0 of the adhesive system",
+      "Target mechanical property constraints (modulus, Tg, elongation)"
+    ],
+    "data_sources": [
+      "Contact angle measurements with probe liquid series (substrate surface HSP)",
+      "HSPiP database (adhesive resin and additive HSP values)",
+      "Group contribution methods for new adhesive formulation HSP estimation",
+      "Adhesive supplier technical documentation",
+      "Inverse gas chromatography (surface energy characterization)"
+    ],
+    "data_availability_score": 3,
+    "complementary_parameters": [
+      "Surface roughness and morphology of substrates",
+      "Substrate surface energy (dispersive and polar components)",
+      "Adhesive rheology (flow and wetting behavior)",
+      "Cure kinetics and degree of conversion",
+      "Environmental durability requirements (humidity, thermal cycling, UV)",
+      "Surface contamination levels (oils, release agents, oxidation products)"
+    ]
+  },
+  "accuracy": {
+    "accuracy_level": "semi-quantitative",
+    "limitations": [
+      "Surface HSP determination is challenging and less precise than bulk HSP measurement, leading to uncertainty in the optimization target",
+      "Modifying adhesive HSP to match substrate may compromise cohesive strength, requiring multi-objective optimization",
+      "Metal surface HSP is strongly influenced by oxide layer thickness, contamination, and surface treatment, making it a moving target",
+      "Long-term durability of primer-less joints may be inferior even when initial bond strength is adequate, as primers often provide corrosion protection",
+      "Does not account for chemical bonding contributions (silane coupling agents, adhesion promoters) that primers may provide",
+      "Cure shrinkage stresses in the adhesive bondline may cause failure at interfaces that are marginally HSP-compatible"
+    ],
+    "known_failure_modes": [
+      "Substrates with weak boundary layers (oxidized polymer, contaminated metal) where primer removal exposes the weak layer",
+      "Joints exposed to hot-wet conditions where moisture ingress at the unprotected interface causes adhesive failure",
+      "Low-surface-energy substrates (PP, PE, PTFE) where HSP matching alone cannot overcome the inherently low work of adhesion",
+      "Dissimilar-material joints where the optimal HSP for one substrate is far from optimal for the other, making compromise impossible"
+    ],
+    "validation_method": [
+      "Lap shear strength testing (ASTM D1002) with and without primer comparison",
+      "Wedge crack test (Boeing wedge test, ASTM D3762) for durability assessment",
+      "Environmental aging (cyclic corrosion, humidity exposure, thermal shock)",
+      "Failure mode analysis (adhesive vs. cohesive) as the primary success criterion",
+      "Salt spray exposure (ASTM B117) for corrosion-related delamination"
+    ]
+  },
+  "implementation": {
+    "complexity": "high",
+    "ui_pattern": "optimization",
+    "existing_modules_reusable": [
+      "calculateRa",
+      "calculateRed",
+      "classifyRisk",
+      "optimizeBlend (for adhesive formulation HSP tuning)"
+    ],
+    "multi_component_complexity": "ternary",
+    "scale_of_application": "design"
+  },
+  "literature": {
+    "key_references": [
+      "Hansen, C.M. 'Hansen Solubility Parameters: A User's Handbook', 2nd Ed., CRC Press, 2007",
+      "Abbott, S.; Hansen, C.M. 'Hansen Solubility Parameters in Practice (HSPiP)', 5th Ed., 2015",
+      "Kinloch, A.J. 'Adhesion and Adhesives: Science and Technology', Chapman & Hall, 1987",
+      "Davis, G.D.; Venables, J.D. 'Surface Treatment of Metal Adherends', in Adhesion Science and Engineering, Elsevier, 2002",
+      "Comyn, J. 'Adhesion Science', RSC Paperbacks, Royal Society of Chemistry, 1997"
+    ],
+    "first_reported_year": 2005,
+    "regulatory_relevance": "In aerospace, primer-less bonding must be qualified per FAA AC 20-107B and EASA AMC 20-29 for structural bonds. Automotive OEM specifications (e.g., BMW, Ford global adhesive standards) increasingly allow primer-less designs if equivalent durability is demonstrated. VOC reduction from primer elimination supports REACH and EPA Clean Air Act compliance goals."
+  },
+  "industry_application": {
+    "industry_sectors": [
+      "Automotive (body-in-white multi-material bonding, closure panel hemming)",
+      "Aerospace (composite-to-metal secondary structure bonding)",
+      "Electronics (display lamination, camera module assembly)",
+      "Renewable energy (solar panel frame bonding, wind blade assembly)",
+      "Consumer appliances (glass-to-metal bonding in home appliances)"
+    ],
+    "commercial_tools": [
+      "HSPiP (adhesive-substrate HSP matching and reformulation guidance)",
+      "COSMOtherm (surface interaction energy prediction)",
+      "Henkel and Sika adhesive selection guides (primer-less product lines)",
+      "Dow BETAFORCE and BETAMATE primer-less adhesive systems",
+      "Materials Studio (molecular-level adhesion simulation)"
+    ]
+  },
+  "uncertain": [
+    "first_reported_year",
+    "typical_red_threshold",
+    "regulatory_relevance"
+  ]
+}

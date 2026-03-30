@@ -1,0 +1,118 @@
+{
+  "basic_info": {
+    "name": "Polymer Recycling Compatibility",
+    "name_ja": "ポリマーリサイクル相溶性予測",
+    "category": "Polymer/Materials",
+    "description": "HSP distance between mixed waste polymers is used to predict blend compatibility during mechanical recycling processes. When post-consumer plastic waste is collected and sorted, residual contamination from incompatible polymers degrades the mechanical properties of recycled materials. The HSP distance (Ra) between polymer pairs predicts their miscibility or immiscibility: small Ra values indicate potential compatibility, while large Ra values predict phase separation and poor mechanical properties in the recycled blend. This enables sorting optimization, compatibilizer selection, and quality prediction for circular economy applications.",
+    "maturity_level": "emerging"
+  },
+  "hsp_principle": {
+    "hsp_principle": "Polymer-polymer miscibility is thermodynamically governed by the Flory-Huggins interaction parameter chi, which can be estimated from the HSP distance between two polymers. For high molecular weight polymers, even small positive chi values lead to immiscibility because the combinatorial entropy of mixing is negligibly small. Therefore, miscibility requires very small Ra values (nearly identical HSP). The HSP distance predicts whether mixed polymer streams will form a homogeneous blend (small Ra), a partially compatible system with useful mechanical properties (moderate Ra with compatibilizer), or a completely incompatible system (large Ra) with catastrophic property loss. In recycling, this guides sorting tolerance levels and identifies which contamination levels are acceptable.",
+    "key_equation": "Ra = sqrt(4*(dD_1 - dD_2)^2 + (dP_1 - dP_2)^2 + (dH_1 - dH_2)^2); chi_12 = V_ref * Ra^2 / (6 * R * T); Miscibility requires chi_12 < chi_critical = 0.5 * (1/sqrt(N_1) + 1/sqrt(N_2))^2",
+    "red_direction": "low_is_good",
+    "typical_red_threshold": "Ra < 2-3 MPa^0.5 for potential miscibility of high-MW polymers; Ra < 5 MPa^0.5 for partial compatibility with compatibilizer assistance",
+    "sensitivity_to_hbond_split": "medium",
+    "temperature_pressure_sensitivity": "medium"
+  },
+  "input_data": {
+    "required_inputs": [
+      "HSP of each polymer in the waste stream (delta_d, delta_p, delta_h)",
+      "Molecular weight of each polymer (affects chi_critical)",
+      "Composition of the polymer blend (weight fractions)",
+      "Processing temperature"
+    ],
+    "data_sources": [
+      "HSPiP database for commodity polymers (PE, PP, PS, PET, PVC, PA)",
+      "Van Krevelen group contribution for polymer HSP",
+      "Published literature for common polymer pairs",
+      "Experimental solubility sphere determination for recycled grades"
+    ],
+    "data_availability_score": 4,
+    "complementary_parameters": [
+      "Polymer molecular weight and molecular weight distribution",
+      "Melt flow index (MFI) of each polymer",
+      "Processing temperature and shear rate",
+      "Crystallinity and melting temperature of each polymer",
+      "Interfacial tension between polymer pairs",
+      "Compatibilizer type and concentration"
+    ]
+  },
+  "accuracy": {
+    "accuracy_level": "semi-quantitative",
+    "limitations": "HSP-based compatibility prediction gives thermodynamic equilibrium miscibility, but mechanical recycling involves non-equilibrium processing conditions (extrusion, injection molding) where kinetic factors, shear-induced mixing, and morphology development matter significantly. Crystallization behavior of semicrystalline polymers (PE, PP, PET) complicates simple HSP-based miscibility prediction. Real waste streams contain additives, fillers, degradation products, and contaminants that alter effective HSP. The approach predicts thermodynamic tendency but not the resulting morphology (droplet size, co-continuity) which critically affects mechanical properties. For polyolefin grades (HDPE, LDPE, LLDPE, PP) with similar HSP but different crystallization behavior, HSP alone cannot distinguish recyclability.",
+    "known_failure_modes": [
+      "Polyolefin pairs (PE/PP) with similar HSP but incompatible crystallization causing mechanical property loss",
+      "Degraded polymers with chain scission or crosslinking altering effective HSP",
+      "Multi-layer packaging with adhesive tie layers creating complex multi-component systems",
+      "Contamination by non-polymer materials (paper, aluminum, food residue)",
+      "Reactive compatibilization during processing that changes the system in situ"
+    ],
+    "validation_method": "Mechanical testing of recycled blends (tensile strength, impact strength, elongation at break), DSC for blend miscibility assessment (single vs. double Tg), SEM/TEM morphology analysis of blend phase structure, melt rheology for blend compatibility assessment"
+  },
+  "implementation": {
+    "complexity": "medium",
+    "ui_pattern": "matrix",
+    "existing_modules_reusable": [
+      "calculateRa",
+      "calculateRed",
+      "classifyRisk",
+      "optimizeBlend"
+    ],
+    "multi_component_complexity": "multi",
+    "scale_of_application": "screening"
+  },
+  "literature": {
+    "key_references": [
+      {
+        "author": "Hansen, C.M.",
+        "title": "Hansen Solubility Parameters: A User's Handbook, 2nd Edition",
+        "journal": "CRC Press",
+        "year": 2007,
+        "doi": "10.1201/9781420006834"
+      },
+      {
+        "author": "Utracki, L.A.; Wilkie, C.A.",
+        "title": "Polymer Blends Handbook",
+        "journal": "Springer",
+        "year": 2014,
+        "doi": "10.1007/978-94-007-6064-6"
+      },
+      {
+        "author": "Hopewell, J.; Dvorak, R.; Kosior, E.",
+        "title": "Plastics recycling: challenges and opportunities",
+        "journal": "Philosophical Transactions of the Royal Society B",
+        "year": 2009,
+        "doi": "10.1098/rstb.2008.0311"
+      },
+      {
+        "author": "Robeson, L.M.",
+        "title": "Polymer Blends: A Comprehensive Review",
+        "journal": "Hanser Publishers",
+        "year": 2007,
+        "doi": "[uncertain]"
+      }
+    ],
+    "first_reported_year": "[uncertain]",
+    "regulatory_relevance": "EU Circular Economy Action Plan and EU Packaging and Packaging Waste Regulation (PPWR) drive recycled content targets requiring compatibility assessment. National recycling standards (e.g., DIN, ISO 15270) reference material compatibility. REACH substance tracking applies to additives in recycled streams. HSP screening supports compliance with mandatory recycled content requirements."
+  },
+  "industry_application": {
+    "industry_sectors": [
+      "Plastic recycling and waste management",
+      "Packaging industry",
+      "Automotive (recycled content requirements)",
+      "Construction materials",
+      "Consumer goods"
+    ],
+    "commercial_tools": [
+      "HSPiP (Hansen Solubility Parameters in Practice)",
+      "PolySort (recycling-specific polymer identification)",
+      "Materials Studio (blend simulation)",
+      "Aspen Plus (polymer processing simulation)"
+    ]
+  },
+  "uncertain": [
+    "literature.key_references[3].doi",
+    "literature.first_reported_year",
+    "industry_application.commercial_tools[1]"
+  ]
+}

@@ -1,0 +1,142 @@
+{
+  "basic_info": {
+    "name": "Food Packaging Migration Risk",
+    "name_ja": "食品包装マイグレーションリスク",
+    "category": "Food/Cosmetics",
+    "description": "The RED (Relative Energy Difference) between food-contact packaging polymers and food components (simulants, monomers, additives) predicts the migration risk of potentially harmful substances from packaging into food. Low RED values indicate high affinity between the polymer and the migrant, meaning the substance is more soluble in the polymer and more likely to migrate. This HSP-based approach supports regulatory screening under EFSA and FDA frameworks for food contact materials, enabling rapid assessment of worst-case migration scenarios before costly experimental testing.",
+    "maturity_level": "established"
+  },
+  "hsp_principle": {
+    "hsp_principle": "Migration of substances from packaging polymer into food is governed by thermodynamic partitioning and diffusion kinetics. The HSP distance between a migrant (monomer, additive, plasticizer, or degradation product) and the food simulant determines the thermodynamic driving force for migration. When RED between the migrant and the food simulant is low (high affinity), the migrant partitions favorably into the food phase. Simultaneously, the migrant's solubility in the polymer matrix (governed by RED between migrant and polymer) determines its availability for diffusion. A migrant that is highly soluble in the polymer (low RED with polymer) but also highly compatible with the food (low RED with food simulant) presents maximum migration risk. The approach extends to predicting which food simulant (aqueous, acidic, alcoholic, fatty) extracts the most from a given polymer, guiding worst-case testing strategies.",
+    "key_equation": "Ra = sqrt(4*(dD_migrant-dD_simulant)^2 + (dP_migrant-dP_simulant)^2 + (dH_migrant-dH_simulant)^2); RED_migrant-food = Ra/R0; Partition coefficient K ~ exp(-Ra^2*V/(RT)); Migration M ~ K * D * sqrt(t)",
+    "red_direction": "threshold_specific",
+    "typical_red_threshold": "RED(migrant-food) < 1.0 indicates high migration risk into that food type; RED(migrant-polymer) < 1.0 indicates migrant is soluble in polymer and available for transport",
+    "sensitivity_to_hbond_split": "medium",
+    "temperature_pressure_sensitivity": "high"
+  },
+  "input_data": {
+    "required_inputs": [
+      "Packaging polymer HSP (dD, dP, dH) and interaction radius R0",
+      "Migrant substance HSP (dD, dP, dH) - for monomers, additives, NIAS",
+      "Food simulant HSP (dD, dP, dH) - water, 3% acetic acid, 10-50% ethanol, vegetable oil",
+      "Contact temperature and duration",
+      "Polymer layer thickness and density",
+      "Migration limit (SML or OML from regulation)"
+    ],
+    "data_sources": [
+      "HSPiP database (polymers, solvents, food simulants)",
+      "EU JRC (Joint Research Centre) database for food contact substances",
+      "FDA Chemistry data for Indirect Food Additives",
+      "Group contribution estimation for novel additives and NIAS",
+      "Published polymer HSP compilations (Van Krevelen, Barton)",
+      "EFSA scientific opinions on specific substances"
+    ],
+    "data_availability_score": 4,
+    "complementary_parameters": [
+      "Diffusion coefficient of migrant in polymer (Dp)",
+      "Polymer crystallinity (reduces effective diffusion)",
+      "Polymer glass transition temperature (Tg)",
+      "Migrant molecular weight and molecular volume",
+      "Food fat content and pH",
+      "Surface area to volume ratio of packaging",
+      "Multilayer structure and barrier layer properties"
+    ]
+  },
+  "accuracy": {
+    "accuracy_level": "semi-quantitative",
+    "limitations": [
+      "HSP alone predicts thermodynamic compatibility but not diffusion kinetics, which depend on polymer free volume, crystallinity, and migrant molecular size",
+      "Non-intentionally added substances (NIAS) such as degradation products or reaction byproducts often have unknown HSP",
+      "Polymer crystallinity significantly reduces migration but is not captured in amorphous-phase HSP values",
+      "Food matrices are far more complex than simple simulants; real food interactions may deviate from simulant predictions",
+      "Multilayer packaging requires modeling of lag time through barrier layers",
+      "Set-off migration (from outer printing inks through substrate to food) involves different mechanisms"
+    ],
+    "known_failure_modes": [
+      "Highly crystalline polymers (HDPE, PET) where migration is much lower than predicted from amorphous HSP due to crystalline barrier",
+      "Low-molecular-weight migrants that diffuse rapidly regardless of HSP compatibility due to small molecular size",
+      "Reactive migrants (e.g., isocyanates, epoxides) that transform chemically during migration",
+      "Nanocomposite packaging where nanoparticle-polymer interactions modify effective polymer HSP and barrier properties"
+    ],
+    "validation_method": [
+      "Migration testing per EU 10/2011 (total and specific migration)",
+      "FDA migration testing protocols (21 CFR 170-199)",
+      "GC-MS or LC-MS for identification and quantification of migrants in food simulants",
+      "Mathematical modeling using Piringer/Begley diffusion models with HSP-derived partition coefficients",
+      "Accelerated migration testing at elevated temperature (e.g., 60C/10 days for long-term room temperature)",
+      "Cell-based bioassays for overall migrate toxicity screening"
+    ]
+  },
+  "implementation": {
+    "complexity": "medium",
+    "ui_pattern": "matrix",
+    "existing_modules_reusable": [
+      "calculateRa",
+      "calculateRed",
+      "classifyRisk"
+    ],
+    "multi_component_complexity": "ternary",
+    "scale_of_application": "screening"
+  },
+  "literature": {
+    "key_references": [
+      {
+        "author": "Piringer, O.G.; Baner, A.L.",
+        "title": "Plastic Packaging: Interactions with Food and Pharmaceuticals, 2nd Edition",
+        "journal": "Wiley-VCH",
+        "year": 2008,
+        "doi": "10.1002/9783527621422"
+      },
+      {
+        "author": "Hansen, C.M.",
+        "title": "Hansen Solubility Parameters: A User's Handbook, 2nd Edition",
+        "journal": "CRC Press",
+        "year": 2007,
+        "doi": "10.1201/9781420006834"
+      },
+      {
+        "author": "Gillet, G.; Vitrac, O.; Desobry, S.",
+        "title": "Prediction of partition coefficients of plastic additives between packaging materials and food simulants",
+        "journal": "Food Additives & Contaminants",
+        "year": 2010,
+        "doi": "10.1080/19440049.2010.495728"
+      },
+      {
+        "author": "Begley, T.; Castle, L.; Feigenbaum, A.; et al.",
+        "title": "Evaluation of migration models that might be used in support of regulations for food-contact plastics",
+        "journal": "Food Additives & Contaminants",
+        "year": 2005,
+        "doi": "10.1080/02652030500098894"
+      },
+      {
+        "author": "Dole, P.; Feigenbaum, A.E.; De la Cruz, C.; et al.",
+        "title": "Typical diffusion behaviour in packaging polymers - application to functional barriers",
+        "journal": "Food Additives & Contaminants",
+        "year": 2006,
+        "doi": "10.1080/02652030500512656"
+      }
+    ],
+    "first_reported_year": "[uncertain]",
+    "regulatory_relevance": "Directly relevant to EFSA food contact material evaluation (EU Regulation 10/2011) and FDA food contact notification (FCN) process. HSP-based partition coefficient estimation is used in mathematical migration modeling accepted by EU JRC and FDA as supportive evidence. EFSA guidelines recognize modeled migration data as a first screening tier before experimental testing. EU Framework Regulation (EC) No 1935/2004 requires demonstration of safety for all food contact materials."
+  },
+  "industry_application": {
+    "industry_sectors": [
+      "Food packaging (flexible and rigid)",
+      "Beverage packaging and closures",
+      "Pharmaceutical primary packaging",
+      "Infant food and formula packaging",
+      "Food contact adhesives and coatings",
+      "Printing inks for food packaging"
+    ],
+    "commercial_tools": [
+      "HSPiP (Hansen Solubility Parameters in Practice)",
+      "AKTS SML (Specific Migration Limit) software",
+      "MIGRATTEST (JRC migration modeling)",
+      "Fabes FMCT (Food Migration Calculation Tool)",
+      "COSMOtherm (COSMO-RS based prediction)"
+    ]
+  },
+  "uncertain": [
+    "literature.first_reported_year"
+  ]
+}

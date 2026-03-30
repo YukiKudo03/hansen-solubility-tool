@@ -1,0 +1,109 @@
+{
+  "basic_info": {
+    "name": "CNT/Graphene Dispersion Solvent",
+    "name_ja": "CNT/グラフェン分散溶媒",
+    "category": "Electronics/Advanced",
+    "description": "HSP sphere determination for carbon nanomaterials (carbon nanotubes, graphene, graphene oxide, reduced graphene oxide) enables rational solvent selection for stable dispersions. The HSP of the nanomaterial is determined by dispersing it in a panel of solvents and fitting a Hansen solubility sphere to the good/bad solvent classification. Solvents within the HSP sphere (RED < 1) produce stable dispersions, while those outside yield aggregation and sedimentation. This approach has become the standard method for solvent screening in carbon nanomaterial processing for composites, conductive inks, thin films, and energy storage applications. The method accounts for the balance of van der Waals attraction between graphitic surfaces and solvation by matching solvent-nanomaterial interaction energies.",
+    "maturity_level": "established"
+  },
+  "hsp_principle": {
+    "hsp_principle": "Carbon nanomaterials possess characteristic HSP values reflecting their surface chemistry: pristine CNTs and graphene are dominated by dispersion forces (dD ~ 17.8 MPa^0.5) with modest polar and hydrogen bonding components (dP ~ 7.0, dH ~ 7.6), while graphene oxide has significantly higher dP and dH due to oxygen-containing functional groups. The HSP sphere is determined experimentally by testing dispersion stability in 30-40 solvents covering Hansen space, then fitting the sphere center (material HSP) and radius R0 using optimization algorithms. A solvent produces a stable dispersion when its HSP falls within the sphere (RED < 1), meaning the solvent-nanomaterial interaction energy is sufficient to overcome the strong van der Waals attraction between graphitic surfaces (pi-pi stacking). The enthalpy of mixing scales with (delta_solvent - delta_nanomaterial)^2, and stable dispersions require this to be minimized. Surface functionalization shifts the sphere center predictably in Hansen space, enabling design of functionalization strategies for target solvents or polymer matrices.",
+    "key_equation": "Ra = sqrt(4*(dD_solv - dD_CNM)^2 + (dP_solv - dP_CNM)^2 + (dH_solv - dH_CNM)^2); RED = Ra/R0; Dispersion concentration correlates with exp(-Ra^2/k)",
+    "red_direction": "low_is_good",
+    "typical_red_threshold": "RED < 1.0 for stable dispersion; RED < 0.5 for high-concentration dispersion (>0.1 mg/mL); RED > 1.3 poor/no dispersion",
+    "sensitivity_to_hbond_split": "medium",
+    "temperature_pressure_sensitivity": "low"
+  },
+  "input_data": {
+    "required_inputs": [
+      "HSP values (dD, dP, dH) and R0 of the carbon nanomaterial (from sphere fitting)",
+      "HSP values (dD, dP, dH) of candidate solvents",
+      "Desired dispersion concentration and stability duration",
+      "Nanomaterial type and surface functionalization state"
+    ],
+    "data_sources": [
+      "Experimental dispersion testing in solvent panels (primary method)",
+      "HSPiP database for solvent HSP values",
+      "Published CNT/graphene HSP values (Bergin 2009, Hernandez 2010, Hansen 2007)",
+      "Computational estimation via surface energy approaches",
+      "Literature compilations of graphene oxide and rGO HSP values"
+    ],
+    "data_availability_score": 2,
+    "complementary_parameters": [
+      "Solvent boiling point and vapor pressure (for processing)",
+      "Solvent viscosity (affects dispersion kinetics and sedimentation)",
+      "Surface tension of the solvent (Hildebrand approach complement)",
+      "Nanomaterial aspect ratio, number of layers, and defect density",
+      "Ultrasonication energy input and protocol",
+      "Surfactant/dispersant type and concentration if applicable"
+    ]
+  },
+  "accuracy": {
+    "accuracy_level": "semi-quantitative",
+    "limitations": [
+      "HSP sphere for nanomaterials shows significant variability between studies due to differences in material quality, defect density, and functionalization degree",
+      "Dispersion stability is kinetic, not purely thermodynamic; HSP predicts thermodynamic affinity but not long-term colloidal stability against reaggregation",
+      "The 4:1:1 weighting factor (4 for dD) in the Ra equation was derived for molecular solutions and may not be optimal for nanomaterial surfaces",
+      "R0 values for nanomaterials are sample-dependent and vary with preparation method, tube diameter, layer number, and oxidation degree",
+      "High surface area and strong pi-pi interactions create energy barriers not fully captured by mean-field HSP approach",
+      "Solvent-nanomaterial charge transfer interactions (e.g., with NMP, DMF) contribute beyond what HSP represents"
+    ],
+    "known_failure_modes": [
+      "NMP and DMF give better dispersions than HSP distance alone predicts, likely due to electron donor-acceptor interactions with the graphitic surface",
+      "Water-based dispersions with surfactants where the effective HSP is that of the surfactant-coated nanomaterial, not the bare surface",
+      "Solvent mixtures where synergistic cosolvency effects move the effective HSP inside the sphere unexpectedly",
+      "Heavily oxidized graphene oxide (GO) where ionic/electrostatic interactions dominate over HSP-type solvation"
+    ],
+    "validation_method": [
+      "UV-Vis spectroscopy of supernatant after centrifugation (Beer-Lambert quantification)",
+      "Dynamic light scattering (DLS) for particle size and stability monitoring",
+      "Zeta potential measurement for colloidal stability assessment",
+      "TEM/SEM imaging of dispersed vs aggregated material",
+      "Sedimentation kinetics monitoring over days-weeks"
+    ]
+  },
+  "implementation": {
+    "complexity": "medium",
+    "ui_pattern": "screening",
+    "existing_modules_reusable": [
+      "calculateRa",
+      "calculateRed",
+      "classifyRisk",
+      "sphere fitting"
+    ],
+    "multi_component_complexity": "binary",
+    "scale_of_application": "screening"
+  },
+  "literature": {
+    "key_references": [
+      "Bergin, S.D.; Sun, Z.; Rickard, D.; Streich, P.V.; Hamilton, J.P.; Coleman, J.N. 'Multicomponent Solubility Parameters for Single-Walled Carbon Nanotube-Solvent Mixtures', ACS Nano, 2009, 3, 2340-2350. DOI: 10.1021/nn900493u",
+      "Hernandez, Y.; Lotya, M.; Rickard, D.; Bergin, S.D.; Coleman, J.N. 'Measurement of Multicomponent Solubility Parameters for Graphene Facilitates Solvent Discovery', Langmuir, 2010, 26, 3208-3213. DOI: 10.1021/la903188a",
+      "Hansen, C.M.; Smith, A.L. 'Using Hansen Solubility Parameters to Correlate Solubility of C60 Fullerene in Organic Solvents and in Polymers', Carbon, 2004, 42, 1591-1597",
+      "Konios, D.; Stylianakis, M.M.; Stratakis, E.; Kymakis, E. 'Dispersion Behaviour of Graphene Oxide and Reduced Graphene Oxide', J. Colloid Interface Sci., 2014, 430, 108-112",
+      "Coleman, J.N. 'Liquid Exfoliation of Defect-Free Graphene', Accounts of Chemical Research, 2013, 46, 14-22"
+    ],
+    "first_reported_year": 2004,
+    "regulatory_relevance": "No direct regulatory acceptance of HSP for nanomaterial dispersion. REACH nanomaterial registration requires dispersion stability data but does not specify HSP methodology. EU ECHA guidance on nanomaterial characterization mentions solubility parameters as a physicochemical descriptor."
+  },
+  "industry_application": {
+    "industry_sectors": [
+      "Electronics (conductive inks, transparent conductive films, printed electronics)",
+      "Composites (CNT/graphene-reinforced polymer nanocomposites)",
+      "Energy storage (electrode slurry formulation for batteries and supercapacitors)",
+      "Coatings (anticorrosion, antistatic, thermal management coatings)",
+      "Biomedical (graphene-based biosensors and drug delivery carriers)"
+    ],
+    "commercial_tools": [
+      "HSPiP (sphere fitting module for nanomaterial HSP determination)",
+      "Materials Studio (molecular dynamics for nanomaterial-solvent interactions)",
+      "NanoComposix (nanomaterial dispersion characterization services)",
+      "Malvern Zetasizer (DLS/zeta potential for dispersion stability validation)",
+      "COSMOtherm (sigma-profile based solubility prediction)"
+    ]
+  },
+  "uncertain": [
+    "typical_red_threshold",
+    "first_reported_year",
+    "regulatory_relevance"
+  ]
+}

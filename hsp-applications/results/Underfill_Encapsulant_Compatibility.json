@@ -1,0 +1,113 @@
+{
+  "basic_info": {
+    "name": "Underfill/Encapsulant Compatibility",
+    "name_ja": "アンダーフィル/封止材適合性",
+    "category": "Electronics/Advanced",
+    "description": "In semiconductor packaging, underfill and encapsulant materials must adhere strongly to multiple surfaces — silicon die, solder bumps, copper pads, substrate laminate, and molding compound — while resisting moisture ingress and thermal cycling stress. HSP matching between the encapsulant (typically epoxy-based, silicone, or polyurethane) and these diverse surfaces predicts interfacial adhesion strength: low HSP distance corresponds to strong thermodynamic affinity and wetting, promoting crack-free interfaces under thermal and mechanical stress. Poor HSP matching leads to delamination, moisture-driven corrosion, and package failure. HSP analysis enables systematic selection of underfill chemistry and filler surface treatments to maximize adhesion to all critical interfaces in flip-chip, BGA, CSP, and advanced 2.5D/3D packaging architectures.",
+    "maturity_level": "established"
+  },
+  "hsp_principle": {
+    "hsp_principle": "Underfill and encapsulant performance depends on adhesion at multiple material interfaces within the semiconductor package. The thermodynamic work of adhesion at each interface correlates with the HSP distance between the encapsulant matrix and the surface. For polymeric substrates (PCB laminate, solder resist), direct HSP comparison applies. For inorganic surfaces (silicon, SiO2, Cu, solder alloys), effective surface HSP derived from contact angle measurements or IGC data are used. The encapsulant must have RED < 1 relative to the most critical surfaces to ensure adequate wetting and adhesion. For epoxy underfills, the HSP changes during cure (from liquid monomer/hardener mixture to crosslinked network), and both the uncured state (governing wetting and capillary flow) and cured state (governing long-term adhesion) HSP must be considered. Silane coupling agents are selected based on HSP matching: one end of the silane matches the inorganic surface and the other matches the epoxy matrix, bridging the HSP gap. Moisture ingress prediction also uses HSP: water has extreme dH, and encapsulants with high dH (closer to water HSP) absorb more moisture, degrading adhesion at interfaces through hydrolysis. Minimizing encapsulant dH while maintaining adhesion to surfaces is a key design trade-off.",
+    "key_equation": "Ra = sqrt(4*(dD_enc - dD_surf)^2 + (dP_enc - dP_surf)^2 + (dH_enc - dH_surf)^2); RED = Ra/R0; Moisture uptake ~ f(dH_encapsulant, dH_water); W_adhesion ~ gamma_enc + gamma_surf - gamma_interfacial",
+    "red_direction": "low_is_good",
+    "typical_red_threshold": "RED < 1.0 for adequate adhesion to critical surfaces; RED < 0.7 for robust adhesion under thermal cycling; Ra(encapsulant-water) should be maximized (RED >> 1) for moisture resistance [uncertain]",
+    "sensitivity_to_hbond_split": "high",
+    "temperature_pressure_sensitivity": "medium"
+  },
+  "input_data": {
+    "required_inputs": [
+      "HSP values (dD, dP, dH) of underfill/encapsulant resin (uncured and cured)",
+      "HSP values or effective surface HSP of die surface (Si, SiN, SiO2)",
+      "HSP values or effective surface HSP of substrate (BT, FR-4, polyimide flex)",
+      "HSP values of solder resist and copper pad surfaces",
+      "HSP values of silane coupling agents (if used)",
+      "R0 for the encapsulant system"
+    ],
+    "data_sources": [
+      "Encapsulant supplier datasheets (some provide HSP or solubility parameter data)",
+      "HSPiP database for epoxy resins, hardeners, and solvents",
+      "Contact angle and IGC measurements on semiconductor packaging surfaces",
+      "Published literature on epoxy-surface adhesion and HSP correlation",
+      "Group contribution estimation for novel encapsulant chemistries"
+    ],
+    "data_availability_score": 3,
+    "complementary_parameters": [
+      "CTE (coefficient of thermal expansion) of encapsulant and surrounding materials",
+      "Glass transition temperature (Tg) of cured encapsulant",
+      "Moisture diffusion coefficient and saturation level",
+      "Filler type, size, and loading (silica, alumina, BN)",
+      "Viscosity and capillary flow characteristics (for underfill)",
+      "Surface roughness of die and substrate",
+      "Cure shrinkage and residual stress"
+    ]
+  },
+  "accuracy": {
+    "accuracy_level": "semi-quantitative",
+    "limitations": [
+      "Real package interfaces involve chemical bonding (silanes, oxide layers) in addition to physical HSP-based adhesion",
+      "HSP of cured thermoset encapsulants cannot be measured by dissolution — must be estimated from composition or swelling tests",
+      "Multi-material interfaces in a package each have different optimal HSP, requiring compromise formulation",
+      "Thermal cycling reliability involves CTE mismatch and fatigue mechanics beyond adhesion/HSP",
+      "Filler-matrix interface adds another HSP interaction layer not captured in bulk encapsulant HSP",
+      "Surface contamination from flux residues, oxidation, and handling alters effective surface HSP"
+    ],
+    "known_failure_modes": [
+      "Moisture-induced delamination at die-attach interface where absorbed water (dH = 42.3) disrupts hydrogen bonds regardless of initial HSP matching",
+      "Lead-free solder reflow temperatures (260 C+) where encapsulant properties change and moisture generates steam pressure (popcorn failure)",
+      "Copper oxidation changing surface HSP over time, degrading initially good encapsulant-Cu adhesion",
+      "Low-k dielectric surfaces on advanced dies with different surface chemistry from bulk silicon"
+    ],
+    "validation_method": [
+      "Die shear test (JEDEC JESD22-B116)",
+      "Button shear adhesion test on individual surfaces",
+      "C-SAM (C-mode scanning acoustic microscopy) for delamination detection",
+      "Moisture sensitivity level (MSL) testing (IPC/JEDEC J-STD-020)",
+      "Temperature cycling test (JEDEC JESD22-A104)",
+      "Contact angle measurement on package surfaces for wetting assessment"
+    ]
+  },
+  "implementation": {
+    "complexity": "high",
+    "ui_pattern": "matrix",
+    "existing_modules_reusable": [
+      "calculateRa",
+      "calculateRed",
+      "classifyRisk"
+    ],
+    "multi_component_complexity": "multi",
+    "scale_of_application": "design"
+  },
+  "literature": {
+    "key_references": [
+      "Wong, C.P.; Luo, S.; Zhang, Z. 'Microelectronics Packaging: Current Trends and Future Challenges', in 'Science and Technology of Advanced Materials', 2005",
+      "Zhang, Z.; Wong, C.P. 'Recent Advances in Flip-Chip Underfill: Materials, Process, and Reliability', IEEE Trans. Adv. Packag., 2004, 27, 515-524. DOI: 10.1109/TADVP.2004.831870",
+      "Hansen, C.M. 'Hansen Solubility Parameters: A User's Handbook', 2nd Ed., CRC Press, 2007, Chapter 16 (Adhesion)",
+      "Fan, L.; Moon, K.S.; Wong, C.P. 'Adhesion of Underfill and Components in Flip Chip Packages', in 'Materials for Advanced Packaging', Springer, 2009, 437-468",
+      "Ardebili, H.; Wong, E.H.; Pecht, M. 'Hygroscopic swelling and sorption characteristics of epoxy molding compounds used in electronic packaging', IEEE Trans. Compon. Packag. Technol., 2003, 26, 206-214. DOI: 10.1109/TCAPT.2002.806172"
+    ],
+    "first_reported_year": 2002,
+    "regulatory_relevance": "No direct regulatory requirement for HSP analysis in semiconductor packaging. JEDEC reliability standards (JESD22 series) govern package qualification testing. IPC-SM-785 covers solder joint reliability. RoHS and REACH restrict hazardous substances in packaging materials. Halogen-free requirements drive reformulation of encapsulants where HSP guides alternative hardener and flame retardant selection."
+  },
+  "industry_application": {
+    "industry_sectors": [
+      "Semiconductor packaging (flip-chip, BGA, CSP, WLP, 2.5D/3D IC)",
+      "Automotive electronics (high-reliability under-hood packaging)",
+      "Aerospace and defense electronics (harsh environment packaging)",
+      "Consumer electronics (smartphone, tablet, wearable SiP modules)",
+      "LED packaging (phosphor encapsulation and lens bonding)"
+    ],
+    "commercial_tools": [
+      "HSPiP (encapsulant-surface compatibility screening)",
+      "Henkel/Namics/Zymet underfill selection guides (some incorporate HSP concepts)",
+      "ANSYS Mechanical (complementary thermo-mechanical stress simulation)",
+      "COSMOtherm (molecular-level adhesion energy prediction)",
+      "Materials Studio (molecular dynamics of epoxy-surface interactions)"
+    ]
+  },
+  "uncertain": [
+    "first_reported_year",
+    "typical_red_threshold",
+    "data_availability_score",
+    "key_references"
+  ]
+}

@@ -1,0 +1,142 @@
+{
+  "basic_info": {
+    "name": "Pigment Dispersion Stability",
+    "name_ja": "顔料分散安定性",
+    "category": "Coatings/Inks",
+    "description": "The HSP distance (Ra) and Relative Energy Difference (RED) between a pigment surface and the vehicle (resin/solvent system) predict dispersion stability, flocculation tendency, and color development in paint, ink, and coating formulations. Pigments with surface HSP close to the vehicle HSP are well-wetted and thermodynamically stabilized against flocculation, leading to superior color strength, gloss, and long-term stability. HSP matching guides both pigment surface treatment selection and vehicle formulation optimization.",
+    "maturity_level": "mature"
+  },
+  "hsp_principle": {
+    "hsp_principle": "Pigment particles are stabilized in a liquid medium when the vehicle HSP closely matches the pigment surface HSP (which may differ from the bulk pigment HSP due to surface treatments, coatings, or adsorbed dispersants). A low RED value means the vehicle effectively wets and solvates the pigment surface, creating a thermodynamic barrier to flocculation. When RED > 1, the pigment-vehicle interaction is unfavorable, leading to poor wetting, incomplete deflocculation during grinding, and flocculation on storage. The total HSP distance governs the Gibbs free energy of the pigment-vehicle interface: lower Ra means lower interfacial energy, stronger adsorption of vehicle molecules on the pigment surface, and greater resistance to aggregation. For multi-pigment systems, each pigment must be individually compatible with the vehicle to avoid differential flocculation and color shift.",
+    "key_equation": "Ra = sqrt(4*(dD_pigment-dD_vehicle)^2 + (dP_pigment-dP_vehicle)^2 + (dH_pigment-dH_vehicle)^2); RED = Ra/R0_pigment",
+    "red_direction": "low_is_good",
+    "typical_red_threshold": "RED < 1.0 for stable dispersion; RED < 0.8 for excellent long-term stability and color development",
+    "sensitivity_to_hbond_split": "medium",
+    "temperature_pressure_sensitivity": "low"
+  },
+  "input_data": {
+    "required_inputs": [
+      "Pigment surface HSP (dD, dP, dH) - accounting for surface treatment",
+      "Pigment interaction radius R0",
+      "Vehicle/binder HSP (dD, dP, dH)",
+      "Solvent blend HSP (volume-weighted average)",
+      "Pigment volume concentration (PVC)"
+    ],
+    "data_sources": [
+      "HSPiP database (extensive pigment and solvent data)",
+      "Pigment manufacturer technical literature (BASF Colors & Effects, Clariant, Sun Chemical)",
+      "Hansen and Abbott published pigment HSP tables",
+      "Experimental determination via sedimentation or turbidity in solvent series",
+      "Inverse gas chromatography for surface-specific HSP"
+    ],
+    "data_availability_score": 4,
+    "complementary_parameters": [
+      "Pigment particle size distribution",
+      "Pigment surface area (BET)",
+      "Surface treatment type and coverage",
+      "Dispersant type and concentration",
+      "Vehicle viscosity and rheology profile",
+      "Zeta potential",
+      "Pigment oil absorption number"
+    ]
+  },
+  "accuracy": {
+    "accuracy_level": "semi-quantitative",
+    "limitations": [
+      "Pigment surface HSP can differ significantly from bulk crystal HSP and depends heavily on surface treatments, which are often proprietary",
+      "HSP alone does not capture steric or electrostatic stabilization contributions from polymeric dispersants",
+      "Multi-pigment systems can exhibit complex co-flocculation behavior not predicted by individual RED values",
+      "Pigment shape and aspect ratio (e.g., needle-like vs. spherical) affect dispersion stability but are not captured by HSP",
+      "Drying and film formation change the vehicle HSP as solvent evaporates, potentially destabilizing initially stable dispersions",
+      "Does not account for pigment crystal polymorphism effects on surface energy"
+    ],
+    "known_failure_modes": [
+      "Surface-treated pigments where the treatment HSP rather than bulk pigment HSP controls behavior, but treatment HSP is unknown",
+      "Controlled flocculation systems where mild flocculation is deliberately designed for rheology control",
+      "Organic pigments with strong pi-pi stacking interactions that dominate over van der Waals forces represented in dD",
+      "Carbon black dispersions where surface chemistry (pH, oxygen functional groups) varies greatly between grades"
+    ],
+    "validation_method": [
+      "Hegman grind gauge for dispersion fineness",
+      "Rub-out test for flocculation detection",
+      "Accelerated stability testing (centrifuge, elevated temperature storage)",
+      "Color strength and tinting strength measurement (spectrophotometry)",
+      "Viscosity monitoring over time",
+      "Optical/electron microscopy for aggregate size assessment"
+    ]
+  },
+  "implementation": {
+    "complexity": "medium",
+    "ui_pattern": "screening",
+    "existing_modules_reusable": [
+      "calculateRa",
+      "calculateRed",
+      "classifyRisk",
+      "optimizeBlend"
+    ],
+    "multi_component_complexity": "ternary",
+    "scale_of_application": "design"
+  },
+  "literature": {
+    "key_references": [
+      {
+        "author": "Hansen, C.M.",
+        "title": "Hansen Solubility Parameters: A User's Handbook, 2nd Edition",
+        "journal": "CRC Press",
+        "year": 2007,
+        "doi": "10.1201/9781420006834"
+      },
+      {
+        "author": "Patton, T.C.",
+        "title": "Paint Flow and Pigment Dispersion, 2nd Edition",
+        "journal": "Wiley-Interscience",
+        "year": 1979,
+        "doi": "[uncertain]"
+      },
+      {
+        "author": "Wicks, Z.W.; Jones, F.N.; Pappas, S.P.; Wicks, D.A.",
+        "title": "Organic Coatings: Science and Technology, 3rd Edition",
+        "journal": "Wiley-Interscience",
+        "year": 2007,
+        "doi": "10.1002/047011422X"
+      },
+      {
+        "author": "Flory, P.J.; Hansen, C.M. (via Skaarup, K.)",
+        "title": "Characterization of pigment surfaces using HSP methodology",
+        "journal": "Various publications and technical reports",
+        "year": 1967,
+        "doi": "[uncertain]"
+      },
+      {
+        "author": "Abbott, S.; Hansen, C.M.",
+        "title": "Hansen Solubility Parameters in Practice (HSPiP) software documentation",
+        "journal": "HSPiP, 5th Edition eBook",
+        "year": 2013,
+        "doi": "N/A"
+      }
+    ],
+    "first_reported_year": 1967,
+    "regulatory_relevance": "HSP-based pigment-vehicle matching supports REACH and VOC compliance by enabling formulation of low-VOC and waterborne coatings with adequate pigment stability. Pigment dispersion quality indirectly affects food-contact compliance (FDA 21 CFR, EU 10/2011) through extractable substance levels."
+  },
+  "industry_application": {
+    "industry_sectors": [
+      "Architectural and decorative paints",
+      "Automotive OEM and refinish coatings",
+      "Printing inks (offset, flexo, gravure, digital)",
+      "Industrial coatings (wood, metal, plastic)",
+      "Cosmetics and personal care (color cosmetics)",
+      "Textile dyeing and printing"
+    ],
+    "commercial_tools": [
+      "HSPiP (Hansen Solubility Parameters in Practice)",
+      "COSMOtherm",
+      "BASF Colors & Effects Dispersibility Guide",
+      "Sun Chemical ColourSuite",
+      "Proprietary dispersant selection tools (BYK, Tego/Evonik)"
+    ]
+  },
+  "uncertain": [
+    "literature.key_references[1].doi",
+    "literature.key_references[3].doi"
+  ]
+}

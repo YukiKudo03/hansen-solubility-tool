@@ -1,0 +1,132 @@
+{
+  "basic_info": {
+    "name": "Liposome Membrane Permeability",
+    "name_ja": "リポソーム膜透過性",
+    "category": "Pharmaceutical",
+    "description": "Liposomes are phospholipid bilayer vesicles used as drug carriers. The HSP distance between a drug molecule and the lipid bilayer predicts passive membrane permeation and encapsulation efficiency. Drugs with HSP values close to the lipid membrane partition favorably into the bilayer, while very hydrophilic or very different HSP drugs remain in the aqueous core. This approach guides rational design of liposomal formulations by predicting drug loading location (bilayer vs. aqueous core), encapsulation efficiency, and release kinetics.",
+    "maturity_level": "emerging"
+  },
+  "hsp_principle": {
+    "hsp_principle": "The lipid bilayer of a liposome has characteristic HSP values determined by the phospholipid composition (e.g., DPPC, DSPC, cholesterol). Drug partitioning between the aqueous phase and the bilayer is governed by the difference in HSP between the drug and each phase. A drug with HSP close to the bilayer interior (low Ra to lipid) will preferentially partition into the membrane, while a drug with HSP far from the bilayer (high Ra) will remain in the aqueous compartment. The RED value relative to the bilayer predicts the degree of membrane interaction and passive permeation rate. Cholesterol content modulates bilayer HSP by increasing the dispersion component.",
+    "key_equation": "Ra(drug-bilayer) = sqrt(4*(dD_drug - dD_lipid)^2 + (dP_drug - dP_lipid)^2 + (dH_drug - dH_lipid)^2); Partition coefficient ~ exp(-Ra^2 * V_drug / (R * T))",
+    "red_direction": "threshold_specific",
+    "typical_red_threshold": "[uncertain] Ra < 5 MPa^0.5 predicts bilayer incorporation; Ra > 10 MPa^0.5 predicts aqueous core encapsulation; intermediate values suggest interfacial localization",
+    "sensitivity_to_hbond_split": "medium",
+    "temperature_pressure_sensitivity": "medium"
+  },
+  "input_data": {
+    "required_inputs": [
+      "Drug HSP values (dD, dP, dH)",
+      "Lipid bilayer HSP values (dD, dP, dH) for specific phospholipid composition",
+      "Molar volume of drug",
+      "Temperature (affects bilayer phase state: gel vs liquid crystalline)"
+    ],
+    "data_sources": [
+      "Group contribution methods for drug HSP",
+      "Published lipid bilayer HSP values (limited; often estimated from component lipid HSP)",
+      "Molecular dynamics simulations for lipid HSP profiles",
+      "HSPiP database for common pharmaceutical excipients",
+      "Literature values for standard lipids (DPPC, DSPC, DOPC, cholesterol)"
+    ],
+    "data_availability_score": 2,
+    "complementary_parameters": [
+      "Log P of drug",
+      "Lipid composition and cholesterol molar ratio",
+      "Bilayer phase transition temperature (Tm)",
+      "Vesicle size and lamellarity",
+      "Drug ionization state (pKa and formulation pH)",
+      "Drug molecular weight"
+    ]
+  },
+  "accuracy": {
+    "accuracy_level": "qualitative",
+    "limitations": [
+      "Lipid bilayer is anisotropic with a gradient of properties from headgroup to hydrophobic core; a single set of HSP values is an oversimplification",
+      "HSP of the bilayer changes significantly with lipid composition, cholesterol content, and temperature",
+      "Electrostatic interactions between charged drugs and charged lipid headgroups are not captured by standard HSP",
+      "Membrane curvature and vesicle size effects on permeation are not predicted",
+      "Active transport mechanisms and protein-mediated processes in biological membranes are not accounted for",
+      "Limited experimental HSP data available for lipid bilayers compared to polymers or solvents"
+    ],
+    "known_failure_modes": [
+      "Ionizable drugs where pH-dependent partitioning dominates over HSP-predicted behavior",
+      "Large molecules (MW > 1000) where size exclusion effects override solubility parameter predictions",
+      "Drugs that form complexes with specific lipid headgroups (e.g., calcium-mediated binding)",
+      "Phase-separated or domain-forming lipid mixtures (rafts) with heterogeneous HSP"
+    ],
+    "validation_method": [
+      "Encapsulation efficiency measurement (ultracentrifugation or dialysis)",
+      "Drug release kinetics (dialysis bag method)",
+      "Fluorescence quenching for bilayer localization",
+      "Differential scanning calorimetry (DSC) for drug-lipid interaction",
+      "Small-angle X-ray scattering (SAXS) for bilayer structure",
+      "Isothermal titration calorimetry (ITC) for binding thermodynamics"
+    ]
+  },
+  "implementation": {
+    "complexity": "medium",
+    "ui_pattern": "pairwise",
+    "existing_modules_reusable": [
+      "calculateRa",
+      "classifyRisk"
+    ],
+    "multi_component_complexity": "ternary",
+    "scale_of_application": "screening"
+  },
+  "literature": {
+    "key_references": [
+      {
+        "author": "Fedotov, V.D. et al.",
+        "journal": "[uncertain]",
+        "year": "[uncertain]",
+        "title": "Application of Hansen solubility parameters to predict drug-lipid bilayer interactions",
+        "doi": "[uncertain]"
+      },
+      {
+        "author": "Adamska, K. and Voelkel, A.",
+        "journal": "Journal of Chromatography A",
+        "year": 2006,
+        "title": "Hansen solubility parameters for polyethylene glycols by inverse gas chromatography",
+        "doi": "10.1016/j.chroma.2006.07.005"
+      },
+      {
+        "author": "Gupta, R. et al.",
+        "journal": "Molecular Pharmaceutics",
+        "year": 2020,
+        "title": "Solubility parameter-based prediction of drug loading in liposomal formulations",
+        "doi": "[uncertain]"
+      },
+      {
+        "author": "Hansen, C.M.",
+        "journal": "Hansen Solubility Parameters: A User's Handbook, 2nd ed.",
+        "year": 2007,
+        "title": "Chapter on biological materials",
+        "doi": "ISBN 978-0849372483"
+      }
+    ],
+    "first_reported_year": "[uncertain] approximately 2005-2010",
+    "regulatory_relevance": "No specific regulatory guidance references HSP for liposome design. However, FDA guidance on liposome drug products (2018) encourages mechanistic understanding of drug-lipid interactions, where HSP analysis can support formulation rationale in IND submissions."
+  },
+  "industry_application": {
+    "industry_sectors": [
+      "Pharmaceutical (injectable and topical liposomal products)",
+      "Cosmetics (liposomal skincare)",
+      "Nanomedicine research",
+      "Gene therapy (lipid nanoparticle design)"
+    ],
+    "commercial_tools": [
+      "HSPiP",
+      "COSMOtherm",
+      "GROMACS / NAMD (molecular dynamics for bilayer HSP estimation)",
+      "Materials Studio"
+    ]
+  },
+  "uncertain": [
+    "typical_red_threshold",
+    "first_reported_year",
+    "key_references[0].journal",
+    "key_references[0].year",
+    "key_references[0].doi",
+    "key_references[2].doi"
+  ]
+}
