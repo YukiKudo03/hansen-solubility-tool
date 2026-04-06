@@ -546,6 +546,7 @@ export interface ElectronAPI {
       concentration?: string;
       notes?: string;
     }>;
+    mappings?: Array<{ rawName: string; solventId: number }>;
   }): Promise<{ batchId: string; count: number }>;
   experimentalGetResults(polymerId: number): Promise<import('./db/experimental-repository').ExperimentalResultRow[]>;
   experimentalDeleteByBatch(batchId: string): Promise<number>;

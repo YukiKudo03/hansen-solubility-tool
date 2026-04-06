@@ -42,6 +42,12 @@ export interface ExperimentalRepository {
   deleteByBatchId(batchId: string): number;
   deleteByPolymerId(polymerId: number): number;
 
+  /** マッピングとデータを同一トランザクションで保存 */
+  saveResultsWithMappings(
+    dtos: CreateExperimentalResultDto[],
+    mappings: Array<{ rawName: string; solventId: number }>,
+  ): ExperimentalResultRow[];
+
   saveMapping(rawName: string, solventId: number): SolventNameMapping;
   saveMappings(mappings: Array<{ rawName: string; solventId: number }>): SolventNameMapping[];
   getAllMappings(): SolventNameMapping[];
@@ -109,6 +115,23 @@ export class SqliteExperimentalRepository implements ExperimentalRepository {
     });
 
     insertMany(dtos);
+    return results;
+  }
+
+  saveResultsWithMappings(
+    dtos: CreateExperimentalResultDto[],
+    mappings: Array<{ rawName: string; solventId: number }>,
+  ): ExperimentalResultRow[] {
+    const results: ExperimentalResultRow[] = [];
+    const atomicSave = this.db.transaction(() => {
+      // マッピングを先に保存
+      for (const m of mappings) {
+        this.saveMapping(m.rawName, m.solventId);
+      }
+      // データを保存
+      results.push(...this.saveResults(dtos));
+    });
+    atomicSave();
     return results;
   }
 

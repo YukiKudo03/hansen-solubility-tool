@@ -606,6 +606,7 @@ export const api = {
       concentration?: string;
       notes?: string;
     }>;
+    mappings?: Array<{ rawName: string; solventId: number }>;
   }) => ipcRenderer.invoke('experimental:saveImport', params),
   experimentalGetResults: (polymerId: number) =>
     ipcRenderer.invoke('experimental:getResults', polymerId),

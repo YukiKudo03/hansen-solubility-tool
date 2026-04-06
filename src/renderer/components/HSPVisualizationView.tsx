@@ -121,11 +121,6 @@ export default function HSPVisualizationView() {
   ) => {
     if (!selectedPart) return;
 
-    // マッピング保存
-    if (manualMappings.length > 0) {
-      await window.api.experimentalSaveMappings(manualMappings);
-    }
-
     // 自動マッチ + 手動マッピングをマージ
     const solventIdMap = new Map<string, number>();
     for (const m of matchResult.matched) {
@@ -146,9 +141,11 @@ export default function HSPVisualizationView() {
       notes: r.notes,
     }));
 
+    // Finding 6: マッピングとデータを同一IPC呼び出しでアトミックに保存
     await window.api.experimentalSaveImport({
       polymerId: selectedPart.id,
       rows: importRows,
+      mappings: manualMappings.length > 0 ? manualMappings : undefined,
     });
 
     setMappingModal(null);
@@ -170,9 +167,13 @@ export default function HSPVisualizationView() {
     }
   };
 
-  // 実験データ全削除
+  // 実験データ全削除（確認ダイアログ付き）
   const handleDeleteExperimental = async () => {
     if (!selectedPart) return;
+    const confirmed = window.confirm(
+      `${selectedPart.name} の実験データ ${experimentalResults.length}件 を全て削除しますか？\nこの操作は元に戻せません。`,
+    );
+    if (!confirmed) return;
     await window.api.experimentalDeleteByPolymer(selectedPart.id);
     await loadExperimentalData();
     setRefineResult(null);
