@@ -526,6 +526,44 @@ export interface ElectronAPI {
     ratio?: [number, number]; temperature?: number; referenceTemp?: number;
   }): Promise<import('./core/ionic-liquid-des-hsp').ILHSPEstimationResult>;
 
+  // 実験データインポート
+  experimentalImport(params: { polymerId: number; treatPartialAs?: 'good' | 'bad' }): Promise<{
+    success: boolean;
+    errors: string[];
+    rows?: import('./core/experimental-import').ExperimentalRow[];
+    matchResult?: import('./core/experimental-import').SolventMatchResult;
+    rowCount?: number;
+  } | null>;
+  experimentalSaveImport(params: {
+    polymerId: number;
+    rows: Array<{
+      solventNameRaw: string;
+      solventId: number | null;
+      result: 'good' | 'partial' | 'bad';
+      quantitativeValue?: number;
+      quantitativeUnit?: string;
+      temperatureC?: number;
+      concentration?: string;
+      notes?: string;
+    }>;
+  }): Promise<{ batchId: string; count: number }>;
+  experimentalGetResults(polymerId: number): Promise<import('./db/experimental-repository').ExperimentalResultRow[]>;
+  experimentalDeleteByBatch(batchId: string): Promise<number>;
+  experimentalDeleteByPolymer(polymerId: number): Promise<number>;
+  experimentalModelAccuracy(params: {
+    polymerId: number;
+    polymerHSP: import('./core/types').HSPValues;
+    r0: number;
+    treatPartialAs?: 'good' | 'bad';
+  }): Promise<import('./core/model-accuracy').ModelAccuracyMetrics>;
+  experimentalRefitSphere(params: {
+    polymerId: number;
+    treatPartialAs?: 'good' | 'bad';
+  }): Promise<import('./core/sphere-fitting').SphereFitResult>;
+  experimentalSaveMappings(mappings: Array<{ rawName: string; solventId: number }>): Promise<import('./core/experimental-import').SolventNameMapping[]>;
+  experimentalGetMappings(): Promise<import('./core/experimental-import').SolventNameMapping[]>;
+  experimentalDeleteMapping(rawName: string): Promise<boolean>;
+
   // 汎用 IPC invoke (可視化パイプライン等)
   invoke(channel: string, ...args: unknown[]): Promise<any>;
 }
