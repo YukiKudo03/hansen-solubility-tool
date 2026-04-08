@@ -128,6 +128,32 @@ CREATE TABLE IF NOT EXISTS evaluation_history (
 );
 CREATE INDEX IF NOT EXISTS idx_history_pipeline ON evaluation_history(pipeline);
 CREATE INDEX IF NOT EXISTS idx_history_date ON evaluation_history(evaluated_at);
+
+CREATE TABLE IF NOT EXISTS experimental_results (
+  id                  INTEGER PRIMARY KEY AUTOINCREMENT,
+  import_batch_id     TEXT NOT NULL,
+  polymer_id          INTEGER NOT NULL REFERENCES parts(id),
+  solvent_id          INTEGER,
+  solvent_name_raw    TEXT NOT NULL,
+  result              TEXT NOT NULL CHECK(result IN ('good','partial','bad')),
+  quantitative_value  REAL,
+  quantitative_unit   TEXT,
+  temperature_c       REAL,
+  concentration       TEXT,
+  notes               TEXT,
+  created_at          TEXT DEFAULT (datetime('now')),
+  FOREIGN KEY (solvent_id) REFERENCES solvents(id)
+);
+CREATE INDEX IF NOT EXISTS idx_expr_batch ON experimental_results(import_batch_id);
+CREATE INDEX IF NOT EXISTS idx_expr_polymer ON experimental_results(polymer_id);
+
+CREATE TABLE IF NOT EXISTS solvent_name_mappings (
+  id          INTEGER PRIMARY KEY AUTOINCREMENT,
+  raw_name    TEXT NOT NULL UNIQUE,
+  solvent_id  INTEGER NOT NULL,
+  created_at  TEXT DEFAULT (datetime('now')),
+  FOREIGN KEY (solvent_id) REFERENCES solvents(id)
+);
 `;
 
 /**

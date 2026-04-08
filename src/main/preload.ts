@@ -591,6 +591,46 @@ export const api = {
     ratio?: [number, number]; temperature?: number; referenceTemp?: number;
   }) => ipcRenderer.invoke('ionicLiquidHsp:estimate', params),
 
+  // 実験データインポート
+  experimentalImport: (params: { polymerId: number; treatPartialAs?: 'good' | 'bad' }) =>
+    ipcRenderer.invoke('experimental:import', params),
+  experimentalSaveImport: (params: {
+    polymerId: number;
+    rows: Array<{
+      solventNameRaw: string;
+      solventId: number | null;
+      result: 'good' | 'partial' | 'bad';
+      quantitativeValue?: number;
+      quantitativeUnit?: string;
+      temperatureC?: number;
+      concentration?: string;
+      notes?: string;
+    }>;
+    mappings?: Array<{ rawName: string; solventId: number }>;
+  }) => ipcRenderer.invoke('experimental:saveImport', params),
+  experimentalGetResults: (polymerId: number) =>
+    ipcRenderer.invoke('experimental:getResults', polymerId),
+  experimentalDeleteByBatch: (batchId: string) =>
+    ipcRenderer.invoke('experimental:deleteByBatch', batchId),
+  experimentalDeleteByPolymer: (polymerId: number) =>
+    ipcRenderer.invoke('experimental:deleteByPolymer', polymerId),
+  experimentalModelAccuracy: (params: {
+    polymerId: number;
+    polymerHSP: { deltaD: number; deltaP: number; deltaH: number };
+    r0: number;
+    treatPartialAs?: 'good' | 'bad';
+  }) => ipcRenderer.invoke('experimental:modelAccuracy', params),
+  experimentalRefitSphere: (params: {
+    polymerId: number;
+    treatPartialAs?: 'good' | 'bad';
+  }) => ipcRenderer.invoke('experimental:refitSphere', params),
+  experimentalSaveMappings: (mappings: Array<{ rawName: string; solventId: number }>) =>
+    ipcRenderer.invoke('experimental:saveMappings', mappings),
+  experimentalGetMappings: () =>
+    ipcRenderer.invoke('experimental:getMappings'),
+  experimentalDeleteMapping: (rawName: string) =>
+    ipcRenderer.invoke('experimental:deleteMapping', rawName),
+
   // 汎用 IPC invoke — 許可チャネルのみ通過
   invoke: (channel: string, ...args: unknown[]) => {
     const ALLOWED_CHANNELS = [

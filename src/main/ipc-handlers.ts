@@ -21,6 +21,9 @@ import { DEFAULT_WETTABILITY_THRESHOLDS, classifyWettability } from '../core/wet
 import type { GroupEvaluationResult, PartEvaluationResult, MixtureComponent, NanoDispersionEvaluationResult, SolventDispersibilityResult, DispersibilityThresholds, SolventConstraints, ContactAngleResult, GroupContactAngleResult, WettabilityThresholds, SwellingThresholds, SwellingResult, GroupSwellingResult, DrugSolubilityThresholds, DrugSolubilityResult, DrugSolubilityScreeningResult, ChemicalResistanceThresholds, ChemicalResistanceResult, GroupChemicalResistanceResult, PlasticizerCompatibilityThresholds, CarrierCompatibilityThresholds } from '../core/types';
 import type { SqliteBookmarkRepository, CreateBookmarkDto } from '../db/bookmark-repository';
 import type { SqliteHistoryRepository } from '../db/history-repository';
+import type { ExperimentalRepository } from '../db/experimental-repository';
+import { parseExperimentalCsv, matchSolventNames, detectShiftJIS } from '../core/experimental-import';
+import { calculateModelAccuracy, buildDataPoints } from '../core/model-accuracy';
 import type { SerializedHistoryEntry } from '../core/evaluation-history';
 import { isValidHistoryPipeline } from '../core/evaluation-history';
 import { validateBookmark } from '../core/bookmark';
@@ -142,6 +145,7 @@ export function registerIpcHandlers(
   bookmarkRepo: SqliteBookmarkRepository,
   historyRepo: SqliteHistoryRepository,
   dispersantRepo: DispersantRepository,
+  experimentalRepo: ExperimentalRepository,
 ): void {
   // --- 部品グループ ---
   ipcMain.handle('parts:getAllGroups', () => partsRepo.getAllGroups());
@@ -2038,5 +2042,219 @@ export function registerIpcHandlers(
     const err = validateIonicLiquidHSPInput(params);
     if (err) throw new Error(err);
     return estimateILHSP(params.cationHSP, params.anionHSP, params.ratio, params.temperature, params.referenceTemp);
+  });
+
+  // --- 実験データ: CSVインポート ---
+  ipcMain.handle('experimental:import', async (_, params: {
+    polymerId: number;
+    treatPartialAs?: 'good' | 'bad';
+  }) => {
+    // ファイル選択ダイアログ
+    const fileResult = await dialog.showOpenDialog({
+      filters: [{ name: 'CSV', extensions: ['csv'] }],
+      properties: ['openFile'],
+    });
+    if (fileResult.canceled || fileResult.filePaths.length === 0) return null;
+
+    const filePath = fileResult.filePaths[0];
+    const stats = await fs.promises.stat(filePath);
+    if (stats.size > MAX_CSV_SIZE) throw new Error(`ファイルが大きすぎます（上限: ${MAX_CSV_SIZE / 1024 / 1024}MB）`);
+
+    // エンコーディング検出
+    const rawBuffer = await fs.promises.readFile(filePath);
+    let csvContent: string;
+    if (detectShiftJIS(new Uint8Array(rawBuffer))) {
+      const decoder = new TextDecoder('shift-jis');
+      csvContent = decoder.decode(rawBuffer);
+    } else {
+      csvContent = rawBuffer.toString('utf-8');
+    }
+
+    // パース
+    const parseResult = parseExperimentalCsv(csvContent);
+    if (parseResult.errors.length > 0 && parseResult.rows.length === 0) {
+      return { success: false, errors: parseResult.errors, matchResult: null, batchId: null };
+    }
+
+    // ポリマー存在チェック
+    const allGroups = partsRepo.getAllGroups();
+    const polymerExists = allGroups.some((g) => g.parts.some((p) => p.id === params.polymerId));
+    if (!polymerExists) throw new Error(`材料 (ID: ${params.polymerId}) が見つかりません`);
+
+    // 溶媒名マッチング
+    const solvents = solventRepo.getAllSolvents();
+    const cachedMappings = experimentalRepo.getAllMappings();
+    const rawNames = parseResult.rows.map((r) => r.solventNameRaw);
+    const matchResult = matchSolventNames(rawNames, solvents, cachedMappings);
+
+    return {
+      success: true,
+      errors: parseResult.errors,
+      rows: parseResult.rows,
+      matchResult,
+      rowCount: parseResult.rows.length,
+    };
+  });
+
+  // --- 実験データ: インポート確定（マッピング解決後） ---
+  ipcMain.handle('experimental:saveImport', (_, params: {
+    polymerId: number;
+    rows: Array<{
+      solventNameRaw: string;
+      solventId: number | null;
+      result: 'good' | 'partial' | 'bad';
+      quantitativeValue?: number;
+      quantitativeUnit?: string;
+      temperatureC?: number;
+      concentration?: string;
+      notes?: string;
+    }>;
+    mappings?: Array<{ rawName: string; solventId: number }>;
+  }) => {
+    // Finding 3: polymerId 存在チェック
+    const allGroups = partsRepo.getAllGroups();
+    const polymerExists = allGroups.some((g) => g.parts.some((p) => p.id === params.polymerId));
+    if (!polymerExists) throw new Error(`材料 (ID: ${params.polymerId}) が見つかりません`);
+
+    // Finding 5: 行数制限
+    const MAX_IMPORT_ROWS = 5000;
+    if (params.rows.length > MAX_IMPORT_ROWS) {
+      throw new Error(`インポート行数が上限を超えています（上限: ${MAX_IMPORT_ROWS}行、実際: ${params.rows.length}行）`);
+    }
+
+    // Finding 1: 入力バリデーション
+    const VALID_RESULTS = new Set(['good', 'partial', 'bad']);
+    const MAX_TEXT_LENGTH = 500;
+    for (let i = 0; i < params.rows.length; i++) {
+      const r = params.rows[i];
+      if (!VALID_RESULTS.has(r.result)) {
+        throw new Error(`行${i + 1}: 不正な result 値 "${r.result}"（good/partial/bad のいずれかが必要）`);
+      }
+      if (!r.solventNameRaw || r.solventNameRaw.length > MAX_TEXT_LENGTH) {
+        throw new Error(`行${i + 1}: solventNameRaw は1〜${MAX_TEXT_LENGTH}文字が必要です`);
+      }
+      if (r.notes && r.notes.length > MAX_TEXT_LENGTH) {
+        throw new Error(`行${i + 1}: notes は${MAX_TEXT_LENGTH}文字以内にしてください`);
+      }
+      if (r.concentration && r.concentration.length > MAX_TEXT_LENGTH) {
+        throw new Error(`行${i + 1}: concentration は${MAX_TEXT_LENGTH}文字以内にしてください`);
+      }
+    }
+
+    // Finding 6: マッピングとデータ保存をアトミックに実行
+    const importBatchId = `batch-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+
+    const dtos = params.rows.map((r) => ({
+      importBatchId,
+      polymerId: params.polymerId,
+      solventId: r.solventId,
+      solventNameRaw: r.solventNameRaw,
+      result: r.result,
+      quantitativeValue: r.quantitativeValue,
+      quantitativeUnit: r.quantitativeUnit,
+      temperatureC: r.temperatureC,
+      concentration: r.concentration,
+      notes: r.notes,
+    }));
+
+    // マッピングとデータを同一トランザクションで保存
+    if (params.mappings && params.mappings.length > 0) {
+      experimentalRepo.saveResultsWithMappings(dtos, params.mappings);
+    } else {
+      experimentalRepo.saveResults(dtos);
+    }
+
+    return { batchId: importBatchId, count: dtos.length };
+  });
+
+  // --- 実験データ: 取得 ---
+  ipcMain.handle('experimental:getResults', (_, polymerId: number) => {
+    return experimentalRepo.getByPolymerId(polymerId);
+  });
+
+  // --- 実験データ: 削除 ---
+  ipcMain.handle('experimental:deleteByBatch', (_, batchId: string) => {
+    return experimentalRepo.deleteByBatchId(batchId);
+  });
+
+  ipcMain.handle('experimental:deleteByPolymer', (_, polymerId: number) => {
+    return experimentalRepo.deleteByPolymerId(polymerId);
+  });
+
+  // --- 実験データ: Model Accuracy計算 ---
+  ipcMain.handle('experimental:modelAccuracy', (_, params: {
+    polymerId: number;
+    polymerHSP: HSPValues;
+    r0: number;
+    treatPartialAs?: 'good' | 'bad';
+  }) => {
+    // Finding 2: HSP値・R₀バリデーション
+    const hspErr = validateHSPValues(params.polymerHSP.deltaD, params.polymerHSP.deltaP, params.polymerHSP.deltaH);
+    if (hspErr) throw new Error(hspErr);
+    const r0Err = validateR0(params.r0);
+    if (r0Err) throw new Error(r0Err);
+
+    const results = experimentalRepo.getByPolymerId(params.polymerId);
+    const solvents = solventRepo.getAllSolvents();
+    const solventMap = new Map(solvents.map((s) => [s.id, s]));
+
+    // solvent_id が紐付いている結果のみでメトリクス計算
+    const dataInputs = results
+      .filter((r) => r.solventId != null)
+      .map((r) => {
+        const solvent = solventMap.get(r.solventId!);
+        if (!solvent) return null;
+        return {
+          solventHSP: solvent.hsp,
+          solventName: r.solventNameRaw,
+          result: r.result,
+        };
+      })
+      .filter((d): d is NonNullable<typeof d> => d !== null);
+
+    const dataPoints = buildDataPoints(dataInputs, params.polymerHSP, params.r0);
+    return calculateModelAccuracy(dataPoints, params.treatPartialAs ?? 'good');
+  });
+
+  // --- 実験データ: Refine Sphere（既存fitHSPSphere再利用） ---
+  ipcMain.handle('experimental:refitSphere', (_, params: {
+    polymerId: number;
+    treatPartialAs?: 'good' | 'bad';
+  }) => {
+    const results = experimentalRepo.getByPolymerId(params.polymerId);
+    const solvents = solventRepo.getAllSolvents();
+    const solventMap = new Map(solvents.map((s) => [s.id, s]));
+    const treat = params.treatPartialAs ?? 'good';
+
+    const classifications = results
+      .filter((r) => r.solventId != null)
+      .map((r) => {
+        const solvent = solventMap.get(r.solventId!);
+        if (!solvent) return null;
+        const isGood = r.result === 'good' || (r.result === 'partial' && treat === 'good');
+        return { solvent: { hsp: solvent.hsp, name: solvent.name }, isGood };
+      })
+      .filter((c): c is NonNullable<typeof c> => c !== null);
+
+    if (classifications.length < 3) {
+      throw new Error('Refine Sphereには最低3つのマッチ済み実験結果が必要です');
+    }
+
+    return fitHSPSphere(classifications);
+  });
+
+  // --- 溶媒名マッピング: 保存 ---
+  ipcMain.handle('experimental:saveMappings', (_, mappings: Array<{ rawName: string; solventId: number }>) => {
+    return experimentalRepo.saveMappings(mappings);
+  });
+
+  // --- 溶媒名マッピング: 取得 ---
+  ipcMain.handle('experimental:getMappings', () => {
+    return experimentalRepo.getAllMappings();
+  });
+
+  // --- 溶媒名マッピング: 削除 ---
+  ipcMain.handle('experimental:deleteMapping', (_, rawName: string) => {
+    return experimentalRepo.deleteMapping(rawName);
   });
 }
